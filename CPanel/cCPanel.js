@@ -70,7 +70,7 @@ cCPanel.prototype.fInit = function(
 	$("#div_messageBoard").fadeIn();
 	mCurrDivVisible = "div_messageBoard";
 
-
+	$("#div_loader").fadeIn();
 	
 	var vViewPortSize = [];
 	var vWidgetEdgeOffset = [50, 50];
@@ -135,7 +135,13 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
-		mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
+		if (mCPanel.mState != "controlpanel")
+			mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
+		else
+		{
+			if (mCPanel.mPrevState == "htmlwidgetengine")
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
+		}
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
@@ -389,7 +395,7 @@ cCPanel.prototype.fShowControlPanelReturn = function(
 )
 {
 fDbg("*** cCPanel, fShowControlPanelReturn(), " + vData);
-	
+	this.pState("controlpanel");
 }
 
 
@@ -458,9 +464,11 @@ cCPanel.prototype.fSetHTMLWidgetEngineSize = function(
 {
 fDbg("*** cCPanel, fSetHTMLWidgetEngineSize(), ");
 
+	$("#div_loader").fadeOut(200, function() {
+	});
 	$("#div_CPanel").animate({
 		left: "-=1200"
-	}, 1200, function() {
+	}, 1000, function() {
 		cCPanel.instance.fSetHTMLWidgetEngineSizeReturn();
 	});
 }
@@ -470,20 +478,21 @@ cCPanel.prototype.fSetHTMLWidgetEngineSizeReturn = function(
 )
 {
 fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
-	var o;
+	var o, p;
 	o = 'http://localhost/widgets/twitter0.1/index.html';
-	$("#div_htmlWidgetPlayer").show();
-	$("#div_htmlWidgetPlayer").css("top", "720px");
-	$("#div_htmlWidgetPlayer").animate({
-		top: "-=80"
-	}, 1000, function() {
-		
-	});
 	
+	//p = setTimeout(function() {
+		$("#div_htmlWidgetPlayer").show();
+		$("#div_htmlWidgetPlayer").css("top", "720px");
+		$("#div_htmlWidgetPlayer").animate({
+			top: "-=80"
+		}, 1000, function() {
+		
+		});
+	//}, 1000);
 	
 	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1080px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
 	this.pState("htmlwidgetengine");
-	//$("#iframe_htmlWidgetPlayer").attr("src") = "http://localhost/widgets/twitter0.1/index.html";\
 }
 
 // -------------------------------------------------------------------------------------------------
