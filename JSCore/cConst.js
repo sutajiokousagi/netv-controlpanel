@@ -25,6 +25,10 @@ cConst.SIGNAL_WIDGETENGINE_SHOW = "signal_widgetengine_show";
 cConst.SIGNAL_WIDGET_NEXT = "signal_widget_next";
 cConst.SIGNAL_WIDGET_PREV = "signal_widget_prev";
 
-cConst.SIGNAL_WIDGET_GOTO_CONTROLPANEL = "signal_widget_goto_controlpanel";
-cConst.SIGNAL_WIDGET_GOTO_FLASHWIDGETENGINE = "signal_widget_goto_flashwidgetengine";
-cConst.SIGNAL_WIDGET_GOTO_HTMLWIDGETENGINE = "signal_widget_goto_htmlwidgetengine";
+cConst.SIGNAL_GOTO_CONTROLPANEL = "signal_goto_controlpanel";
+cConst.SIGNAL_GOTO_FLASHWIDGETENGINE = "signal_goto_flashwidgetengine";
+cConst.SIGNAL_GOTO_HTMLWIDGETENGINE = "signal_goto_htmlwidgetengine";
+
+
+cConst.SIGNAL_TOGGLE_CONTROLPANEL = "signal_toggle_controlpanel";
+cConst.SIGNAL_TOGGLE_WIDGETENGINE = "signal_toggle_widgetengine";

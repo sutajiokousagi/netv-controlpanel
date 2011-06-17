@@ -21,6 +21,7 @@ function cCPanel(
 	this.mMessageDisplayInProgress = false;
 	this.mMessageList = [];
 	this.mState = "";
+	this.mPrevState = "";
 	this.mCurrDivVisible = "";
 	this.mLocked = false;
 }
@@ -110,7 +111,11 @@ cCPanel.prototype.pState = function(
 	if (! vState)
 		return cCPanel.instance.mState;
 		
-	cCPanel.instance.mState = vState;
+	if (cCPanel.instance.mState != vState)
+	{
+		cCPanel.instance.mPrevState = cCPanel.instance.mState;	
+		cCPanel.instance.mState = vState;
+	}
 	return cCPanel.instance.mState;
 }
 
@@ -125,6 +130,17 @@ cCPanel.prototype.fOnSignal = function(
 {
 fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	var mCPanel = cCPanel.fGetInstance();
+	
+	// JavaScript Injection Signals
+	switch(vSignal)
+	{
+	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
+		break;
+		
+	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		break;
+	}
 	
 	switch(vSignal)
 	{
@@ -143,10 +159,10 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		
 	case cConst.SIGNAL_WIDGETENGINE_SHOW:
 		//mCPanel.fShowWidgetEngine();
-		mCPanel.fOnSignal(cConst.SIGNAL_WIDGET_GOTO_HTMLWIDGETENGINE);
+		mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
 		break;
 		
-	case cConst.SIGNAL_WIDGET_GOTO_CONTROLPANEL:
+	case cConst.SIGNAL_GOTO_CONTROLPANEL:
 		switch (mCPanel.mState)
 		{
 		case "controlpanel":
@@ -161,12 +177,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		}
 		break;
 		
-	case cConst.SIGNAL_WIDGET_GOTO_HTMLWIDGETENGINE:
-		this.pState("htmlwidgetengine");
+	case cConst.SIGNAL_GOTO_HTMLWIDGETENGINE:
 		mCPanel.fShowHTMLWidgetEngine();
 		break;
 		
-	case cConst.SIGNAL_WIDGET_GOTO_FLASHWIDGETENGINE:
+	case cConst.SIGNAL_GOTO_FLASHWIDGETENGINE:
 		this.pState("flashwidgetengine");
 		break;
 	}	
@@ -461,13 +476,13 @@ fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
 	$("#div_htmlWidgetPlayer").css("top", "720px");
 	$("#div_htmlWidgetPlayer").animate({
 		top: "-=80"
-	}, 500, function() {
+	}, 1000, function() {
 		
 	});
 	
 	
 	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1080px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
-	
+	this.pState("htmlwidgetengine");
 	//$("#iframe_htmlWidgetPlayer").attr("src") = "http://localhost/widgets/twitter0.1/index.html";\
 }
 

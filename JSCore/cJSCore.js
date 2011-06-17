@@ -144,11 +144,13 @@ fDbg("*** cJSCore, fStartUp()");
 		cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "&nocache=4682&dcid_skin=0000" + "</value>"}, this.fStartUpReturn);
 		//~ cProxy.xmlhttpPost("http://www.chumby.com/xml/chumbies/" + this.mModel.CHUMBY_GUID, "get", null, this.fStartUpReturn);
 	}
+	
+cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>0,7,0</value>"}, function() {})
 cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>0 0 1279 719</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>240 60 800 600</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + ((vViewPortSize[0] - 800) / 2) + " " + ((vViewPortSize[1] - 600)) / 2 + " 800 600</value>"}, function() {});
 
-cProxy.fCPanelMsgBoardDisplay("Athorization in progress...");
+	cProxy.fCPanelMsgBoardDisplay("Athorization in progress...");
 }
 
 cJSCore.prototype.fStartUpReturn = function(
