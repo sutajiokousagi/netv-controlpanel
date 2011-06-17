@@ -6,9 +6,6 @@
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
-//	static members
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cCPanel(
@@ -20,9 +17,11 @@ function cCPanel(
 	
 	this.mMessageDisplayInProgress = false;
 	this.mMessageList = [];
+	
 	this.mState = "";
 	this.mPrevState = "";
-	this.mCurrDivVisible = "";
+	this.mSubState = "";
+	
 	this.mLocked = false;
 }
 
@@ -42,15 +41,15 @@ cCPanel.fGetInstance = function(
 cCPanel.prototype.fInit = function(
 )
 {
-	$("#div_channelMain").hide();
-	$("#div_channelMain_arrowPrev").click(function() {
+	$("#div_flashWidgetMain").hide();
+	$("#div_flashWidgetMain_arrowPrev").click(function() {
 		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
 		cModel.fGetInstance().CURR_WIDGET_INDEX--;
 		if (cModel.fGetInstance().CURR_WIDGET_INDEX < 0)
 			cModel.fGetInstance().CURR_WIDGET_INDEX = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1;
 		cCPanel.fGetInstance().fRefreshChannelDiv();
 	});
-	$("#div_channelMain_arrowNext").click(function() {
+	$("#div_flashWidgetMain_arrowNext").click(function() {
 		//~ alert();
 		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
 		cModel.fGetInstance().CURR_WIDGET_INDEX++;
@@ -58,7 +57,12 @@ cCPanel.prototype.fInit = function(
 			cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
 		cCPanel.fGetInstance().fRefreshChannelDiv();
 	});
-
+	$("#div_channelMain").hide();
+	
+	$("#div_tempBg").hide();
+	
+	
+	
 	$("#div_actionArea").hide();
 	$("#div_dbg_container").hide();
 	
@@ -145,9 +149,61 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		switch (mCPanel.mState)
+		{
+		case "htmlwidgetengine":
+			mCPanel.fHideHTMLWidgetEngine(function() {
+				mCPanel.pState("");
+			});
+			break;
+			
+		case "flashwidgetengine":
+			break;
+			
+		case "":
+			break;
+		}
+		break;
+		
+	case cConst.SIGNAL_BUTTON_LEFT:
+		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
+		{
+			$("#div_channelMain_channelThumbnail_0_shadow").show();
+			$("#div_channelMain_channelThumbnail_1_shadow").hide();
+		}
+		break;
+		
+	case cConst.SIGNAL_BUTTON_RIGHT:
+		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
+		{
+			$("#div_channelMain_channelThumbnail_0_shadow").hide();
+			$("#div_channelMain_channelThumbnail_1_shadow").show();
+		}
+		break;
+		
+	case cConst.SIGNAL_BUTTON_CENTER:
+		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
+		{
+			if ($('#div_channelMain_channelThumbnail_0_shadow').is(':visible'))
+			{
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
+			}
+			else if ($('#div_channelMain_channelThumbnail_1_shadow').is(':visible'))
+			{
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
+			}
+		}
+		break;
+		
+	case cConst.SIGNAL_BUTTON_UP:
+		break;
+		
+	case cConst.SIGNAL_BUTTON_DOWN:
+		cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Restart</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 		break;
 	}
 	
+	// internal signals
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_MESSAGE:
@@ -179,6 +235,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			});
 			break;
 		case "flashwidgetengine":
+			cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
+			mCPanel.fShowControlPanel();
 			break;
 		}
 		break;
@@ -188,10 +249,45 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_GOTO_FLASHWIDGETENGINE:
-		this.pState("flashwidgetengine");
+		$("#div_CPanel").animate({
+			left: "-=1200"
+		}, 1000, function() {
+			mCPanel.fShowFLASHWidgetEngine();
+		});
 		break;
 	}	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // -------------------------------------------------------------------------------------------------
 //	fShow
@@ -254,6 +350,7 @@ cCPanel.prototype.fDisplayMessageBoard = function(
 				});
 			});
 	}
+	cCPanel.instance.mSubState = "messageBoard";
 }
 
 
@@ -382,11 +479,19 @@ cCPanel.prototype.fShowControlPanel = function(
 )
 {
 fDbg("*** cCPanel, fShowControlPanel(), ");
+	
+
+		$("#div_tempBg").show();
+		$("#div_tempBg").hide();
 	$("#div_CPanel").css("left", "-960px");
 	$("#div_CPanel").animate({
 		left: "+=1200"
 	}, 1200, function() {
+		
+		cCPanel.instance.fRenderChannelMain();
 		cCPanel.instance.fShowControlPanelReturn();
+		$("#div_tempBg").show();
+		$("#div_tempBg").hide();
 	});
 }
 
@@ -398,10 +503,31 @@ fDbg("*** cCPanel, fShowControlPanelReturn(), " + vData);
 	this.pState("controlpanel");
 }
 
-
-
-
-
+// -------------------------------------------------------------------------------------------------
+//	fRenderChannelMain
+// -------------------------------------------------------------------------------------------------
+cCPanel.prototype.fRenderChannelMain = function(
+)
+{
+fDbg("*** cCPanel, fRenderChannelMain(), ");
+	$("#div_channelMain").fadeIn(1000, function() {
+	
+	});
+	
+	switch (cCPanel.instance.mState)
+	{
+	case "htmlwidgetengine":
+		$("#div_channelMain_channelThumbnail_0_shadow").hide();
+		$("#div_channelMain_channelThumbnail_1_shadow").show();
+		cCPanel.instance.mSubState = "channelMain";
+		break;
+	case "flashwidgetengine":
+		$("#div_channelMain_channelThumbnail_0_shadow").show();
+		$("#div_channelMain_channelThumbnail_1_shadow").hide();
+		cCPanel.instance.mSubState = "channelMain";
+		break;
+	}
+}
 
 
 
@@ -463,7 +589,7 @@ cCPanel.prototype.fSetHTMLWidgetEngineSize = function(
 )
 {
 fDbg("*** cCPanel, fSetHTMLWidgetEngineSize(), ");
-
+	
 	$("#div_loader").fadeOut(200, function() {
 	});
 	$("#div_CPanel").animate({
@@ -491,7 +617,7 @@ fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
 		});
 	//}, 1000);
 	
-	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1080px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
+	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
 	this.pState("htmlwidgetengine");
 }
 
@@ -568,21 +694,34 @@ fDbg("*** cCPanel, fHideHTMLWidgetEngineReturn(), " + vData);
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
-//	fShowWidgetEngine
+//	fShowFLASHWidgetEngine
 // -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fShowWidgetEngine = function(
+cCPanel.prototype.fShowFLASHWidgetEngine = function(
 )
 {
-fDbg("*** cCPanel, fShowWidgetEngine(), ");
-	cProxy.xmlhttpPost("", "post", {cmd : "ShowWidgetEngine", data : "<value>true</value>"}, cCPanel.instance.fShowWidgetEngineReturn);
+fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
+	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>Off</value>"}, function() { });
+	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	// cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>SetBox 959 479 320 240</value>"}, function() {});
+	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, function() {});
+	
+	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>SetBox 959 479 320 240</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 }
 
-cCPanel.prototype.fShowWidgetEngineReturn = function(
+cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(
 	vData
 )
 {
-fDbg("*** cCPanel, fShowWidgetEngineReturn(), " + vData);
-	cCPanel.instance.fSetWidgetEngineSize();
+fDbg("*** cCPanel, fShowFLASHWidgetEngineReturn(), " + vData);
+	cCPanel.instance.pState("flashwidgetengine");
+	
+	//cCPanel.instance.fSetWidgetEngineSize();
+//$('#div_channelMain_channelThumbnail_0_title').css("font-size", "12px");
+//$('#div_channelMain_channelThumbnail_0_title').css("width", "600px");
+
+//$('#div_channelMain_channelThumbnail_0_title').html(vData.replace("<", "||").replace(">", "||"));
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -708,7 +847,7 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 		this.mModel.CURR_WIDGET_INDEX = 0;
 
 	vWidgetList = this.mModel.CHANNEL_LIST[this.mModel.CURR_CHANNEL_INDEX].mWidgetList;
-	if ($("#img_channelMain_thumbnailPrev").attr("src") == "")
+	if ($("#img_flashWidgetMain_thumbnailPrev").attr("src") == "")
 	{
 		// show control panel MAIN div
 		if (this.mModel.CURR_WIDGET_INDEX == 0)
@@ -717,14 +856,14 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 			p = this.mModel.CURR_WIDGET_INDEX - 1;
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			$("#img_channelMain_thumbnailPrev").attr("src", "");
-			$("#img_channelMain_thumbnailPrev").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailPrev").attr("src", "");
+			$("#img_flashWidgetMain_thumbnailPrev").attr("src", vData);
 		});
 		
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			$("#img_channelMain_thumbnailCurr").attr("src", "");
-			$("#img_channelMain_thumbnailCurr").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailCurr").attr("src", "");
+			$("#img_flashWidgetMain_thumbnailCurr").attr("src", vData);
 		});
 
 		if (this.mModel.CURR_WIDGET_INDEX == vWidgetList.length - 1)
@@ -733,12 +872,12 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 			p = this.mModel.CURR_WIDGET_INDEX + 1;
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			$("#img_channelMain_thumbnailNext").attr("src", "");
-			$("#img_channelMain_thumbnailNext").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailNext").attr("src", "");
+			$("#img_flashWidgetMain_thumbnailNext").attr("src", vData);
 		});
 		
-		$("#div_channelMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
-		$("#div_channelMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
+		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
+		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
 
 
 		if (vReturnFun)
@@ -747,9 +886,9 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 	else
 	{
 		o = ["Prev", "Curr", "Next"];
-		p = [parseFloat($("#div_channelMain_thumbnail" + o[0] + "_container").css("left").split("px")[0]),
-			parseFloat($("#div_channelMain_thumbnail" + o[1] + "_container").css("left").split("px")[0]),
-			parseFloat($("#div_channelMain_thumbnail" + o[2] + "_container").css("left").split("px")[0])]
+		p = [parseFloat($("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left").split("px")[0]),
+			parseFloat($("#div_flashWidgetMain_thumbnail" + o[1] + "_container").css("left").split("px")[0]),
+			parseFloat($("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left").split("px")[0])]
 		if (p[0] < p[1] && p[1] < p[2])
 			o = ["Prev", "Curr", "Next"];
 		else if (p[1] < p[2] && p[2] < p[0])
@@ -766,32 +905,32 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				i = this.mModel.CURR_WIDGET_INDEX - 1;
 			/*
 			$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + vWidgetList[i].mWidget.mThumbnail.mHref, function(data) {
-				$("#img_channelMain_thumbnail" + o[2]).attr("src", "data:image/jpg;base64," + data);
+				$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "data:image/jpg;base64," + data);
 			});
 			*/
 			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-				$("#img_channelMain_thumbnail" + o[2]).attr("src", vData);
+				$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", vData);
 			});
 			
-			$("#div_channelMain_thumbnail" + o[2] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
 				left: "+=300"
 			}, vTransitionTime / 2, function() {
 				// Animation complete
 			});
-			$("#img_channelMain_thumbnail" + o[2]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
 				width: "-=100",
 				height: "-=100"
 			}, vTransitionTime / 2, function() {
-					$("#img_channelMain_thumbnail" + o[2]).attr("src", "");
-					$("#img_channelMain_thumbnail" + o[2]).attr("src", "./images/chumby_logo_48x48.png");
-					$("#div_channelMain_thumbnail" + o[2] + "_container").css("left", "-100px");
-					$("#div_channelMain_thumbnail" + o[2] + "_container").animate({
+					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "");
+					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "./images/chumby_logo_48x48.png");
+					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left", "-100px");
+					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
 						left: "+=200"
 					}, vTransitionTime, function() {
 						// Animation complete
 					});
-					$("#img_channelMain_thumbnail" + o[2]).animate({
+					$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
 						width: "+=100",
 						height: "+=100"
 					}, vTransitionTime, function() {
@@ -799,13 +938,13 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 					});
 			});
 			
-			$("#div_channelMain_thumbnail" + o[0] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
 				left: "+=200",
 				top: "-=15"
 			}, vTransitionTime, function() {
 				// Animation complete
 			});
-			$("#img_channelMain_thumbnail" + o[0]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
 				width: "+=40",
 				height: "+=30"
 			}, vTransitionTime, function() {
@@ -813,13 +952,13 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 			});
 
 			
-			$("#div_channelMain_thumbnail" + o[1] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[1] + "_container").animate({
 				left: "+=240",
 				top: "+=15"
 			}, vTransitionTime, function() {
 				// Animation complete
 			});
-			$("#img_channelMain_thumbnail" + o[1]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[1]).animate({
 				width: "-=40",
 				height: "-=30"
 			}, vTransitionTime, function() {
@@ -835,32 +974,32 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				i = this.mModel.CURR_WIDGET_INDEX + 1;
 			/*
 			$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + vWidgetList[i].mWidget.mThumbnail.mHref, function(data) {
-				$("#img_channelMain_thumbnail" + o[0]).attr("src", "data:image/jpg;base64," + data);
+				$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "data:image/jpg;base64," + data);
 			});
 			*/
 			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-				$("#img_channelMain_thumbnail" + o[0]).attr("src", vData);
+				$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", vData);
 			});
 			
-			$("#div_channelMain_thumbnail" + o[0] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
 				left: "-=300"
 			}, vTransitionTime / 2, function() {
 				// Animation complete
 			});
-			$("#img_channelMain_thumbnail" + o[0]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
 				width: "-=100",
 				height: "-=100"
 			}, vTransitionTime / 2, function() {
-					$("#img_channelMain_thumbnail" + o[0]).attr("src", "");
-					$("#img_channelMain_thumbnail" + o[0]).attr("src", "./images/chumby_logo_48x48.png");
-					$("#div_channelMain_thumbnail" + o[0] + "_container").css("left", "840px");
-					$("#div_channelMain_thumbnail" + o[0] + "_container").animate({
+					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "");
+					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "./images/chumby_logo_48x48.png");
+					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left", "840px");
+					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
 						left: "-=300"
 					}, vTransitionTime, function() {
 						// Animation complete
 					});
-					$("#img_channelMain_thumbnail" + o[0]).animate({
+					$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
 						width: "+=100",
 						height: "+=100"
 					}, vTransitionTime, function() {
@@ -868,28 +1007,28 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 					});
 			});
 			
-			$("#div_channelMain_thumbnail" + o[1] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[1] + "_container").animate({
 				left: "-=200",
 				top: "+=15"
 			}, vTransitionTime, function() {
 				// Animation complete
 			});
 
-			$("#img_channelMain_thumbnail" + o[1]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[1]).animate({
 				width: "-=40",
 				height: "-=30"
 			}, vTransitionTime, function() {
 			});
 
 			
-			$("#div_channelMain_thumbnail" + o[2] + "_container").animate({
+			$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
 				left: "-=240",
 				top: "-=15"
 			}, vTransitionTime, function() {
 				// Animation complete
 			});
 
-			$("#img_channelMain_thumbnail" + o[2]).animate({
+			$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
 				width: "+=40",
 				height: "+=30"
 			}, vTransitionTime, function() {
@@ -898,8 +1037,8 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 		}
 
 		
-		$("#div_channelMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
-		$("#div_channelMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
+		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
+		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
 		
 		if (vReturnFun)
 			vReturnFun();
@@ -912,9 +1051,9 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 cCPanel.prototype.fShowChannelDiv = function(
 )
 {
-	$("#div_channelMain").show();
-	$("#div_channelMain").css("left", "-800px");
-	$("#div_channelMain").animate({
+	$("#div_flashWidgetMain").show();
+	$("#div_flashWidgetMain").css("left", "-800px");
+	$("#div_flashWidgetMain").animate({
 		left: "+=800"
 	}, 200, function() {
 		// Animation complete

@@ -39,7 +39,7 @@ showTweetLinks='all';
 		var o = [parseInt($("#tweets").css("width").split("px")[0]), parseFloat($("#tweets").css("left").split("px")[0])];
 		$("#tweets").css("left", (parseInt($("#tweets").css("left").split("px")[0]) - mSpeed) + "px");
 		//alert(o[0] + o[1]);
-		if (o[0] + o[1] < 1000)
+		if (o[0] + o[1] < 1279)
 			window.location.reload();
 		mInterval = setTimeout ("fStart()", 20);
 	}
@@ -50,7 +50,7 @@ showTweetLinks='all';
 <!--
 <p>Five most recent tweets mentioning <a target="_blank" href="http://search.twitter.com/search?q=china">chumby</a>:</p>
 -->
-<div id="twitstream_container" style="position: absolute; width: 1080px; height: 68px; overflow: hidden; border: solid black 0px;">
+<div id="twitstream_container" style="position: absolute; width: 1279px; height: 68px; overflow: hidden; border: solid black 0px;">
 <div class="twitStream 50" id="tweets" title="chumby" ></div>
 </div>
 </body>

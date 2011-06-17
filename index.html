@@ -37,19 +37,57 @@ function fDbg(v)
 	//document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
 }
 
+function fButtonPress(
+	vButtonName
+)
+{
+	switch (vButtonName)
+	{
+	case "cpanel":
+		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL);
+		break;
+		
+	case "widget":
+		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
+		break;
+		
+	case "left":
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT);
+		break;
+		
+	case "right":
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT);
+		break;
+		
+	case "center":
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
+		break;
+		
+	case "up":
+		
+		break;
+		
+	case "down":
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN);
+		break;
+	}
+}
 </script>
 </header>
 
 
 
 <body style="background-color: #000700;">
+<div id="div_tempBg" style="position: absolute; top: 0px; left: 0px; background-color: #000701; width: 1279px; height: 719px;">
+
+</div>
 <!--
 -----------------------------------------------
 -------------debug div
 -----------------------------------------------
 -->
 <div id="div_dbg_container" style="float: right; height: 500px; width: 300px; overflow: hidden; background-color: white; z-index: 1000;">
-<div id="div_dbg" style="float: right; height: 500px; width: 300px; font-size: 12px; font-family: Arial; border: dotted black 1px; height: 500px; overflow: hidden;"></div>
+<div id="div_dbg" style="float: right; height: 500px; width: 300px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
 
 <!--
@@ -66,32 +104,32 @@ function fDbg(v)
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
 
-<!-- ----------------------- channelMain main module ---------------------- -->
-<div id="div_channelMain" style="position: absolute; width: 800px; height: 600px;">
-	<div id="div_channelMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
+<!-- ----------------------- flashWidgetMain module ---------------------- -->
+<div id="div_flashWidgetMain" style="position: absolute; width: 800px; height: 600px;">
+	<div id="div_flashWidgetMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
 	
-	<div id="div_channelMain_thumbnailPrev_container" style="position: absolute; top: 230px; left: 100px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_channelMain_thumbnailPrev" alt="" style="border: none;" width="160" height="120" src="" />
+	<div id="div_flashWidgetMain_thumbnailPrev_container" style="position: absolute; top: 230px; left: 100px; border: solid black 1px;" onclick="alert(this.id);">
+		<img id="img_flashWidgetMain_thumbnailPrev" alt="" style="border: none;" width="160" height="120" src="" />
 	</div>
-	<div id="div_channelMain_thumbnailCurr_container" style="position: absolute; top: 215px; left: 300px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_channelMain_thumbnailCurr" alt="" style="border: none;"  width="200" height="150" src="" />
+	<div id="div_flashWidgetMain_thumbnailCurr_container" style="position: absolute; top: 215px; left: 300px; border: solid black 1px;" onclick="alert(this.id);">
+		<img id="img_flashWidgetMain_thumbnailCurr" alt="" style="border: none;"  width="200" height="150" src="" />
 	</div>
-	<div id="div_channelMain_thumbnailNext_container" style="position: absolute; top: 230px; left: 540px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_channelMain_thumbnailNext" alt="" style="border: none;"  width="160" height="120" src="" />
+	<div id="div_flashWidgetMain_thumbnailNext_container" style="position: absolute; top: 230px; left: 540px; border: solid black 1px;" onclick="alert(this.id);">
+		<img id="img_flashWidgetMain_thumbnailNext" alt="" style="border: none;"  width="160" height="120" src="" />
 	</div>
-	<div id="div_channelMain_title_container" style="position: absolute; top: 100px; left: 100px; border: solid black 0px; font-size: 48px; font-family: Arial; width: 600px; text-align: center;">
+	<div id="div_flashWidgetMain_title_container" style="position: absolute; top: 100px; left: 100px; border: solid black 0px; font-size: 48px; font-family: Arial; width: 600px; text-align: center;">
 		TITLE
 	</div>
-	<div id="div_channelMain_description_container" style="position: absolute; top: 400px; left: 100px; border: solid black 0px; font-size: 18px; font-family: Arial; width: 600px; text-align: left;">
+	<div id="div_flashWidgetMain_description_container" style="position: absolute; top: 400px; left: 100px; border: solid black 0px; font-size: 18px; font-family: Arial; width: 600px; text-align: left;">
 		DESCRIPTION
 	</div>
 	
-	<div id="div_channelMain_arrowPrev" style="position: absolute; left: 20px; top: 250px;">
+	<div id="div_flashWidgetMain_arrowPrev" style="position: absolute; left: 20px; top: 250px;">
 		<div class="arrow-left" style="position: absolute; width: 0px; height: 0px; border-top: 40px solid transparent; border-bottom: 40px solid transparent; border-right:40px solid green;"></div>
 		<div class="arrow-block" style="position: absolute; left: 40px; top: 15px; width: 20px; height: 50px; background-color: green;"></div>
 	</div>
 	
-	<div id="div_channelMain_arrowNext" style="position: absolute; left: 720px; top: 250px;">
+	<div id="div_flashWidgetMain_arrowNext" style="position: absolute; left: 720px; top: 250px;">
 		<div class="arrow-right" style="position: absolute; left: 20px; top: 0px; width: 0px; height: 0px; border-top: 40px solid transparent; border-bottom: 40px solid transparent; border-left: 40px solid green;"></div>
 		<div class="arrow-block" style="position: absolute; top: 15px; width: 20px; height: 50px; background-color: green;"></div>
 	</div>
@@ -99,10 +137,28 @@ function fDbg(v)
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
 
+<!-- ----------------------- channelMain module ---------------------- -->
+<div id="div_channelMain" style="position: absolute; width: 800px; height: 600px;">
+	<div id="div_channelMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
+	
+	<div id="div_channelMain_channelThumbnail_0_container" style="position: absolute; top: 230px; left: 160px; width: 160px; height: 196px" onclick="alert(this.id);">
+		<div id="div_channelMain_channelThumbnail_0_title" style="position: absolute; top: 0px; left: 0px; font-size: 18px; width: 160px; font-family: Arial; text-align: center;">FLASH Widgets</div>
+		<div id="div_channelMain_channelThumbnail_0_shadow" style="position: absolute; top: 46px; left: 10px; width: 160px; height: 160px; background-color: #666666"></div>
+		<img id="img_channelMain_channelThumbnail_0" style="position: absolute; top: 36px; left: 0px; border: none;" width="160" height="160" src="./images/Flash_logo_988x988.jpg" />
+	</div>
+	<div id="div_channelMain_channelThumbnail_1_container" style="position: absolute; top: 230px; left: 480px; width: 160px; height: 196px" onclick="alert(this.id);">
+		<div id="div_channelMain_channelThumbnail_1_title" style="position: absolute; top: 0px; left: 0px; font-size: 18px;  width: 160px; font-family: Arial; text-align: center;">HTML5 Widgets</div>
+		<div id="div_channelMain_channelThumbnail_1_shadow" style="position: absolute; top: 46px; left: 10px; width: 160px; height: 160px; background-color: #666666"></div>
+		<img id="img_channelMain_channelThumbnail_1" style="position: absolute; top: 36px; left: 0px; border: none;"  width="160" height="160" src="./images/HTML5_logo_480x480.jpg" />
+	</div>
+	
+	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
+</div>
+
 <!-- ----------------------- loading... module ---------------------- -->
 <div id="div_loader" style="position: absolute; width: 800px; height: 600px;">
-	<div style="position: absolute; top: 400px; left: 400px;">
-		<!--<img src="./images/ajax-loader.gif">-->
+	<div style="position: absolute; top: 250px; left: 350px;">
+		<img src="./images/gif-loading.gif">
 	</div>
 </div>
 
@@ -127,14 +183,13 @@ function fDbg(v)
 -------------widget rendering engine (HTML5 + Javascript)
 -----------------------------------------------
 -->
-<div id="div_htmlWidgetPlayer" style="position: absolute; left: 100px; top: 650px; width: 1080px; height: 70px; padding: 0; margin: 0; overflow: hidden;">
+<div id="div_htmlWidgetPlayer" style="position: absolute; left: 0px; top: 650px; width: 1279px; height: 70px; padding: 0; margin: 0; overflow: hidden;">
 <!--
 <div id="div_htmlWidgetPlayer_embed" style="position: absolute; left: 140px; top: 640px; width: 1000px; height: 60px;">
 <embed style="padding: 0px; margin: 0px;" src="widget_player_0.1.swf" quality="high" bgcolor="#869ca7" border="0" width="800" height="600" name="widget_player_01" id="widget_player_01" align="middle" play="true" loop="false" quality="high" always="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
 </div>
 -->
-<iframe id="iframe_htmlWidgetPlayer" src="" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1000px; height: 80px; background-color:rgba(255, 255, 255, 1)">
-	
+<iframe id="iframe_htmlWidgetPlayer">
 </iframe>
 </div>
 

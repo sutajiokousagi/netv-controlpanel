@@ -145,6 +145,8 @@ fDbg("*** cJSCore, fStartUp()");
 		//~ cProxy.xmlhttpPost("http://www.chumby.com/xml/chumbies/" + this.mModel.CHUMBY_GUID, "get", null, this.fStartUpReturn);
 	}
 	
+cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
+cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>0,7,0</value>"}, function() {})
 cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>0 0 1279 719</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>240 60 800 600</value>"}, function() {});
@@ -167,6 +169,11 @@ fDbg("*** cJSCore, fStartUpReturn()");
 	cJSCore.instance.mModel.PROFILE_NAME = xmlDoc.getElementsByTagName("profile")[0].getAttribute("name");
 	cJSCore.instance.mModel.PROFILE_ID = xmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	cJSCore.instance.mModel.USER_NAME = xmlDoc.getElementsByTagName("user")[0].getAttribute("username");
+
+
+	//cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() { });
+	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Restart</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	//return;
 
 	// proceed to fGetChannelInfo();
 	cJSCore.instance.fGetChannelInfo();
