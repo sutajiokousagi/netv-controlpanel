@@ -153,14 +153,20 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		{
 		case "htmlwidgetengine":
 			mCPanel.fHideHTMLWidgetEngine(function() {
-				mCPanel.pState("");
+				//mCPanel.mState = "";
+				cCPanel.instance.pState("empty");
 			});
 			break;
-			
 		case "flashwidgetengine":
 			break;
-			
-		case "":
+		case "empty":
+			if (mCPanel.mPrevState == "htmlwidgetengine")
+				mCPanel.fShowHTMLWidgetEngine2(function() {
+					cCPanel.instance.pState("htmlwidgetengine");
+				});
+			break;
+		case "controlpanel":
+			mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
 			break;
 		}
 		break;
@@ -239,6 +245,9 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
+			mCPanel.fShowControlPanel();
+			break;
+		case "empty":
 			mCPanel.fShowControlPanel();
 			break;
 		}
@@ -526,6 +535,11 @@ fDbg("*** cCPanel, fRenderChannelMain(), ");
 		$("#div_channelMain_channelThumbnail_1_shadow").hide();
 		cCPanel.instance.mSubState = "channelMain";
 		break;
+	case "empty":
+		$("#div_channelMain_channelThumbnail_0_shadow").hide();
+		$("#div_channelMain_channelThumbnail_1_shadow").show();
+		cCPanel.instance.mSubState = "channelMain";
+		break;
 	}
 }
 
@@ -566,20 +580,46 @@ fDbg("*** cCPanel, fRenderChannelMain(), ");
 // -------------------------------------------------------------------------------------------------
 //	fShowHTMLWidgetEngine
 // -------------------------------------------------------------------------------------------------
+cCPanel.prototype.fShowHTMLWidgetEngine2 = function(
+	vReturnFun
+)
+{
+	if (vReturnFun)
+	{
+		$("#div_htmlWidgetPlayer").show();
+		$("#div_htmlWidgetPlayer").css("top", "720px");
+		$("#div_htmlWidgetPlayer").animate({
+			top: "-=80"
+		}, 1000, function() {
+			vReturnFun();
+		});
+	}
+}
+
+
 cCPanel.prototype.fShowHTMLWidgetEngine = function(
+	vReturnFun
 )
 {
 fDbg("*** cCPanel, fShowHTMLWidgetEngine(), ");
 	//cProxy.xmlhttpPost("", "post", {cmd : "ShowWidgetEngine", data : "<value>true</value>"}, cCPanel.instance.fShowHTMLWidgetEngineReturn);
-	cCPanel.instance.fShowHTMLWidgetEngineReturn();
+	cCPanel.instance.fShowHTMLWidgetEngineReturn(null, vReturnFun);
+	
 }
 
 cCPanel.prototype.fShowHTMLWidgetEngineReturn = function(
-	vData
+	vData,
+	vReturnFun
 )
 {
 fDbg("*** cCPanel, fShowHTMLWidgetEngineReturn(), " + vData);
-	cCPanel.instance.fSetHTMLWidgetEngineSize();
+	if (!vReturnFun)
+		cCPanel.instance.fSetHTMLWidgetEngineSize();
+	else
+	{
+		vReturnFun();
+
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
