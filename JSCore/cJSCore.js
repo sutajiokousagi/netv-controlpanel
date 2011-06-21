@@ -152,7 +152,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>0 0 1279 7
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>240 60 800 600</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + ((vViewPortSize[0] - 800) / 2) + " " + ((vViewPortSize[1] - 600)) / 2 + " 800 600</value>"}, function() {});
 
-	cProxy.fCPanelMsgBoardDisplay("Athorization in progress...");
+	cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
 }
 
 cJSCore.prototype.fStartUpReturn = function(
