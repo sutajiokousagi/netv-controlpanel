@@ -147,12 +147,12 @@ fDbg("*** cJSCore, fStartUp()");
 	
 cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>0,7,0</value>"}, function() {})
+cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>240,0,240</value>"}, function() {})
 cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>0 0 1279 719</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>240 60 800 600</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + ((vViewPortSize[0] - 800) / 2) + " " + ((vViewPortSize[1] - 600)) / 2 + " 800 600</value>"}, function() {});
 
-	cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
+	cProxy.fCPanelMsgBoardDisplay("Athorization in progress...");
 }
 
 cJSCore.prototype.fStartUpReturn = function(
