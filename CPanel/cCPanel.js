@@ -13,16 +13,16 @@ function cCPanel(
 {
 	this.JSCORE = null;
 	this.mModel = null;
-
 	
 	this.mMessageDisplayInProgress = false;
 	this.mMessageList = [];
 	
-	this.mState = "";
 	this.mPrevState = "";
+	this.mState = "";
 	this.mSubState = "";
 	
 	this.mLocked = false;
+	console.log("hello console");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -36,12 +36,33 @@ cCPanel.fGetInstance = function(
 }
 
 // -------------------------------------------------------------------------------------------------
+//	pState
+// -------------------------------------------------------------------------------------------------
+cCPanel.prototype.pState = function(
+	vState
+)
+{
+	if (! vState)
+		return cCPanel.instance.mState;
+		
+	if (cCPanel.instance.mState != vState)
+	{
+		cCPanel.instance.mPrevState = cCPanel.instance.mState;
+		cCPanel.instance.mState = vState;
+	}
+	return cCPanel.instance.mState;
+}
+
+// -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
 cCPanel.prototype.fInit = function(
+	vReturnFun
 )
 {
-	$("#div_flashWidgetMain").hide();
+	this.fHideAll();
+	
+	// hide the flash widget div
 	$("#div_flashWidgetMain_arrowPrev").click(function() {
 		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
 		cModel.fGetInstance().CURR_WIDGET_INDEX--;
@@ -50,35 +71,18 @@ cCPanel.prototype.fInit = function(
 		cCPanel.fGetInstance().fRefreshChannelDiv();
 	});
 	$("#div_flashWidgetMain_arrowNext").click(function() {
-		//~ alert();
 		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
 		cModel.fGetInstance().CURR_WIDGET_INDEX++;
 		if (cModel.fGetInstance().CURR_WIDGET_INDEX > cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1)
 			cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
 		cCPanel.fGetInstance().fRefreshChannelDiv();
 	});
-	$("#div_channelMain").hide();
 	
-	$("#div_tempBg").hide();
-	
-	
-	
-	$("#div_actionArea").hide();
-	$("#div_dbg_container").hide();
-	
-	$("#div_flashWidgetPlayer").hide();
-	$("#div_htmlWidgetPlayer").hide();
-	$("#div_loader").hide();
-	
-	$("#div_messageBoard").hide();
-	$("#div_messageBoard").fadeIn();
-	mCurrDivVisible = "div_messageBoard";
-
 	$("#div_loader").fadeIn();
+	$("#div_messageBoard").fadeIn();
 	
 	var vViewPortSize = [];
 	var vWidgetEdgeOffset = [50, 50];
-//	return;
 	if (typeof window.innerWidth != 'undefined')
 	{
 		vViewPortSize[0] = window.innerWidth,
@@ -86,7 +90,6 @@ cCPanel.prototype.fInit = function(
 	}
 	if (vViewPortSize[0] > 800)
 		$("#div_CPanel").css("left", (vViewPortSize[0] - 800) / 2 + "px");
-
 	if (vViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vViewPortSize[1] - 600) / 2 + "px");
 
@@ -102,25 +105,32 @@ cCPanel.prototype.fInit = function(
 		$("#div_widgetPlayer").css("top", (vViewPortSize[1] - parseFloat($("#div_widgetPlayer").css("height").split("px")[0]) - vWidgetEdgeOffset[1]) + "px")
 	}
 	
+	mCurrDivVisible = "div_messageBoard";
 	this.pState("controlpanel");
 }
 
 // -------------------------------------------------------------------------------------------------
-//	pState
+//	fHideAll
 // -------------------------------------------------------------------------------------------------
-cCPanel.prototype.pState = function(
-	vState
+cCPanel.prototype.fHideAll = function(
 )
 {
-	if (! vState)
-		return cCPanel.instance.mState;
+	$("#div_flashWidgetMain").hide();
+	
+	// hide main channel div
+	$("#div_channelMain").hide();
+	$("#div_tempBg").hide();
+	$("#div_activation").hide();
 		
-	if (cCPanel.instance.mState != vState)
-	{
-		cCPanel.instance.mPrevState = cCPanel.instance.mState;	
-		cCPanel.instance.mState = vState;
-	}
-	return cCPanel.instance.mState;
+	// hide all debug div
+	$("#div_actionArea").hide();
+	$("#div_dbg_container").hide();
+	
+	$("#div_flashWidgetPlayer").hide();
+	$("#div_htmlWidgetPlayer").hide();
+	$("#div_loader").hide();
+	
+	$("#div_messageBoard").hide();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -149,12 +159,15 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		if (cCPanel.instance.mLocked == true)
+			return;
+		cCPanel.instance.mLocked = true;
 		switch (mCPanel.mState)
 		{
 		case "htmlwidgetengine":
 			mCPanel.fHideHTMLWidgetEngine(function() {
-				//mCPanel.mState = "";
 				cCPanel.instance.pState("empty");
+				cCPanel.instance.mLocked = false;
 			});
 			break;
 		case "flashwidgetengine":
@@ -163,6 +176,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			if (mCPanel.mPrevState == "htmlwidgetengine")
 				mCPanel.fShowHTMLWidgetEngine2(function() {
 					cCPanel.instance.pState("htmlwidgetengine");
+					cCPanel.instance.mLocked = false;
 				});
 			break;
 		case "controlpanel":
@@ -191,13 +205,9 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
 		{
 			if ($('#div_channelMain_channelThumbnail_0_shadow').is(':visible'))
-			{
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
-			}
 			else if ($('#div_channelMain_channelThumbnail_1_shadow').is(':visible'))
-			{
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
-			}
 		}
 		break;
 		
@@ -258,9 +268,10 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_GOTO_FLASHWIDGETENGINE:
+		$("#div_flashWidgetMain").show();
 		$("#div_CPanel").animate({
 			left: "-=1200"
-		}, 1000, function() {
+		}, 800, function() {
 			mCPanel.fShowFLASHWidgetEngine();
 		});
 		break;
@@ -320,9 +331,7 @@ cCPanel.prototype.fDisplayMessageBoard = function(
 					mCPanel.mMessageList.splice(0, 1);
 					$("#div_messageBoard_text").fadeIn("fast", function() {
 						if (mCPanel.mMessageList.length > 0)
-						{
 							mCPanel.instance.fDisplayMessageBoard();
-						}
 						else
 							mCPanel.mMessageDisplayInProgress = false;
 					});
@@ -348,7 +357,7 @@ cCPanel.prototype.fDisplayMessageBoard = function(
 		}
 			$("#div_messageBoard_text").fadeOut("fast", function() {
 				$("#div_messageBoard_text").html(o);
-				fDbg("new curr : " + $("#div_messageBoard_text").html());
+fDbg("new curr : " + $("#div_messageBoard_text").html());
 				$("#div_messageBoard_text").fadeIn("fast", function() {
 					if (mCPanel.mMessageList.length > 0)
 					{
@@ -489,14 +498,13 @@ cCPanel.prototype.fShowControlPanel = function(
 {
 fDbg("*** cCPanel, fShowControlPanel(), ");
 	
-
-		$("#div_tempBg").show();
-		$("#div_tempBg").hide();
+	$("#div_tempBg").show();
+	$("#div_tempBg").hide();
+	
 	$("#div_CPanel").css("left", "-960px");
 	$("#div_CPanel").animate({
 		left: "+=1200"
-	}, 1200, function() {
-		
+	}, 800, function() {
 		cCPanel.instance.fRenderChannelMain();
 		cCPanel.instance.fShowControlPanelReturn();
 		$("#div_tempBg").show();
@@ -519,7 +527,7 @@ cCPanel.prototype.fRenderChannelMain = function(
 )
 {
 fDbg("*** cCPanel, fRenderChannelMain(), ");
-	$("#div_channelMain").fadeIn(1000, function() {
+	$("#div_channelMain").fadeIn(800, function() {
 	
 	});
 	
@@ -590,7 +598,7 @@ cCPanel.prototype.fShowHTMLWidgetEngine2 = function(
 		$("#div_htmlWidgetPlayer").css("top", "720px");
 		$("#div_htmlWidgetPlayer").animate({
 			top: "-=80"
-		}, 1000, function() {
+		}, 300, function() {
 			vReturnFun();
 		});
 	}
@@ -634,7 +642,7 @@ fDbg("*** cCPanel, fSetHTMLWidgetEngineSize(), ");
 	});
 	$("#div_CPanel").animate({
 		left: "-=1200"
-	}, 1000, function() {
+	}, 800, function() {
 		cCPanel.instance.fSetHTMLWidgetEngineSizeReturn();
 	});
 }
@@ -652,10 +660,10 @@ fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
 		$("#div_htmlWidgetPlayer").css("top", "720px");
 		$("#div_htmlWidgetPlayer").animate({
 			top: "-=80"
-		}, 1000, function() {
+		}, 300, function() {
 		
 		});
-	//}, 1000);
+	//}, 800);
 	
 	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
 	this.pState("htmlwidgetengine");
@@ -671,7 +679,7 @@ cCPanel.prototype.fHideHTMLWidgetEngine = function(
 fDbg("*** cCPanel, fHideHTMLWidgetEngine(), ");
 	$("#div_htmlWidgetPlayer").animate({
 		top: "+=80"
-	}, 500, function() {
+	}, 300, function() {
 		cCPanel.instance.fHideHTMLWidgetEngineReturn(null, vReturnFun);
 	});
 }
@@ -740,11 +748,16 @@ cCPanel.prototype.fShowFLASHWidgetEngine = function(
 )
 {
 fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
-	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>Off</value>"}, function() { });
+	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function(vData) {
+		fDbg2("===> " + vData.split("<status>")[1].split("</status>")[0]);
+		fDbg2("===> " + vData.split("<value>")[1].split("</value>")[0]);
+	});
+	//cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function(vData) {fDbg2("---> " + encodeURI(vData));});
 	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, null);
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	// cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>SetBox 959 479 320 240</value>"}, function() {});
-	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, function() {});
+	//cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, function() {});
+	//$("#div_dbg_container").show();
 	
 	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>SetBox 959 479 320 240</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 }
@@ -755,6 +768,10 @@ cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(
 {
 fDbg("*** cCPanel, fShowFLASHWidgetEngineReturn(), " + vData);
 	cCPanel.instance.pState("flashwidgetengine");
+	fDbg2("-----> " + vData.split("<status>")[1].split("</status>")[0]);
+	fDbg2("-----> " + vData.split("<value>")[1].split("</value>")[0]);
+	// fDbg2("---> " + encodeURI(vData));
+	
 	
 	//cCPanel.instance.fSetWidgetEngineSize();
 //$('#div_channelMain_channelThumbnail_0_title').css("font-size", "12px");
@@ -774,7 +791,7 @@ fDbg("*** cCPanel, fSetWidgetEngineSize(), ");
 
 	$("#div_CPanel").animate({
 		left: "-=1200"
-	}, 1200, function() {
+	}, 800, function() {
 		cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>1000 520 240 180</value>"}, cCPanel.instance.fSetWidgetEngineSizeReturn);
 		
 		/*
@@ -926,9 +943,11 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 	else
 	{
 		o = ["Prev", "Curr", "Next"];
-		p = [parseFloat($("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left").split("px")[0]),
+		p = [
+			parseFloat($("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left").split("px")[0]),
 			parseFloat($("#div_flashWidgetMain_thumbnail" + o[1] + "_container").css("left").split("px")[0]),
-			parseFloat($("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left").split("px")[0])]
+			parseFloat($("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left").split("px")[0])
+		];
 		if (p[0] < p[1] && p[1] < p[2])
 			o = ["Prev", "Curr", "Next"];
 		else if (p[1] < p[2] && p[2] < p[0])
@@ -1108,4 +1127,5 @@ cCPanel.prototype.fHideChannelDiv = function(
 {
 	
 }
+
 

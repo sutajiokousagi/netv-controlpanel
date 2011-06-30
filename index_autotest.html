@@ -2,6 +2,7 @@
 <header>
 
 <link rel="stylesheet" href="./css/reset.css" type="text/css">
+<link rel="stylesheet" href="./css/autotest.css" type="text/css">
 <script type='text/javascript' src='./JSCore/cJSCore.js'></script>
 <script type='text/javascript' src='./CPanel/jquery-1.6.1.min.js'></script>
 <script type='text/javascript' src='./CPanel/cCPanel.js'></script>
@@ -9,57 +10,78 @@
 var mJSCore;
 var mCPanel;
 
-	$(function() {
+var mTimeStart = 0;
+var mTimeTakenList = [];
+	$(function(){
 		mJSCore = cJSCore.fGetInstance();
 		mCPanel = cCPanel.fGetInstance();
 		mJSCore.CPANEL = mCPanel;
 		mCPanel.JSCORE = mJSCore;
 		
-		mJSCore.fInit(function() {
-			mJSCore.fStartUp();
-		});
-		mCPanel.fInit(function() {
-			mCPanel.fStartUp();
-		});
 		
-		/*
-		document.getElementById("ip_dbg").focus();
-		document.getElementById("ip_dbg").onkeyup = function(e) {
-			if( !e )
-			{
-				fDbg("== e : false " + e.keyCode);
-			}
-			else
-			{
-				fDbg("== e : true " + e.keyCode);
-			}
-			$("#div_input_container").hide();
-			switch (e.keyCode)
-			{
-			case 37:
-				fDbg2("left");
-				fButtonPress("left");
-				break;
-			case 39:
-				fButtonPress("right");
-				break;
-			case 38:
-				fButtonPress("top");
-				break;
-			case 40:
-				fButtonPress("down");
-				break;
-			case 13:
-				fButtonPress("center");
-				break;
-			}
-		}
-		*/
+		
+		mTimeStart = new Date().getTime();
+		$('#div_autotest_0 .autotest_timer').html(mTimeStart);
+		fAppendText("Loading JSCore classes ......");
+		mJSCore.fInit(function() {
+			mTimeTakenList.push(new Date().getTime());
+			fAppendText("Loading JSCore classes passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeStart), true);
+			fAppendText("Loading Profile Info ......");
+			mJSCore.fStartUp(function(vData) {
+				mTimeTakenList.push(new Date().getTime());
+				fAppendText("Loading Profile Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+				fAppendText("Loading Channel Info ......");
+				mJSCore.fGetChannelInfo(function(vData) {
+					mTimeTakenList.push(new Date().getTime());
+					fAppendText("Loading Channel Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+					fAppendText("Parsing Channel Info ......");
+					vData = vData.split("<data><value>")[1].split("</value></data>")[0];
+					var o;
+					o = new cChannelObj(vData);
+					if (o.mWidgetList.length)
+					{
+						mTimeTakenList.push(new Date().getTime());
+						fAppendText("Parsing Channel Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+					}
+				});
+			});
+		});
+		mCPanel.fInit();
 	});
 
+var mTestFunList = [fTest1, fTest2, fTest3];
 
+function fTest1(vData) {
+	mJSCore.fStartUp(vData);
+}
 
+function fTest2(vData) {
+	mJSCore.fStartUp(vData);
+}
 
+function fTest3(vData) {
+	mJSCore.fStartUp(vData);
+}
+
+// -------------------------------------------------------------------------------------------------
+//	append text / autotest result
+// -------------------------------------------------------------------------------------------------
+function fAppendText(
+	vData,
+	vUpdateFlag
+)
+{
+	if (vUpdateFlag)
+	{
+		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).html(vData);
+		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).toggleClass('autotest_item_curr');
+		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).toggleClass('autotest_item');
+	}
+	else
+	{
+		$("#div_autotest_container").append('<div id="div_autotest_' + $("#div_autotest_container").children().length + '" class="autotest_item_curr">' + vData + '<div class="div_autotest_timer" style="float:right;">time here!</div>' + '</div>');
+	}
+}
 
 // -------------------------------------------------------------------------------------------------
 //	override fDbg() function
@@ -69,14 +91,9 @@ function fDbg(v)
 	//$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
 	//document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
 }
-function fDbg2(v)
-{
-	$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
-	document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
-}
 
 // -------------------------------------------------------------------------------------------------
-//	press button on D-pad / android
+//	D-pad button functions
 // -------------------------------------------------------------------------------------------------
 function fButtonPress(
 	vButtonName
@@ -105,7 +122,7 @@ function fButtonPress(
 		break;
 		
 	case "up":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP);
+		
 		break;
 		
 	case "down":
@@ -115,7 +132,6 @@ function fButtonPress(
 }
 </script>
 </header>
-
 
 
 
@@ -131,29 +147,6 @@ function fButtonPress(
 <div id="div_dbg_container" style="float: right; height: 500px; width: 300px; overflow: hidden; background-color: white; z-index: 1000;">
 <div id="div_dbg" style="float: right; height: 500px; width: 300px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
-
-
-
-
-
-<!--
------------------------------------------------
--------------CPanel
------------------------------------------------
--->
-<div id="div_activation" style="position: absolute; left: 0px; top: 0px; border: solid black 0px; width: 800px; height: 600px; overflow: hidden;">
-
-<!-- ----------------------- message module ---------------------- -->
-<div id="div_info" style="position: absolute; width: 800px; height: 600px;">
-	<div id="div_info_messageBoard_bg" style="position: absolute; width: 800px; height: 600px; background-color: #0000FF;"></div>
-	<div id="div_info_messageBoard_text" style="position: absolute; top: 12px; left: 70px; width: 400px; height: 100px; border: solid black 0px; font-family: Arial; font-size: 24px; color: #094fa6;">Initializing...</div>
-	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
-</div>
-
-</div>
-
-
-
 
 <!--
 -----------------------------------------------
@@ -227,6 +220,18 @@ function fButtonPress(
 	</div>
 </div>
 
+
+<!-- ----------------------- auto testing outputs ---------------------- -->
+<div id="div_autotest_container" style="position: absolute; width: 720px; height: 560px; top: 70px; left: 40px;">
+	<div id="div_autotest_0" class="autotest_item_title" style="">
+		Auto Testing Starts......
+		<div class="autotest_timer" style="float:right;">
+			time here!
+		</div>
+	</div>
+</div>
+
+
 </div>
 
 <!--
@@ -274,11 +279,7 @@ function fButtonPress(
 </div>
 
 
-<!--
-<div id="div_input_container" style="position: absolute;">
-<input id="ip_dbg" type="text"  style="width: 400px; height: 320px;" value="aaaaaaaaaaaaaaaaaaaaa"/>
-</div>
--->
+
 </body>
 </html>
 
