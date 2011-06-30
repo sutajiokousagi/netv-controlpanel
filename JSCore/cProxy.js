@@ -48,19 +48,23 @@ fDbg("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();
 	
-	//~ self.xmlHttpReq.open(vType, "http://192.168.1.210/cgi-bin/xmlbridge.cgi?" + strURL, true);
 	xmlHttpReq.open(vType, cModel.fGetInstance().LOCALBRIDGE_URL, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()
 	{
 		if (xmlHttpReq.readyState == 4)
 		{
-			//~ alert(self.xmlHttpReq.status);
 fDbg("status: " + xmlHttpReq.status);
-//fDbg("length: " + xmlHttpReq.responseText.length);
-			if (xmlHttpReq.status == 200)
+			switch (xmlHttpReq.status)
 			{
-				vCompleteFun(xmlHttpReq.responseText);
+			case 200:
+				if (vCompleteFun)
+					vCompleteFun(xmlHttpReq.responseText);
+				break;
+			case 0:
+				if (vCompleteFun)
+					vCompleteFun(0);
+				break;
 			}
 		}
 	}

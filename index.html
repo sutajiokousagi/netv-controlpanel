@@ -9,25 +9,58 @@
 var mJSCore;
 var mCPanel;
 
-	$(function(){
+	$(function() {
 		mJSCore = cJSCore.fGetInstance();
 		mCPanel = cCPanel.fGetInstance();
 		mJSCore.CPANEL = mCPanel;
 		mCPanel.JSCORE = mJSCore;
-
-
+		
 		mJSCore.fInit(function() {
 			mJSCore.fStartUp();
 		});
-		mCPanel.fInit();
-
-		//setInterval ( "fRaiseDbgDiv()", 2000);
+		mCPanel.fInit(function() {
+			mCPanel.fStartUp();
+		});
+		
+		/*
+		document.getElementById("ip_dbg").focus();
+		document.getElementById("ip_dbg").onkeyup = function(e) {
+			if( !e )
+			{
+				fDbg("== e : false " + e.keyCode);
+			}
+			else
+			{
+				fDbg("== e : true " + e.keyCode);
+			}
+			$("#div_input_container").hide();
+			switch (e.keyCode)
+			{
+			case 37:
+				fDbg2("left");
+				fButtonPress("left");
+				break;
+			case 39:
+				fButtonPress("right");
+				break;
+			case 38:
+				fButtonPress("top");
+				break;
+			case 40:
+				fButtonPress("down");
+				break;
+			case 13:
+				fButtonPress("center");
+				break;
+			}
+		}
+		*/
 	});
 
-function fRaiseDbgDiv() 
-{
-	$("#div_dbg_container").css("z-index", "10000");
-}
+
+
+
+
 // -------------------------------------------------------------------------------------------------
 //	override fDbg() function
 // -------------------------------------------------------------------------------------------------
@@ -36,7 +69,15 @@ function fDbg(v)
 	//$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
 	//document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
 }
+function fDbg2(v)
+{
+	$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
+	document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+}
 
+// -------------------------------------------------------------------------------------------------
+//	press button on D-pad / android
+// -------------------------------------------------------------------------------------------------
 function fButtonPress(
 	vButtonName
 )
@@ -64,7 +105,7 @@ function fButtonPress(
 		break;
 		
 	case "up":
-		
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP);
 		break;
 		
 	case "down":
@@ -74,6 +115,7 @@ function fButtonPress(
 }
 </script>
 </header>
+
 
 
 
@@ -89,6 +131,29 @@ function fButtonPress(
 <div id="div_dbg_container" style="float: right; height: 500px; width: 300px; overflow: hidden; background-color: white; z-index: 1000;">
 <div id="div_dbg" style="float: right; height: 500px; width: 300px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
+
+
+
+
+
+<!--
+-----------------------------------------------
+-------------CPanel
+-----------------------------------------------
+-->
+<div id="div_activation" style="position: absolute; left: 0px; top: 0px; border: solid black 0px; width: 800px; height: 600px; overflow: hidden;">
+
+<!-- ----------------------- message module ---------------------- -->
+<div id="div_info" style="position: absolute; width: 800px; height: 600px;">
+	<div id="div_info_messageBoard_bg" style="position: absolute; width: 800px; height: 600px; background-color: #0000FF;"></div>
+	<div id="div_info_messageBoard_text" style="position: absolute; top: 12px; left: 70px; width: 400px; height: 100px; border: solid black 0px; font-family: Arial; font-size: 24px; color: #094fa6;">Initializing...</div>
+	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
+</div>
+
+</div>
+
+
+
 
 <!--
 -----------------------------------------------
@@ -209,7 +274,11 @@ function fButtonPress(
 </div>
 
 
-
+<!--
+<div id="div_input_container" style="position: absolute;">
+<input id="ip_dbg" type="text"  style="width: 400px; height: 320px;" value="aaaaaaaaaaaaaaaaaaaaa"/>
+</div>
+-->
 </body>
 </html>
 

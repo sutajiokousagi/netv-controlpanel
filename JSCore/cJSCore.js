@@ -67,6 +67,7 @@ cJSCore.prototype.fInit = function(
 )
 {
 fDbg("*** cJSCore, fInit()");
+
 	// load other js classes
 	this.fLoadExtJSList(vCompleteFun);
 }
@@ -115,6 +116,7 @@ cJSCore.prototype.fLoadScript = function(
 //	fStartUp
 // -------------------------------------------------------------------------------------------------
 cJSCore.prototype.fStartUp = function(
+	vReturnFun
 )
 {
 fDbg("*** cJSCore, fStartUp()");
@@ -135,24 +137,35 @@ fDbg("*** cJSCore, fStartUp()");
 	}
 	else
 	{
-
+		
 	}
 	
-	// check if has GUID, server add
-	if (this.mModel.CHUMBY_GUID && this.mModel.SERVER_URL && this.mModel.LOCALBRIDGE_URL)
-	{
-		cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "&nocache=4682&dcid_skin=0000" + "</value>"}, this.fStartUpReturn);
-		//~ cProxy.xmlhttpPost("http://www.chumby.com/xml/chumbies/" + this.mModel.CHUMBY_GUID, "get", null, this.fStartUpReturn);
-	}
+	// check for access point : chumby device? browser from other computer/device?
+	// if (document.location.href.indexOf("localhost") == -1)
+	// {
+		// cCPanel.
+		// return;
+	// }
 	
+cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>240,0,240</value>"}, function() {})
-cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>0 0 1279 719</value>"}, function() {});
-//cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>240 60 800 600</value>"}, function() {});
-//cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + ((vViewPortSize[0] - 800) / 2) + " " + ((vViewPortSize[1] - 600)) / 2 + " 800 600</value>"}, function() {});
 
-	cProxy.fCPanelMsgBoardDisplay("Athorization in progress...");
+	cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
+	
+	// check if has GUID, server add
+	var fAjaxReturn = function(vData) {
+		cJSCore.instance.fStartUpReturn(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	};
+	
+	if (this.mModel.CHUMBY_GUID && this.mModel.SERVER_URL && this.mModel.LOCALBRIDGE_URL)
+	{
+		// cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "&nocache=4682&dcid_skin=0000" + "</value>"}, fAjaxReturn);
+		cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "</value>"}, fAjaxReturn);
+	}
 }
 
 cJSCore.prototype.fStartUpReturn = function(
@@ -163,18 +176,17 @@ fDbg("*** cJSCore, fStartUpReturn()");
 	vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 	var parser = new DOMParser();
 	var xmlDoc = parser.parseFromString(vData, "text/xml");
-
+	
 	cJSCore.instance.mModel.CHUMBY_NAME = xmlDoc.getElementsByTagName("name")[0].textContent;
 	cJSCore.instance.mModel.PROFILE_HREF = xmlDoc.getElementsByTagName("profile")[0].getAttribute("href");
 	cJSCore.instance.mModel.PROFILE_NAME = xmlDoc.getElementsByTagName("profile")[0].getAttribute("name");
 	cJSCore.instance.mModel.PROFILE_ID = xmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	cJSCore.instance.mModel.USER_NAME = xmlDoc.getElementsByTagName("user")[0].getAttribute("username");
-
-
+	
 	//cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() { });
 	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Restart</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 	//return;
-
+	
 	// proceed to fGetChannelInfo();
 	cJSCore.instance.fGetChannelInfo();
 }
@@ -183,12 +195,19 @@ fDbg("*** cJSCore, fStartUpReturn()");
 //	fGetChannelInfo
 // -------------------------------------------------------------------------------------------------
 cJSCore.prototype.fGetChannelInfo = function(
+	vReturnFun
 )
 {
 fDbg("*** cJSCore, fGetChannelInfo()");
 	
+	var fAjaxReturn = function(vData) {
+		cJSCore.instance.fGetChannelInfoReturn(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	};
+	
 	if (cJSCore.instance.mModel.PROFILE_ID)
-		cProxy.xmlhttpPost("", "post", {cmd : "GetXML", data : "<value>" + "http://xml.chumby.com/xml/profiles/" + cJSCore.instance.mModel.PROFILE_ID + "</value>"}, cJSCore.instance.fGetChannelInfoReturn);
+		cProxy.xmlhttpPost("", "post", {cmd : "GetXML", data : "<value>" + "http://xml.chumby.com/xml/profiles/" + cJSCore.instance.mModel.PROFILE_ID + "</value>"}, fAjaxReturn);
 		//~ cProxy.xmlhttpPost("http://192.168.1.210/projects/0009.chumbyJSCore/test.php", "get", null, cJSCore.instance.fGetChannelInfoReturn);
 
 	cProxy.fCPanelMsgBoardDisplay("Fetching Channel Info...");
@@ -209,7 +228,9 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	// show and play widget
 	//~ cJSCore.instance.fPlayWidget("http://www.chumby.com/" + o.mWidgetList[0].mHref);
 	cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_WIDGETENGINE_SHOW, null, null);
-
+	
+	//connect();
+	
 	// show channel div
 	//cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_CHANNELDIV_SHOW, null, null);
 }
@@ -222,9 +243,33 @@ cJSCore.prototype.fPlayWidget = function(
 )
 {
 	cProxy.fCPanelMsgBoardDisplay("Playing Widget...");
-
 	cJSCore.instance.CPANEL.fPlayWidget(vWidgetPath);
 }
+
+
+
+	function callComplete(response)
+	{
+		// reconnect to the server
+		fDbg("res : " + response);
+		connect();
+	};
+
+	function connect()
+	{
+		// when the call completes, callComplete() will be called along with
+		// the response returned
+		//$.post('http://localhost/bridge', {cmd : "longpoll", data : ""}, callComplete, 'json');
+	
+		fDbg("start a long poll...");
+		cProxy.xmlhttpPost("", "post", {cmd : "LongPoll", data : ""}, callComplete);
+	};
+	
+	
+	
+	
+	
+	
 
 // -------------------------------------------------------------------------------------------------
 //	fDbg
