@@ -21,40 +21,6 @@ var mCPanel;
 		mCPanel.fInit(function() {
 			mCPanel.fStartUp();
 		});
-		
-		/*
-		document.getElementById("ip_dbg").focus();
-		document.getElementById("ip_dbg").onkeyup = function(e) {
-			if( !e )
-			{
-				fDbg("== e : false " + e.keyCode);
-			}
-			else
-			{
-				fDbg("== e : true " + e.keyCode);
-			}
-			$("#div_input_container").hide();
-			switch (e.keyCode)
-			{
-			case 37:
-				fDbg2("left");
-				fButtonPress("left");
-				break;
-			case 39:
-				fButtonPress("right");
-				break;
-			case 38:
-				fButtonPress("top");
-				break;
-			case 40:
-				fButtonPress("down");
-				break;
-			case 13:
-				fButtonPress("center");
-				break;
-			}
-		}
-		*/
 	});
 
 
@@ -138,7 +104,7 @@ function fButtonPress(
 
 <!--
 -----------------------------------------------
--------------CPanel
+-------------CPanel - page - activation
 -----------------------------------------------
 -->
 <div id="div_activation" style="position: absolute; left: 0px; top: 0px; border: solid black 0px; width: 800px; height: 600px; overflow: hidden;">
@@ -160,27 +126,27 @@ function fButtonPress(
 -------------CPanel
 -----------------------------------------------
 -->
-<div id="div_CPanel" style="position: absolute; left: 0px; top: 0px; border: solid black 0px; width: 800px; height: 600px; overflow: hidden;">
+<div id="div_CPanel" style="position: absolute; left: 0px; top: 0px; border: solid blue 0px; width: 800px; height: 600px; background-color: #EEEEFF; overflow: hidden;">
 
 <!-- ----------------------- message module ---------------------- -->
-<div id="div_messageBoard" style="position: absolute; width: 800px; height: 600px;">
+<div id="div_messageBoard" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_messageBoard_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
 	<div id="div_messageBoard_text" style="position: absolute; top: 12px; left: 70px; width: 400px; height: 100px; border: solid black 0px; font-family: Arial; font-size: 24px; color: #094fa6;">Initializing...</div>
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
 
 <!-- ----------------------- flashWidgetMain module ---------------------- -->
-<div id="div_flashWidgetMain" style="position: absolute; width: 800px; height: 600px;">
+<div id="div_flashWidgetMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_flashWidgetMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
 	
-	<div id="div_flashWidgetMain_thumbnailPrev_container" style="position: absolute; top: 230px; left: 100px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_flashWidgetMain_thumbnailPrev" alt="" style="border: none;" width="160" height="120" src="" />
+	<div id="div_flashWidgetMain_thumbnailPrev_container" style="position: absolute; top: 230px; left: 100px; border: solid black 0px;">
+		<img id="img_flashWidgetMain_thumbnailPrev" alt="" style="border: none;" width="160" height="120" src="./images/chumby_logo_48x48.png" />
 	</div>
-	<div id="div_flashWidgetMain_thumbnailCurr_container" style="position: absolute; top: 215px; left: 300px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_flashWidgetMain_thumbnailCurr" alt="" style="border: none;"  width="200" height="150" src="" />
+	<div id="div_flashWidgetMain_thumbnailCurr_container" style="position: absolute; top: 215px; left: 300px; border: solid black 0px;">
+		<img id="img_flashWidgetMain_thumbnailCurr" alt="" style="border: none;"  width="200" height="150" src="./images/chumby_logo_48x48.png" />
 	</div>
-	<div id="div_flashWidgetMain_thumbnailNext_container" style="position: absolute; top: 230px; left: 540px; border: solid black 1px;" onclick="alert(this.id);">
-		<img id="img_flashWidgetMain_thumbnailNext" alt="" style="border: none;"  width="160" height="120" src="" />
+	<div id="div_flashWidgetMain_thumbnailNext_container" style="position: absolute; top: 230px; left: 540px; border: solid black 0px;">
+		<img id="img_flashWidgetMain_thumbnailNext" alt="" style="border: none;"  width="160" height="120" src="./images/chumby_logo_48x48.png" />
 	</div>
 	<div id="div_flashWidgetMain_title_container" style="position: absolute; top: 100px; left: 100px; border: solid black 0px; font-size: 48px; font-family: Arial; width: 600px; text-align: center;">
 		TITLE
@@ -203,15 +169,15 @@ function fButtonPress(
 </div>
 
 <!-- ----------------------- channelMain module ---------------------- -->
-<div id="div_channelMain" style="position: absolute; width: 800px; height: 600px;">
+<div id="div_channelMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_channelMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
 	
-	<div id="div_channelMain_channelThumbnail_0_container" style="position: absolute; top: 230px; left: 160px; width: 160px; height: 196px" onclick="alert(this.id);">
+	<div id="div_channelMain_channelThumbnail_0_container" style="position: absolute; top: 230px; left: 160px; width: 160px; height: 196px">
 		<div id="div_channelMain_channelThumbnail_0_title" style="position: absolute; top: 0px; left: 0px; font-size: 18px; width: 160px; font-family: Arial; text-align: center;">FLASH Widgets</div>
 		<div id="div_channelMain_channelThumbnail_0_shadow" style="position: absolute; top: 46px; left: 10px; width: 160px; height: 160px; background-color: #666666"></div>
 		<img id="img_channelMain_channelThumbnail_0" style="position: absolute; top: 36px; left: 0px; border: none;" width="160" height="160" src="./images/Flash_logo_988x988.jpg" />
 	</div>
-	<div id="div_channelMain_channelThumbnail_1_container" style="position: absolute; top: 230px; left: 480px; width: 160px; height: 196px" onclick="alert(this.id);">
+	<div id="div_channelMain_channelThumbnail_1_container" style="position: absolute; top: 230px; left: 480px; width: 160px; height: 196px">
 		<div id="div_channelMain_channelThumbnail_1_title" style="position: absolute; top: 0px; left: 0px; font-size: 18px;  width: 160px; font-family: Arial; text-align: center;">HTML5 Widgets</div>
 		<div id="div_channelMain_channelThumbnail_1_shadow" style="position: absolute; top: 46px; left: 10px; width: 160px; height: 160px; background-color: #666666"></div>
 		<img id="img_channelMain_channelThumbnail_1" style="position: absolute; top: 36px; left: 0px; border: none;"  width="160" height="160" src="./images/HTML5_logo_480x480.jpg" />
@@ -221,13 +187,30 @@ function fButtonPress(
 </div>
 
 <!-- ----------------------- loading... module ---------------------- -->
-<div id="div_loader" style="position: absolute; width: 800px; height: 600px;">
+<div id="div_loader" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div style="position: absolute; top: 250px; left: 350px;">
 		<img src="./images/gif-loading.gif">
 	</div>
 </div>
 
+
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!--
 -----------------------------------------------
@@ -258,20 +241,8 @@ function fButtonPress(
 </iframe>
 </div>
 
-<!--
------------------------------------------------
--------------debug mode buttons : to inject action/signals
------------------------------------------------
--->
-<div id="div_actionArea" style="position: absolute; top: 540px;">
-	<input type="button" value="show CP" onClick="mCPanel.fShow();"/>
-	<input type="button" value="hide CP" onClick="mCPanel.fHide();"/>
-	<input type="button" value="show W" onClick="mCPanel.fHide();"/>
-	
-	<input type="button" value="prev W" /> 
-	<input type="button" value="pause W" /> 
-	<input type="button" value="next W" /> 
-</div>
+
+
 
 
 <!--
@@ -282,3 +253,57 @@ function fButtonPress(
 </body>
 </html>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+		/*
+		document.getElementById("ip_dbg").focus();
+		document.getElementById("ip_dbg").onkeyup = function(e) {
+			if( !e )
+			{
+				fDbg("== e : false " + e.keyCode);
+			}
+			else
+			{
+				fDbg("== e : true " + e.keyCode);
+			}
+			$("#div_input_container").hide();
+			switch (e.keyCode)
+			{
+			case 37:
+				fDbg2("left");
+				fButtonPress("left");
+				break;
+			case 39:
+				fButtonPress("right");
+				break;
+			case 38:
+				fButtonPress("top");
+				break;
+			case 40:
+				fButtonPress("down");
+				break;
+			case 13:
+				fButtonPress("center");
+				break;
+			}
+		}
+		*/
+-->

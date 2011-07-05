@@ -66,3 +66,25 @@ cChannelObj.prototype.toXML = function(
 
 	return vXML;
 }
+
+
+
+
+
+
+// -------------------------------------------------------------------------------------------------
+//	parse to XML
+// -------------------------------------------------------------------------------------------------
+cChannelObj.prototype.fPreloadThumbnails = function(
+)
+{
+	var o, i;
+
+	
+	fDbg2("asdg");
+	fDbg2("asdg");
+	fDbg2("asdg");
+	
+}
+
+

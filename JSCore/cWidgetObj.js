@@ -130,6 +130,8 @@ function cWidgetObj(
 		mRating : vDataNode.getElementsByTagName("rating")[0].getAttribute("rating")
 	}
 
+
+	// local/temp variables
+	this.mLocalThumbnailPath = "";
 	
-	//fDbg(this.mWidget.mName);	
 }

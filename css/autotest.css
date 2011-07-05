@@ -1,0 +1,35 @@
+
+
+#div_autotest_container {
+	font-size: 16px;
+}
+
+.autotest_item_curr {
+	padding: 10px 50px;
+	background-color: yellow;
+	
+	color: black;
+}
+.autotest_item {
+	padding: 10px 50px;
+	background-color: green;
+	
+	color: white;
+}
+.autotest_item_failed {
+	padding: 10px 50px;
+	background-color: yellow;
+	
+	color: black;
+}
+.autotest_item_title {
+	padding: 10px 50px;
+	background-color: black;
+	text-align: center;
+	color: white;
+	font-weight: bold;
+}
+
+.autotest_timer {
+	text-align: left:
+}

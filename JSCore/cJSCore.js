@@ -25,7 +25,6 @@ function cJSCore(
 {
 	// CONNECTION LINKS
 	this.CPANEL = null;
-
 	
 	// members
 	this.mJSClassList = [
@@ -127,7 +126,7 @@ fDbg("*** cJSCore, fStartUp()");
 	this.mTimerModule.fInit();
 	this.mChannelModule = cChannelModule.fGetInstance();
 	this.mWidgetModule = cWidgetModule.fGetInstance();
-
+	
 	// simulation for local testing
 	if (!cJSCore.kProductionMode)
 	{
@@ -224,6 +223,8 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	var o;
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
+	cJSCore.instance.fPreloadChannelThumbnails(o);
+	
 	
 	// show and play widget
 	//~ cJSCore.instance.fPlayWidget("http://www.chumby.com/" + o.mWidgetList[0].mHref);
@@ -246,25 +247,47 @@ cJSCore.prototype.fPlayWidget = function(
 	cJSCore.instance.CPANEL.fPlayWidget(vWidgetPath);
 }
 
+// -------------------------------------------------------------------------------------------------
+//	fPreloadChannelThumbnails
+// -------------------------------------------------------------------------------------------------
+cJSCore.prototype.fPreloadChannelThumbnails = function(
+	vChannelObj,
+	vReturnFun
+)
+{
+	var o, i;
+	fDbg2(vChannelObj.mWidgetList.length);
+	o = [];
 
-
-	function callComplete(response)
-	{
-		// reconnect to the server
-		fDbg("res : " + response);
-		connect();
-	};
-
-	function connect()
-	{
-		// when the call completes, callComplete() will be called along with
-		// the response returned
-		//$.post('http://localhost/bridge', {cmd : "longpoll", data : ""}, callComplete, 'json');
+	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
+		o.push(vChannelObj.mWidgetList[i].mWidget.mThumbnail.mHref);
 	
-		fDbg("start a long poll...");
-		cProxy.xmlhttpPost("", "post", {cmd : "LongPoll", data : ""}, callComplete);
+	var fLoadTN = function () {
+		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
+			//~ fDbg2(o.length);
+			//~ fDbg2(vData);
+			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
+			o.splice(0, 1);
+			if (o.length == 0)
+			{
+				if (vReturnFun)
+					vReturnFun();
+				return;
+			}
+			fLoadTN();
+		});
 	};
 	
+	fLoadTN();
+}
+
+
+
+
+
+
+
+
 	
 	
 	

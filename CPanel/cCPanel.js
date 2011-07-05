@@ -6,6 +6,14 @@
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
+//	static members
+// -------------------------------------------------------------------------------------------------
+var mGCPanelStatic = {
+	mShowDbg : false
+};
+
+
+// -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cCPanel(
@@ -50,7 +58,7 @@ cCPanel.prototype.pState = function(
 		cCPanel.instance.mPrevState = cCPanel.instance.mState;
 		cCPanel.instance.mState = vState;
 	}
-	return cCPanel.instance.mState;
+	return [cCPanel.instance.mPrevState, cCPanel.instance.mState];
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -92,12 +100,6 @@ cCPanel.prototype.fInit = function(
 		$("#div_CPanel").css("left", (vViewPortSize[0] - 800) / 2 + "px");
 	if (vViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vViewPortSize[1] - 600) / 2 + "px");
-
-	if ($("#div_actionArea").length)
-	{
-		$("#div_actionArea").css("top", (parseFloat($("#div_CPanel").css("top").split("px")[0]) + 570) + "px");
-		$("#div_actionArea").css("left", $("#div_CPanel").css("left"));
-	}
 	
 	if ($("#div_widgetPlayer").length)
 	{
@@ -123,8 +125,8 @@ cCPanel.prototype.fHideAll = function(
 	$("#div_activation").hide();
 		
 	// hide all debug div
-	$("#div_actionArea").hide();
-	$("#div_dbg_container").hide();
+	if (!mGCPanelStatic["mShowDbg"])
+		$("#div_dbg_container").hide();
 	
 	$("#div_flashWidgetPlayer").hide();
 	$("#div_htmlWidgetPlayer").hide();
@@ -145,7 +147,9 @@ cCPanel.prototype.fOnSignal = function(
 fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	var mCPanel = cCPanel.fGetInstance();
 	
+	// =========================
 	// JavaScript Injection Signals
+	// =========================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
@@ -155,6 +159,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		{
 			if (mCPanel.mPrevState == "htmlwidgetengine")
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
+			//~ else if (mCPanel.mPrevState == "flashwidgetengine")
+				//~ mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
 		}
 		break;
 		
@@ -171,13 +177,25 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			});
 			break;
 		case "flashwidgetengine":
+			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1 1</value>"}, null);
+			cCPanel.instance.pState("empty");
+			cCPanel.instance.mLocked = false;
 			break;
 		case "empty":
-			if (mCPanel.mPrevState == "htmlwidgetengine")
+			switch (mCPanel.mPrevState)
+			{
+			case "htmlwidgetengine":
 				mCPanel.fShowHTMLWidgetEngine2(function() {
 					cCPanel.instance.pState("htmlwidgetengine");
 					cCPanel.instance.mLocked = false;
 				});
+				break;
+			case "flashwidgetengine":
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, null);
+				cCPanel.instance.pState("flashwidgetengine");
+				cCPanel.instance.mLocked = false;
+				break;
+			}
 			break;
 		case "controlpanel":
 			mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
@@ -186,18 +204,42 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
+		if (mCPanel.mState == "controlpanel")
 		{
-			$("#div_channelMain_channelThumbnail_0_shadow").show();
-			$("#div_channelMain_channelThumbnail_1_shadow").hide();
+			switch (mCPanel.mSubState)
+			{
+			case "channelMain":
+				$("#div_channelMain_channelThumbnail_0_shadow").show();
+				$("#div_channelMain_channelThumbnail_1_shadow").hide();
+				break;
+			case "flashchannelwidgetsmain":			
+				cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
+				cModel.fGetInstance().CURR_WIDGET_INDEX--;
+				if (cModel.fGetInstance().CURR_WIDGET_INDEX < 0)
+					cModel.fGetInstance().CURR_WIDGET_INDEX = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1;
+				cCPanel.fGetInstance().fRefreshChannelDiv();
+				break;
+			}
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
+		if (mCPanel.mState == "controlpanel")
 		{
-			$("#div_channelMain_channelThumbnail_0_shadow").hide();
-			$("#div_channelMain_channelThumbnail_1_shadow").show();
+			switch (mCPanel.mSubState)
+			{
+			case "channelMain":	
+				$("#div_channelMain_channelThumbnail_0_shadow").hide();
+				$("#div_channelMain_channelThumbnail_1_shadow").show();
+				break;
+			case "flashchannelwidgetsmain":
+				cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
+				cModel.fGetInstance().CURR_WIDGET_INDEX++;
+				if (cModel.fGetInstance().CURR_WIDGET_INDEX > cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1)
+					cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
+				cCPanel.fGetInstance().fRefreshChannelDiv();
+				break;
+			}
 		}
 		break;
 		
@@ -212,14 +254,42 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		if (mCPanel.mState == "controlpanel")
+		{
+			switch (mCPanel.mSubState)
+			{
+			case "channelMain":
+				$("#div_messageBoard").hide();
+				$("#div_channelMain").hide();
+				$("#div_flashWidgetMain").hide();
+				$("#div_flashWidgetMain").fadeIn();
+				cCPanel.instance.fRefreshChannelDiv();
+				mCPanel.mSubState = "flashchannelwidgetsmain";
+				break;
+			}
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
-		cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Restart</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+		if (mCPanel.mState == "controlpanel")
+		{
+			switch (mCPanel.mSubState)
+			{
+			case "flashchannelwidgetsmain":
+				$("#div_messageBoard").hide();
+				$("#div_channelMain").hide();
+				$("#div_flashWidgetMain").hide();
+				$("#div_channelMain").fadeIn();
+				mCPanel.mSubState = "channelMain";
+				break;
+			}
+		}
 		break;
 	}
 	
+	// =========================
 	// internal signals
+	// =========================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_MESSAGE:
@@ -258,6 +328,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			mCPanel.fShowControlPanel();
 			break;
 		case "empty":
+			//~ switch (mCPanel.
 			mCPanel.fShowControlPanel();
 			break;
 		}
@@ -752,14 +823,10 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
 		fDbg2("===> " + vData.split("<status>")[1].split("</status>")[0]);
 		fDbg2("===> " + vData.split("<value>")[1].split("</value>")[0]);
 	});
-	//cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function(vData) {fDbg2("---> " + encodeURI(vData));});
+	
 	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, null);
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	//cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, function() {});
-	//$("#div_dbg_container").show();
-	
-	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>SetBox 959 479 320 240</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 }
 
 cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(
@@ -770,14 +837,6 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngineReturn(), " + vData);
 	cCPanel.instance.pState("flashwidgetengine");
 	fDbg2("-----> " + vData.split("<status>")[1].split("</status>")[0]);
 	fDbg2("-----> " + vData.split("<value>")[1].split("</value>")[0]);
-	// fDbg2("---> " + encodeURI(vData));
-	
-	
-	//cCPanel.instance.fSetWidgetEngineSize();
-//$('#div_channelMain_channelThumbnail_0_title').css("font-size", "12px");
-//$('#div_channelMain_channelThumbnail_0_title').css("width", "600px");
-
-//$('#div_channelMain_channelThumbnail_0_title').html(vData.replace("<", "||").replace(">", "||"));
 
 }
 
@@ -893,50 +952,76 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 {
 	var o, p, vWidgetList, vTransitionTime;
 	var i;
+	var vDefaultImg = "chumby_logo_48x48";
+	
 	vTransitionTime = 500;
 	
 	if (!this.mModel)
 		this.mModel = cModel.fGetInstance();
-	
 	if (!this.mModel.CURR_CHANNEL_INDEX)
 		this.mModel.CURR_CHANNEL_INDEX = 0;
 	if (!this.mModel.CURR_WIDGET_INDEX)
 		this.mModel.CURR_WIDGET_INDEX = 0;
 
 	vWidgetList = this.mModel.CHANNEL_LIST[this.mModel.CURR_CHANNEL_INDEX].mWidgetList;
-	if ($("#img_flashWidgetMain_thumbnailPrev").attr("src") == "")
+	if ($("#img_flashWidgetMain_thumbnailPrev").attr("src").indexOf(vDefaultImg) > -1)
 	{
+		$("#img_flashWidgetMain_thumbnailPrev").hide();
+		$("#img_flashWidgetMain_thumbnailCurr").hide();
+		$("#img_flashWidgetMain_thumbnailNext").hide();
+	
+		
 		// show control panel MAIN div
 		if (this.mModel.CURR_WIDGET_INDEX == 0)
 			p = vWidgetList.length - 1;
 		else
 			p = this.mModel.CURR_WIDGET_INDEX - 1;
+		
+		$("#img_flashWidgetMain_thumbnailPrev").attr("src", "");
+		$("#img_flashWidgetMain_thumbnailPrev").attr("src", vWidgetList[p].mLocalThumbnailPath);
+		$("#img_flashWidgetMain_thumbnailPrev").fadeIn();
+
+		$("#img_flashWidgetMain_thumbnailCurr").attr("src", "");
+		$("#img_flashWidgetMain_thumbnailCurr").attr("src", vWidgetList[this.mModel.CURR_WIDGET_INDEX].mLocalThumbnailPath);
+		$("#img_flashWidgetMain_thumbnailCurr").fadeIn();
+		
+		/*
+		fDbg2(">>>" + vWidgetList[p].mWidget.mThumbnail.mHref);
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
+			fDbg2("=====" + vData);
 			$("#img_flashWidgetMain_thumbnailPrev").attr("src", "");
 			$("#img_flashWidgetMain_thumbnailPrev").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailPrev").fadeIn();
 		});
 		
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 			$("#img_flashWidgetMain_thumbnailCurr").attr("src", "");
 			$("#img_flashWidgetMain_thumbnailCurr").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailCurr").fadeIn();
 		});
-
+		*/
 		if (this.mModel.CURR_WIDGET_INDEX == vWidgetList.length - 1)
 			p = 0;
 		else
 			p = this.mModel.CURR_WIDGET_INDEX + 1;
+		
+		$("#img_flashWidgetMain_thumbnailNext").attr("src", "");
+		$("#img_flashWidgetMain_thumbnailNext").attr("src", vWidgetList[p].mLocalThumbnailPath);
+		$("#img_flashWidgetMain_thumbnailNext").fadeIn();
+		/*
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 			$("#img_flashWidgetMain_thumbnailNext").attr("src", "");
 			$("#img_flashWidgetMain_thumbnailNext").attr("src", vData);
+			$("#img_flashWidgetMain_thumbnailNext").fadeIn();
 		});
+		*/
 		
 		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
 		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
-
-
+		
 		if (vReturnFun)
 			vReturnFun();
 	}
@@ -963,14 +1048,11 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 			else
 				i = this.mModel.CURR_WIDGET_INDEX - 1;
 			/*
-			$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + vWidgetList[i].mWidget.mThumbnail.mHref, function(data) {
-				$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "data:image/jpg;base64," + data);
-			});
-			*/
 			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 				$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", vData);
 			});
+			*/
 			
 			$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
 				left: "+=300"
@@ -982,7 +1064,8 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				height: "-=100"
 			}, vTransitionTime / 2, function() {
 					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "");
-					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "./images/chumby_logo_48x48.png");
+					//~ $("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "./images/chumby_logo_48x48.png");
+					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", vWidgetList[i].mLocalThumbnailPath);
 					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left", "-100px");
 					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
 						left: "+=200"
@@ -1032,14 +1115,11 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 			else
 				i = this.mModel.CURR_WIDGET_INDEX + 1;
 			/*
-			$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + vWidgetList[i].mWidget.mThumbnail.mHref, function(data) {
-				$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "data:image/jpg;base64," + data);
-			});
-			*/
 			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
 				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 				$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", vData);
 			});
+			*/
 			
 			$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
 				left: "-=300"
@@ -1051,7 +1131,8 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				height: "-=100"
 			}, vTransitionTime / 2, function() {
 					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "");
-					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "./images/chumby_logo_48x48.png");
+					//~ $("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "./images/chumby_logo_48x48.png");
+					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", vWidgetList[i].mLocalThumbnailPath);
 					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left", "840px");
 					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
 						left: "-=300"
@@ -1077,6 +1158,7 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				width: "-=40",
 				height: "-=30"
 			}, vTransitionTime, function() {
+				
 			});
 
 			
@@ -1085,6 +1167,7 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				top: "-=15"
 			}, vTransitionTime, function() {
 				// Animation complete
+				
 			});
 
 			$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
@@ -1094,7 +1177,6 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 				
 			});
 		}
-
 		
 		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
 		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
@@ -1102,6 +1184,7 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 		if (vReturnFun)
 			vReturnFun();
 	}
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -1127,5 +1210,3 @@ cCPanel.prototype.fHideChannelDiv = function(
 {
 	
 }
-
-
