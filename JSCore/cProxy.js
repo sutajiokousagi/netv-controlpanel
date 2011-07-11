@@ -52,9 +52,10 @@ fDbg("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()
 	{
+//~ fDbg2("state: " + xmlHttpReq.readyState);
 		if (xmlHttpReq.readyState == 4)
 		{
-fDbg("status: " + xmlHttpReq.status);
+//~ fDbg2("status: " + xmlHttpReq.status);
 			switch (xmlHttpReq.status)
 			{
 			case 200:

@@ -25,6 +25,7 @@ cConst.SIGNAL_WIDGET_PREV = "signal_widget_prev";
 cConst.SIGNAL_GOTO_CONTROLPANEL = "signal_goto_controlpanel";
 cConst.SIGNAL_GOTO_FLASHWIDGETENGINE = "signal_goto_flashwidgetengine";
 cConst.SIGNAL_GOTO_HTMLWIDGETENGINE = "signal_goto_htmlwidgetengine";
+cConst.SIGNAL_GOTO_EVENTWIDGETENGINE = "signal_goto_eventwidgetengine";
 
 // -------------------------------------------------------------
 //	D-Pad buttons
@@ -72,19 +73,3 @@ cConst.STATE_SUB_CHANNELMAIN = "state_sub_channelmain";
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

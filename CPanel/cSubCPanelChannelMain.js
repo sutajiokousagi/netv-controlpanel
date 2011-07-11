@@ -57,13 +57,17 @@ fDbg("*** cSubCPanelChannelMain, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		$("#div_channelMain_channelThumbnail_0_shadow").show();
-		$("#div_channelMain_channelThumbnail_1_shadow").hide();
+		o = this.fGetSelected()[0];
+		if (o > 0)
+			o--;
+		this.fSetSelected([o]);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		$("#div_channelMain_channelThumbnail_0_shadow").hide();
-		$("#div_channelMain_channelThumbnail_1_shadow").show();
+		o = this.fGetSelected()[0];
+		if (o < 3)
+			o++;
+		this.fSetSelected([o]);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
@@ -92,6 +96,20 @@ cSubCPanelChannelMain.prototype.fHide = function(
 }
 
 // -------------------------------------------------------------------------------------------------
+//	fFadeIn / fFadeOut
+// -------------------------------------------------------------------------------------------------
+cSubCPanelChannelMain.prototype.fFadeIn = function(
+)
+{
+	this.mDiv.fadeIn(500, function() {});
+}
+cSubCPanelChannelMain.prototype.fFadeOut = function(
+)
+{
+	this.mDiv.fadeOut(500, function() {});
+}
+
+// -------------------------------------------------------------------------------------------------
 //	fGetSelected
 // -------------------------------------------------------------------------------------------------
 cSubCPanelChannelMain.prototype.fGetSelected = function(
@@ -102,6 +120,8 @@ cSubCPanelChannelMain.prototype.fGetSelected = function(
 		o = [0];
 	else if ($('#div_channelMain_channelThumbnail_1_shadow').is(':visible'))
 		o = [1];
+	else if ($('#div_channelMain_channelThumbnail_2_shadow').is(':visible'))
+		o = [2];
 
 	return o;
 }
@@ -114,23 +134,12 @@ cSubCPanelChannelMain.prototype.fSetSelected = function(
 	vReturnFun
 )
 {
-	this.mDiv.fadeIn(500, function() {});
+	var i;
 	
-	switch (vData[0])
-	{
-	case 0:
-		$("#div_channelMain_channelThumbnail_0_shadow").show();
-		$("#div_channelMain_channelThumbnail_1_shadow").hide();
-		break;
-	case 1:
-		$("#div_channelMain_channelThumbnail_0_shadow").hide();
-		$("#div_channelMain_channelThumbnail_1_shadow").show();
-		break;
-	case null:
-		$("#div_channelMain_channelThumbnail_0_shadow").hide();
-		$("#div_channelMain_channelThumbnail_1_shadow").show();
-		break;
-	}
+	for (i = 0; i < 3; i++)
+		$("#div_channelMain_channelThumbnail_" + i + "_shadow").hide();
+	$("#div_channelMain_channelThumbnail_" + vData[0] + "_shadow").show();
+
 	if (vReturnFun)
 		vReturnFun();
 }

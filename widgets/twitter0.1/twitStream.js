@@ -88,6 +88,7 @@ function fetch_tweets(elem){
 	});
 	return(false);
 }
+
 $(function(){
 	showTweetLinks=showTweetLinks.toLowerCase();
 	if(showTweetLinks.indexOf('all')!=-1)
