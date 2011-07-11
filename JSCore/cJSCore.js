@@ -231,7 +231,7 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 	
 	var fLoadTN = function () {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
-			fDbg2(o.length);
+			//~ fDbg2(o.length);
 			//~ fDbg2(vData);
 			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
 			o.splice(0, 1);
@@ -247,6 +247,76 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 	
 	fLoadTN();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -297,7 +367,7 @@ function fLoadExtJSScript(
 {
 //~ fDbg("cJSCore, fLoadExtJSScript()");
 	var vUrl = vFileList.pop();
-	var script = document.createElement("script")
+	var script = document.createElement("script");
 	script.type = "text/javascript";
 	script.src = vUrl;
 	

@@ -9,7 +9,7 @@
 //	static members
 // -------------------------------------------------------------------------------------------------
 var mGCPanelStatic = {
-	mShowDbg : true
+	mShowDbg : false
 };
 
 
@@ -344,12 +344,13 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (mCPanel.mState == "controlpanel")
 		{
+			/*
 			if (mCPanel.mSubState == "flashchannelwidgetsmain")
 			{
 				
 				return;
 			}
-				
+			*/
 			for (i = 0; i < mCPanel.mSubCPanelList.length; i++)
 				if (mCPanel.mSubCPanelList[i].mSubStateName == mCPanel.mSubState)
 				{
@@ -976,6 +977,7 @@ cCPanel.prototype.fRefreshChannelDiv = function(
 	vReturnFun
 )
 {
+fDbg2("*** cCPanel, ");
 	var o, p, vWidgetList, vTransitionTime;
 	var i;
 	var vDefaultImg = "chumby_logo_48x48";
