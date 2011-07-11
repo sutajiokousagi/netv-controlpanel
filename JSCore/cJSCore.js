@@ -12,7 +12,7 @@ cJSCore.kProductionMode = false;
 cJSCore.kSimulatedData = {
 	mGUID : "A620123B-1F0E-B7CB-0E11-921ADB7BE22A",				// the black chumbyR
 	//~ mGUID : "84436234-0E47-3AB6-A0C9-95897F243B32",			// the white chumbyR
-	mServerUrl : "http://xml.chumby.com/xml/chumbies/",			
+	mServerUrl : "http://xml.chumby.com/xml/chumbies/",
 	//~ mLocalBridgeUrl : "http://192.168.1.210/projects/0009.chumbyJSCore/server.php"			// testing/development mode at 192.168.1.210
 	mLocalBridgeUrl : "./bridge"			// production mode
 }
@@ -68,47 +68,13 @@ cJSCore.prototype.fInit = function(
 fDbg("*** cJSCore, fInit()");
 
 	// load other js classes
-	this.fLoadExtJSList(vCompleteFun);
+	fLoadExtJSScript(this.mJSClassList, vCompleteFun);
 }
 
 cJSCore.prototype.fInitReturn = function(
 )
 {
 	
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fLoadExtJSList
-// -------------------------------------------------------------------------------------------------
-cJSCore.prototype.fLoadExtJSList = function(
-	vCompleteFun
-)
-{
-	if (cJSCore.instance.mJSClassList.length == 1)
-		cJSCore.instance.fLoadScript(cJSCore.instance.mJSClassList.pop(), vCompleteFun);
-	else
-		cJSCore.instance.fLoadScript(cJSCore.instance.mJSClassList.pop(), cJSCore.instance.fLoadExtJSList, vCompleteFun);
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fLoadScript
-// -------------------------------------------------------------------------------------------------
-cJSCore.prototype.fLoadScript = function(
-	url,
-	callback,
-	vCompleteFun
-)
-{	
-	var script = document.createElement("script")
-	script.type = "text/javascript";
-	script.onload = function(){
-//fDbg("*** cJSCore, fLoadScript(), loaded");
-		callback(vCompleteFun);
-	};
-	script.src = url;
-	document.getElementsByTagName("head")[0].appendChild(script);
-//fDbg("*** cJSCore, fLoadScript(), loading " + url);
-
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -151,6 +117,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</v
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>240,0,240</value>"}, function() {})
 
+	
 	cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
 	
 	// check if has GUID, server add
@@ -264,7 +231,7 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 	
 	var fLoadTN = function () {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
-			//~ fDbg2(o.length);
+			fDbg2(o.length);
 			//~ fDbg2(vData);
 			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
 			o.splice(0, 1);
@@ -288,11 +255,27 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 
 
 
+
+
+
+
+
+
+
+
 	
 	
-	
-	
-	
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+//	utility functions
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
 //	fDbg
@@ -302,4 +285,30 @@ function fDbg(
 )
 {
 	//alert(v);
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fLoadScript
+// -------------------------------------------------------------------------------------------------
+function fLoadExtJSScript(
+	vFileList,
+	vReturnFun
+)
+{
+//~ fDbg("cJSCore, fLoadExtJSScript()");
+	var vUrl = vFileList.pop();
+	var script = document.createElement("script")
+	script.type = "text/javascript";
+	script.src = vUrl;
+	
+	script.onload = function() {
+//~ fDbg2("*** fLoadScript(), loaded");
+		if (vFileList.length == 0)
+			vReturnFun();
+		else
+			fLoadExtJSScript(vFileList, vReturnFun);
+	};
+	
+	document.getElementsByTagName("head")[0].appendChild(script);
+//~ fDbg2("*** fLoadScript(), loading " + vUrl);
 }

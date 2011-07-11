@@ -1,0 +1,56 @@
+
+
+/*
+----------------------------------------------------------------
+	general classes
+----------------------------------------------------------------
+*/
+.bold {
+	font-weight: bold;
+}
+.italic {
+	text-decoration: italic;
+}
+.font18 {
+	font-size: 18px;
+}
+.font20 {
+	font-size: 20px;
+}
+.font24 {
+	font-size: 24px;
+}
+.bigline {
+	line-height: 120%;
+}
+
+.chumbyblue {
+	color: #094fa6;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.subcpanel_title {
+	position: absolute;
+	top: 12px;
+	left: 70px;
+	
+	color: #094fa6;
+	font-weight: bold;
+	font-size: 24px;
+}

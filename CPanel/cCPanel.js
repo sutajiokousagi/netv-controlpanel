@@ -9,7 +9,7 @@
 //	static members
 // -------------------------------------------------------------------------------------------------
 var mGCPanelStatic = {
-	mShowDbg : false
+	mShowDbg : true
 };
 
 
@@ -22,14 +22,46 @@ function cCPanel(
 	this.JSCORE = null;
 	this.mModel = null;
 	
+	this.mLocked = false;
+
+	this.mJSClassList = [
+		"./CPanel/cSubCPanelChannelMain.js",
+		"./CPanel/cSCPChannelWidgetsMain.js"
+	];
+	
 	this.mMessageDisplayInProgress = false;
 	this.mMessageList = [];
+	this.mSubCPanelList = [
+		{
+			mSubStateName : "flashchannelwidgetsmain",
+			mDivID : "div_flashWidgetMain",
+			mSubCPanel : null
+		},
+		{
+			mSubStateName : "channelMain",
+			mDivID : "div_channelMain",
+			mSubCPanel : null
+		},
+		{
+			mSubStateName : "infomain",
+			mDivID : "div_infoMain",
+			mSubCPanel : null
+		},
+		{
+			mSubStateName : "settingmain",
+			mDivID : "div_settingMain",
+			mSubCPanel : null
+		}
+	];
+	this.mSCPChannelMain = null;
+	this.mSCPChannelWidgetsMain = null;
+	this.mSCPInfoMain = null;
+	this.mSCPSettingMain = null;
 	
 	this.mPrevState = "";
 	this.mState = "";
 	this.mSubState = "";
 	
-	this.mLocked = false;
 	console.log("hello console");
 }
 
@@ -68,23 +100,10 @@ cCPanel.prototype.fInit = function(
 	vReturnFun
 )
 {
+	// hide all
 	this.fHideAll();
 	
-	// hide the flash widget div
-	$("#div_flashWidgetMain_arrowPrev").click(function() {
-		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
-		cModel.fGetInstance().CURR_WIDGET_INDEX--;
-		if (cModel.fGetInstance().CURR_WIDGET_INDEX < 0)
-			cModel.fGetInstance().CURR_WIDGET_INDEX = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1;
-		cCPanel.fGetInstance().fRefreshChannelDiv();
-	});
-	$("#div_flashWidgetMain_arrowNext").click(function() {
-		cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
-		cModel.fGetInstance().CURR_WIDGET_INDEX++;
-		if (cModel.fGetInstance().CURR_WIDGET_INDEX > cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1)
-			cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
-		cCPanel.fGetInstance().fRefreshChannelDiv();
-	});
+	// show div(s) for initialization
 	
 	$("#div_loader").fadeIn();
 	$("#div_messageBoard").fadeIn();
@@ -109,6 +128,9 @@ cCPanel.prototype.fInit = function(
 	
 	mCurrDivVisible = "div_messageBoard";
 	this.pState("controlpanel");
+	
+	// load other js classes
+	fLoadExtJSScript(this.mJSClassList, vReturnFun);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -117,11 +139,11 @@ cCPanel.prototype.fInit = function(
 cCPanel.prototype.fHideAll = function(
 )
 {
-	$("#div_flashWidgetMain").hide();
-	
-	// hide main channel div
-	$("#div_channelMain").hide();
 	$("#div_tempBg").hide();
+	
+	$("#div_CPanel").children().hide();
+	
+	// hide activation div
 	$("#div_activation").hide();
 		
 	// hide all debug div
@@ -130,9 +152,22 @@ cCPanel.prototype.fHideAll = function(
 	
 	$("#div_flashWidgetPlayer").hide();
 	$("#div_htmlWidgetPlayer").hide();
-	$("#div_loader").hide();
 	
-	$("#div_messageBoard").hide();
+	$("#div_infoMain_content_advanced").hide();
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fHideAll
+// -------------------------------------------------------------------------------------------------
+cCPanel.prototype.fStartUp = function(
+)
+{
+	fDbg("*** cCPanel, fStartUp()");
+	
+	// register all classes
+	this.mSubCPanelList[1].mSubCPanel = cSubCPanelChannelMain.fGetInstance($("#" + this.mSubCPanelList[1].mDivID));
+	this.mSCPChannelWidgetsMain = cSCPChannelWidgetsMain.fGetInstance($("#div_flashWidgetMain"));
+	
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -146,6 +181,12 @@ cCPanel.prototype.fOnSignal = function(
 {
 fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	var mCPanel = cCPanel.fGetInstance();
+	var i, o;
+	
+	// handle the lock state;
+	//~ if (cCPanel.instance.mLocked == true)
+		//~ return;
+	//~ cCPanel.instance.mLocked = true;
 	
 	// =========================
 	// JavaScript Injection Signals
@@ -159,8 +200,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		{
 			if (mCPanel.mPrevState == "htmlwidgetengine")
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
-			//~ else if (mCPanel.mPrevState == "flashwidgetengine")
-				//~ mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
+			else if (mCPanel.mPrevState == "flashwidgetengine")
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
 		}
 		break;
 		
@@ -209,15 +250,23 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			switch (mCPanel.mSubState)
 			{
 			case "channelMain":
-				$("#div_channelMain_channelThumbnail_0_shadow").show();
-				$("#div_channelMain_channelThumbnail_1_shadow").hide();
+				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
 				break;
-			case "flashchannelwidgetsmain":			
+			case "flashchannelwidgetsmain":
 				cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
 				cModel.fGetInstance().CURR_WIDGET_INDEX--;
 				if (cModel.fGetInstance().CURR_WIDGET_INDEX < 0)
 					cModel.fGetInstance().CURR_WIDGET_INDEX = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1;
 				cCPanel.fGetInstance().fRefreshChannelDiv();
+				break;
+			case "infomain":
+				if ($("#div_infoMain_content_basic").is(":visible"))
+					o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
+				else
+					o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
+				o[0].fadeOut(200, function() {
+					o[1].fadeIn(200);
+				});
 				break;
 			}
 		}
@@ -228,9 +277,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		{
 			switch (mCPanel.mSubState)
 			{
-			case "channelMain":	
-				$("#div_channelMain_channelThumbnail_0_shadow").hide();
-				$("#div_channelMain_channelThumbnail_1_shadow").show();
+			case "channelMain":
+				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			case "flashchannelwidgetsmain":
 				cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
@@ -239,6 +287,16 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 					cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
 				cCPanel.fGetInstance().fRefreshChannelDiv();
 				break;
+			case "infomain":
+				if ($("#div_infoMain_content_basic").is(":visible"))
+					o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
+				else
+					o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
+
+				o[0].fadeOut(200, function() {
+					o[1].fadeIn(200);
+				});
+				break;
 			}
 		}
 		break;
@@ -246,26 +304,39 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	case cConst.SIGNAL_BUTTON_CENTER:
 		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
 		{
-			if ($('#div_channelMain_channelThumbnail_0_shadow').is(':visible'))
+			o = this.mSubCPanelList[1].mSubCPanel.fGetSelected();
+			
+			if (o[0] == 0)
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
-			else if ($('#div_channelMain_channelThumbnail_1_shadow').is(':visible'))
+			else if (o[0] == 1)
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
 		if (mCPanel.mState == "controlpanel")
-		{
-			switch (mCPanel.mSubState)
+		{	
+			for (i = 0; i < mCPanel.mSubCPanelList.length; i++)
+				if (mCPanel.mSubCPanelList[i].mSubStateName == mCPanel.mSubState)
+				{
+					if (i == 0)
+						o = [i, mCPanel.mSubCPanelList.length - 1];
+					else
+						o = [i, i - 1];
+					break;
+				}
+			
+			$("#div_messageBoard").hide();
+						
+			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
+			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
+			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
+			
+			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
+			if (mCPanel.mSubState == "flashchannelwidgetsmain")
 			{
-			case "channelMain":
-				$("#div_messageBoard").hide();
-				$("#div_channelMain").hide();
-				$("#div_flashWidgetMain").hide();
-				$("#div_flashWidgetMain").fadeIn();
-				cCPanel.instance.fRefreshChannelDiv();
-				mCPanel.mSubState = "flashchannelwidgetsmain";
-				break;
+				//~ cCPanel.instance.fRefreshChannelDiv();
+				mSCPChannelWidgetsMain.fHide();
 			}
 		}
 		break;
@@ -273,19 +344,33 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (mCPanel.mState == "controlpanel")
 		{
-			switch (mCPanel.mSubState)
+			if (mCPanel.mSubState == "flashchannelwidgetsmain")
 			{
-			case "flashchannelwidgetsmain":
-				$("#div_messageBoard").hide();
-				$("#div_channelMain").hide();
-				$("#div_flashWidgetMain").hide();
-				$("#div_channelMain").fadeIn();
-				mCPanel.mSubState = "channelMain";
-				break;
+				
+				return;
 			}
+				
+			for (i = 0; i < mCPanel.mSubCPanelList.length; i++)
+				if (mCPanel.mSubCPanelList[i].mSubStateName == mCPanel.mSubState)
+				{
+					if (i == mCPanel.mSubCPanelList.length - 1)
+						o = [i, 0];
+					else
+						o = [i, i + 1];
+					break;
+				}
+			$("#div_messageBoard").hide();
+			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
+			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
+			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
+			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
+			if (mCPanel.mSubState == "flashchannelwidgetsmain")
+				cCPanel.instance.fRefreshChannelDiv();
 		}
 		break;
 	}
+
+
 	
 	// =========================
 	// internal signals
@@ -328,8 +413,19 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			mCPanel.fShowControlPanel();
 			break;
 		case "empty":
-			//~ switch (mCPanel.
-			mCPanel.fShowControlPanel();
+			switch (mCPanel.mPrevState)
+			{
+			case "flashwidgetengine":
+				cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
+				mCPanel.fShowControlPanel();
+				break;
+			case "htmlwidgetengine":
+				mCPanel.fShowControlPanel();
+				break;
+			}
 			break;
 		}
 		break;
@@ -346,7 +442,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			mCPanel.fShowFLASHWidgetEngine();
 		});
 		break;
-	}	
+	}
 }
 
 
@@ -380,6 +476,15 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 
 
 
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+//	message board div functions
+// 
+// 
+// -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 //	fShow
 // -------------------------------------------------------------------------------------------------
@@ -452,9 +557,6 @@ cCPanel.prototype.fShowMessageDiv = function(
 	
 }
 
-// -------------------------------------------------------------------------------------------------
-//	fHideMessageDiv
-// -------------------------------------------------------------------------------------------------
 cCPanel.prototype.fHideMessageDiv = function(
 )
 {
@@ -462,93 +564,31 @@ cCPanel.prototype.fHideMessageDiv = function(
 }
 
 
-/*
-// -------------------------------------------------------------------------------------------------
-//	fPlayWidget
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fPlayWidget = function(
-	vWidgetPath
-)
-{
-fDbg("*** cCPanel, fPlayWidget(), " + vWidgetPath);
-	$("#div_widgetPlayer").show();
-	$("#div_widgetPlayer_embed").css("left", (parseFloat($("#div_widgetPlayer_embed").css("left").split("px")[0]) + 800) + "px");
-	$("#div_widgetPlayer_embed").animate({
-		left: '-=800'
-	}, 200, function() {
-		// Animation complete.
-	});
-	
-	$("#div_messageBoard").animate({
-		left: "-=800"
-	}, 200, function() {
-		// Animation compelte
-	});
-	
-	var o = setInterval(function() {
-		//document.getElementById("widget_player_01").fPlayWidget();
-		clearInterval(o);
-	}, 500);
-}
 
-// -------------------------------------------------------------------------------------------------
-//	fShow
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fShow = function(
-)
-{
-	// hide widget rendering engine
-	$("#div_widgetPlayer_embed").animate({
-		left: '+=800'
-	}, 200, function() {
-		// Animation complete.
-		//~ $("#div_widgetPlayer").hide();
-	});
-	// tell JSCore to hold counter/heartbeat, or shall reset it??
-	
-	
-	// show control panel MAIN div
-	$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + "http://s3movies.chumby.com/cdn/xmlthumbnail/40D95390-FF04-11DE-A291-001B24E044BE", function(data) {
-		$("#div_main_thumbnailPrev").attr("src", "data:image/jpg;base64," + data);
-	});
-	$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + "http://s3movies.chumby.com/cdn/xmlthumbnail/B86CAD48-3114-11DF-B75B-001B24E044BE", function(data) {
-		$("#div_main_thumbnailCurr").attr("src", "data:image/jpg;base64," + data);
-	});
-	$.get('http://192.168.1.210/projects/0009.chumbyJSCore/test/test1.php?url=' + "http://s3movies.chumby.com/cdn/xmlthumbnail/F9694E16-2AEB-11DF-B699-001B24E044BE", function(data) {
-		$("#div_main_thumbnailNext").attr("src", "data:image/jpg;base64," + data);
-	});
-	//~ $("#div_main").fadeIn();
 
-	
-	$("#div_main").show();
-	$("#div_main").css("left", "-800px");
-	$("#div_main").animate({
-		left: "+=800"
-	}, 200, function() {
-		// Animation complete
-	});
-}
 
-cCPanel.prototype.fHide = function(
-)
-{
-	$("#div_main").show();
-	$("#div_main").css("left", "0px");
-	$("#div_main").animate({
-		left: "-=800"
-	}, 200, function() {
-		// Animation complete
-	});
-	
-	$("#div_widgetPlayer_embed").show();
-	$("#div_widgetPlayer_embed").css("left", "800px");
-	$("#div_widgetPlayer_embed").animate({
-		left: '-=800'
-	}, 200, function() {
-		// Animation complete.
-	});
-}
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -568,18 +608,36 @@ cCPanel.prototype.fShowControlPanel = function(
 )
 {
 fDbg("*** cCPanel, fShowControlPanel(), ");
+	var o;
 	
 	$("#div_tempBg").show();
-	$("#div_tempBg").hide();
+	$("#div_tempBg").css("top", "-720px");
+	$("#div_tempBg").animate({
+		top: "+=720px"
+	}, 100, function() {
+		$("#div_tempBg").hide();
+	});
 	
 	$("#div_CPanel").css("left", "-960px");
 	$("#div_CPanel").animate({
 		left: "+=1200"
 	}, 800, function() {
-		cCPanel.instance.fRenderChannelMain();
+		switch (cCPanel.instance.mState)
+		{
+		case "htmlwidgetengine": o = 1; break;
+		case "flashwidgetengine": o = 0; break;
+		case "empty":
+			switch (cCPanel.instance.mPrevState)
+			{
+				case "htmlwidgetengine": o = 1; break;
+				case "flashwidgetengine": o = 0; break;
+			}
+			break;
+		}
+		cCPanel.instance.mSubCPanelList[1].mSubCPanel.fSetSelected([o], function() {
+			cCPanel.instance.mSubState = "channelMain";
+		});
 		cCPanel.instance.fShowControlPanelReturn();
-		$("#div_tempBg").show();
-		$("#div_tempBg").hide();
 	});
 }
 
@@ -590,38 +648,6 @@ cCPanel.prototype.fShowControlPanelReturn = function(
 fDbg("*** cCPanel, fShowControlPanelReturn(), " + vData);
 	this.pState("controlpanel");
 }
-
-// -------------------------------------------------------------------------------------------------
-//	fRenderChannelMain
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fRenderChannelMain = function(
-)
-{
-fDbg("*** cCPanel, fRenderChannelMain(), ");
-	$("#div_channelMain").fadeIn(800, function() {
-	
-	});
-	
-	switch (cCPanel.instance.mState)
-	{
-	case "htmlwidgetengine":
-		$("#div_channelMain_channelThumbnail_0_shadow").hide();
-		$("#div_channelMain_channelThumbnail_1_shadow").show();
-		cCPanel.instance.mSubState = "channelMain";
-		break;
-	case "flashwidgetengine":
-		$("#div_channelMain_channelThumbnail_0_shadow").show();
-		$("#div_channelMain_channelThumbnail_1_shadow").hide();
-		cCPanel.instance.mSubState = "channelMain";
-		break;
-	case "empty":
-		$("#div_channelMain_channelThumbnail_0_shadow").hide();
-		$("#div_channelMain_channelThumbnail_1_shadow").show();
-		cCPanel.instance.mSubState = "channelMain";
-		break;
-	}
-}
-
 
 
 
@@ -884,9 +910,9 @@ cCPanel.prototype.fSetWidgetEngineSizeReturn = function(
 )
 {
 fDbg("*** cCPanel, fSetWidgetEngineSizeReturn(), " + vData);
-	$("#div_flashWidgetPlayer").show();
-	$("#div_flashWidgetPlayer").css("left", "1000px");
-	$("#div_flashWidgetPlayer").css("top", "520px");
+	//~ $("#div_flashWidgetPlayer").show();
+	//~ $("#div_flashWidgetPlayer").css("left", "1000px");
+	//~ $("#div_flashWidgetPlayer").css("top", "520px");
 	cCPanel.instance.fPlayWidget();
 }
 
