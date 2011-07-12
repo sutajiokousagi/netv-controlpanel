@@ -1,11 +1,14 @@
 *.giosave*
 index_test.html
 index_testing.html
-test.html
 favicon.ico
 js
 scripts
 staging
-html_test
 html_config
 html_remote
+html_test
+html_config.html
+html_remote.html
+html_test.html
+test.html
