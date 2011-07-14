@@ -83,9 +83,13 @@ function fButtonPress(
 
 
 <body style="background-color: #F000F0;">
-<div id="div_tempBg" style="position: absolute; top: 0px; left: 0px; background-color: #F000F0; width: 1279px; height: 719px;">
+<div id="div_all" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 719px; overflow: hidden">
 
-</div>
+
+
+
+
+<div id="div_tempBg" style="position: absolute; top: -50px; left: -50px; background-color: #F000F0; width: 1600px; height: 900px;"></div>
 
 
 
@@ -206,8 +210,8 @@ function fButtonPress(
 	</div>
 	
 	<div id="div_infoMain_content" style="position: absolute; top: 8px; left: 0px;">
-		<div style="position: absolute; top: 110px; left: 110px; width: 200px; height: 200px; border: solid black 1px; text-align: center;"><br /><br /><br /><br /><br /><br />QR IMAGE </div>
-		<div class="bigline chumbyblue font18" style="position: absolute; top: 350px; left: 60px; width: 300px; height: 250px; text-align: justify;"> Use your android device to scan the QR image above, to acquire the web address of NeTV Android App.</div>
+		<div style="position: absolute; top: 130px; left: 135px; width: 175px; height: 175px; border: solid black 0px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat;"></div>
+		<div class="bigline chumbyblue font18" style="position: absolute; top: 350px; left: 75px; width: 300px; height: 250px; text-align: justify;"> Use your android device to scan the QR image above, to acquire the web address of NeTV Android App.</div>
 
 		<div id="div_infoMain_content_basic" style="position: absolute; top: 90px; left: 420px; width: 360px; height: 400px; border: solid black 0px;">
 			<div style="position: relative; width: 350px; height: 25px;">
@@ -367,10 +371,12 @@ function fButtonPress(
 -----------------------------------------------
 -->
 <div id="div_eventWidgetPlayer" style="position: absolute; left: 0px; top: 651px; width: 1279px; height: 68px; padding: 0; margin: 0; overflow: hidden;">
-<div id="div_eventWidgetPlayer_crawling" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 68px; background-color: #EEEEFF;">
+<div id="div_eventWidgetPlayer_crawling" style="position: absolute; top: 0px; left: 0px; width: 1179px; height: 68px; background-color: #EEEEFF; overflow: hidden;">
+	<div id="div_eventWidgetPlayer_crawling_text" style="position: absolute; top: 0px; left: 0px; font-size: 20px; padding: 10px 20px;">
+	</div>
 </div>
 <div id="div_eventWidgetPlayer_mini" style="position: absolute; top: 0px; left: 1179px; width: 100px; height: 68px; background-color: #EEEEFF; font-size: 20px;">
-	<div id="time_top" style="position: absolute; top: 0px; left: 0px; width: 100px; height: 32px; border: solid black 0px; padding: 8px 0 0 0; text-align: center">16:39</div>
+	<div id="time_top" style="position: absolute; top: 0px; left: 0px; width: 100px; height: 32px; border: solid black 0px; padding: 8px 0 0 0; text-align: center">00:00</div>
 	<div id="time_bottom" style="position: absolute; top: 36px; left: 0px; width: 100px; height: 36px; border: solid black 0px; padding: 2px 0 0 0; text-align: center">INFO</div>
 </div>
 </div>
@@ -385,8 +391,13 @@ function fButtonPress(
 -----------------------------------------------
 -->
 <div id="div_dbg_container" style="float: right; height: 450px; width: 240px; overflow: hidden; background-color: white; z-index: 1000;">
-<div id="div_dbg" style="float: right; height: 450px; width: 240px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
+<div id="div_dbg" style="position: absolute; top: 10px; height: 450px; width: 240px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
 
+
+
+
+
+</div>
 </body>
 </html>

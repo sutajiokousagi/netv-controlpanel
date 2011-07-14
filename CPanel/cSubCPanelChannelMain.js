@@ -65,7 +65,7 @@ fDbg("*** cSubCPanelChannelMain, fOnSignal(), " + vSignal + ", " + vData);
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
 		o = this.fGetSelected()[0];
-		if (o < 3)
+		if (o < 2)
 			o++;
 		this.fSetSelected([o]);
 		break;

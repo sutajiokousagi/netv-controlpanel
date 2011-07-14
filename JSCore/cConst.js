@@ -17,6 +17,8 @@ cConst.SIGNAL_SHOW = "signal_show";
 cConst.SIGNAL_HIDE = "signal_hide";
 cConst.SIGNAL_CHANNELDIV_SHOW = "signal_channeldiv_show";
 cConst.SIGNAL_CHANNELDIV_HIDE = "signal_channeldiv_hide";
+cConst.SIGNAL_SCPINFO_SHOW = "signal_scpinfo_hide";
+cConst.SIGNAL_SCPINFO_HIDE = "signal_scpinfo_hide";
 
 cConst.SIGNAL_WIDGETENGINE_SHOW = "signal_widgetengine_show";
 cConst.SIGNAL_WIDGET_NEXT = "signal_widget_next";

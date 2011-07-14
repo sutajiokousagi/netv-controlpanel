@@ -43,7 +43,7 @@ cProxy.xmlhttpPost = function(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-fDbg("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
+//~ fDbg2("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
 	
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();
@@ -56,6 +56,8 @@ fDbg("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
 		if (xmlHttpReq.readyState == 4)
 		{
 //~ fDbg2("status: " + xmlHttpReq.status);
+//~ fDbg2("text length : " + xmlHttpReq.responseText.length);
+//~ fDbg2("text: " + xmlHttpReq.responseText);
 			switch (xmlHttpReq.status)
 			{
 			case 200:
@@ -120,4 +122,15 @@ cProxy.fWidgetEngineShow = function(
 )
 {
 	cProxy.fDispatchSignal(cConst.SIGNAL_WIDGETENGINE_SHOW, null, null);
+}
+
+
+// -------------------------------------------------------------------------------------------------
+//	CPanel, show info SCP
+// -------------------------------------------------------------------------------------------------
+cProxy.fCPanelInfoPanelShow = function(
+)
+{
+fDbg2("*** cProxy, fCPanelInfoPanelShow(), ");
+	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_SHOW, null, null);
 }

@@ -26,6 +26,9 @@ function cJSCore(
 	// CONNECTION LINKS
 	this.CPANEL = null;
 	
+	if (location.href.indexOf("localhost") == -1)
+		location.href = "test.html";
+	
 	// members
 	this.mJSClassList = [
 		"./JSCore/cConst.js",
@@ -92,46 +95,139 @@ fDbg("*** cJSCore, fStartUp()");
 	this.mTimerModule.fInit();
 	this.mChannelModule = cChannelModule.fGetInstance();
 	this.mWidgetModule = cWidgetModule.fGetInstance();
-	
-	// simulation for local testing
-	if (!cJSCore.kProductionMode)
-	{
-		this.mModel.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUID
-		this.mModel.SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
-		this.mModel.LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
-	}
-	else
-	{
-		
-	}
-	
-	// check for access point : chumby device? browser from other computer/device?
-	// if (document.location.href.indexOf("localhost") == -1)
-	// {
-		// cCPanel.
-		// return;
-	// }
-	
+
+	// force write over GUID and URLs
+	this.mModel.SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
+	this.mModel.LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
+
+
+// do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
 cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd: "SetChromaKey", data: "<value>240,0,240</value>"}, function() {})
+cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
 
-	
-	cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
-	
-	// check if has GUID, server add
-	var fAjaxReturn = function(vData) {
-		cJSCore.instance.fStartUpReturn(vData);
-		if (vReturnFun)
-			vReturnFun(vData);
+
+	var fun1 = function() {
+		
+		var vInterval = setInterval(function() {
+			$("#div_tempBg").show();
+			if ($("#div_tempBg").css("left") == "-50px")
+				$("#div_tempBg").css("left", "-40px");
+			else
+			{
+				$("#div_tempBg").hide();
+				$("#div_tempBg").css("left", "-50px");
+			}
+		}, 2000);
+			
+		
+		cProxy.xmlhttpPost("", "post", {cmd : "Hello", data: ""}, function(vData) {
+			fDbg2("----------------------");
+			fDbg2(vData.split("</flashplugin>")[0].split("<flashplugin>")[1]);
+			fDbg2(vData.split("</network>")[0].split("<network>")[1].length);
+			fDbg2("----------------------");
+
+			
+			
+			var o;
+			o = cModel.fGetInstance();
+			
+			if (vData.split("</status>")[0].split("<status>")[1] == "1")
+			{
+				o.CHUMBY_GUID = vData.split("</guid>")[0].split("<guid>")[1];
+				o.CHUMBY_DCID = vData.split("</dcid>")[0].split("<dcid>")[1];
+				o.CHUMBY_HWVERSION = vData.split("</hwver>")[0].split("<hwver>")[1];
+				o.CHUMBY_FWVERSION = vData.split("</fwver>")[0].split("<fwver>")[1];
+				o.CHUMBY_FLASHPLAYER = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
+				
+				if (vData.split("</network>")[0].split("<network>")[1].length < 100)
+				{
+					// has no network
+
+					// display info SCP
+					cProxy.fCPanelInfoPanelShow();
+					return;
+				}
+				else
+				{
+					// has network
+					o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_IP = vData.split("ip=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_BROADCAST = vData.split("broadcast=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_NETMASK = vData.split("netmask=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
+
+
+					clearInterval(vInterval);
+					/*
+					// display info SCP
+					o.CHUMBY_NETWORK_UP = "";
+					cProxy.fCPanelInfoPanelShow();
+					return;
+					*/
+				}	
+			}
+			else
+			{
+				fDbg2("Hello failed.");
+				// display info SCP
+			}
+			
+			fDbg2("==============================");
+			fDbg2(o.CHUMBY_GUID);
+			fDbg2(o.CHUMBY_DCID);
+			fDbg2(o.CHUMBY_HWVERSION);
+			fDbg2(o.CHUMBY_FWVERSION);
+			fDbg2(o.CHUMBY_FLASHPLAYER);
+			fDbg2(o.CHUMBY_NETWORK_IF);
+			fDbg2(o.CHUMBY_NETWORK_UP);
+			fDbg2(o.CHUMBY_NETWORK_IP);
+			fDbg2(o.CHUMBY_NETWORK_BROADCAST);
+			fDbg2(o.CHUMBY_NETWORK_NETMASK);
+			fDbg2(o.CHUMBY_NETWORK_GATEWAY);
+			fDbg2(o.CHUMBY_NETWORK_NAMESERVER1);
+			fDbg2("==============================");
+			
+			// check for access point : chumby device? browser from other computer/device?
+			// if (document.location.href.indexOf("localhost") == -1)
+			// {
+				// cCPanel.
+				// return;
+			// }
+				// simulation for local testing
+
+			
+			// force write over GUID and URLs
+			if (!cJSCore.kProductionMode)
+			{
+				cModel.instance.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUIDfDbg2("yes!!!");
+			}
+			else
+			{
+				
+			}
+			
+			cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
+			
+			// check if has GUID, server add
+			var fAjaxReturn = function(vData) {
+				cJSCore.instance.fStartUpReturn(vData);
+				if (vReturnFun)
+					vReturnFun(vData);
+			};
+			
+			if (o.CHUMBY_GUID && o.SERVER_URL && o.LOCALBRIDGE_URL)
+			{
+				cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + o.SERVER_URL + "?id=" + o.CHUMBY_GUID + "</value>"}, fAjaxReturn);
+			}
+		});
 	};
 	
-	if (this.mModel.CHUMBY_GUID && this.mModel.SERVER_URL && this.mModel.LOCALBRIDGE_URL)
-	{
-		// cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "&nocache=4682&dcid_skin=0000" + "</value>"}, fAjaxReturn);
-		cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + this.mModel.SERVER_URL + "?id=" + this.mModel.CHUMBY_GUID + "</value>"}, fAjaxReturn);
-	}
+	fun1();
+	
 }
 
 cJSCore.prototype.fStartUpReturn = function(

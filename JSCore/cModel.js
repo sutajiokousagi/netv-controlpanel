@@ -18,8 +18,21 @@ function cModel(
 	this.USER_NAME = "";
 	this.USER_ID = "";
 
-	this.CHUMBY_GUID = "";
 	this.CHUMBY_NAME = "";
+	this.CHUMBY_GUID = "";
+	this.CHUMBY_DCID = "";
+	this.CHUMBY_HWVERSION = "";
+	this.CHUMBY_FWVERSION = "";
+	this.CHUMBY_FLASHPLAYER = "";
+	
+	this.CHUMBY_NETWORK_IF = "";
+	this.CHUMBY_NETWORK_UP = "";
+	this.CHUMBY_NETWORK_IP = "";
+	this.CHUMBY_NETWORK_BROADCAST = "";
+	this.CHUMBY_NETWORK_NETMASK = "";
+	this.CHUMBY_NETWORK_GATEWAY = "";
+	this.CHUMBY_NETWORK_NAMESERVER1 = "";
+	this.CHUMBY_NETWORK_NAMESERVER2 = "";
 	
 	this.PROFILE_HREF = "";
 	this.PROFILE_NAME = "";
