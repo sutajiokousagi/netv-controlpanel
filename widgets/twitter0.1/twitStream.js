@@ -22,6 +22,7 @@ String.prototype.linktag=function(){
 };
 var showTweetLinks = 'none';
 var mHWidth = 0;
+var mFailSafeTimer = null;
 
 function fetch_tweets(elem){
 	elem=$(elem);
@@ -29,6 +30,12 @@ function fetch_tweets(elem){
 	num=elem.attr('class').split(' ').slice(-1);
 	var url="http://search.twitter.com/search.json?q="+keyword+"&rpp="+num+"&callback=?";
 	$.getJSON(url,function(json){
+		//alert(json.results);
+		if (json.results && json.results.length > 1)
+		{
+			clearInterval(mFailSafeTimer);
+			mFailSafeTimer = null;
+		}
 		$(json.results).each(function(){
 			var tTime=new Date(Date.parse(this.created_at));
 			var cTime=new Date();
@@ -95,5 +102,8 @@ $(function(){
 		showTweetLinks='reply,view,rt';
 	$('.twitStream').each(function(){
 		fetch_tweets(this);
+		mFailSafeTimer = setInterval(function() {
+			window.location.reload();
+		}, 5000);
 	});
 });

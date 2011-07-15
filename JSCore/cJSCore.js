@@ -25,9 +25,10 @@ function cJSCore(
 {
 	// CONNECTION LINKS
 	this.CPANEL = null;
-	
+
 	if (location.href.indexOf("localhost") == -1)
-		location.href = "test.html";
+		if (location.href.indexOf("usr/share") == -1)
+			location.href = "test.html";
 	
 	// members
 	this.mJSClassList = [
@@ -102,11 +103,10 @@ fDbg("*** cJSCore, fStartUp()");
 
 
 // do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
-cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
+cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
+//cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
-
 
 	var fun1 = function() {
 		
@@ -126,8 +126,9 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 			fDbg2("----------------------");
 			fDbg2(vData.split("</flashplugin>")[0].split("<flashplugin>")[1]);
 			fDbg2(vData.split("</network>")[0].split("<network>")[1].length);
+			fDbg2(vData.split("</network>")[0].split("<network>")[1].substring(0, 10));
+			fDbg2("asdgasdg");
 			fDbg2("----------------------");
-
 			
 			
 			var o;
@@ -144,7 +145,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 				if (vData.split("</network>")[0].split("<network>")[1].length < 100)
 				{
 					// has no network
-
+					fDbg2(" has no network....");
 					// display info SCP
 					cProxy.fCPanelInfoPanelShow();
 					return;
@@ -162,12 +163,13 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 
 
 					clearInterval(vInterval);
-					/*
+					$("#div_startup").hide();
+					
 					// display info SCP
-					o.CHUMBY_NETWORK_UP = "";
-					cProxy.fCPanelInfoPanelShow();
-					return;
-					*/
+					//~ o.CHUMBY_NETWORK_UP = "";
+					//~ cProxy.fCPanelInfoPanelShow();
+					//~ return;
+					
 				}	
 			}
 			else
@@ -286,7 +288,7 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	var o;
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	cJSCore.instance.fPreloadChannelThumbnails(o);
+	//~ cJSCore.instance.fPreloadChannelThumbnails(o);
 	
 	
 	// show and play widget
@@ -477,4 +479,12 @@ function fLoadExtJSScript(
 	
 	document.getElementsByTagName("head")[0].appendChild(script);
 //~ fDbg2("*** fLoadScript(), loading " + vUrl);
+}
+
+
+function fServerReset(
+	vData		// true | false
+)
+{
+	fDbg2("fServerReset(), " + vData);
 }

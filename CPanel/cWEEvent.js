@@ -14,7 +14,9 @@ function cWEEvent(
 {
 	this.mDiv = vDivObj;
 
-	this.mMessageList = [];
+	this.mMessageList = [
+
+	];
 	this.mPrevMessage = "";
 	this.mEventEngineInterval = null;
 

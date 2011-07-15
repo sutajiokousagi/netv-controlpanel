@@ -111,9 +111,11 @@ cCPanel.prototype.fInit = function(
 	this.fHideAll();
 	
 	// show div(s) for initialization
+
 	
-	$("#div_loader").fadeIn();
-	$("#div_messageBoard").fadeIn();
+	$("#div_startup").show();
+	$("#div_loader").show();
+	$("#div_messageBoard").show();
 	
 	var vViewPortSize = [];
 	var vWidgetEdgeOffset = [50, 50];
@@ -250,7 +252,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				});
 				break;
 			case "flashwidgetengine":
-				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, null);
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 469 320 240</value>"}, null);
 				cCPanel.instance.pState("flashwidgetengine");
 				cCPanel.instance.mLocked = false;
 				break;
@@ -453,12 +455,25 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 
 	case cConst.SIGNAL_SCPINFO_SHOW:
-		$("#div_loader").hide(function() {
-			$("#div_messageBoard").fadeOut(function() {
+		fDbg("to show info page...");
+		if ($("#div_startup").is(":visible"))
+		{
+			$("#div_loader").hide();
+			$("#div_messageBoard").hide();
+			$("#div_startup").fadeOut(function() {
 				$("#div_infoMain").fadeIn();
 				mCPanel.mSubState = "infomain";
 			});
-		});
+		}
+		else
+		{
+			$("#div_loader").hide(function() {
+				$("#div_messageBoard").fadeOut(function() {
+					$("#div_infoMain").fadeIn();
+					mCPanel.mSubState = "infomain";
+				});
+			});
+		}
 		break;
 		
 	case cConst.SIGNAL_WIDGETENGINE_SHOW:
@@ -478,9 +493,9 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			break;
 		case "flashwidgetengine":
 			cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
-			cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
-			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
+			//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
 			mCPanel.fShowControlPanel();
 			break;
 		case "eventwidgetengine":
@@ -494,9 +509,9 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			{
 			case "flashwidgetengine":
 				cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
-				cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
-				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
+				//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
 				mCPanel.fShowControlPanel();
 				break;
 			case "htmlwidgetengine":
@@ -704,11 +719,12 @@ cCPanel.prototype.fShowControlPanel = function(
 fDbg("*** cCPanel, fShowControlPanel(), ");
 	var o;
 	
+	$("#div_tempBg").hide();
 	$("#div_tempBg").show();
 	$("#div_tempBg").css("top", "-720px");
 	$("#div_tempBg").animate({
 		top: "+=720px"
-	}, 100, function() {
+	}, 1000, function() {
 		$("#div_tempBg").hide();
 	});
 	
@@ -793,7 +809,7 @@ cCPanel.prototype.fShowHTMLWidgetEngine2 = function(
 		$("#div_htmlWidgetPlayer").css("top", "720px");
 		$("#div_htmlWidgetPlayer").animate({
 			top: "-=80"
-		}, 300, function() {
+		}, 200, function() {
 			vReturnFun();
 		});
 	}
@@ -848,20 +864,21 @@ cCPanel.prototype.fSetHTMLWidgetEngineSizeReturn = function(
 {
 fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
 	var o, p;
-	o = 'http://localhost/widgets/twitter0.1/index.html';
+	o = 'http://localhost/widgets/twitter0.2/index.html';
 	
-	//p = setTimeout(function() {
 		$("#div_htmlWidgetPlayer").show();
 		$("#div_htmlWidgetPlayer").css("top", "720px");
+	p = setTimeout(function() {
 		$("#div_htmlWidgetPlayer").animate({
 			top: "-=80"
-		}, 300, function() {
+		}, 200, function() {
 		
 		});
-	//}, 800);
+	}, 1000);
 	
-	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px; background-color:rgba(255, 255, 255, 1)"></iframe>');
+	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px;"></iframe>');
 	this.pState("htmlwidgetengine");
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -874,7 +891,7 @@ cCPanel.prototype.fHideHTMLWidgetEngine = function(
 fDbg("*** cCPanel, fHideHTMLWidgetEngine(), ");
 	$("#div_htmlWidgetPlayer").animate({
 		top: "+=80"
-	}, 300, function() {
+	}, 200, function() {
 		cCPanel.instance.fHideHTMLWidgetEngineReturn(null, vReturnFun);
 	});
 }
@@ -948,9 +965,9 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
 		fDbg2("===> " + vData.split("<value>")[1].split("</value>")[0]);
 	});
 	
-	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 479 320 240</value>"}, null);
-	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 465 320 240</value>"}, null);
+	//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 }
 
 cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(

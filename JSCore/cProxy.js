@@ -43,12 +43,14 @@ cProxy.xmlhttpPost = function(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-//~ fDbg2("*** cProxy, " + vType.toUpperCase() + " >> " + strURL);
+fDbg2("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd);
 	
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();
 	
-	xmlHttpReq.open(vType, cModel.fGetInstance().LOCALBRIDGE_URL, true);
+	//~ if (!strURL || strURL == "")
+		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
+	xmlHttpReq.open(vType, strURL, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()
 	{
