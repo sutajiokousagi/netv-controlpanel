@@ -28,6 +28,7 @@ function cModel(
 	this.CHUMBY_NETWORK_IF = "";
 	this.CHUMBY_NETWORK_UP = "";
 	this.CHUMBY_NETWORK_IP = "";
+	this.CHUMBY_NETWORK_MAC = "";
 	this.CHUMBY_NETWORK_BROADCAST = "";
 	this.CHUMBY_NETWORK_NETMASK = "";
 	this.CHUMBY_NETWORK_GATEWAY = "";

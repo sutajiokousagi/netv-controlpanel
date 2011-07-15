@@ -122,7 +122,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 		}, 2000);
 			
 		
-		cProxy.xmlhttpPost("", "post", {cmd : "Hello", data: ""}, function(vData) {
+		cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
 			fDbg2("----------------------");
 			fDbg2(vData.split("</flashplugin>")[0].split("<flashplugin>")[1]);
 			fDbg2(vData.split("</network>")[0].split("<network>")[1].length);
@@ -141,6 +141,14 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 				o.CHUMBY_HWVERSION = vData.split("</hwver>")[0].split("<hwver>")[1];
 				o.CHUMBY_FWVERSION = vData.split("</fwver>")[0].split("<fwver>")[1];
 				o.CHUMBY_FLASHPLAYER = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
+				o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
+
+				$("#div_info_guid").html(o.CHUMBY_GUID);
+				$("#div_info_dcid").html(o.CHUMBY_DCID);
+				$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
+				$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
+				$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
+				
 				
 				if (vData.split("</network>")[0].split("<network>")[1].length < 100)
 				{
@@ -161,6 +169,8 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 					o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
 					o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
 
+					
+					$("#div_info_ip").html(o.CHUMBY_NETWORK_IP);
 
 					clearInterval(vInterval);
 					$("#div_startup").hide();
