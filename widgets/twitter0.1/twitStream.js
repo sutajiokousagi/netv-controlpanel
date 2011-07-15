@@ -104,6 +104,6 @@ $(function(){
 		fetch_tweets(this);
 		mFailSafeTimer = setInterval(function() {
 			window.location.reload();
-		}, 5000);
+		}, 3200);
 	});
 });

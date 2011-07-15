@@ -252,7 +252,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				});
 				break;
 			case "flashwidgetengine":
-				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 469 320 240</value>"}, null);
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
 				cCPanel.instance.pState("flashwidgetengine");
 				cCPanel.instance.mLocked = false;
 				break;
@@ -495,7 +495,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 			//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
+			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 			mCPanel.fShowControlPanel();
 			break;
 		case "eventwidgetengine":
@@ -511,7 +511,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 				//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
-				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 				mCPanel.fShowControlPanel();
 				break;
 			case "htmlwidgetengine":
@@ -966,7 +966,7 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
 	});
 	
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 465 320 240</value>"}, null);
+	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 }
 

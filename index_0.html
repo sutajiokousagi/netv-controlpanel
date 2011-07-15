@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>NeTV Configuration</title>
+<script type='text/javascript' src='./html_remote/browser_detect.js'></script>
+<script type='text/javascript' src='./html_remote/remote.js'></script>
+<script language="javascript">
+	function onLoad()
+	{
+		document.all.browserDetect_browser.innerHTML = "Browser: " + BrowserDetect.browser;
+		document.all.browserDetect_version.innerHTML = "Version: " + BrowserDetect.version;
+		document.all.browserDetect_os.innerHTML = "OS: " + BrowserDetect.OS;
+	}
+</script>
+<style>
+	body {
+		font-family: Verdana;
+		margin: 0px;
+		background-color: #444444;
+		color: #EEEEEE;
+	}
+</style>
+</head>
+<body>
+		
+</body>
+</html>

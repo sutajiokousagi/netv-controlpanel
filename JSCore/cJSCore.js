@@ -103,7 +103,7 @@ fDbg("*** cJSCore, fStartUp()");
 
 
 // do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
-cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 705</value>"}, function() {});
+cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
