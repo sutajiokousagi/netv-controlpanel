@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>TwitStream - Sample</title>
+<style type="text/css">
+body{
+	font-family: Verdana;
+	font-size: 12px;	
+}
+</style>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="twitStream.js"></script>
+<script type="text/javascript">
+showTweetLinks='all';
+</script>
+<link rel="stylesheet" href="twit-stream.css" />
+<script language="javascript">
+	var vViewPortSize = [];
+	var mInterval = null;
+	var mSpeed = 1;
+	
+	$(function() {
+		if (typeof window.innerWidth != 'undefined')
+		{
+			vViewPortSize[0] = window.innerWidth,
+			vViewPortSize[1] = window.innerHeight
+		}
+		$("#twitstream_container").css("left", (vViewPortSize[0] - parseFloat($("#twitstream_container").css("width").split("px")[0])) / 2 + "px");
+		
+		//fStart();
+		mInterval = setTimeout ("fStart()", 20);
+	});
+
+	
+	
+	function fStart()
+	{
+		var o = [parseInt($("#tweets").css("width").split("px")[0]), parseFloat($("#tweets").css("left").split("px")[0])];
+		$("#tweets").css("left", (parseInt($("#tweets").css("left").split("px")[0]) - mSpeed) + "px");
+		//alert(o[0] + o[1]);
+		if (o[0] + o[1] < 1279)
+		{
+			window.location.reload();
+		}
+		mInterval = setTimeout ("fStart()", 20);
+	}
+</script>
+</head>
+
+<body>
+<!--
+<p>Five most recent tweets mentioning <a target="_blank" href="http://search.twitter.com/search?q=china">chumby</a>:</p>
+-->
+<div id="twitstream_container" style="position: absolute; width: 1279px; height: 68px; overflow: hidden; border: solid black 0px;">
+<div class="twitStream 10" id="tweets" title="harry%20potter" ></div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<html>
+<head>
+	<title>Twitter JavaScript API</title>
+	<script type="text/javascript" src="twitter.js"></script>
+<!--
+	<link type="text/css" rel="stylesheet" href="scripts/twitter.css"/>
+-->
+</head>
+<body>
+
+	<div><strong>Latest Twitter</strong></div>
+	
+	<table>
+		<tr>
+			<td>
+			
+				<div id="twitter_single" class="twitter_wrap"></div>
+				
+				<div id="speech_single" class="speech">
+					<img src="images/arr.gif" alt=""/>
+				</div>
+			
+			</td>
+		</tr>
+	</table>
+	
+	<table>
+		<tr>
+			<!--<td>
+	
+				<div id="twitter" class="twitter_wrap">
+					<h3>My Twitters</h3>
+				</div>
+				
+				<div id="speech" class="speech">
+					<img src="images/arr.gif" alt=""/>
+				</div>
+		
+			</td>-->
+			<td>
+	
+				<div id="profile" class="profile">
+					<img id="profile_image" alt=""/>
+					<span id="screen_name" class="screen_name"></span>
+				</div>
+			
+				<div id="speech" class="speech">
+					<img src="images/arr2.gif" alt=""/>
+				</div>
+			
+				<div id="twitter_limit" class="twitter_wrap"></div>
+		
+			</td>
+			<td>
+			
+				<div id="profile_bob" class="profile">
+					<img id="profile_image_bob" alt=""/>
+					<span id="screen_name_bob" class="screen_name"></span>
+				</div>
+			
+				<div id="speech_bob" class="speech">
+					<img src="images/arr2.gif" alt=""/>
+				</div>
+				
+				<div id="twitter_friends" class="twitter_wrap"></div>
+			
+			</td>
+			<td>
+				
+				<div id="twitter_public" class="twitter_wrap">
+					<h3>Public Timeline</h3>
+				</div>
+				
+				<div id="speech_public" class="speech">
+					<img src="images/arr.gif" alt=""/>
+				</div>
+				
+			</td>
+		</tr>
+	</table>
+	
+	<script type="text/javascript">
+		Twitter.SingleStatus({update:"twitter_single",id:"247009372"});
+		Twitter.GetUserProfile({user:"justin_",onload:function() {
+			document.getElementById("profile_image").src = Twitter.UserProfile.ImageUrl;
+			document.getElementById("screen_name").innerHTML = Twitter.UserProfile.Name + " says";
+		}});
+		Twitter.GetUserProfile({user:"bob",onload:function() {
+			document.getElementById("profile_image_bob").src = Twitter.UserProfile.ImageUrl;
+			document.getElementById("screen_name_bob").innerHTML = Twitter.UserProfile.Name + "'s friends say";
+		}});
+		//Twitter.UserTimeline({user:"justin_",update:"twitter"});
+		Twitter.UserTimeline({user:"justin_",update:"twitter_limit",limit:true});
+		Twitter.FriendsTimeline({user:"bob",update:"twitter_friends"});
+		Twitter.PublicTimeline({update:"twitter_public"});
+	</script>
+	
+</body>
+</html>
