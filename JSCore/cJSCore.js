@@ -298,7 +298,7 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	var o;
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	//~ cJSCore.instance.fPreloadChannelThumbnails(o);
+	cJSCore.instance.fPreloadChannelThumbnails(o);
 	
 	
 	// show and play widget
