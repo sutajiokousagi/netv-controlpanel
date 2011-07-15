@@ -496,5 +496,9 @@ function fServerReset(
 	vData		// true | false
 )
 {
+	if (vData == "true" || vData == true)
+	{
+		location.href="http://localhost/";
+	}
 	fDbg2("fServerReset(), " + vData);
 }
