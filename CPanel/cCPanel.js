@@ -9,7 +9,7 @@
 //	static members
 // -------------------------------------------------------------------------------------------------
 var mGCPanelStatic = {
-	mShowDbg : true
+	mShowDbg : false
 };
 
 
