@@ -9,7 +9,7 @@
 //	static members
 // -------------------------------------------------------------------------------------------------
 var mGCPanelStatic = {
-	mShowDbg : false
+	mShowDbg : true
 };
 
 
@@ -114,6 +114,11 @@ cCPanel.prototype.fInit = function(
 
 	
 	$("#div_startup").show();
+	$("#div_startup_logo").animate({}, 3000, function() {
+
+
+	});
+	
 	$("#div_loader").show();
 	$("#div_messageBoard").show();
 	
@@ -727,11 +732,12 @@ fDbg("*** cCPanel, fShowControlPanel(), ");
 	}, 1000, function() {
 		$("#div_tempBg").hide();
 	});
-	
+
 	$("#div_CPanel").css("left", "-960px");
 	$("#div_CPanel").animate({
 		left: "+=1200"
 	}, 800, function() {
+		
 		switch (cCPanel.instance.mState)
 		{
 		case "htmlwidgetengine": o = 1; break;
