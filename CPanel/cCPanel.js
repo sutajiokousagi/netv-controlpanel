@@ -28,7 +28,8 @@ function cCPanel(
 	this.mJSClassList = [
 		"./CPanel/cSubCPanelChannelMain.js",
 		"./CPanel/cSCPChannelWidgetsMain.js",
-		"./CPanel/cWEEvent.js"
+		"./CPanel/cWEEvent.js",
+		"./CPanel/cSCPInfo.js"
 	];
 	
 	this.mMessageDisplayInProgress = false;
@@ -145,6 +146,14 @@ cCPanel.prototype.fInit = function(
 	
 	// load other js classes
 	fLoadExtJSScript(this.mJSClassList, vReturnFun);
+
+
+
+
+	$(window).resize(function() {
+		fDbg2("*** window resize : " + $(window).width() + ", " + $(window).height());
+	});
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -184,6 +193,7 @@ cCPanel.prototype.fStartUp = function(
 	this.mSubCPanelList[1].mSubCPanel = cSubCPanelChannelMain.fGetInstance($("#div_channelMain"));
 	this.mSCPChannelWidgetsMain = cSCPChannelWidgetsMain.fGetInstance($("#div_flashWidgetMain"));
 	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
+	this.mSCPInfo = cSCPInfo.fGetInstance($("#div_infoMain"));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -299,13 +309,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				}
 				break;
 			case "infomain":
-				if ($("#div_infoMain_content_basic").is(":visible"))
-					o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-				else
-					o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-				o[0].fadeOut(200, function() {
-					o[1].fadeIn(200);
-				});
+				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			}
 		}
@@ -335,14 +339,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				}
 				break;
 			case "infomain":
-				if ($("#div_infoMain_content_basic").is(":visible"))
-					o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-				else
-					o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-
-				o[0].fadeOut(200, function() {
-					o[1].fadeIn(200);
-				});
+				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			}
 		}
@@ -480,6 +477,10 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			});
 		}
 		break;
+
+	case cConst.SIGNAL_SCPINFO_UPDATE:
+		cSCPInfo.fGetInstance().fUpdate();
+		break;
 		
 	case cConst.SIGNAL_WIDGETENGINE_SHOW:
 		//mCPanel.fShowWidgetEngine();
@@ -499,7 +500,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		case "flashwidgetengine":
 			cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
-			//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 			mCPanel.fShowControlPanel();
 			break;
@@ -515,7 +515,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			case "flashwidgetengine":
 				cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
-				//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 				mCPanel.fShowControlPanel();
 				break;
@@ -965,7 +964,7 @@ fDbg("*** cCPanel, fHideHTMLWidgetEngineReturn(), " + vData);
 cCPanel.prototype.fShowFLASHWidgetEngine = function(
 )
 {
-fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
+fDbg2("*** cCPanel, fShowFLASHWidgetEngine(), ");
 	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function(vData) {
 		fDbg2("===> " + vData.split("<status>")[1].split("</status>")[0]);
 		fDbg2("===> " + vData.split("<value>")[1].split("</value>")[0]);
@@ -974,6 +973,22 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngine(), ");
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
 	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
+	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
+		fDbg2(vData);
+	});
+	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
+	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
+	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
+	return;
+	var vCount = 0;
+	var o = setInterval(function() {
+		cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
+			fDbg2(vData);
+		});
+		vCount++;
+		if (vCount == 3)
+			clearInterval(o);
+	}, 3000);
 }
 
 cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(
@@ -993,7 +1008,7 @@ fDbg("*** cCPanel, fShowFLASHWidgetEngineReturn(), " + vData);
 cCPanel.prototype.fSetWidgetEngineSize = function(
 )
 {
-fDbg("*** cCPanel, fSetWidgetEngineSize(), ");
+fDbg2("*** cCPanel, fSetWidgetEngineSize(), ");
 
 	$("#div_CPanel").animate({
 		left: "-=1200"
@@ -1030,7 +1045,7 @@ cCPanel.prototype.fSetWidgetEngineSizeReturn = function(
 	vData
 )
 {
-fDbg("*** cCPanel, fSetWidgetEngineSizeReturn(), " + vData);
+fDbg2("*** cCPanel, fSetWidgetEngineSizeReturn(), " + vData);
 	//~ $("#div_flashWidgetPlayer").show();
 	//~ $("#div_flashWidgetPlayer").css("left", "1000px");
 	//~ $("#div_flashWidgetPlayer").css("top", "520px");
@@ -1044,7 +1059,7 @@ fDbg("*** cCPanel, fSetWidgetEngineSizeReturn(), " + vData);
 cCPanel.prototype.fPlayWidget = function(
 )
 {
-fDbg("*** cCPanel, fPlayWidget(), ");
+fDbg2("*** cCPanel, fPlayWidget(), ");
 	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, cCPanel.instance.fPlayWidgetReturn);
 }
 
@@ -1052,7 +1067,7 @@ cCPanel.prototype.fPlayWidgetReturn = function(
 	vData
 )
 {
-fDbg("*** cCPanel, fPlayWidgetReturn(), " + vData);
+fDbg2("*** cCPanel, fPlayWidgetReturn(), " + vData);
 	
 }
 

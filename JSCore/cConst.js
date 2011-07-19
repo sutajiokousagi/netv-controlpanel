@@ -19,6 +19,7 @@ cConst.SIGNAL_CHANNELDIV_SHOW = "signal_channeldiv_show";
 cConst.SIGNAL_CHANNELDIV_HIDE = "signal_channeldiv_hide";
 cConst.SIGNAL_SCPINFO_SHOW = "signal_scpinfo_hide";
 cConst.SIGNAL_SCPINFO_HIDE = "signal_scpinfo_hide";
+cConst.SIGNAL_SCPINFO_UPDATE = "signal_scpinfo_update";
 
 cConst.SIGNAL_WIDGETENGINE_SHOW = "signal_widgetengine_show";
 cConst.SIGNAL_WIDGET_NEXT = "signal_widget_next";
@@ -45,8 +46,8 @@ cConst.SIGNAL_BUTTON_DOWN = "signal_button_down";
 //	states
 // -------------------------------------------------------------
 cConst.STATE_CONTROLPANEL = "state_controlpanel";
-cCOnst.STATE_HTMLWIDGETENGINE = "state_htmlwidgetengine";
-cCOnst.STATE_FLASHWIDGETENGINE = "state_flashwidgetengine";
+cConst.STATE_HTMLWIDGETENGINE = "state_htmlwidgetengine";
+cConst.STATE_FLASHWIDGETENGINE = "state_flashwidgetengine";
 
 cConst.STATE_SUB_FLASHCHANNELWIDGETSMAIN = "state_sub_flashchannelwidgetsmain";
 cConst.STATE_SUB_HTMLCHANNELWIDGETSMAIN = "state_sub_htmlchannelwidgetsmain";

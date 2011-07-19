@@ -34,8 +34,12 @@ function fDbg(v)
 }
 function fDbg2(v)
 {
-	$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
-	document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+	if ($("#div_dbg").length > 0)
+	{
+		$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
+		document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+	}
+	console.log("|~|" + v);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -418,16 +422,16 @@ function fButtonPress(
 
 
 
-
 <!--
 -----------------------------------------------
 -------------debug div
 -----------------------------------------------
 -->
+<!--
 <div id="div_dbg_container" style="float: right; height: 450px; width: 240px; overflow: hidden; background-color: white; z-index: 1000;">
 <div id="div_dbg" style="position: absolute; top: 10px; height: 450px; width: 240px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
-
+-->
 
 
 

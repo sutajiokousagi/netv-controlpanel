@@ -23,7 +23,9 @@ function cModel(
 	this.CHUMBY_DCID = "";
 	this.CHUMBY_HWVERSION = "";
 	this.CHUMBY_FWVERSION = "";
+	this.CHUMBY_FLASHPLUGIN = "";
 	this.CHUMBY_FLASHPLAYER = "";
+	this.CHUMBY_INTERNET = "";
 	
 	this.CHUMBY_NETWORK_IF = "";
 	this.CHUMBY_NETWORK_UP = "";

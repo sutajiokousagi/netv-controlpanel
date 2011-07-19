@@ -13,6 +13,9 @@ function cTimerModule(
 {
 	this.mHeartBeat = null;
 	
+	
+	this.mPrevTime = null;
+	
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -41,5 +44,9 @@ cTimerModule.prototype.fInit = function(
 cTimerModule.prototype.fHeartBeat = function(
 )
 {
-	//~ fDbg("*** HEARTBEAT ***");
+	var vDate = new Date();
+	//~ fDbg2("*** HEARTBEAT ***");
+	
+	//~ fDbg2((new Date().getHours()) + ":" + (new Date().getMinutes()) + ":" + (new Date().getSeconds()) + "." + (new Date().getMilliseconds()) + " --- " + (new Date().getSeconds() * 1000 + new Date().getMilliseconds() - this.mPrevTime));
+	this.mPrevTime = vDate.getHours()*3600000 + vDate.getMinutes()*60000 + vDate.getSeconds() * 1000 + vDate.getMilliseconds();
 }

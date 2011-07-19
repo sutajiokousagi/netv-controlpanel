@@ -136,3 +136,10 @@ cProxy.fCPanelInfoPanelShow = function(
 fDbg2("*** cProxy, fCPanelInfoPanelShow(), ");
 	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_SHOW, null, null);
 }
+
+cProxy.fCPanelInfoPanelUpdate = function(
+)
+{
+fDbg2("*** cProxy, fCPanelInfoPanelUpdate(), ");
+	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
+}

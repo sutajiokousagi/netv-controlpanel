@@ -105,7 +105,7 @@ fDbg("*** cJSCore, fStartUp()");
 // do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
 cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 //cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Minimize</value>"}, function() {});
+cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Hide</value>"}, function() {});
 cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
 
 	var fun1 = function() {
@@ -123,13 +123,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 			
 		
 		cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
-			fDbg2("----------------------");
-			fDbg2(vData.split("</flashplugin>")[0].split("<flashplugin>")[1]);
-			fDbg2(vData.split("</network>")[0].split("<network>")[1].length);
-			fDbg2(vData.split("</network>")[0].split("<network>")[1].substring(0, 10));
-			fDbg2("asdgasdg");
-			fDbg2("----------------------");
-			
+			//fDbg2(vData);
 			
 			var o;
 			o = cModel.fGetInstance();
@@ -140,20 +134,18 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 				o.CHUMBY_DCID = vData.split("</dcid>")[0].split("<dcid>")[1];
 				o.CHUMBY_HWVERSION = vData.split("</hwver>")[0].split("<hwver>")[1];
 				o.CHUMBY_FWVERSION = vData.split("</fwver>")[0].split("<fwver>")[1];
-				o.CHUMBY_FLASHPLAYER = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
+				o.CHUMBY_FLASHPLUGIN = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
+				o.CHUMBY_FLASHPLAYER = vData.split("</flashver>")[0].split("<flashver>")[1];
 				o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
+				o.CHUMBY_INTERNET = vData.split("</internet>")[0].split("<internet>")[1];
+				
+				cProxy.fCPanelInfoPanelUpdate();
 
-				$("#div_info_guid").html(o.CHUMBY_GUID);
-				$("#div_info_dcid").html(o.CHUMBY_DCID);
-				$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
-				$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
-				$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
 				
-				
-				if (vData.split("</network>")[0].split("<network>")[1].length < 100)
+				if (vData.split("</internet>")[0].split("<internet>")[1] != "true")
 				{
 					// has no network
-					fDbg2(" has no network....");
+					fDbg2("sadly... has no network....");
 					// display info SCP
 					cProxy.fCPanelInfoPanelShow();
 					return;
@@ -187,30 +179,6 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 				fDbg2("Hello failed.");
 				// display info SCP
 			}
-			
-			fDbg2("==============================");
-			fDbg2(o.CHUMBY_GUID);
-			fDbg2(o.CHUMBY_DCID);
-			fDbg2(o.CHUMBY_HWVERSION);
-			fDbg2(o.CHUMBY_FWVERSION);
-			fDbg2(o.CHUMBY_FLASHPLAYER);
-			fDbg2(o.CHUMBY_NETWORK_IF);
-			fDbg2(o.CHUMBY_NETWORK_UP);
-			fDbg2(o.CHUMBY_NETWORK_IP);
-			fDbg2(o.CHUMBY_NETWORK_BROADCAST);
-			fDbg2(o.CHUMBY_NETWORK_NETMASK);
-			fDbg2(o.CHUMBY_NETWORK_GATEWAY);
-			fDbg2(o.CHUMBY_NETWORK_NAMESERVER1);
-			fDbg2("==============================");
-			
-			// check for access point : chumby device? browser from other computer/device?
-			// if (document.location.href.indexOf("localhost") == -1)
-			// {
-				// cCPanel.
-				// return;
-			// }
-				// simulation for local testing
-
 			
 			// force write over GUID and URLs
 			if (!cJSCore.kProductionMode)
