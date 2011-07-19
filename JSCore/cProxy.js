@@ -43,7 +43,7 @@ cProxy.xmlhttpPost = function(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-fDbg2("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd);
+//~ fDbg2("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd);
 	
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();

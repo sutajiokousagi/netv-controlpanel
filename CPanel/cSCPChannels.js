@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cSCPInfo class
+//	cSCPChannels class
 //
 //
 //
@@ -8,48 +8,44 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cSCPInfo(
+function cSCPChannels(
 	vDivObj
 )
 {
 	this.mDiv = vDivObj;
-
-
-	this.fInit();
+	this.mSelectedChannel = null;
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.instance = null;
-cSCPInfo.fGetInstance = function(
+cSCPChannels.instance = null;
+cSCPChannels.fGetInstance = function(
 	vDivObj
 )
 {
-	return cSCPInfo.instance ? cSCPInfo.instance : cSCPInfo.instance = new cSCPInfo(vDivObj);
+	return cSCPChannels.instance ? cSCPChannels.instance : cSCPChannels.instance = new cSCPChannels(vDivObj);
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fInit = function(
+cSCPChannels.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSCPInfo, fInit(), ");
-	$("#div_infoMain_content_basic").show();
-	$("#div_infoMain_content_advanced").hide();
+	
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fOnSignal
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fOnSignal = function(
+cSCPChannels.prototype.fOnSignal = function(
 	vSignal,		// string
 	vData,			// data array
 	vReturnFun		// return function call
 )
 {
-fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
+fDbg("*** cSCPChannels, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o;
 	
 	switch(vSignal)
@@ -61,24 +57,17 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
+		o = this.fGetSelected()[0];
+		if (o > 0)
+			o--;
+		this.fSetSelected([o]);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
+		o = this.fGetSelected()[0];
+		if (o < 2)
+			o++;
+		this.fSetSelected([o]);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
@@ -95,12 +84,12 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 // -------------------------------------------------------------------------------------------------
 //	fShow / fHide
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fShow = function(
+cSCPChannels.prototype.fShow = function(
 )
 {
 	this.mDiv.show();
 }
-cSCPInfo.prototype.fHide = function(
+cSCPChannels.prototype.fHide = function(
 )
 {
 	this.mDiv.hide();
@@ -109,29 +98,48 @@ cSCPInfo.prototype.fHide = function(
 // -------------------------------------------------------------------------------------------------
 //	fFadeIn / fFadeOut
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fFadeIn = function(
+cSCPChannels.prototype.fFadeIn = function(
 )
 {
 	this.mDiv.fadeIn(500, function() {});
 }
-cSCPInfo.prototype.fFadeOut = function(
+cSCPChannels.prototype.fFadeOut = function(
 )
 {
 	this.mDiv.fadeOut(500, function() {});
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fUpdate
+//	fGetSelected
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fUpdate = function(
+cSCPChannels.prototype.fGetSelected = function(
 )
 {
 	var o;
-	o = cModel.fGetInstance();
+	if ($('#div_channelMain_channelThumbnail_0_shadow').is(':visible'))
+		o = [0];
+	else if ($('#div_channelMain_channelThumbnail_1_shadow').is(':visible'))
+		o = [1];
+	else if ($('#div_channelMain_channelThumbnail_2_shadow').is(':visible'))
+		o = [2];
+
+	return o;
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fRenderChannelMain
+// -------------------------------------------------------------------------------------------------
+cSCPChannels.prototype.fSetSelected = function(
+	vData,
+	vReturnFun
+)
+{
+	var i;
 	
-	$("#div_info_guid").html(o.CHUMBY_GUID);
-	$("#div_info_dcid").html(o.CHUMBY_DCID);
-	$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
-	$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
-	$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
+	for (i = 0; i < 3; i++)
+		$("#div_channelMain_channelThumbnail_" + i + "_shadow").hide();
+	$("#div_channelMain_channelThumbnail_" + vData[0] + "_shadow").show();
+
+	if (vReturnFun)
+		vReturnFun();
 }

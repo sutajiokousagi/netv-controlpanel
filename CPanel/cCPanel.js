@@ -12,7 +12,6 @@ var mGCPanelStatic = {
 	mShowDbg : false
 };
 
-
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
@@ -23,17 +22,15 @@ function cCPanel(
 	this.mModel = null;
 	
 	this.mLocked = false;
-	this.mEventEngineInterval = null;
-
 	this.mJSClassList = [
-		"./CPanel/cSubCPanelChannelMain.js",
+		"./CPanel/cSCPMessage.js",
+		"./CPanel/cSCPChannels.js",
 		"./CPanel/cSCPChannelWidgetsMain.js",
+		"./CPanel/cSCPInfo.js",
 		"./CPanel/cWEEvent.js",
-		"./CPanel/cSCPInfo.js"
+		"./CPanel/cWEFlash.js"
 	];
 	
-	this.mMessageDisplayInProgress = false;
-	this.mMessageList = [];
 	this.mSubCPanelList = [
 		{
 			mSubStateName : "flashchannelwidgetsmain",
@@ -56,11 +53,14 @@ function cCPanel(
 			mSubCPanel : null
 		}
 	];
+	
 	// components
-	this.mSCPChannelMain = null;
-	this.mSCPChannelWidgetsMain = null;
+	this.mSCPMessage = null;
+	this.mSCPChannelsMain = null;
+	this.mSCPWidgetsMain = null;
 	this.mSCPInfoMain = null;
 	this.mSCPSettingMain = null;
+	
 	this.mWEEvent = null;
 	this.mWEHtml = null;
 	this.mWEFlash = null;
@@ -70,7 +70,6 @@ function cCPanel(
 	this.mState = "";
 	this.mSubState = "";
 	
-	console.log("hello console");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -112,13 +111,8 @@ cCPanel.prototype.fInit = function(
 	this.fHideAll();
 	
 	// show div(s) for initialization
-
-	
 	$("#div_startup").show();
-	$("#div_startup_logo").animate({}, 3000, function() {
-
-
-	});
+	$("#div_startup_logo").animate({}, 3000, function() { });
 	
 	$("#div_loader").show();
 	$("#div_messageBoard").show();
@@ -148,8 +142,6 @@ cCPanel.prototype.fInit = function(
 	fLoadExtJSScript(this.mJSClassList, vReturnFun);
 
 
-
-
 	$(window).resize(function() {
 		fDbg2("*** window resize : " + $(window).width() + ", " + $(window).height());
 	});
@@ -177,8 +169,6 @@ cCPanel.prototype.fHideAll = function(
 	//~ $("#div_flashWidgetPlayer").hide();
 	$("#div_htmlWidgetPlayer").hide();
 	$("#div_eventWidgetPlayer").hide();
-	
-	$("#div_infoMain_content_advanced").hide();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -190,10 +180,13 @@ cCPanel.prototype.fStartUp = function(
 	fDbg("*** cCPanel, fStartUp()");
 	
 	// register all classes
-	this.mSubCPanelList[1].mSubCPanel = cSubCPanelChannelMain.fGetInstance($("#div_channelMain"));
-	this.mSCPChannelWidgetsMain = cSCPChannelWidgetsMain.fGetInstance($("#div_flashWidgetMain"));
-	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
+	this.mSCPMessage = cSCPMessage.fGetInstance($("#div_messageBoard"));
+	this.mSubCPanelList[1].mSubCPanel = cSCPChannels.fGetInstance($("#div_channelMain"));
+	this.mSCPWidgetsMain = cSCPChannelWidgetsMain.fGetInstance($("#div_flashWidgetMain"));
 	this.mSCPInfo = cSCPInfo.fGetInstance($("#div_infoMain"));
+	
+	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
+	this.mWEFlash = cWEEvent.fGetInstance(null);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -384,7 +377,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 					break;
 				}
 			
-			$("#div_messageBoard").hide();
+			cSCPMessage.fGetInstance().fHide();
 						
 			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
 			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
@@ -394,7 +387,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			if (mCPanel.mSubState == "flashchannelwidgetsmain")
 			{
 				cCPanel.instance.fRefreshChannelDiv();
-				//~ mSCPChannelWidgetsMain.fHide();
 			}
 		}
 		break;
@@ -423,7 +415,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 						o = [i, i + 1];
 					break;
 				}
-			$("#div_messageBoard").hide();
+			cSCPMessage.fGetInstance().fHide();
+			
 			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
 			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
 			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
@@ -444,7 +437,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_MESSAGE:
-		mCPanel.fDisplayMessageBoard(vData[0]);
+		cSCPMessage.fGetInstance().fDisplay(vData[0]);
 		break;
 		
 	case cConst.SIGNAL_CHANNELDIV_SHOW:
@@ -457,22 +450,21 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 
 	case cConst.SIGNAL_SCPINFO_SHOW:
-		fDbg("to show info page...");
 		if ($("#div_startup").is(":visible"))
 		{
 			$("#div_loader").hide();
-			$("#div_messageBoard").hide();
+			cSCPMessage.fGetInstance().fHide();
 			$("#div_startup").fadeOut(function() {
-				$("#div_infoMain").fadeIn();
+				cSCPInfo.fGetInstance().fFadeIn();
 				mCPanel.mSubState = "infomain";
 			});
 		}
 		else
 		{
 			$("#div_loader").hide(function() {
-				$("#div_messageBoard").fadeOut(function() {
-					$("#div_infoMain").fadeIn();
-					mCPanel.mSubState = "infomain";
+				cSCPMessage.fFadeOut(function() {
+					cSCPInfo.fGetInstance().fFadeIn();
+					cCPanel.fGetInstance().mSubState = "infomain";
 				});
 			});
 		}
@@ -483,7 +475,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_WIDGETENGINE_SHOW:
-		//mCPanel.fShowWidgetEngine();
 		mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
 		break;
 		
@@ -498,7 +489,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			});
 			break;
 		case "flashwidgetengine":
-			cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 			mCPanel.fShowControlPanel();
@@ -513,7 +503,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			switch (mCPanel.mPrevState)
 			{
 			case "flashwidgetengine":
-				cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 				mCPanel.fShowControlPanel();
@@ -539,7 +528,23 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		$("#div_CPanel").animate({
 			left: "-=1200"
 		}, 800, function() {
-			mCPanel.fShowFLASHWidgetEngine();
+			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
+			cWEFlash.fGetInstance().fShow();
+			cWEFlash.fGetInstance().fPlayWidget("./widget1.swf", function() {
+				cCPanel.instance.pState("flashwidgetengine");
+			});
+
+			/*
+			var vCount = 0;
+			var o = setInterval(function() {
+				cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
+					fDbg2(vData);
+				});
+				vCount++;
+				if (vCount == 3)
+					clearInterval(o);
+			}, 3000);
+			*/
 		});
 		break;
 
@@ -573,108 +578,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	message board div functions
-// 
-// 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	fShow
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fDisplayMessageBoard = function(
-	v
-)
-{
-	var o;
-	
-	if (v)
-	{
-		if ($("#div_messageBoard_text").html() !== v)
-		{
-			mCPanel.mMessageList.push(v);
-			if (mCPanel.mMessageDisplayInProgress === false)
-			{
-				mCPanel.mMessageDisplayInProgress = true;
-				$("#div_messageBoard_text").fadeOut("fast", function() {
-					$("#div_messageBoard_text").html(v);
-					mCPanel.mMessageList.splice(0, 1);
-					$("#div_messageBoard_text").fadeIn("fast", function() {
-						if (mCPanel.mMessageList.length > 0)
-							mCPanel.instance.fDisplayMessageBoard();
-						else
-							mCPanel.mMessageDisplayInProgress = false;
-					});
-				});
-			}
-		}
-		else
-		{
-			if (mCPanel.mMessageList.length > 0)
-				mCPanel.mMessageList.splice(0, 1);
-			fDisplayMessageBoard();
-		}
-	}
-	else
-	{
-		if (mCPanel.mMessageList.length == 0)
-			return;
-		o = mCPanel.mMessageList[0];
-		mCPanel.mMessageList.splice(0, 1);
-		if (mCPanel.mMessageDisplayInProgress === false)
-		{
-			mCPanel.mMessageDisplayInProgress = true;
-		}
-			$("#div_messageBoard_text").fadeOut("fast", function() {
-				$("#div_messageBoard_text").html(o);
-fDbg("new curr : " + $("#div_messageBoard_text").html());
-				$("#div_messageBoard_text").fadeIn("fast", function() {
-					if (mCPanel.mMessageList.length > 0)
-					{
-						fDisplayMessageBoard();
-					}
-					else
-						mCPanel.mMessageDisplayInProgress = false;
-				});
-			});
-	}
-	cCPanel.instance.mSubState = "messageBoard";
-}
-
-
-// -------------------------------------------------------------------------------------------------
-//	fShowMessageDiv
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fShowMessageDiv = function(
-)
-{
-	
-}
-
-cCPanel.prototype.fHideMessageDiv = function(
-)
-{
-	
-}
 
 
 
@@ -847,7 +750,7 @@ fDbg("*** cCPanel, fShowHTMLWidgetEngineReturn(), " + vData);
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fSetWidgetEngineSize
+//	fSetHTMLWidgetEngineSize
 // -------------------------------------------------------------------------------------------------
 cCPanel.prototype.fSetHTMLWidgetEngineSize = function(
 )
@@ -910,208 +813,6 @@ fDbg("*** cCPanel, fHideHTMLWidgetEngineReturn(), " + vData);
 	if (vReturnFun)
 		vReturnFun();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	widget engine div functions		(flash widgets)
-// 
-// 
-// -------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------
-//	fShowFLASHWidgetEngine
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fShowFLASHWidgetEngine = function(
-)
-{
-fDbg2("*** cCPanel, fShowFLASHWidgetEngine(), ");
-	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>On</value>"}, function(vData) {
-		fDbg2("===> " + vData.split("<status>")[1].split("</status>")[0]);
-		fDbg2("===> " + vData.split("<value>")[1].split("</value>")[0]);
-	});
-	
-	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
-	//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Maximize</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
-		fDbg2(vData);
-	});
-	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
-	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
-	fDbg2("-=-=-=-=-=-=-=-=-=-=-=-=-=--");
-	return;
-	var vCount = 0;
-	var o = setInterval(function() {
-		cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
-			fDbg2(vData);
-		});
-		vCount++;
-		if (vCount == 3)
-			clearInterval(o);
-	}, 3000);
-}
-
-cCPanel.prototype.fShowFLASHWidgetEngineReturn = function(
-	vData
-)
-{
-fDbg("*** cCPanel, fShowFLASHWidgetEngineReturn(), " + vData);
-	cCPanel.instance.pState("flashwidgetengine");
-	fDbg2("-----> " + vData.split("<status>")[1].split("</status>")[0]);
-	fDbg2("-----> " + vData.split("<value>")[1].split("</value>")[0]);
-
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fSetWidgetEngineSize
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fSetWidgetEngineSize = function(
-)
-{
-fDbg2("*** cCPanel, fSetWidgetEngineSize(), ");
-
-	$("#div_CPanel").animate({
-		left: "-=1200"
-	}, 800, function() {
-		cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>1000 520 240 180</value>"}, cCPanel.instance.fSetWidgetEngineSizeReturn);
-		
-		/*
-		var vStepCount = 50;
-		var vCurrBox = [240, 60, 800, 600];
-		var vFinalBox = [800, 450, 320, 240];
-		var vStep = [
-			(vFinalBox[0] - vCurrBox[0]) / vStepCount,
-			(vFinalBox[1] - vCurrBox[1]) / vStepCount,
-			(vFinalBox[2] - vCurrBox[2]) / vStepCount,
-			(vFinalBox[3] - vCurrBox[3]) / vStepCount
-		];
-		var i = 0;
-		//cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + vFinalBox.join(" ") + "</value>"}, cCPanel.instance.fSetWidgetEngineSizeReturn);
-		//return;
-		var o = setInterval(function() {
-			i++;
-			vCurrBox = [vCurrBox[0] + vStep[0], vCurrBox[1] + vStep[1], vCurrBox[2] + vStep[2], vCurrBox[3] + vStep[3]];
-			var str = vCurrBox[0] + " " + vCurrBox[1] + " " + vCurrBox[2] + " " + vCurrBox[3];
-			cProxy.xmlhttpPost("", "post", {cmd : "SetWidgetSize", data : "<value>" + str + "</value>"}, cCPanel.instance.fSetWidgetEngineSizeReturn);
-			if (i == vStepCount)
-				clearInterval(o);
-		}, 20);
-		*/
-	});
-	
-}
-
-cCPanel.prototype.fSetWidgetEngineSizeReturn = function(
-	vData
-)
-{
-fDbg2("*** cCPanel, fSetWidgetEngineSizeReturn(), " + vData);
-	//~ $("#div_flashWidgetPlayer").show();
-	//~ $("#div_flashWidgetPlayer").css("left", "1000px");
-	//~ $("#div_flashWidgetPlayer").css("top", "520px");
-	cCPanel.instance.fPlayWidget();
-}
-
-
-// -------------------------------------------------------------------------------------------------
-//	fPlayWidget
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fPlayWidget = function(
-)
-{
-fDbg2("*** cCPanel, fPlayWidget(), ");
-	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, cCPanel.instance.fPlayWidgetReturn);
-}
-
-cCPanel.prototype.fPlayWidgetReturn = function(
-	vData
-)
-{
-fDbg2("*** cCPanel, fPlayWidgetReturn(), " + vData);
-	
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1421,13 +1122,4 @@ cCPanel.prototype.fShowChannelDiv = function(
 	}, 200, function() {
 		// Animation complete
 	});
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fHideChannelDiv
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fHideChannelDiv = function(
-)
-{
-	
 }

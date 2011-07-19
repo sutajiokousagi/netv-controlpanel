@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cSCPInfo class
+//	cSCPMessage class
 //
 //
 //
@@ -8,11 +8,13 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cSCPInfo(
+function cSCPMessage(
 	vDivObj
 )
 {
 	this.mDiv = vDivObj;
+	this.mMessageList = [];
+	this.mMessageDisplayInProgress = false;
 
 
 	this.fInit();
@@ -21,35 +23,34 @@ function cSCPInfo(
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.instance = null;
-cSCPInfo.fGetInstance = function(
+cSCPMessage.instance = null;
+cSCPMessage.fGetInstance = function(
 	vDivObj
 )
 {
-	return cSCPInfo.instance ? cSCPInfo.instance : cSCPInfo.instance = new cSCPInfo(vDivObj);
+	return cSCPMessage.instance ? cSCPMessage.instance : cSCPMessage.instance = new cSCPMessage(vDivObj);
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fInit = function(
+cSCPMessage.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSCPInfo, fInit(), ");
-	$("#div_infoMain_content_basic").show();
-	$("#div_infoMain_content_advanced").hide();
+//~ fDbg2("*** cSCPMessage, fInit(), ");
+
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fOnSignal
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fOnSignal = function(
+cSCPMessage.prototype.fOnSignal = function(
 	vSignal,		// string
 	vData,			// data array
 	vReturnFun		// return function call
 )
 {
-fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
+fDbg2("*** cSCPMessage, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o;
 	
 	switch(vSignal)
@@ -61,24 +62,9 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
@@ -95,12 +81,12 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 // -------------------------------------------------------------------------------------------------
 //	fShow / fHide
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fShow = function(
+cSCPMessage.prototype.fShow = function(
 )
 {
 	this.mDiv.show();
 }
-cSCPInfo.prototype.fHide = function(
+cSCPMessage.prototype.fHide = function(
 )
 {
 	this.mDiv.hide();
@@ -109,29 +95,81 @@ cSCPInfo.prototype.fHide = function(
 // -------------------------------------------------------------------------------------------------
 //	fFadeIn / fFadeOut
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fFadeIn = function(
+cSCPMessage.prototype.fFadeIn = function(
+	vReturnFun
 )
 {
-	this.mDiv.fadeIn(500, function() {});
+	this.mDiv.fadeIn(500, function() {
+		if (vReturnFun)
+			vReturnFun();
+	});
 }
-cSCPInfo.prototype.fFadeOut = function(
+cSCPMessage.prototype.fFadeOut = function(
+	vReturnFun
 )
 {
-	this.mDiv.fadeOut(500, function() {});
+	this.mDiv.fadeOut(500, function() {
+		if (vReturnFun)
+			vReturnFun();
+	});
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fUpdate
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fUpdate = function(
+cSCPMessage.prototype.fDisplay = function(
+	vData
 )
 {
-	var o;
-	o = cModel.fGetInstance();
-	
-	$("#div_info_guid").html(o.CHUMBY_GUID);
-	$("#div_info_dcid").html(o.CHUMBY_DCID);
-	$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
-	$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
-	$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
+	var o, mCPanel, vThis;
+	mCPanel = cCPanel.fGetInstance();
+	vThis = cSCPMessage.instance;
+
+	if (vData)
+	{
+		if ($("#div_messageBoard_text").html() !== vData)
+		{
+			vThis.mMessageList.push(vData);
+			if (vThis.mMessageDisplayInProgress === false)
+			{
+				vThis.mMessageDisplayInProgress = true;
+				$("#div_messageBoard_text").fadeOut("fast", function() {
+					$("#div_messageBoard_text").html(vData);
+					vThis.mMessageList.splice(0, 1);
+					$("#div_messageBoard_text").fadeIn("fast", function() {
+						if (vThis.mMessageList.length > 0)
+							vThis.fDisplayMessageBoard();
+						else
+							vThis.mMessageDisplayInProgress = false;
+					});
+				});
+			}
+		}
+		else
+		{
+			if (vThis.mMessageList.length > 0)
+				vThis.mMessageList.splice(0, 1);
+			vThis.fDisplayMessageBoard();
+		}
+	}
+	else
+	{
+		if (vThis.mMessageList.length == 0)
+			return;
+		o = vThis.mMessageList[0];
+		vThis.mMessageList.splice(0, 1);
+		if (vThis.mMessageDisplayInProgress === false)
+			vThis.mMessageDisplayInProgress = true;
+			
+		$("#div_messageBoard_text").fadeOut("fast", function() {
+			$("#div_messageBoard_text").html(o);
+			$("#div_messageBoard_text").fadeIn("fast", function() {
+				if (vThis.mMessageList.length > 0)
+					vThis.fDisplayMessageBoard();
+				else
+					vThis.mMessageDisplayInProgress = false;
+			});
+		});
+	}
+	cCPanel.instance.mSubState = "messageBoard";
 }

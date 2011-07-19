@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cSCPInfo class
+//	cWEFlash class
 //
 //
 //
@@ -8,48 +8,45 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cSCPInfo(
+function cWEFlash(
 	vDivObj
 )
 {
-	this.mDiv = vDivObj;
-
-
+	this.mDiv = vDivObj ? vDivObj : {};
+	
 	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.instance = null;
-cSCPInfo.fGetInstance = function(
+cWEFlash.instance = null;
+cWEFlash.fGetInstance = function(
 	vDivObj
 )
 {
-	return cSCPInfo.instance ? cSCPInfo.instance : cSCPInfo.instance = new cSCPInfo(vDivObj);
+	return cWEFlash.instance ? cWEFlash.instance : cWEFlash.instance = new cWEFlash(vDivObj);
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fInit = function(
+cWEFlash.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSCPInfo, fInit(), ");
-	$("#div_infoMain_content_basic").show();
-	$("#div_infoMain_content_advanced").hide();
+fDbg2("*** cWEFlash, fInit(), ");
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fOnSignal
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fOnSignal = function(
+cWEFlash.prototype.fOnSignal = function(
 	vSignal,		// string
 	vData,			// data array
 	vReturnFun		// return function call
 )
 {
-fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
+fDbg2("*** cWEFlash, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o;
 	
 	switch(vSignal)
@@ -61,24 +58,9 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if ($("#div_infoMain_content_basic").is(":visible"))
-			o = [$("#div_infoMain_content_basic"), $("#div_infoMain_content_advanced")];
-		else
-			o = [$("#div_infoMain_content_advanced"), $("#div_infoMain_content_basic")];
-
-		o[0].fadeOut(200, function() {
-			o[1].fadeIn(200);
-		});
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
@@ -95,43 +77,42 @@ fDbg2("*** cSCPInfo, fOnSignal(), " + vSignal + ", " + vData);
 // -------------------------------------------------------------------------------------------------
 //	fShow / fHide
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fShow = function(
+cWEFlash.prototype.fShow = function(
 )
 {
-	this.mDiv.show();
+	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, function() {});
 }
-cSCPInfo.prototype.fHide = function(
+cWEFlash.prototype.fHide = function(
 )
 {
-	this.mDiv.hide();
+	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fFadeIn / fFadeOut
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fFadeIn = function(
+cWEFlash.prototype.fFadeIn = function(
 )
 {
-	this.mDiv.fadeIn(500, function() {});
+	
 }
-cSCPInfo.prototype.fFadeOut = function(
+cWEFlash.prototype.fFadeOut = function(
 )
 {
-	this.mDiv.fadeOut(500, function() {});
+	
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fUpdate
+//	fPlayWidget
 // -------------------------------------------------------------------------------------------------
-cSCPInfo.prototype.fUpdate = function(
+cWEFlash.prototype.fPlayWidget = function(
+	vData,
+	vReturnFun
 )
 {
-	var o;
-	o = cModel.fGetInstance();
-	
-	$("#div_info_guid").html(o.CHUMBY_GUID);
-	$("#div_info_dcid").html(o.CHUMBY_DCID);
-	$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
-	$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
-	$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
+	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>" + vData + "</value>"}, function(vData) {
+		fDbg2(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
 }

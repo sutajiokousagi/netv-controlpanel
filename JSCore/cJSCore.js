@@ -69,8 +69,8 @@ cJSCore.prototype.fInit = function(
 	vCompleteFun
 )
 {
-fDbg("*** cJSCore, fInit()");
-
+fDbg2("*** cJSCore, fInit()");
+	
 	// load other js classes
 	fLoadExtJSScript(this.mJSClassList, vCompleteFun);
 }
@@ -88,7 +88,7 @@ cJSCore.prototype.fStartUp = function(
 	vReturnFun
 )
 {
-fDbg("*** cJSCore, fStartUp()");
+fDbg2("*** cJSCore, fStartUp()");
 	// init loaded classes
 	this.mModel = cModel.fGetInstance();
 	this.mStartupModule = cStartupModule.fGetInstance();
@@ -200,9 +200,7 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 			};
 			
 			if (o.CHUMBY_GUID && o.SERVER_URL && o.LOCALBRIDGE_URL)
-			{
 				cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + o.SERVER_URL + "?id=" + o.CHUMBY_GUID + "</value>"}, fAjaxReturn);
-			}
 		});
 	};
 	
@@ -225,10 +223,6 @@ fDbg("*** cJSCore, fStartUpReturn()");
 	cJSCore.instance.mModel.PROFILE_ID = xmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	cJSCore.instance.mModel.USER_NAME = xmlDoc.getElementsByTagName("user")[0].getAttribute("username");
 	
-	//cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() { });
-	//cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Restart</value>"}, cCPanel.instance.fShowFLASHWidgetEngineReturn);
-	//return;
-	
 	// proceed to fGetChannelInfo();
 	cJSCore.instance.fGetChannelInfo();
 }
@@ -241,17 +235,13 @@ cJSCore.prototype.fGetChannelInfo = function(
 )
 {
 fDbg("*** cJSCore, fGetChannelInfo()");
-	
-	var fAjaxReturn = function(vData) {
-		cJSCore.instance.fGetChannelInfoReturn(vData);
-		if (vReturnFun)
-			vReturnFun(vData);
-	};
-	
 	if (cJSCore.instance.mModel.PROFILE_ID)
-		cProxy.xmlhttpPost("", "post", {cmd : "GetXML", data : "<value>" + "http://xml.chumby.com/xml/profiles/" + cJSCore.instance.mModel.PROFILE_ID + "</value>"}, fAjaxReturn);
-		//~ cProxy.xmlhttpPost("http://192.168.1.210/projects/0009.chumbyJSCore/test.php", "get", null, cJSCore.instance.fGetChannelInfoReturn);
-
+		cProxy.xmlhttpPost("", "post", {cmd : "GetXML", data : "<value>" + "http://xml.chumby.com/xml/profiles/" + cJSCore.instance.mModel.PROFILE_ID + "</value>"}, function(vData) {
+			cJSCore.instance.fGetChannelInfoReturn(vData);
+			if (vReturnFun)
+				vReturnFun(vData);
+	});
+	
 	cProxy.fCPanelMsgBoardDisplay("Fetching Channel Info...");
 }
 
@@ -260,6 +250,7 @@ cJSCore.prototype.fGetChannelInfoReturn = function(
 )
 {
 fDbg("*** cJSCore, fGetChannelInfoReturn()");
+	
 	vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 	//alert(vData);
 	
@@ -268,27 +259,22 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cJSCore.instance.fPreloadChannelThumbnails(o);
 	
-	
 	// show and play widget
 	//~ cJSCore.instance.fPlayWidget("http://www.chumby.com/" + o.mWidgetList[0].mHref);
 	cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_WIDGETENGINE_SHOW, null, null);
-	
-	//connect();
 	
 	// show channel div
 	//cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_CHANNELDIV_SHOW, null, null);
 }
 
-// -------------------------------------------------------------------------------------------------
-//	fPlayWidget
-// -------------------------------------------------------------------------------------------------
-cJSCore.prototype.fPlayWidget = function(
-	vWidgetPath
-)
-{
-	cProxy.fCPanelMsgBoardDisplay("Playing Widget...");
-	cJSCore.instance.CPANEL.fPlayWidget(vWidgetPath);
-}
+
+
+
+
+
+
+
+
 
 // -------------------------------------------------------------------------------------------------
 //	fPreloadChannelThumbnails
@@ -299,16 +285,13 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 )
 {
 	var o, i;
-	fDbg2(vChannelObj.mWidgetList.length);
 	o = [];
-
+	
 	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
 		o.push(vChannelObj.mWidgetList[i].mWidget.mThumbnail.mHref);
 	
-	var fLoadTN = function () {
+	var fLoadTN = function() {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
-			//~ fDbg2(o.length);
-			//~ fDbg2(vData);
 			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
 			o.splice(0, 1);
 			if (o.length == 0)
@@ -444,6 +427,7 @@ function fLoadExtJSScript(
 //~ fDbg("cJSCore, fLoadExtJSScript()");
 	var vUrl = vFileList.pop();
 	var script = document.createElement("script");
+	
 	script.type = "text/javascript";
 	script.src = vUrl;
 	
@@ -465,8 +449,7 @@ function fServerReset(
 )
 {
 	if (vData == "true" || vData == true)
-	{
 		location.href="http://localhost/";
-	}
+		
 	fDbg2("fServerReset(), " + vData);
 }
