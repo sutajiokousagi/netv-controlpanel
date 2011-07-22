@@ -263,10 +263,19 @@
 			delete dict["status"];
 			
 			//Follow by 'data'
-			for (var k:Object in dict) 
-			  	xmlString += "<" + String(k) + ">" + dict[k].toString() + "</" + String(k) + ">";
-
-			xmlString += "</xml>";
+			xmlString += "<data>";
+			if (countKeys(dict) > 1)
+			{
+				for (var k:Object in dict) 
+			  		xmlString += "<" + String(k) + ">" + dict[k].toString() + "</" + String(k) + ">";
+			}
+			else
+			{
+				for (var t:Object in dict) 
+			  		xmlString += "<value>" + dict[t].toString() + "</value>";
+			}
+			
+			xmlString += "</data></xml>";
 			myTrace(xmlString);
 			return sendXmlString(xmlString);
 		}
@@ -286,6 +295,37 @@
 		}
 		
 		//----------------------------------------------------------------------
+		//-- High-level Transmitting Utilities ---------------------------------
+		//----------------------------------------------------------------------
+		
+		public function sendSimpleCommand(commandName:String, commandValue:String)
+		{
+			var dict:Dictionary = new Dictionary();
+			dict["value"] = commandValue;
+			return sendCommand(commandName, dict);
+		}
+		
+		public function executeJavaScript(javascriptString:String)
+		{
+			return sendSimpleCommand("JavaScript", javascriptString);
+		}
+		
+		public function setCooperative(isCooperative:Boolean)
+		{
+			return executeJavaScript("fSetCooperative(" + isCooperative ? "true);" : "false);");
+		}
+		
+		public function sendEmail(toAddress:String, body:String)
+		{
+			return executeJavaScript("fSendEmail(" + toAddress + "," + body + ");");
+		}
+		
+		public function sendNotification(iconURL:String, title:String, body:String)
+		{
+			return executeJavaScript("fAddNotification(" + iconURL + "," + title + "," + body + ");");
+		}
+		
+		//----------------------------------------------------------------------
 		//-- Process receiving data --------------------------------------------
 		//----------------------------------------------------------------------
 			
@@ -296,16 +336,10 @@
 		{
 			var bytesAvailable:uint = _socket.bytesAvailable;
 			var str:String = _socket.readUTFBytes(bytesAvailable);
-			
-			//The received string shoud only use 1 level of node
-			/*
-			<cmd>play_widget</cmd>
-			<data>url_to_some_where</data>
-			or
-			<status>123</status>
-			<data>url_to_some_where</data>
-			*/
 			var myXML:XML = new XML(str);
+			
+			if (_enableTrace)
+				trace(str);
 			
 			//Parse and store in a dictionary
 			//http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/utils/Dictionary.html
