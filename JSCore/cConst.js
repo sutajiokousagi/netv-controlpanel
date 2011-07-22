@@ -28,6 +28,8 @@ cConst.SIGNAL_GOTO_HTMLWIDGETENGINE = "signal_goto_htmlwidgetengine";
 cConst.SIGNAL_GOTO_EVENTWIDGETENGINE = "signal_goto_eventwidgetengine";
 
 cConst.SIGNAL_FIRSTTIME_STARTUP = "signal_firsttime_startup";
+cConst.SIGNAL_HEARTBEAT = "signal_heartbeat";
+cConst.SIGNAL_PLAYNEXTWIDGET = "signal_playnextwidget";
 
 // -----------------------------------------------------------------------------
 //	widget engine signals

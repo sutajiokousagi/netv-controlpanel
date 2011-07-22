@@ -6,13 +6,23 @@
 <script type='text/javascript' src='./JSCore/cJSCore.js'></script>
 <script type='text/javascript' src='./CPanel/jquery-1.6.1.min.js'></script>
 <script type='text/javascript' src='./CPanel/cCPanel.js'></script>
+
+
 <script language="javascript">
 var mJSCore;
 var mCPanel;
-fDbg2("----------------!!!!!!!!----------------------");
+fDbg2("--------------------!!!!!!!!----------------------");
 	$(function() {
-		mJSCore = cJSCore.fGetInstance();
-		mCPanel = cCPanel.fGetInstance();
+		if (cCPanel)
+			mJSCore = cJSCore.fGetInstance();
+		else
+			window.location.reload();
+
+		if (cCPanel)
+			mCPanel = cCPanel.fGetInstance();
+		else
+			window.location.reload();
+			
 		mJSCore.CPANEL = mCPanel;
 		mCPanel.JSCORE = mJSCore;
 		
@@ -22,6 +32,40 @@ fDbg2("----------------!!!!!!!!----------------------");
 		mCPanel.fInit(function() {
 			mCPanel.fStartUp();
 		});
+
+
+		$(window).keypress(function(event) {
+			fDbg2("key stroke!!");
+			fDbg2(event.which);
+			/*
+			if ( event.which == 13 ) {
+				event.preventDefault();
+			}
+			xTriggered++;
+			var msg = "Handler for .keypress() called " + xTriggered + " time(s).";
+			*/
+		});
+
+
+		function fLoadExtPageModule(
+			vPagePath,
+			vPageClassPath
+		)
+		{
+			$("#loaderDiv").load("index_activation.html", function() {
+				fLoadExtJSScript([vPageClassPath], function() {
+					var o = cPActivation.fGetInstance($("#div_activation"));
+					fDbg2("Bingo!!!!!!!!!!");
+					fDbg2("Bingo!!!!!!!!!!");
+					fDbg2("Bingo!!!!!!!!!!");
+					fDbg2("Bingo!!!!!!!!!!");
+					fDbg2("Bingo!!!!!!!!!!");
+				});
+			});
+		}
+		//fLoadExtPageModule("index_activation.html", "./CPanel/cPActivation.js");
+		
+		
 	});
 
 // -------------------------------------------------------------------------------------------------
@@ -42,6 +86,43 @@ function fDbg2(v)
 	console.log("|~|" + v);
 }
 
+function fServerReset(
+	vData		// true | false
+)
+{
+fDbg2("fServerReset(), " + vData);
+	if (vData == "true" || vData == true)
+		location.href="http://localhost/";
+}
+
+
+// -------------------------------------------------------------------------------------------------
+//	fLoadScript
+// -------------------------------------------------------------------------------------------------
+function fLoadExtJSScript(
+	vFileList,
+	vReturnFun
+)
+{
+//~ fDbg("cJSCore, fLoadExtJSScript()");
+	var vUrl = vFileList.pop();
+	var script = document.createElement("script");
+	
+	script.type = "text/javascript";
+	script.src = vUrl;
+	
+	script.onload = function() {
+//~ fDbg2("*** fLoadScript(), loaded");
+		if (vFileList.length == 0)
+			vReturnFun();
+		else
+			fLoadExtJSScript(vFileList, vReturnFun);
+	};
+	
+	document.getElementsByTagName("head")[0].appendChild(script);
+//~ fDbg2("*** fLoadScript(), loading " + vUrl);
+}
+
 // -------------------------------------------------------------------------------------------------
 //	press button on D-pad / android
 // -------------------------------------------------------------------------------------------------
@@ -54,27 +135,21 @@ function fButtonPress(
 	case "cpanel":
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL);
 		break;
-		
 	case "widget":
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
 		break;
-		
 	case "left":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT);
 		break;
-		
 	case "right":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT);
 		break;
-		
 	case "center":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
 		break;
-		
 	case "up":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP);
 		break;
-		
 	case "down":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN);
 		break;
@@ -87,12 +162,16 @@ function fButtonPress(
 
 
 <body style="background-color: #F000F0;">
+
 <div id="div_all" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 719px; overflow: hidden">
 
 
 
-
-
+<!--
+-----------------------------------------------
+-------------temp bg - for refreshing browser content (redraw page)
+-----------------------------------------------
+-->
 <div id="div_tempBg" style="position: absolute; top: -50px; left: -50px; background-color: #F000F0; width: 1600px; height: 900px;"></div>
 
 
@@ -104,14 +183,12 @@ function fButtonPress(
 -----------------------------------------------
 -->
 <div id="div_activation" style="position: absolute; left: 0px; top: 0px; border: solid black 0px; width: 800px; height: 600px; overflow: hidden;">
-
 <!-- ----------------------- message module ---------------------- -->
 <div id="div_info" style="position: absolute; width: 800px; height: 600px;">
 	<div id="div_info_messageBoard_bg" style="position: absolute; width: 800px; height: 600px; background-color: #0000FF;"></div>
 	<div id="div_info_messageBoard_text" style="position: absolute; top: 12px; left: 70px; width: 400px; height: 100px; border: solid black 0px; font-family: Arial; font-size: 24px; color: #094fa6;">Initializing...</div>
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
-
 </div>
 
 
@@ -359,44 +436,12 @@ function fButtonPress(
 
 
 
-
-
-
-
-
-
-
-
-
-
-<!--
------------------------------------------------
--------------widget rendering engine (flash)
------------------------------------------------
--->
-<!--
-<div id="div_flashWidgetPlayer" style="position: absolute; left: 50px; top: 50px; padding: 0; margin: 0; overflow: hidden; width: 240px; height: 180px;">
-<div id="div_flashWidgetPlayer_embed" style="position: absolute; left: 0px; top: 0px; width: 240px; height: 180px; background-image: url('images/flash_cs5_logo.png'); background-size: 180px 130px; background-position: center center;">
-
-<embed style="padding: 0px; margin: 0px;" src="widget_player_0.1.swf" quality="high" bgcolor="#869ca7" border="0" width="800" height="600" name="widget_player_01" id="widget_player_01" align="middle" play="true" loop="false" quality="high" always="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
-
-</div>
-</div>
--->
-
-
-
 <!--
 -----------------------------------------------
 -------------widget rendering engine (HTML5 + Javascript)
 -----------------------------------------------
 -->
 <div id="div_htmlWidgetPlayer" style="position: absolute; left: 0px; top: 650px; width: 1279px; height: 70px; padding: 0; margin: 0; overflow: hidden;">
-<!--
-<div id="div_htmlWidgetPlayer_embed" style="position: absolute; left: 140px; top: 640px; width: 1000px; height: 60px;">
-<embed style="padding: 0px; margin: 0px;" src="widget_player_0.1.swf" quality="high" bgcolor="#869ca7" border="0" width="800" height="600" name="widget_player_01" id="widget_player_01" align="middle" play="true" loop="false" quality="high" always="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
-</div>
--->
 <iframe id="iframe_htmlWidgetPlayer">
 </iframe>
 </div>
@@ -420,8 +465,6 @@ function fButtonPress(
 </div>
 
 
-
-
 <!--
 -----------------------------------------------
 -------------debug div
@@ -432,10 +475,13 @@ function fButtonPress(
 <div id="div_dbg" style="position: absolute; top: 10px; height: 450px; width: 240px; font-size: 12px; font-family: Arial; border: dotted black 1px; overflow: hidden;"></div>
 </div>
 -->
+<div id="loaderDiv" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 600px; overflow: hidden;">
 
+</div>
 
 
 
 </div>
+
 </body>
 </html>

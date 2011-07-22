@@ -23,12 +23,14 @@ function cCPanel(
 	
 	this.mLocked = false;
 	this.mJSClassList = [
+		"./CPanel/cTempBg.js",
 		"./CPanel/cSCPMessage.js",
 		"./CPanel/cSCPChannels.js",
-		"./CPanel/cSCPChannelWidgetsMain.js",
+		"./CPanel/cSCPWidgets.js",
 		"./CPanel/cSCPInfo.js",
 		"./CPanel/cWEEvent.js",
-		"./CPanel/cWEFlash.js"
+		"./CPanel/cWEFlash.js",
+		"./CPanel/cWEHtml.js"
 	];
 	
 	this.mSubCPanelList = [
@@ -53,8 +55,14 @@ function cCPanel(
 			mSubCPanel : null
 		}
 	];
+
+	// widget playing
+	this.mCurrWidget = null;
+	this.mCurrWidgetPeriod = 10;
+	this.mCurrWidgetTimeSpend = 0;
 	
 	// components
+	this.mTempBg = null;
 	this.mSCPMessage = null;
 	this.mSCPChannelsMain = null;
 	this.mSCPWidgetsMain = null;
@@ -142,10 +150,10 @@ cCPanel.prototype.fInit = function(
 	fLoadExtJSScript(this.mJSClassList, vReturnFun);
 
 
+	
 	$(window).resize(function() {
 		fDbg2("*** window resize : " + $(window).width() + ", " + $(window).height());
 	});
-
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -155,16 +163,15 @@ cCPanel.prototype.fHideAll = function(
 )
 {
 	$("#div_tempBg").hide();
-	
 	$("#div_CPanel").children().hide();
 	
 	// hide activation div
 	$("#div_activation").hide();
-		
+	
 	// hide all debug div
 	if (!mGCPanelStatic["mShowDbg"])
 		$("#div_dbg_container").hide();
-
+	
 	// hide all widget players
 	//~ $("#div_flashWidgetPlayer").hide();
 	$("#div_htmlWidgetPlayer").hide();
@@ -180,13 +187,16 @@ cCPanel.prototype.fStartUp = function(
 	fDbg("*** cCPanel, fStartUp()");
 	
 	// register all classes
+	this.mTempBg = cTempBg.fGetInstance($("div_tempBg"));
+	
 	this.mSCPMessage = cSCPMessage.fGetInstance($("#div_messageBoard"));
 	this.mSubCPanelList[1].mSubCPanel = cSCPChannels.fGetInstance($("#div_channelMain"));
-	this.mSCPWidgetsMain = cSCPChannelWidgetsMain.fGetInstance($("#div_flashWidgetMain"));
+	this.mSCPWidgetsMain = cSCPWidgets.fGetInstance($("#div_flashWidgetMain"));
 	this.mSCPInfo = cSCPInfo.fGetInstance($("#div_infoMain"));
 	
 	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
-	this.mWEFlash = cWEEvent.fGetInstance(null);
+	this.mWEFlash = cWEFlash.fGetInstance(null);
+	this.mWEHtml = cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -233,7 +243,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		switch (mCPanel.mState)
 		{
 		case "htmlwidgetengine":
-			mCPanel.fHideHTMLWidgetEngine(function() {
+			cWEHtml.fGetInstance().fSlideOut(function() {
 				cCPanel.instance.pState("empty");
 				cCPanel.instance.mLocked = false;
 			});
@@ -254,7 +264,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			switch (mCPanel.mPrevState)
 			{
 			case "htmlwidgetengine":
-				mCPanel.fShowHTMLWidgetEngine2(function() {
+				cWEHtml.fGetInstance().fSlideIn(function() {
 					cCPanel.instance.pState("htmlwidgetengine");
 					cCPanel.instance.mLocked = false;
 				});
@@ -287,19 +297,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			case "flashchannelwidgetsmain":
-				if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "485px")
-				{
-					$("#div_flashWidgetMain").children("#div_flashWidgetMain_bottom").children("#bottomhighlight").css("left", "150px");
-					$("#div_flashWidgetMain").children("#div_flashWidgetMain_bottom").children("#bottomhighlight").css("width", "70px");
-				}
-				else if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "75px")
-				{
-					cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
-					cModel.fGetInstance().CURR_WIDGET_INDEX--;
-					if (cModel.fGetInstance().CURR_WIDGET_INDEX < 0)
-						cModel.fGetInstance().CURR_WIDGET_INDEX = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1;
-					cCPanel.fGetInstance().fRefreshChannelDiv();
-				}
+				cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			case "infomain":
 				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
@@ -317,19 +315,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			case "flashchannelwidgetsmain":
-				if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "485px")
-				{
-					$("#div_flashWidgetMain").children("#div_flashWidgetMain_bottom").children("#bottomhighlight").css("left", "238px");
-					$("#div_flashWidgetMain").children("#div_flashWidgetMain_bottom").children("#bottomhighlight").css("width", "58px");
-				}
-				else if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "75px")
-				{
-					cModel.fGetInstance().PREV_WIDGET_INDEX = cModel.fGetInstance().CURR_WIDGET_INDEX;
-					cModel.fGetInstance().CURR_WIDGET_INDEX++;
-					if (cModel.fGetInstance().CURR_WIDGET_INDEX > cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CURR_CHANNEL_INDEX].mWidgetList.length - 1)
-						cModel.fGetInstance().CURR_WIDGET_INDEX = 0;
-					cCPanel.fGetInstance().fRefreshChannelDiv();
-				}
+				cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 				break;
 			case "infomain":
 				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
@@ -385,9 +371,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			
 			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
 			if (mCPanel.mSubState == "flashchannelwidgetsmain")
-			{
-				cCPanel.instance.fRefreshChannelDiv();
-			}
+				cSCPWidgets.fGetInstance().fRefreshChannelDiv();
+				//~ cCPanel.instance.fRefreshChannelDiv();
 		}
 		break;
 		
@@ -422,7 +407,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
 			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
 			if (mCPanel.mSubState == "flashchannelwidgetsmain")
-				cCPanel.instance.fRefreshChannelDiv();
+				cSCPWidgets.fGetInstance().fRefreshChannelDiv();
+				//~ cCPanel.instance.fRefreshChannelDiv();
 		}
 		break;
 	}
@@ -436,6 +422,25 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	// =========================
 	switch(vSignal)
 	{
+	case cConst.SIGNAL_HEARTBEAT:
+		switch (mCPanel.mState)
+		{
+		case "htmlwidgetengine":
+			mCPanel.mCurrWidgetTimeSpend++;
+			if (mCPanel.mCurrWidgetTimeSpend > mCPanel.mCurrWidgetPeriod)
+			{
+				// play next widget
+				cWEHtml.fGetInstance().fPlayWidget("next");
+				
+				// reset curre widget timer
+				mCPanel.mCurrWidgetTimeSpend = 0;
+			}
+			break;
+		}
+
+		fDbg2(mCPanel.mCurrWidgetTimeSpend);
+		break;
+		
 	case cConst.SIGNAL_MESSAGE:
 		cSCPMessage.fGetInstance().fDisplay(vData[0]);
 		break;
@@ -444,7 +449,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		switch (mCurrDivVisible)
 		{
 		case "div_messageBoard":
-			mCPanel.fRefreshChannelDiv(mCPanel.fShowChannelDiv);	
+			//~ mCPanel.fRefreshChannelDiv();
+			
+			cSCPWidgets.fGetInstance().fRefreshChannelDiv(function() {
+				cCPanel.fGetInstance().fShowChannelDiv();
+			});
 			break;
 		}
 		break;
@@ -484,14 +493,20 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		case "controlpanel":
 			break;
 		case "htmlwidgetengine":
-			mCPanel.fHideHTMLWidgetEngine(function() {
+			cWEHtml.fGetInstance().fSlideOut(function() {
 				mCPanel.fShowControlPanel();
 			});
 			break;
 		case "flashwidgetengine":
-			cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
-			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
-			mCPanel.fShowControlPanel();
+			cWEFlash.fGetInstance().fAnimateOut();
+			var to1 = setTimeout(function() {
+				cWEFlash.fGetInstance().fHide();
+			}, 1000);
+
+			var to2 = setTimeout(function() {
+				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
+				cCPanel.instance.fShowControlPanel();
+			}, 1500);
 			break;
 		case "eventwidgetengine":
 			cCPanel.instance.mWEEvent.fSlideDown(function() {
@@ -520,7 +535,16 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_GOTO_HTMLWIDGETENGINE:
-		mCPanel.fShowHTMLWidgetEngine();
+		if ($("#div_loader").is(":visible"))
+			$("#div_loader").fadeOut(200, function() { });
+			
+		$("#div_CPanel").animate({
+			left: "-=1200"
+		}, 800, function() {
+			cCPanel.instance.mCurrWidgetTimeSpend = 0;
+			cWEHtml.fGetInstance().fPlayWidget();
+			cCPanel.instance.pState("htmlwidgetengine");
+		});
 		break;
 		
 	case cConst.SIGNAL_GOTO_FLASHWIDGETENGINE:
@@ -530,21 +554,16 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		}, 800, function() {
 			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
 			cWEFlash.fGetInstance().fShow();
-			cWEFlash.fGetInstance().fPlayWidget("./widget1.swf", function() {
-				cCPanel.instance.pState("flashwidgetengine");
-			});
 
-			/*
-			var vCount = 0;
-			var o = setInterval(function() {
-				cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>./widget1.swf</value>"}, function(vData) {
-					fDbg2(vData);
+			var to1 = setTimeout(function() {
+				cWEFlash.fGetInstance().fAnimateIn();
+			}, 100);
+			
+			var to2 = setTimeout(function() {
+				cWEFlash.fGetInstance().fPlayWidget("./first_widget.swf", function() {
+					cCPanel.instance.pState("flashwidgetengine");
 				});
-				vCount++;
-				if (vCount == 3)
-					clearInterval(o);
-			}, 3000);
-			*/
+			}, 200);
 		});
 		break;
 
@@ -586,28 +605,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
@@ -623,7 +620,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 cCPanel.prototype.fShowControlPanel = function(
 )
 {
-fDbg("*** cCPanel, fShowControlPanel(), ");
+fDbg2("*** cCPanel, fShowControlPanel(), ");
 	var o;
 	
 	$("#div_tempBg").hide();
@@ -659,17 +656,11 @@ fDbg("*** cCPanel, fShowControlPanel(), ");
 		cCPanel.instance.mSubCPanelList[1].mSubCPanel.fSetSelected([o], function() {
 			cCPanel.instance.mSubState = "channelMain";
 		});
-		cCPanel.instance.fShowControlPanelReturn();
+		
+		cCPanel.instance.pState("controlpanel");
 	});
 }
 
-cCPanel.prototype.fShowControlPanelReturn = function(
-	vData
-)
-{
-fDbg("*** cCPanel, fShowControlPanelReturn(), " + vData);
-	this.pState("controlpanel");
-}
 
 
 
@@ -681,433 +672,6 @@ fDbg("*** cCPanel, fShowControlPanelReturn(), " + vData);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	widget engine div functions   (HTML widgets)
-// 
-// 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	fShowHTMLWidgetEngine
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fShowHTMLWidgetEngine2 = function(
-	vReturnFun
-)
-{
-	if (vReturnFun)
-	{
-		$("#div_htmlWidgetPlayer").show();
-		$("#div_htmlWidgetPlayer").css("top", "720px");
-		$("#div_htmlWidgetPlayer").animate({
-			top: "-=80"
-		}, 200, function() {
-			vReturnFun();
-		});
-	}
-}
-
-
-cCPanel.prototype.fShowHTMLWidgetEngine = function(
-	vReturnFun
-)
-{
-fDbg("*** cCPanel, fShowHTMLWidgetEngine(), ");
-	//cProxy.xmlhttpPost("", "post", {cmd : "ShowWidgetEngine", data : "<value>true</value>"}, cCPanel.instance.fShowHTMLWidgetEngineReturn);
-	cCPanel.instance.fShowHTMLWidgetEngineReturn(null, vReturnFun);
-	
-}
-
-cCPanel.prototype.fShowHTMLWidgetEngineReturn = function(
-	vData,
-	vReturnFun
-)
-{
-fDbg("*** cCPanel, fShowHTMLWidgetEngineReturn(), " + vData);
-	if (!vReturnFun)
-		cCPanel.instance.fSetHTMLWidgetEngineSize();
-	else
-	{
-		vReturnFun();
-
-	}
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fSetHTMLWidgetEngineSize
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fSetHTMLWidgetEngineSize = function(
-)
-{
-fDbg("*** cCPanel, fSetHTMLWidgetEngineSize(), ");
-	
-	$("#div_loader").fadeOut(200, function() {
-	});
-	$("#div_CPanel").animate({
-		left: "-=1200"
-	}, 800, function() {
-		cCPanel.instance.fSetHTMLWidgetEngineSizeReturn();
-	});
-}
-
-cCPanel.prototype.fSetHTMLWidgetEngineSizeReturn = function(
-	vData
-)
-{
-fDbg("*** cCPanel, fSetHTMLWidgetEngineSizeReturn(), " + vData);
-	var o, p;
-	o = 'http://localhost/widgets/twitter0.2/index.html';
-	
-		$("#div_htmlWidgetPlayer").show();
-		$("#div_htmlWidgetPlayer").css("top", "720px");
-	p = setTimeout(function() {
-		$("#div_htmlWidgetPlayer").animate({
-			top: "-=80"
-		}, 200, function() {
-		
-		});
-	}, 1000);
-	
-	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + o + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px;"></iframe>');
-	this.pState("htmlwidgetengine");
-
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fHideHTMLWidgetEngine
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fHideHTMLWidgetEngine = function(
-	vReturnFun
-)
-{
-fDbg("*** cCPanel, fHideHTMLWidgetEngine(), ");
-	$("#div_htmlWidgetPlayer").animate({
-		top: "+=80"
-	}, 200, function() {
-		cCPanel.instance.fHideHTMLWidgetEngineReturn(null, vReturnFun);
-	});
-}
-
-cCPanel.prototype.fHideHTMLWidgetEngineReturn = function(
-	vData,
-	vReturnFun
-)
-{
-fDbg("*** cCPanel, fHideHTMLWidgetEngineReturn(), " + vData);
-	if (vReturnFun)
-		vReturnFun();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	channel div functions
-// 
-// 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-//	fShowChannelDiv
-// -------------------------------------------------------------------------------------------------
-cCPanel.prototype.fRefreshChannelDiv = function(
-	vReturnFun
-)
-{
-fDbg2("*** cCPanel, ");
-	var o, p, vWidgetList, vTransitionTime;
-	var i;
-	var vDefaultImg = "chumby_logo_48x48";
-	
-	vTransitionTime = 500;
-	
-	if (!this.mModel)
-		this.mModel = cModel.fGetInstance();
-	if (!this.mModel.CURR_CHANNEL_INDEX)
-		this.mModel.CURR_CHANNEL_INDEX = 0;
-	if (!this.mModel.CURR_WIDGET_INDEX)
-		this.mModel.CURR_WIDGET_INDEX = 0;
-
-	vWidgetList = this.mModel.CHANNEL_LIST[this.mModel.CURR_CHANNEL_INDEX].mWidgetList;
-	if ($("#img_flashWidgetMain_thumbnailPrev").attr("src").indexOf(vDefaultImg) > -1)
-	{
-		$("#img_flashWidgetMain_thumbnailPrev").hide();
-		$("#img_flashWidgetMain_thumbnailCurr").hide();
-		$("#img_flashWidgetMain_thumbnailNext").hide();
-	
-		
-		// show control panel MAIN div
-		if (this.mModel.CURR_WIDGET_INDEX == 0)
-			p = vWidgetList.length - 1;
-		else
-			p = this.mModel.CURR_WIDGET_INDEX - 1;
-		
-		$("#img_flashWidgetMain_thumbnailPrev").attr("src", "");
-		$("#img_flashWidgetMain_thumbnailPrev").attr("src", vWidgetList[p].mLocalThumbnailPath);
-		$("#img_flashWidgetMain_thumbnailPrev").fadeIn();
-
-		$("#img_flashWidgetMain_thumbnailCurr").attr("src", "");
-		$("#img_flashWidgetMain_thumbnailCurr").attr("src", vWidgetList[this.mModel.CURR_WIDGET_INDEX].mLocalThumbnailPath);
-		$("#img_flashWidgetMain_thumbnailCurr").fadeIn();
-		
-		/*
-		fDbg2(">>>" + vWidgetList[p].mWidget.mThumbnail.mHref);
-		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
-			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			fDbg2("=====" + vData);
-			$("#img_flashWidgetMain_thumbnailPrev").attr("src", "");
-			$("#img_flashWidgetMain_thumbnailPrev").attr("src", vData);
-			$("#img_flashWidgetMain_thumbnailPrev").fadeIn();
-		});
-		
-		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
-			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			$("#img_flashWidgetMain_thumbnailCurr").attr("src", "");
-			$("#img_flashWidgetMain_thumbnailCurr").attr("src", vData);
-			$("#img_flashWidgetMain_thumbnailCurr").fadeIn();
-		});
-		*/
-		if (this.mModel.CURR_WIDGET_INDEX == vWidgetList.length - 1)
-			p = 0;
-		else
-			p = this.mModel.CURR_WIDGET_INDEX + 1;
-		
-		$("#img_flashWidgetMain_thumbnailNext").attr("src", "");
-		$("#img_flashWidgetMain_thumbnailNext").attr("src", vWidgetList[p].mLocalThumbnailPath);
-		$("#img_flashWidgetMain_thumbnailNext").fadeIn();
-		/*
-		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[p].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
-			vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-			$("#img_flashWidgetMain_thumbnailNext").attr("src", "");
-			$("#img_flashWidgetMain_thumbnailNext").attr("src", vData);
-			$("#img_flashWidgetMain_thumbnailNext").fadeIn();
-		});
-		*/
-		
-		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
-		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
-		
-		if (vReturnFun)
-			vReturnFun();
-	}
-	else
-	{
-		o = ["Prev", "Curr", "Next"];
-		p = [
-			parseFloat($("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left").split("px")[0]),
-			parseFloat($("#div_flashWidgetMain_thumbnail" + o[1] + "_container").css("left").split("px")[0]),
-			parseFloat($("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left").split("px")[0])
-		];
-		if (p[0] < p[1] && p[1] < p[2])
-			o = ["Prev", "Curr", "Next"];
-		else if (p[1] < p[2] && p[2] < p[0])
-			o = ["Curr", "Next", "Prev"];
-		else if (p[2] < p[0] && p[0] < p[1])
-			o = ["Next", "Prev", "Curr"];
-		
-		if ((cModel.fGetInstance().CURR_WIDGET_INDEX < cModel.fGetInstance().PREV_WIDGET_INDEX && cModel.fGetInstance().PREV_WIDGET_INDEX - cModel.fGetInstance().CURR_WIDGET_INDEX == 1) ||
-			(cModel.fGetInstance().CURR_WIDGET_INDEX == vWidgetList.length - 1 && cModel.fGetInstance().PREV_WIDGET_INDEX == 0))
-		{
-			if (this.mModel.CURR_WIDGET_INDEX == 0)
-				i = vWidgetList.length - 1;
-			else
-				i = this.mModel.CURR_WIDGET_INDEX - 1;
-			/*
-			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
-				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-				$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", vData);
-			});
-			*/
-			
-			$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
-				left: "+=300"
-			}, vTransitionTime / 2, function() {
-				// Animation complete
-			});
-			$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
-				width: "-=100",
-				height: "-=100"
-			}, vTransitionTime / 2, function() {
-					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "");
-					//~ $("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", "./images/chumby_logo_48x48.png");
-					$("#img_flashWidgetMain_thumbnail" + o[2]).attr("src", vWidgetList[i].mLocalThumbnailPath);
-					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").css("left", "-100px");
-					$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
-						left: "+=200"
-					}, vTransitionTime, function() {
-						// Animation complete
-					});
-					$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
-						width: "+=100",
-						height: "+=100"
-					}, vTransitionTime, function() {
-						// Animation complete
-					});
-			});
-			
-			$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
-				left: "+=200",
-				top: "-=15"
-			}, vTransitionTime, function() {
-				// Animation complete
-			});
-			$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
-				width: "+=40",
-				height: "+=30"
-			}, vTransitionTime, function() {
-				// Animation complete
-			});
-
-			
-			$("#div_flashWidgetMain_thumbnail" + o[1] + "_container").animate({
-				left: "+=240",
-				top: "+=15"
-			}, vTransitionTime, function() {
-				// Animation complete
-			});
-			$("#img_flashWidgetMain_thumbnail" + o[1]).animate({
-				width: "-=40",
-				height: "-=30"
-			}, vTransitionTime, function() {
-				// Animation complete
-			});
-		}
-		else if ((cModel.fGetInstance().CURR_WIDGET_INDEX > cModel.fGetInstance().PREV_WIDGET_INDEX && cModel.fGetInstance().CURR_WIDGET_INDEX - cModel.fGetInstance().PREV_WIDGET_INDEX == 1) ||
-			(cModel.fGetInstance().CURR_WIDGET_INDEX == 0 && cModel.fGetInstance().PREV_WIDGET_INDEX == vWidgetList.length - 1))
-		{
-			if (this.mModel.CURR_WIDGET_INDEX == vWidgetList.length - 1)
-				i = 0;
-			else
-				i = this.mModel.CURR_WIDGET_INDEX + 1;
-			/*
-			cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + vWidgetList[i].mWidget.mThumbnail.mHref + "</value>"}, function(vData) {
-				vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-				$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", vData);
-			});
-			*/
-			
-			$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
-				left: "-=300"
-			}, vTransitionTime / 2, function() {
-				// Animation complete
-			});
-			$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
-				width: "-=100",
-				height: "-=100"
-			}, vTransitionTime / 2, function() {
-					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "");
-					//~ $("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", "./images/chumby_logo_48x48.png");
-					$("#img_flashWidgetMain_thumbnail" + o[0]).attr("src", vWidgetList[i].mLocalThumbnailPath);
-					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").css("left", "840px");
-					$("#div_flashWidgetMain_thumbnail" + o[0] + "_container").animate({
-						left: "-=300"
-					}, vTransitionTime, function() {
-						// Animation complete
-					});
-					$("#img_flashWidgetMain_thumbnail" + o[0]).animate({
-						width: "+=100",
-						height: "+=100"
-					}, vTransitionTime, function() {
-						// Animation complete
-					});
-			});
-			
-			$("#div_flashWidgetMain_thumbnail" + o[1] + "_container").animate({
-				left: "-=200",
-				top: "+=15"
-			}, vTransitionTime, function() {
-				// Animation complete
-			});
-
-			$("#img_flashWidgetMain_thumbnail" + o[1]).animate({
-				width: "-=40",
-				height: "-=30"
-			}, vTransitionTime, function() {
-				
-			});
-
-			
-			$("#div_flashWidgetMain_thumbnail" + o[2] + "_container").animate({
-				left: "-=240",
-				top: "-=15"
-			}, vTransitionTime, function() {
-				// Animation complete
-				
-			});
-
-			$("#img_flashWidgetMain_thumbnail" + o[2]).animate({
-				width: "+=40",
-				height: "+=30"
-			}, vTransitionTime, function() {
-				
-			});
-		}
-		
-		$("#div_flashWidgetMain_title_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mName);
-		$("#div_flashWidgetMain_description_container").html(vWidgetList[this.mModel.CURR_WIDGET_INDEX].mWidget.mDescription);
-		
-		if (vReturnFun)
-			vReturnFun();
-	}
-
-}
 
 // -------------------------------------------------------------------------------------------------
 //	fShowChannelDiv
@@ -1122,4 +686,21 @@ cCPanel.prototype.fShowChannelDiv = function(
 	}, 200, function() {
 		// Animation complete
 	});
+}
+
+
+
+
+
+cCPanel.prototype.fRefreshScreen = function() {
+	var vInterval = setInterval(function() {
+		$("#div_tempBg").show();
+		if ($("#div_tempBg").css("left") == "-50px")
+			$("#div_tempBg").css("left", "-40px");
+		else
+		{
+			$("#div_tempBg").hide();
+			$("#div_tempBg").css("left", "-50px");
+		}
+	}, 2000);
 }

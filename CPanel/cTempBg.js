@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cTimerModule class
+//	cTempBg class
 //
 //
 //
@@ -8,47 +8,67 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cTimerModule(
+function cTempBg(
+	vDivObj
 )
 {
-	this.mHeartBeat = null;
+	this.mDiv = vDivObj ? vDivObj : {};
+
+
 	
-	
-	this.mPrevTime = null;
-	
+	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cTimerModule.instance = null;
-cTimerModule.fGetInstance = function(
+cTempBg.instance = null;
+cTempBg.fGetInstance = function(
+	vDivObj
 )
 {
-	return cTimerModule.instance ? cTimerModule.instance : (cTimerModule.instance = new cTimerModule());
+	return cTempBg.instance ? cTempBg.instance : cTempBg.instance = new cTempBg(vDivObj);
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cTimerModule.prototype.fInit = function(
+cTempBg.prototype.fInit = function(
 )
 {
-	this.mHeartBeat = setInterval(this.fHeartBeat, 1000);
+fDbg2("*** cTempBg, fInit(), ");
 }
 
-
 // -------------------------------------------------------------------------------------------------
-//	fInit
+//	fPlayWidget
 // -------------------------------------------------------------------------------------------------
-cTimerModule.prototype.fHeartBeat = function(
+cTempBg.prototype.fReset = function(
+	vReturnFun
 )
 {
-	var vDate = new Date();
-	//~ fDbg2("*** HEARTBEAT ***");
-	
-	//~ fDbg2((new Date().getHours()) + ":" + (new Date().getMinutes()) + ":" + (new Date().getSeconds()) + "." + (new Date().getMilliseconds()) + " --- " + (new Date().getSeconds() * 1000 + new Date().getMilliseconds() - this.mPrevTime));
-	this.mPrevTime = vDate.getHours()*3600000 + vDate.getMinutes()*60000 + vDate.getSeconds() * 1000 + vDate.getMilliseconds();
+	cTempBg.instance.mHeartbeatN = 0;
+}
 
-	cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_HEARTBEAT, null, null);
+// -------------------------------------------------------------------------------------------------
+//	fShow / fHide
+// -------------------------------------------------------------------------------------------------
+cTempBg.prototype.fShow = function(
+)
+{
+	this.mDiv.show();
+}
+cTempBg.prototype.fHide = function(
+)
+{
+	this.mDiv.hide();
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fRefreshScreen
+// -------------------------------------------------------------------------------------------------
+cTempBg.prototype.fRefreshScreen = function(
+	vReturnFun
+)
+{
+
 }

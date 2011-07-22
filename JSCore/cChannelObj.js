@@ -33,6 +33,10 @@ function cChannelObj(
 
 	this.mWidgetList = [];
 	
+	if (!vData)
+		return;
+
+		
 	// parse
 	var i, o;
 	vData = vData.substring(vData.indexOf("<?xml"));
@@ -86,5 +90,3 @@ cChannelObj.prototype.fPreloadThumbnails = function(
 	fDbg2("asdg");
 	
 }
-
-

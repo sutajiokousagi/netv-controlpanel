@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cTimerModule class
+//	cPActivation class
 //
 //
 //
@@ -8,47 +8,52 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cTimerModule(
+function cPActivation(
+	vDivObj
 )
 {
-	this.mHeartBeat = null;
+fDbg2("*** cPActivation, ");
+	this.mDiv = vDivObj ? vDivObj : {};
+
+
 	
-	
-	this.mPrevTime = null;
-	
+	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cTimerModule.instance = null;
-cTimerModule.fGetInstance = function(
+cPActivation.instance = null;
+cPActivation.fGetInstance = function(
+	vDivObj
 )
 {
-	return cTimerModule.instance ? cTimerModule.instance : (cTimerModule.instance = new cTimerModule());
+	return cPActivation.instance ? cPActivation.instance : cPActivation.instance = new cPActivation(vDivObj);
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cTimerModule.prototype.fInit = function(
+cPActivation.prototype.fInit = function(
 )
 {
-	this.mHeartBeat = setInterval(this.fHeartBeat, 1000);
+fDbg2("*** cPActivation, fInit(), ");
+	fDbg2(this.mDiv);
+	fDbg2(this.mDiv.length);
+	fDbg2(this.mDiv.attr("id"));
+	$("#" + this.mDiv.attr("id")).hide();
 }
 
-
 // -------------------------------------------------------------------------------------------------
-//	fInit
+//	fShow / fHide
 // -------------------------------------------------------------------------------------------------
-cTimerModule.prototype.fHeartBeat = function(
+cPActivation.prototype.fShow = function(
 )
 {
-	var vDate = new Date();
-	//~ fDbg2("*** HEARTBEAT ***");
-	
-	//~ fDbg2((new Date().getHours()) + ":" + (new Date().getMinutes()) + ":" + (new Date().getSeconds()) + "." + (new Date().getMilliseconds()) + " --- " + (new Date().getSeconds() * 1000 + new Date().getMilliseconds() - this.mPrevTime));
-	this.mPrevTime = vDate.getHours()*3600000 + vDate.getMinutes()*60000 + vDate.getSeconds() * 1000 + vDate.getMilliseconds();
-
-	cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_HEARTBEAT, null, null);
+	this.mDiv.show();
+}
+cPActivation.prototype.fHide = function(
+)
+{
+	this.mDiv.hide();
 }

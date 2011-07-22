@@ -73,6 +73,10 @@ function cWidgetObj(
 	}
 
 
+	if (!vDataNode)
+		return;
+
+
 	// parse vDataNode
 	this.mHref = vDataNode.getAttribute("href");
 	this.mId = vDataNode.getAttribute("id");

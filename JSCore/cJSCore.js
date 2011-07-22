@@ -63,16 +63,34 @@ cJSCore.fGetInstance = function(
 }
 
 // -------------------------------------------------------------------------------------------------
+//	fOnSignal
+// -------------------------------------------------------------------------------------------------
+cJSCore.prototype.fOnSignal = function(
+	vSignal,		// string
+	vData,			// data array
+	vReturnFun		// return function call
+)
+{
+fDbg("*** cJSCore, fOnSignal(), " + vSignal + ", " + vData);
+	switch (vSignal)
+	{
+	case cConst.SIGNAL_HEARTBEAT:
+		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
+		break;
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
 cJSCore.prototype.fInit = function(
-	vCompleteFun
+	vReturnFun
 )
 {
 fDbg2("*** cJSCore, fInit()");
 	
 	// load other js classes
-	fLoadExtJSScript(this.mJSClassList, vCompleteFun);
+	fLoadExtJSScript(this.mJSClassList, vReturnFun);
 }
 
 cJSCore.prototype.fInitReturn = function(
@@ -141,17 +159,9 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 				
 				cProxy.fCPanelInfoPanelUpdate();
 
-				
-				if (vData.split("</internet>")[0].split("<internet>")[1] != "true")
+				switch (vData.split("</internet>")[0].split("<internet>")[1])
 				{
-					// has no network
-					fDbg2("sadly... has no network....");
-					// display info SCP
-					cProxy.fCPanelInfoPanelShow();
-					return;
-				}
-				else
-				{
+				case "true":
 					// has network
 					o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
 					o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];
@@ -160,19 +170,28 @@ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</
 					o.CHUMBY_NETWORK_NETMASK = vData.split("netmask=\"")[1].split("\"")[0];
 					o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
 					o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
-
 					
 					$("#div_info_ip").html(o.CHUMBY_NETWORK_IP);
-
+					
 					clearInterval(vInterval);
 					$("#div_startup").hide();
-					
+					break;
+
+				case "false":
+					fDbg2("sadly... has no network....");
+
 					// display info SCP
-					//~ o.CHUMBY_NETWORK_UP = "";
-					//~ cProxy.fCPanelInfoPanelShow();
-					//~ return;
-					
-				}	
+					cProxy.fCPanelInfoPanelShow();
+					return;
+					break;
+
+				default:
+					fDbg2("InitialHello retrying......");
+					fun1();
+					return;
+					break;
+				}
+				
 			}
 			else
 			{
@@ -258,6 +277,15 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cJSCore.instance.fPreloadChannelThumbnails(o);
+
+	o = new cChannelObj();
+	cModel.fGetInstance().CHANNEL_LIST.push(o);
+	o.mWidgetList = [new cWidgetObj(), new cWidgetObj(), new cWidgetObj()];
+	o.mWidgetList[0].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.1/index.html";
+	o.mWidgetList[1].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.2/index.html";
+	o.mWidgetList[2].mWidget.mMovie.mHref = "http://localhost/widgets/google_news_0.1/index.html";
+	
+	
 	
 	// show and play widget
 	//~ cJSCore.instance.fPlayWidget("http://www.chumby.com/" + o.mWidgetList[0].mHref);
@@ -305,151 +333,4 @@ cJSCore.prototype.fPreloadChannelThumbnails = function(
 	};
 	
 	fLoadTN();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-//	utility functions
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------
-//	fDbg
-// -------------------------------------------------------------------------------------------------
-function fDbg(
-	v
-)
-{
-	//alert(v);
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fLoadScript
-// -------------------------------------------------------------------------------------------------
-function fLoadExtJSScript(
-	vFileList,
-	vReturnFun
-)
-{
-//~ fDbg("cJSCore, fLoadExtJSScript()");
-	var vUrl = vFileList.pop();
-	var script = document.createElement("script");
-	
-	script.type = "text/javascript";
-	script.src = vUrl;
-	
-	script.onload = function() {
-//~ fDbg2("*** fLoadScript(), loaded");
-		if (vFileList.length == 0)
-			vReturnFun();
-		else
-			fLoadExtJSScript(vFileList, vReturnFun);
-	};
-	
-	document.getElementsByTagName("head")[0].appendChild(script);
-//~ fDbg2("*** fLoadScript(), loading " + vUrl);
-}
-
-
-function fServerReset(
-	vData		// true | false
-)
-{
-	if (vData == "true" || vData == true)
-		location.href="http://localhost/";
-		
-	fDbg2("fServerReset(), " + vData);
 }

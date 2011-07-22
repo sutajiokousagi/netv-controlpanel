@@ -80,26 +80,30 @@ fDbg2("*** cWEFlash, fOnSignal(), " + vSignal + ", " + vData);
 cWEFlash.prototype.fShow = function(
 )
 {
+fDbg2("*** cWEFlash, fShow(). ");
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>show</value>"}, function() {});
 }
 cWEFlash.prototype.fHide = function(
 )
 {
+fDbg2("*** cWEFlash, fHide(). ");
 	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fFadeIn / fFadeOut
 // -------------------------------------------------------------------------------------------------
-cWEFlash.prototype.fFadeIn = function(
+cWEFlash.prototype.fAnimateIn = function(
 )
 {
-	
+fDbg2("*** cWEFlash, fAnimateIn(). ");
+	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>show</value>"}, function() {});
 }
-cWEFlash.prototype.fFadeOut = function(
+cWEFlash.prototype.fAnimateOut = function(
 )
 {
-	
+fDbg2("*** cWEFlash, fAnimateOut(). ");
+	cProxy.xmlhttpPost("", "post", {cmd : "PlayWidget", data : "<value>hide</value>"}, function() {});
 }
 
 // -------------------------------------------------------------------------------------------------
