@@ -6,6 +6,18 @@
 <script type='text/javascript' src='./JSCore/cJSCore.js'></script>
 <script type='text/javascript' src='./CPanel/jquery-1.6.1.min.js'></script>
 <script type='text/javascript' src='./CPanel/cCPanel.js'></script>
+
+<!--
+<script type='text/javascript' src='./CPanel/jquery-1.6.1.min.js'></script>
+<script type='text/javascript' src='./JSCore/cJSCore.js'></script>
+<script type='text/javascript' src='./CPanel/cCPanel.js'></script>
+<script type='text/javascript' src='./CPanel/NeTV.js'></script>
+<link rel="stylesheet" href="./css/reset.css" type="text/css">
+<link rel="stylesheet" href="./css/cpanel.css" type="text/css">
+-->
+
+
+
 <script language="javascript">
 var mJSCore;
 var mCPanel;
@@ -22,18 +34,22 @@ var mTimeTakenList = [];
 		
 		mTimeStart = new Date().getTime();
 		$('#div_autotest_0 .autotest_timer').html(mTimeStart);
+
+		
 		fAppendText("Loading JSCore classes ......");
 		mJSCore.fInit(function() {
 			mTimeTakenList.push(new Date().getTime());
-			fAppendText("Loading JSCore classes passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeStart), true);
+			fAppendText(["Loading JSCore classes passed.", mTimeTakenList[mTimeTakenList.length - 1] - mTimeStart], true);
+
 			fAppendText("Loading Profile Info ......");
 			mJSCore.fStartUp(function(vData) {
 				mTimeTakenList.push(new Date().getTime());
-				fAppendText("Loading Profile Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+				fAppendText(["Loading Profile Info passed.", mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]], true);
+				
 				fAppendText("Loading Channel Info ......");
 				mJSCore.fGetChannelInfo(function(vData) {
 					mTimeTakenList.push(new Date().getTime());
-					fAppendText("Loading Channel Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+					fAppendText(["Loading Channel Info passed.", mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]], true);
 					fAppendText("Parsing Channel Info ......");
 					vData = vData.split("<data><value>")[1].split("</value></data>")[0];
 					var o;
@@ -41,18 +57,39 @@ var mTimeTakenList = [];
 					if (o.mWidgetList.length)
 					{
 						mTimeTakenList.push(new Date().getTime());
-						fAppendText("Parsing Channel Info passed." + (mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]), true);
+						fAppendText(["Parsing Channel Info passed.", mTimeTakenList[mTimeTakenList.length - 1] - mTimeTakenList[mTimeTakenList.length - 2]], true);
 					}
 				});
 			});
 		});
-		mCPanel.fInit();
+		
+		mCPanel.fInit(function() {
+			$("#div_autotest_container").show();
+			$("#div_loader").hide();
+		});
 	});
 
 var mTestFunList = [fTest1, fTest2, fTest3];
+var mCurrTestN = 0;
 
-function fTest1(vData) {
-	mJSCore.fStartUp(vData);
+function fStartTest(
+)
+{
+	fDoTest(mTestFunList[mCurrTestN], function() {});
+}
+
+
+function fTest1(
+	vData
+)
+{
+	// print testFun start
+	fAppendText("Loading JSCore classes ......");
+	mJSCore.fInit(function() {
+		mTimeTakenList.push(new Date().getTime());
+		fAppendText(["Loading JSCore classes passed.", mTimeTakenList[mTimeTakenList.length - 1] - mTimeStart], true);
+		fCompletedTest();
+	});
 }
 
 function fTest2(vData) {
@@ -62,6 +99,29 @@ function fTest2(vData) {
 function fTest3(vData) {
 	mJSCore.fStartUp(vData);
 }
+
+function fDoTest(
+	vTestFun,
+	vReturnFun
+)
+{
+	// register curr time
+	mTimeTakenList.push(new Date().getTime());
+	
+	// start test
+	
+	// do return fun
+	if (vReturnFun)
+		vReturnFun();
+}
+
+function fCompletedTest(
+)
+{
+	mCurrTestN++;
+	fDoTest(mTestFunList[mCurrTestN], function() {});
+}
+
 
 // -------------------------------------------------------------------------------------------------
 //	append text / autotest result
@@ -73,7 +133,12 @@ function fAppendText(
 {
 	if (vUpdateFlag)
 	{
-		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).html(vData);
+		if (typeof(vData) == "string")
+			$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).html(vData);
+		else
+		{
+			$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).html(vData[0] + '<div class="div_autotest_timer" style="float:right;">' + vData[1] + '</div>');
+		}
 		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).toggleClass('autotest_item_curr');
 		$('#div_autotest_' + ($("#div_autotest_container").children().length - 1)).toggleClass('autotest_item');
 	}
@@ -91,9 +156,55 @@ function fDbg(v)
 	//$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
 	//document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
 }
+function fDbg2(v)
+{
+	if ($("#div_dbg").length > 0)
+	{
+		$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
+		document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+	}
+	console.log("|~|" + v);
+}
+
+function fServerReset(
+	vData		// true | false
+)
+{
+fDbg2("fServerReset(), " + vData);
+	if (vData == "true" || vData == true)
+		location.href="http://localhost/";
+}
+
 
 // -------------------------------------------------------------------------------------------------
-//	D-pad button functions
+//	fLoadScript
+// -------------------------------------------------------------------------------------------------
+function fLoadExtJSScript(
+	vFileList,
+	vReturnFun
+)
+{
+//~ fDbg("cJSCore, fLoadExtJSScript()");
+	var vUrl = vFileList.pop();
+	var script = document.createElement("script");
+	
+	script.type = "text/javascript";
+	script.src = vUrl;
+	
+	script.onload = function() {
+//~ fDbg2("*** fLoadScript(), loaded");
+		if (vFileList.length == 0)
+			vReturnFun();
+		else
+			fLoadExtJSScript(vFileList, vReturnFun);
+	};
+	
+	document.getElementsByTagName("head")[0].appendChild(script);
+//~ fDbg2("*** fLoadScript(), loading " + vUrl);
+}
+
+// -------------------------------------------------------------------------------------------------
+//	press button on D-pad / android
 // -------------------------------------------------------------------------------------------------
 function fButtonPress(
 	vButtonName
@@ -104,27 +215,21 @@ function fButtonPress(
 	case "cpanel":
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL);
 		break;
-		
 	case "widget":
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
 		break;
-		
 	case "left":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT);
 		break;
-		
 	case "right":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT);
 		break;
-		
 	case "center":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
 		break;
-		
 	case "up":
-		
+		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP);
 		break;
-		
 	case "down":
 		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN);
 		break;
@@ -234,19 +339,6 @@ function fButtonPress(
 
 </div>
 
-<!--
------------------------------------------------
--------------widget rendering engine (flash)
------------------------------------------------
--->
-<div id="div_flashWidgetPlayer" style="position: absolute; left: 50px; top: 50px; padding: 0; margin: 0; overflow: hidden; width: 240px; height: 180px;">
-<div id="div_flashWidgetPlayer_embed" style="position: absolute; left: 0px; top: 0px; width: 240px; height: 180px; background-image: url('images/flash_cs5_logo.png'); background-size: 180px 130px; background-position: center center;">
-<!--
-<embed style="padding: 0px; margin: 0px;" src="widget_player_0.1.swf" quality="high" bgcolor="#869ca7" border="0" width="800" height="600" name="widget_player_01" id="widget_player_01" align="middle" play="true" loop="false" quality="high" always="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
--->
-</div>
-</div>
-
 
 <!--
 -----------------------------------------------
@@ -254,32 +346,10 @@ function fButtonPress(
 -----------------------------------------------
 -->
 <div id="div_htmlWidgetPlayer" style="position: absolute; left: 0px; top: 650px; width: 1279px; height: 70px; padding: 0; margin: 0; overflow: hidden;">
-<!--
-<div id="div_htmlWidgetPlayer_embed" style="position: absolute; left: 140px; top: 640px; width: 1000px; height: 60px;">
-<embed style="padding: 0px; margin: 0px;" src="widget_player_0.1.swf" quality="high" bgcolor="#869ca7" border="0" width="800" height="600" name="widget_player_01" id="widget_player_01" align="middle" play="true" loop="false" quality="high" always="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
-</div>
--->
-<iframe id="iframe_htmlWidgetPlayer">
-</iframe>
-</div>
-
-<!--
------------------------------------------------
--------------debug mode buttons : to inject action/signals
------------------------------------------------
--->
-<div id="div_actionArea" style="position: absolute; top: 540px;">
-	<input type="button" value="show CP" onClick="mCPanel.fShow();"/>
-	<input type="button" value="hide CP" onClick="mCPanel.fHide();"/>
-	<input type="button" value="show W" onClick="mCPanel.fHide();"/>
-	
-	<input type="button" value="prev W" /> 
-	<input type="button" value="pause W" /> 
-	<input type="button" value="next W" /> 
+<iframe id="iframe_htmlWidgetPlayer"></iframe>
 </div>
 
 
 
 </body>
 </html>
-

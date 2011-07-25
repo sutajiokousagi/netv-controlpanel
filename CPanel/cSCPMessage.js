@@ -138,7 +138,7 @@ cSCPMessage.prototype.fDisplay = function(
 					vThis.mMessageList.splice(0, 1);
 					$("#div_messageBoard_text").fadeIn("fast", function() {
 						if (vThis.mMessageList.length > 0)
-							vThis.fDisplayMessageBoard();
+							vThis.fDisplay();
 						else
 							vThis.mMessageDisplayInProgress = false;
 					});
@@ -149,7 +149,7 @@ cSCPMessage.prototype.fDisplay = function(
 		{
 			if (vThis.mMessageList.length > 0)
 				vThis.mMessageList.splice(0, 1);
-			vThis.fDisplayMessageBoard();
+			vThis.fDisplay();
 		}
 	}
 	else
@@ -165,7 +165,7 @@ cSCPMessage.prototype.fDisplay = function(
 			$("#div_messageBoard_text").html(o);
 			$("#div_messageBoard_text").fadeIn("fast", function() {
 				if (vThis.mMessageList.length > 0)
-					vThis.fDisplayMessageBoard();
+					vThis.fDisplay();
 				else
 					vThis.mMessageDisplayInProgress = false;
 			});

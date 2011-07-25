@@ -437,8 +437,7 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			}
 			break;
 		}
-
-		fDbg2(mCPanel.mCurrWidgetTimeSpend);
+		//~ fDbg2(mCPanel.mCurrWidgetTimeSpend);
 		break;
 		
 	case cConst.SIGNAL_MESSAGE:

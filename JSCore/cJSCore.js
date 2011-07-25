@@ -25,10 +25,11 @@ function cJSCore(
 {
 	// CONNECTION LINKS
 	this.CPANEL = null;
-
+	
 	if (location.href.indexOf("localhost") == -1)
 		if (location.href.indexOf("usr/share") == -1)
-			location.href = "test.html";
+			if (location.href.indexOf("index_autotest.html") == -1)
+				location.href = "test.html";
 	
 	// members
 	this.mJSClassList = [
@@ -43,7 +44,7 @@ function cJSCore(
 		"./JSCore/cProxy.js",
 		"./JSCore/cModel.js"];
 	this.mCallBackList = [];
-
+	
 	// javascript classes
 	this.mStartupModule = null;
 	this.mTimerModuel = null;
@@ -118,7 +119,6 @@ fDbg2("*** cJSCore, fStartUp()");
 	// force write over GUID and URLs
 	this.mModel.SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
 	this.mModel.LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
-
 
 // do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
 cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
