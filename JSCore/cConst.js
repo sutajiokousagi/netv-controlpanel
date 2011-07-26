@@ -31,6 +31,10 @@ cConst.SIGNAL_FIRSTTIME_STARTUP = "signal_firsttime_startup";
 cConst.SIGNAL_HEARTBEAT = "signal_heartbeat";
 cConst.SIGNAL_PLAYNEXTWIDGET = "signal_playnextwidget";
 
+
+cConst.SIGNAL_NETWORKEVENT_DISCONNECTED = "signal_networkevent_disconnnected";
+cConst.SIGNAL_NETWORKEVENT_CONNECTED = "signal_networkevent_connnected";
+
 // -----------------------------------------------------------------------------
 //	widget engine signals
 // -----------------------------------------------------------------------------

@@ -60,7 +60,9 @@ $(function() {
 	*/
 	//fLoadExtPageModule("index_activation.html", "./CPanel/cPActivation.js");
 	
-	
+	var t1 = setInterval(function() {
+		fNetworkEvent("disconnected");
+	}, 10000);
 });
 
 
@@ -127,6 +129,11 @@ function fLoadExtJSScript(
 
 
 
+
+
+
+
+
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
@@ -155,27 +162,13 @@ function fButtonPress(
 {
 	switch (vButtonName)
 	{
-	case "cpanel":
-		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL);
-		break;
-	case "widget":
-		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
-		break;
-	case "left":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT);
-		break;
-	case "right":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT);
-		break;
-	case "center":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
-		break;
-	case "up":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP);
-		break;
-	case "down":
-		mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN);
-		break;
+	case "cpanel": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
+	case "widget": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE); break;
+	case "left": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT); break;
+	case "right": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT); break;
+	case "center": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
+	case "up": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
+	case "down": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
 	}
 }
 
@@ -185,9 +178,6 @@ function fNetworkEvent(
 {
 	switch (vEventName)
 	{
-	case "disconnected":
-		
-		break;
-
+	case "disconnected": mCPanel.fOnSignal(cConst.SIGNAL_NETWORKEVENT_DISCONNECTED); break;
 	}
 }

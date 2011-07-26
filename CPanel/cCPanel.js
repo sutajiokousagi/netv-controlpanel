@@ -444,6 +444,10 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		cSCPMessage.fGetInstance().fDisplay(vData[0]);
 		break;
 		
+	case cConst.SIGNAL_NETWORKEVENT_DISCONNECTED:
+		mCPanel.fToast("Network Disconnected! Please check your wireless connection.");
+		break;
+		
 	case cConst.SIGNAL_CHANNELDIV_SHOW:
 		switch (mCurrDivVisible)
 		{
@@ -593,7 +597,29 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 
 
 
+cCPanel.prototype.fToast = function(
+	vMsg
+)
+{
+//~ fDbg2(vMsg);
+	$("#div_toast_content").html(vMsg);
 
+	$("#div_toast_content").css("top", "-50px");
+	$("#div_toast_content").animate({
+		top : "10px"
+	}, 200, function() {
+		var vTO = setTimeout(function() {
+			$("#div_toast_content").animate({
+				top : "-50px"
+			}, 200, function() {
+			});
+		}, 5000);
+
+	});
+
+	//~ fDbg2($("#div_toast_content").outerWidth());
+
+}
 
 
 

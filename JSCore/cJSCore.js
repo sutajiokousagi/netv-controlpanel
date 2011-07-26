@@ -29,7 +29,7 @@ function cJSCore(
 	if (location.href.indexOf("localhost") == -1)
 		if (location.href.indexOf("usr/share") == -1)
 			if (location.href.indexOf("index_autotest.html") == -1)
-				location.href = "test.html";
+				location.href = "html_remote.html";
 	
 	// members
 	this.mJSClassList = [
@@ -241,7 +241,14 @@ fDbg("*** cJSCore, fStartUpReturn()");
 	cJSCore.instance.mModel.PROFILE_NAME = xmlDoc.getElementsByTagName("profile")[0].getAttribute("name");
 	cJSCore.instance.mModel.PROFILE_ID = xmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	cJSCore.instance.mModel.USER_NAME = xmlDoc.getElementsByTagName("user")[0].getAttribute("username");
-	
+
+
+
+	cProxy.xmlhttpPost("", "post", {cmd : "GetUrl", data: "<value><url>http:</url><post></post></value>"}, function(vData) {
+		fDbg2(vData);
+	});
+
+	//~ return;
 	// proceed to fGetChannelInfo();
 	cJSCore.instance.fGetChannelInfo();
 }
