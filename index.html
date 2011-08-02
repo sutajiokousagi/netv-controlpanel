@@ -15,7 +15,7 @@
 
 <body style="background-color: #F000F0;">
 
-<div id="div_all" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 719px; overflow: hidden">
+<div id="div_all" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; overflow: hidden">
 
 
 
@@ -51,7 +51,7 @@
 -------------CPanel
 -----------------------------------------------
 -->
-<div id="div_CPanel" style="position: absolute; left: 0px; top: 0px; border: solid blue 0px; width: 800px; height: 600px; background-color: #EEEEFF; overflow: hidden;">
+<div id="div_CPanel" style="position: absolute; left: 240px; top: 60px; border: solid blue 0px; width: 800px; height: 600px; background-color: #EEEEFF; overflow: hidden;">
 
 <!-- ----------------------- message module ---------------------- -->
 <div id="div_messageBoard" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
@@ -140,7 +140,9 @@
 </div>
 
 
+
 <!-- ----------------------- chumby info module ---------------------- -->
+<!--
 <div id="div_infoMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
 	
@@ -160,16 +162,6 @@
 			<div style="position: relative; width: 350px; height: 25px;">
 				<div style="float: left; width: 110px; border: solid black 0px;">NeTV Name</div><div style="float: left; width: 14px;"> : </div><div style="float: left;">chumby_netv_demo_set</div>
 			</div>
-<!--
-			
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">GUID</div><div style="float: left; width: 14px;"> : </div><div id="div_info_guid" style="float: left; font-size: 10px;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">DCID</div><div style="float: left; width: 14px;"> : </div><div id="div_info_dcid" style="float: left;"> </div>
-			</div>
--->
-
 			<div style="position: relative; width: 350px; height: 25px;">
 				<div style="float: left; width: 110px; border: solid black 0px;">HW Ver</div><div style="float: left; width: 14px;"> : </div><div id="div_info_hwver" style="float: left;"> </div>
 			</div>
@@ -243,7 +235,7 @@
 	<div class="subcpanel_title">NeTV Info</div>
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
-
+-->
 
 <!-- ----------------------- settings module ---------------------- -->
 <div id="div_settingMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
@@ -256,6 +248,31 @@
 	<div class="subcpanel_title">Settings</div>
 	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 </div>
+
+
+<!-- ----------------------- chumby info module ---------------------- -->
+<div id="div_infoMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
+	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
+	
+	<div class="bg_innerborder_outer" style="position: absolute; top: 75px; left: 40px; width: 720px; height: 460px; background-color: #333333; ">
+		<div class="bg_innerborder_inner" style="position: absolute;  top: 8px; left: 8px; width: 704px; height: 444px; background-color: #EEEEFF; "></div>
+	</div>
+	
+	<div id="div_infoMain_content" style="position: absolute; top: 0px; left: 0px;">
+		<div style="position: absolute; top: 120px; left: 220px;">ANDROID</div>
+		<div style="position: absolute; top: 120px; left: 520px;">IOS</div>
+		<div style="position: absolute; top: 140px; left: 175px; width: 175px; height: 175px; border: solid black 0px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat;"></div>
+		<div style="position: absolute; top: 140px; left: 450px; width: 175px; height: 175px; border: solid black 0px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat;"></div>
+		<div class="bigline chumbyblue font20" style="position: absolute; top: 350px; left: 150px; width: 500px; height: 250px; text-align: justify;">
+			Use your <span style="color: red; font-size: 24px; font-weight: bold;">android</span> device / <span style="color: red; font-size: 24px; font-weight: bold;"><span style="color: #AAA;">iph</span><span style="color: black;">one</span></span> to scan the <span style="color: black; font-size: 22px; font-weight: bold;">QR</span> image above, to acquire the web address of <span style="font-weight: bold; font-size: 22px; text-decoration: underline;">NeTV Mobile App</span>.<br /><br />
+			Or use click on any button on the <span style="font-size: 24px: font-weight: bold; ">NeTV Remote Control</span> to proceed.
+		</div>
+	</div>
+	
+	<div class="subcpanel_title">NeTV</div>
+	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
+</div>
+
 
 
 <!-- ----------------------- loading... module ---------------------- -->
@@ -305,7 +322,7 @@
 -------------widget rendering engine (HTML5 + Javascript)
 -----------------------------------------------
 -->
-<div id="div_eventWidgetPlayer" style="position: absolute; left: 0px; top: 651px; width: 1279px; height: 68px; padding: 0; margin: 0; overflow: hidden;">
+<div id="div_eventWidgetPlayer" style="position: absolute; left: 0px; top: 651px; width: 1279px; height: 68px; padding: 0; margin: 0; overflow: hidden; display:none;">
 <div id="div_eventWidgetPlayer_crawling" style="position: absolute; top: 0px; left: 0px; width: 1179px; height: 68px; background-color: #EEEEFF; overflow: hidden;">
 	<div id="div_eventWidgetPlayer_crawling_text" style="position: absolute; top: 0px; left: 0px; font-size: 20px; padding: 10px 20px;">
 	</div>
@@ -342,9 +359,8 @@
 -------------warning message/instruction div
 -----------------------------------------------
 -->
-<div id="div_toast" style="position: absolute; top: 10px; left: 0px; width: 1279px; height: 50px; border: solid blue 0px;">
+<div id="div_toast" style="position: absolute; top: 20px; left: 10px; width: 1279px; height: 50px; border: solid blue 0px; display: none;">
 	<div id="div_toast_content" style="position: absolute; top: 20px; left: 0px; width: auto; background-color: #FF4444; border: solid #EEEEEE 0px; color: #FFFFFF; font-size: 17px; padding: 10px 40px">
-	
 	</div>
 </div>
 
