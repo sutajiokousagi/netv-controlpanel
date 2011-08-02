@@ -9,11 +9,12 @@
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cSCPInfo(
-	vDivObj
+	vDiv
 )
 {
-	this.mDiv = vDivObj;
-
+	this.mDiv = $("#" + vDiv);
+	this.mID = vDiv;
+	
 
 	this.fInit();
 }
@@ -23,10 +24,10 @@ function cSCPInfo(
 // -------------------------------------------------------------------------------------------------
 cSCPInfo.instance = null;
 cSCPInfo.fGetInstance = function(
-	vDivObj
+	vDiv
 )
 {
-	return cSCPInfo.instance ? cSCPInfo.instance : cSCPInfo.instance = new cSCPInfo(vDivObj);
+	return cSCPInfo.instance ? cSCPInfo.instance : cSCPInfo.instance = new cSCPInfo(vDiv);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -126,6 +127,7 @@ cSCPInfo.prototype.fFadeOut = function(
 cSCPInfo.prototype.fUpdate = function(
 )
 {
+fDbg2("*** cSCPInfo, fUpdate(), ");
 	var o;
 	o = cModel.fGetInstance();
 	
@@ -134,4 +136,6 @@ cSCPInfo.prototype.fUpdate = function(
 	$("#div_info_hwver").html(o.CHUMBY_HWVERSION);
 	$("#div_info_fwver").html(o.CHUMBY_FWVERSION);
 	$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
+	
+	$("#div_info_ip").html(o.CHUMBY_NETWORK_IP);
 }

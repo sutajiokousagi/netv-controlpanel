@@ -9,10 +9,12 @@
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cSCPChannels(
-	vDivObj
+	vDiv
 )
 {
-	this.mDiv = vDivObj;
+	this.mDiv = $("#" + vDiv);
+	this.mID = vDiv;
+	
 	this.mSelectedChannel = null;
 }
 
@@ -21,10 +23,10 @@ function cSCPChannels(
 // -------------------------------------------------------------------------------------------------
 cSCPChannels.instance = null;
 cSCPChannels.fGetInstance = function(
-	vDivObj
+	vDiv
 )
 {
-	return cSCPChannels.instance ? cSCPChannels.instance : cSCPChannels.instance = new cSCPChannels(vDivObj);
+	return cSCPChannels.instance ? cSCPChannels.instance : cSCPChannels.instance = new cSCPChannels(vDiv);
 }
 
 // -------------------------------------------------------------------------------------------------

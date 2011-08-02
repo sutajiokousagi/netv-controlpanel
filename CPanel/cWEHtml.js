@@ -164,7 +164,7 @@ fDbg2("*** cWEHtml, fPlayWidget(), " + vData);
 	
 	cWEHtml.instance.mCurrWidget = cModel.fGetInstance().CHANNEL_LIST[1].mWidgetList[i];
 	vData = cWEHtml.instance.mCurrWidget.mWidget.mMovie.mHref;
-	fDbg2(vData);
+	//~ fDbg2(vData);
 
 	$("#div_htmlWidgetPlayer").show();
 	$("#div_htmlWidgetPlayer").css("top", "720px");

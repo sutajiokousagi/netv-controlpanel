@@ -9,10 +9,12 @@
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cSCPWidgets(
-	vDivObj
+	vDiv
 )
 {
-	this.mDiv = vDivObj;
+	this.mDiv = $("#" + vDiv);
+	this.mID = vDiv;
+	
 	this.mSelectedChannel = null;
 }
 
@@ -21,10 +23,10 @@ function cSCPWidgets(
 // -------------------------------------------------------------------------------------------------
 cSCPWidgets.instance = null;
 cSCPWidgets.fGetInstance = function(
-	vDivObj
+	vDiv
 )
 {
-	return cSCPWidgets.instance ? cSCPWidgets.instance : cSCPWidgets.instance = new cSCPWidgets(vDivObj);
+	return cSCPWidgets.instance ? cSCPWidgets.instance : cSCPWidgets.instance = new cSCPWidgets(vDiv);
 }
 
 // -------------------------------------------------------------------------------------------------

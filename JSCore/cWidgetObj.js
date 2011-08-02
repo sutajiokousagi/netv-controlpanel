@@ -3,6 +3,34 @@
 //
 //
 //
+/*
+		<widget_instances count="35">
+			<widget_instance id="98E8057C-81FD-11E0-927E-0021288EC192">
+				<name>Local Info</name>
+				<info created="Thu May 19 02:51:41 -0700 2011" secure="" updated="Thu May 19 02:51:41 -0700 2011" origin="default" access="private"/>
+				<play mode="default" time="15"/>
+				<rating value="0"/>
+				<widget id="8664F0CE-C50E-11DF-91A6-001B24E044BE">
+					<name>Local Info</name>
+					<description>Local news, sports, weather, and traffic, all at a glance.</description>
+					<play mode="default" time="30"/>
+					<user username="chumby" type="chumby" id="00000000-0000-0000-0000-000000000001"/>
+					<security previewable="true" virtualable="true" approval="approved" deletable="true" access="public" overlay="true" sendable="true"/>
+					<rating count="169" value="4.1479"/>
+					<thumbnail href="http://s3movies.chumby.com/cdn/xmlthumbnail/86976CD4-C50E-11DF-91A6-001B24E044BE"/>
+					<template href="http://s3movies.chumby.com/cdn/xmltemplate/86A733EE-C50E-11DF-91A6-001B24E044BE"/>
+					<movie contenttype="application/x-shockwave-flash" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE"/>
+					<swfs>
+						<swf bgcolor="000000" camera="false" previewable="true" supports_browser="false" content-type="application/x-shockwave-flash" height="240" width="320" microphone="false" resolution="" scalable="false" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE" accelerometer="false" pointing="false" as_version="2" requires_sound="false" swf_version="8" kb="false"/>
+					</swfs>
+				</widget>
+				<parameters></parameters>
+			</widget_instance>
+			*
+			*
+			*
+		</widget_instances>
+*/
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
@@ -16,126 +44,165 @@ function cWidgetObj(
 	vDataNode		// xml node
 )
 {
-	this.mHref = "";
-	this.mId = "";
+	this.mID = "";
 	this.mName = "";
+	this.mInfo = {
+		mCreated : "",
+		mSecure : "",
+		mUpdated : "",
+		mOrigin : "",
+		mAccess : ""
+	};
+	this.mPlay = {
+		mMode : "",
+		mTime : ""
+	};
+	this.mRating = {
+		mValue : ""
+	};
 	this.mWidget = {
-		mId : "",
+		mID : "",
 		mName : "",
 		mDescription : "",
-		mVersion : "",
-		mMode : {
+		mPlay : {
 			mMode : "",
-			mTime : 30
-		},
-		mAccess : {
-			mAccess : "",
-			mDeleteable : "",
-			mSendable : "",
-			mVirtualable : ""
+			mTime : ""
 		},
 		mUser : {
-			mUserName : ""
+			mUsername : "",
+			mType : "",
+			mID : ""
 		},
-		mCategory : {
-			mId : "",
-			mName : "",
-			mHref : ""
+		mSecurity : {
+			mPreviewable : "",
+			mVirtualable : "",
+			mApproval : "",
+			mDeletable : "",
+			mAccess : "",
+			mOverlay : ""
+		},
+		mRating : {
+			mCount : "",
+			mValue : ""
 		},
 		mThumbnail : {
-			mContentType : "",
 			mHref : ""
 		},
 		mTemplate : {
-			mContentType : "",
 			mHref : ""
 		},
 		mMovie : {
 			mContentType : "",
 			mHref : ""
 		},
-		mRating : {
-			mRating : "",
-			mCount : ""
-		}
+		mSwfList : [
+			{
+				mBgcolor : "",
+				mCamera : "",
+				mPreviewable : "",
+				mSupportsBrowser : "",
+				mContentType : "",
+				mWidth : null,
+				mHeight : null,
+				mMicrophone : "",
+				mResolution : "",
+				mScalable : "",
+				mHref : "",
+				mAccelerometer : "",
+				mPointing : "",
+				mASVersion : "",
+				mRequiresSound : "",
+				mSWFVersion : "",
+				mKB : ""	// keyboard
+			}
+		]
 	};
-	this.mAccess = {
-		mAccess : ""
+	this.mParameterList = {
 	};
-	this.mMode = {
-		mMode : "",
-		mTime : null
-	};
-	this.mWidgetParameters = {
-	};
-	this.mRating = {
-		mRating : null
-	}
-
-
+	
 	if (!vDataNode)
 		return;
 
 
+	
 	// parse vDataNode
-	this.mHref = vDataNode.getAttribute("href");
-	this.mId = vDataNode.getAttribute("id");
+	this.mID = vDataNode.getAttribute("id");
 	this.mName = vDataNode.getElementsByTagName("name")[0].textContent;
+	this.mInfo = {
+		mCreated : vDataNode.getElementsByTagName("info")[0].getAttribute("created"),
+		mSecure : vDataNode.getElementsByTagName("info")[0].getAttribute("secure"),
+		mUpdated : vDataNode.getElementsByTagName("info")[0].getAttribute("updated"),
+		mOrigin : vDataNode.getElementsByTagName("info")[0].getAttribute("origin"),
+		mAccess : vDataNode.getElementsByTagName("info")[0].getAttribute("private")
+	};
+	this.mPlay = {
+		mMode : vDataNode.getElementsByTagName("play")[0].getAttribute("mode"),
+		mTime : vDataNode.getElementsByTagName("play")[0].getAttribute("time")
+	};
+	this.mRating = {
+		mValue : vDataNode.getElementsByTagName("rating")[0].getAttribute("value")
+	};
 	this.mWidget = {
-		mId : vDataNode.getElementsByTagName("widget")[0].getAttribute("id"),
+		mID : vDataNode.getElementsByTagName("widget")[0].getAttribute("id"),
 		mName : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("name")[0].textContent,
 		mDescription : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("description")[0].textContent,
-		mVersion : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("version")[0].textContent,
-		mMode : {
-			mMode : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("mode")[0].getAttribute("name"),
-			mTime : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("mode")[0].getAttribute("time")
-		},
-		mAccess : {
-			mAccess : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("access")[0].getAttribute("access"),
-			mDeleteable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("access")[0].getAttribute("deleteable"),
-			mSendable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("access")[0].getAttribute("sendable"),
-			mVirtualable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("access")[0].getAttribute("virtualable")
+		mPlay : {
+			mMode : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("play")[0].getAttribute("mode"),
+			mTime : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("play")[0].getAttribute("time")
 		},
 		mUser : {
-			mUserName : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("user")[0].getAttribute("username")
+			mUsername : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("user")[0].getAttribute("username"),
+			mType : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("user")[0].getAttribute("type"),
+			mID : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("user")[0].getAttribute("id")
 		},
-		mCategory : {
-			mId : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("category")[0].getAttribute("id"),
-			mName : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("category")[0].getAttribute("name"),
-			mHref : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("category")[0].getAttribute("href")
+		mSecurity : {
+			mPreviewable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("previewable"),
+			mVirtualable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("virtualable"),
+			mApproval : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("approval"),
+			mDeletable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("deletable"),
+			mAccess : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("access"),
+			mOverlay : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("overlay"),
+			mSendable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("security")[0].getAttribute("sendable")
+		},
+		mRating : {
+			mCount : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("rating")[0].getAttribute("count"),
+			mValue : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("rating")[0].getAttribute("value")
 		},
 		mThumbnail : {
-			mContentType : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("thumbnail")[0].getAttribute("contenttype"),
 			mHref : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("thumbnail")[0].getAttribute("href")
 		},
 		mTemplate : {
-			mContentType : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("template")[0].getAttribute("contenttype"),
 			mHref : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("template")[0].getAttribute("href")
 		},
 		mMovie : {
 			mContentType : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("movie")[0].getAttribute("contenttype"),
 			mHref : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("movie")[0].getAttribute("href")
 		},
-		mRating : {
-			mRating : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("rating")[0].getAttribute("rating"),
-			mCount : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("rating")[0].getAttribute("count")
-		}
+		mSwfList : [
+			{
+				mBgcolor : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("bgcolor"),
+				mCamera : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("camera"),
+				mPreviewable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("previewable"),
+				mSupportsBrowser : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("supports_browser"),
+				mContentType : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("content-type"),
+				mWidth : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("width"),
+				mHeight : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("height"),
+				mMicrophone : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("microphone"),
+				mResolution : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("resolution"),
+				mScalable : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("scalable"),
+				mHref : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("href"),
+				mAccelerometer : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("accelerometer"),
+				mPointing : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("pointing"),
+				mASVersion : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("as_version"),
+				mRequiresSound : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("requires_sound"),
+				mSWFVersion : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("swf_version"),
+				mKB : vDataNode.getElementsByTagName("widget")[0].getElementsByTagName("swfs")[0].getElementsByTagName("swf")[0].getAttribute("kb")	// keyboard
+			}
+		]
 	};
-	this.mAccess = {
-		mAccess : vDataNode.getElementsByTagName("access")[0].getAttribute("access")
+	this.mParameterList = {
 	};
-	this.mMode = {
-		mMode : vDataNode.getElementsByTagName("mode")[0].getAttribute("mode"),
-		mTime : vDataNode.getElementsByTagName("mode")[0].getAttribute("time")
-	};
-	this.mWidgetParameters = {
-	};
-	this.mRating = {
-		mRating : vDataNode.getElementsByTagName("rating")[0].getAttribute("rating")
-	}
-
-
+	
 	// local/temp variables
 	this.mLocalThumbnailPath = "";
-	
 }

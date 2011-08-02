@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cTempBg class
+//	cProfile class
 //
 //
 //
@@ -8,67 +8,59 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cTempBg(
-	vDivObj
+function cProfile(
 )
 {
-	this.mDiv = vDivObj ? vDivObj : {};
-
-
-	
 	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cTempBg.instance = null;
-cTempBg.fGetInstance = function(
-	vDivObj
+cProfile.instance = null;
+cProfile.fGetInstance = function(
 )
 {
-	return cTempBg.instance ? cTempBg.instance : cTempBg.instance = new cTempBg(vDivObj);
+	return cProfile.instance ? cProfile.instance : (cProfile.instance = new cProfile());
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cTempBg.prototype.fInit = function(
+cProfile.prototype.fInit = function(
 )
 {
-fDbg2("*** cTempBg, fInit(), ");
+fDbg2("*** cProfile, fInit()");
+	
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fPlayWidget
+//	fFetchInfo
+//
+//	/xapis/profile/show/<profile id>
 // -------------------------------------------------------------------------------------------------
-cTempBg.prototype.fReset = function(
+cProfile.prototype.fFetchInfo = function(
+	vProfileID,
 	vReturnFun
 )
 {
-	cTempBg.instance.mHeartbeatN = 0;
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fShow / fHide
-// -------------------------------------------------------------------------------------------------
-cTempBg.prototype.fShow = function(
-)
-{
-	this.mDiv.show();
-}
-cTempBg.prototype.fHide = function(
-)
-{
-	this.mDiv.hide();
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fRefreshScreen
-// -------------------------------------------------------------------------------------------------
-cTempBg.prototype.fRefreshScreen = function(
-	vReturnFun
-)
-{
-
+fDbg2("*** cProfile, fFetchInfo()");
+	var o;
+	
+	vOauthSignatureMethod = "MD5-HEX";
+	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
+	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;
+	vOauthSignature = cXAPI.fSignatureMD5Of(["profile", "show", vProfileID], {
+		oauth_signature_method : "MD5-HEX",
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	});
+	
+	cXAPI.fXAPIRequest(["profile", "show", vProfileID], {
+		oauth_signature : vOauthSignature,
+		oauth_signature_method : vOauthSignatureMethod,
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	}, null, vReturnFun);
+	return;
 }

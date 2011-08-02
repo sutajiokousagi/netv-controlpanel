@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------------------------
-//	cSCPChannelWidgetsMain class
+//	cDevice class
 //
 //
 //
@@ -8,81 +8,73 @@
 // -------------------------------------------------------------------------------------------------
 //	constructor
 // -------------------------------------------------------------------------------------------------
-function cSCPChannelWidgetsMain(
-	vDivObj
+function cDevice(
 )
 {
-	this.mDiv = vDivObj;
-	this.mSelectedChannel = null;
+	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
 //	singleton
 // -------------------------------------------------------------------------------------------------
-cSCPChannelWidgetsMain.instance = null;
-cSCPChannelWidgetsMain.fGetInstance = function(
-	vDivObj
+cDevice.instance = null;
+cDevice.fGetInstance = function(
 )
 {
-	return cSCPChannelWidgetsMain.instance ? cSCPChannelWidgetsMain.instance : cSCPChannelWidgetsMain.instance = new cSCPChannelWidgetsMain(vDivObj);
+	return cDevice.instance ? cDevice.instance : (cDevice.instance = new cDevice());
 }
 
 // -------------------------------------------------------------------------------------------------
 //	fInit
 // -------------------------------------------------------------------------------------------------
-cSCPChannelWidgetsMain.prototype.fInit = function(
+cDevice.prototype.fInit = function(
 )
 {
+fDbg2("*** cDevice, fInit()");
 	
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fOnSignal
+//	fAuthenticateByUsr
 // -------------------------------------------------------------------------------------------------
-cSCPChannelWidgetsMain.prototype.fOnSignal = function(
-	vSignal,		// string
-	vData,			// data array
-	vReturnFun		// return function call
+cDevice.prototype.fCheckAuthorization = function(
+	vDeviceID,
+	vReturnFun
 )
 {
-fDbg("*** cSCPChannelWidgetsMain, fOnSignal(), " + vSignal + ", " + vData);
-	var i, o;
-	
-	switch(vSignal)
-	{
-	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
-		break;
-		
-	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
-		break;
-		
-	case cConst.SIGNAL_BUTTON_LEFT:
-		break;
-		
-	case cConst.SIGNAL_BUTTON_RIGHT:
-		break;
-		
-	case cConst.SIGNAL_BUTTON_CENTER:
-		break;
-		
-	case cConst.SIGNAL_BUTTON_UP:
-		break;
-		
-	case cConst.SIGNAL_BUTTON_DOWN:
-		break;
-	}
+	cXAPI.fXAPIRequest(["device", "authorize", vDeviceID], {hw : 1, sw : 1, fw : 1}, null, vReturnFun);
+	return;
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fShow / fHide
+//	fInit
 // -------------------------------------------------------------------------------------------------
-cSCPChannelWidgetsMain.prototype.fShow = function(
+cDevice.prototype.fFetchInfo = function(
+	vDeviceID,
+	vOauthSignature,
+	vOauthSignatureMethod,
+	vOauthNonce,
+	vOauthConsumerKey,
+	vReturnFun
 )
 {
-	this.mDiv.show();
-}
-cSCPChannelWidgetsMain.prototype.fHide = function(
-)
-{
-	this.mDiv.hide();
+fDbg2("*** cDevice, fFetchInfo()");
+	var o;
+
+	vOauthSignatureMethod = "MD5-HEX";
+	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
+	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;
+	vOauthSignature = cXAPI.fSignatureMD5Of(["device", "index", vDeviceID], {
+		oauth_signature_method : "MD5-HEX",
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	});
+	
+	cXAPI.fXAPIRequest(["device", "index", vDeviceID], {
+		oauth_signature : vOauthSignature,
+		oauth_signature_method : vOauthSignatureMethod,
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	}, null, vReturnFun);
+	return;
 }

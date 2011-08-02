@@ -60,8 +60,8 @@ $(function() {
 	*/
 	//fLoadExtPageModule("index_activation.html", "./CPanel/cPActivation.js");
 	
-	var t1 = setInterval(function() {
-		fNetworkEvent("disconnected");
+	var t1 = setInterval(function(){
+		fNMStateChanged("disconnected");
 	}, 10000);
 });
 
@@ -151,6 +151,8 @@ function fServerReset(
 fDbg2("fServerReset(), " + vData);
 	if (vData == "true" || vData == true)
 		location.href="http://localhost/";
+
+	return true;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -162,22 +164,50 @@ function fButtonPress(
 {
 	switch (vButtonName)
 	{
-	case "cpanel": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
-	case "widget": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE); break;
-	case "left": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT); break;
-	case "right": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT); break;
-	case "center": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
-	case "up": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
-	case "down": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
+		case "cpanel": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
+		case "widget": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE); break;
+		case "left": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT); break;
+		case "right": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT); break;
+		case "center": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
+		case "up": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
+		case "down": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
 	}
+	return true;
 }
 
-function fNetworkEvent(
-	vEventName
-)
+// -------------------------------------------------------------------------------------------------
+//	events from HDMI/FPGA
+// -------------------------------------------------------------------------------------------------
+function fHDMIEvents( vEventName )
+{
+	//To be decided
+	if (vEventName == "unsupported");
+	if (vEventName == "attach");
+	if (vEventName == "detach");
+	if (vEventName == "trigger");
+}
+
+// -------------------------------------------------------------------------------------------------
+//	events from DBus/NetworkManager
+// -------------------------------------------------------------------------------------------------
+function fNMStateChanged( vEventName )
 {
 	switch (vEventName)
 	{
-	case "disconnected": mCPanel.fOnSignal(cConst.SIGNAL_NETWORKEVENT_DISCONNECTED); break;
+		case "unknown":			break;
+		case "sleeping":		break;
+		case "connecting":		break;
+		case "disconnected":	mCPanel.fOnSignal(cConst.SIGNAL_NETWORKEVENT_DISCONNECTED); break;
+		case "connected":		break;
 	}
+}
+
+function fNMDeviceAdded(  )
+{
+	//Switching back FROM Access Point mode
+}
+
+function fNMDeviceRemoved(  )
+{
+	//Switching TO Access Point mode
 }

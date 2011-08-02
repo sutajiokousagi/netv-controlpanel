@@ -15,7 +15,25 @@ cJSCore.kSimulatedData = {
 	mServerUrl : "http://xml.chumby.com/xml/chumbies/",
 	//~ mLocalBridgeUrl : "http://192.168.1.210/projects/0009.chumbyJSCore/server.php"			// testing/development mode at 192.168.1.210
 	mLocalBridgeUrl : "./bridge"			// production mode
-}
+};
+cJSCore.kPluginClassList = [
+	"./JSCore/json2.js",
+	"./JSCore/cConst.js",
+	"./JSCore/cProxy.js",
+	"./JSCore/cStartupModule.js",
+	"./JSCore/cTimerModule.js",
+	"./JSCore/cAccountModule.js",
+	"./JSCore/cChannelModule.js",
+	"./JSCore/cChannelObj.js",
+	"./JSCore/cWidgetModule.js",
+	"./JSCore/cWidgetObj.js",
+	"./JSCore/cModel.js",
+	"./JSCore/XAPI/cXAPI.js",
+	"./JSCore/XAPI/cDevice.js",
+	"./JSCore/XAPI/cProfile.js",
+	"./JSCore/util/cGUID.js",
+	"./JSCore/util/cMD5.js"
+];
 
 // -------------------------------------------------------------------------------------------------
 //	constructor
@@ -32,22 +50,11 @@ function cJSCore(
 				location.href = "html_remote.html";
 	
 	// members
-	this.mJSClassList = [
-		"./JSCore/cConst.js",
-		"./JSCore/json2.js",
-		"./JSCore/cStartupModule.js",
-		"./JSCore/cTimerModule.js",
-		"./JSCore/cChannelModule.js",
-		"./JSCore/cChannelObj.js",
-		"./JSCore/cWidgetModule.js",
-		"./JSCore/cWidgetObj.js",
-		"./JSCore/cProxy.js",
-		"./JSCore/cModel.js"];
-	this.mCallBackList = [];
 	
 	// javascript classes
 	this.mStartupModule = null;
 	this.mTimerModuel = null;
+	this.mAccountModule = null;
 	this.mChannelModule = null;
 	this.mWidgetModule = null;
 	this.mModel = null;
@@ -91,13 +98,29 @@ cJSCore.prototype.fInit = function(
 fDbg2("*** cJSCore, fInit()");
 	
 	// load other js classes
-	fLoadExtJSScript(this.mJSClassList, vReturnFun);
+	fLoadExtJSScript(cJSCore.kPluginClassList, function(vData) {
+		cJSCore.fGetInstance().fInitReturn(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
 }
 
 cJSCore.prototype.fInitReturn = function(
 )
 {
+	// init loaded classes
+	this.mModel = cModel.fGetInstance();
+	this.mStartupModule = cStartupModule.fGetInstance();
+	this.mTimerModule = cTimerModule.fGetInstance();
+	this.mAccountModule = cAccountModule.fGetInstance();
+	this.mChannelModule = cChannelModule.fGetInstance();
+	this.mWidgetModule = cWidgetModule.fGetInstance();
+	cXAPI.fGetInstance();
+	cDevice.fGetInstance();
 	
+	// force write over GUID and URLs
+	this.mModel.SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
+	this.mModel.LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -108,123 +131,46 @@ cJSCore.prototype.fStartUp = function(
 )
 {
 fDbg2("*** cJSCore, fStartUp()");
-	// init loaded classes
-	this.mModel = cModel.fGetInstance();
-	this.mStartupModule = cStartupModule.fGetInstance();
-	this.mTimerModule = cTimerModule.fGetInstance();
-	this.mTimerModule.fInit();
-	this.mChannelModule = cChannelModule.fGetInstance();
-	this.mWidgetModule = cWidgetModule.fGetInstance();
-
-	// force write over GUID and URLs
-	this.mModel.SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
-	this.mModel.LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
-
-// do necessary with NeTVBrowser and FlashPlayer, ChromaKey	
-cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
-//cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Hide</value>"}, function() {});
-cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
-
-	var fun1 = function() {
-		
-		var vInterval = setInterval(function() {
-			$("#div_tempBg").show();
-			if ($("#div_tempBg").css("left") == "-50px")
-				$("#div_tempBg").css("left", "-40px");
-			else
-			{
-				$("#div_tempBg").hide();
-				$("#div_tempBg").css("left", "-50px");
-			}
-		}, 2000);
+	var o;
+	
+	this.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
+	
+	// start up tasks
+	this.mStartupModule.fPrepareSystem();
+	this.mStartupModule.fEnvironmentalCheck(function(vData) {
+		if (vData)
+		{
+			// TODO
+			//	convert this to a singal >> CPANEL - upon bootup, perfect condition
+			cProxy.fCPanelInfoPanelUpdate();
+			$("#div_startup").hide();
 			
-		
-		cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
-			//fDbg2(vData);
-			
-			var o;
-			o = cModel.fGetInstance();
-			
-			if (vData.split("</status>")[0].split("<status>")[1] == "1")
-			{
-				o.CHUMBY_GUID = vData.split("</guid>")[0].split("<guid>")[1];
-				o.CHUMBY_DCID = vData.split("</dcid>")[0].split("<dcid>")[1];
-				o.CHUMBY_HWVERSION = vData.split("</hwver>")[0].split("<hwver>")[1];
-				o.CHUMBY_FWVERSION = vData.split("</fwver>")[0].split("<fwver>")[1];
-				o.CHUMBY_FLASHPLUGIN = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
-				o.CHUMBY_FLASHPLAYER = vData.split("</flashver>")[0].split("<flashver>")[1];
-				o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
-				o.CHUMBY_INTERNET = vData.split("</internet>")[0].split("<internet>")[1];
-				
-				cProxy.fCPanelInfoPanelUpdate();
 
-				switch (vData.split("</internet>")[0].split("<internet>")[1])
-				{
-				case "true":
-					// has network
-					o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_IP = vData.split("ip=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_BROADCAST = vData.split("broadcast=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_NETMASK = vData.split("netmask=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
-					o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
-					
-					$("#div_info_ip").html(o.CHUMBY_NETWORK_IP);
-					
-					clearInterval(vInterval);
-					$("#div_startup").hide();
-					break;
-
-				case "false":
-					fDbg2("sadly... has no network....");
-
-					// display info SCP
-					cProxy.fCPanelInfoPanelShow();
-					return;
-					break;
-
-				default:
-					fDbg2("InitialHello retrying......");
-					fun1();
-					return;
-					break;
-				}
-				
-			}
-			else
-			{
-				fDbg2("Hello failed.");
-				// display info SCP
-			}
-			
-			// force write over GUID and URLs
+			// cast some fake data for testing
 			if (!cJSCore.kProductionMode)
-			{
-				cModel.instance.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUIDfDbg2("yes!!!");
-			}
-			else
-			{
-				
-			}
+				cJSCore.instance.fSimulateTestingData();
 			
+			// load profile/channel data from server
 			cProxy.fCPanelMsgBoardDisplay("Authorization in progress...");
-			
-			// check if has GUID, server add
-			var fAjaxReturn = function(vData) {
-				cJSCore.instance.fStartUpReturn(vData);
-				if (vReturnFun)
-					vReturnFun(vData);
-			};
-			
-			if (o.CHUMBY_GUID && o.SERVER_URL && o.LOCALBRIDGE_URL)
-				cProxy.xmlhttpPost("", "post", {cmd: "GetXML", data: "<value>" + o.SERVER_URL + "?id=" + o.CHUMBY_GUID + "</value>"}, fAjaxReturn);
-		});
-	};
-	
-	fun1();
-	
+			cAccountModule.fGetInstance().fFetchAccountInfo(function() {
+				cProxy.fCPanelMsgBoardDisplay("Fetching Channel Info...");
+				cChannelModule.fGetInstance().fFetchChannelInfo(function() {
+					cJSCore.instance.fStartUpReturn();
+					if (vReturnFun)
+						vReturnFun(vData);
+				});
+			});
+			return;
+		}
+		else
+		{
+			// TODO
+			//	convert this to a singal >> CPANEL - upon bootup, no network
+			// display info SCP
+			cProxy.fCPanelInfoPanelUpdate();
+			cProxy.fCPanelInfoPanelShow();
+		}
+	});
 }
 
 cJSCore.prototype.fStartUpReturn = function(
@@ -232,74 +178,9 @@ cJSCore.prototype.fStartUpReturn = function(
 )
 {
 fDbg("*** cJSCore, fStartUpReturn()");
-	vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-	var parser = new DOMParser();
-	var xmlDoc = parser.parseFromString(vData, "text/xml");
-	
-	cJSCore.instance.mModel.CHUMBY_NAME = xmlDoc.getElementsByTagName("name")[0].textContent;
-	cJSCore.instance.mModel.PROFILE_HREF = xmlDoc.getElementsByTagName("profile")[0].getAttribute("href");
-	cJSCore.instance.mModel.PROFILE_NAME = xmlDoc.getElementsByTagName("profile")[0].getAttribute("name");
-	cJSCore.instance.mModel.PROFILE_ID = xmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
-	cJSCore.instance.mModel.USER_NAME = xmlDoc.getElementsByTagName("user")[0].getAttribute("username");
 
-
-
-	cProxy.xmlhttpPost("", "post", {cmd : "GetUrl", data: "<value><url>http:</url><post></post></value>"}, function(vData) {
-		fDbg2(vData);
-	});
-
-	//~ return;
-	// proceed to fGetChannelInfo();
-	cJSCore.instance.fGetChannelInfo();
-}
-
-// -------------------------------------------------------------------------------------------------
-//	fGetChannelInfo
-// -------------------------------------------------------------------------------------------------
-cJSCore.prototype.fGetChannelInfo = function(
-	vReturnFun
-)
-{
-fDbg("*** cJSCore, fGetChannelInfo()");
-	if (cJSCore.instance.mModel.PROFILE_ID)
-		cProxy.xmlhttpPost("", "post", {cmd : "GetXML", data : "<value>" + "http://xml.chumby.com/xml/profiles/" + cJSCore.instance.mModel.PROFILE_ID + "</value>"}, function(vData) {
-			cJSCore.instance.fGetChannelInfoReturn(vData);
-			if (vReturnFun)
-				vReturnFun(vData);
-	});
-	
-	cProxy.fCPanelMsgBoardDisplay("Fetching Channel Info...");
-}
-
-cJSCore.prototype.fGetChannelInfoReturn = function(
-	vData
-)
-{
-fDbg("*** cJSCore, fGetChannelInfoReturn()");
-	
-	vData = vData.split("<data><value>")[1].split("</value></data>")[0];
-	//alert(vData);
-	
-	var o;
-	o = new cChannelObj(vData);
-	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	cJSCore.instance.fPreloadChannelThumbnails(o);
-
-	o = new cChannelObj();
-	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	o.mWidgetList = [new cWidgetObj(), new cWidgetObj(), new cWidgetObj()];
-	o.mWidgetList[0].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.1/index.html";
-	o.mWidgetList[1].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.2/index.html";
-	o.mWidgetList[2].mWidget.mMovie.mHref = "http://localhost/widgets/google_news_0.1/index.html";
-	
-	
-	
-	// show and play widget
-	//~ cJSCore.instance.fPlayWidget("http://www.chumby.com/" + o.mWidgetList[0].mHref);
-	cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_WIDGETENGINE_SHOW, null, null);
-	
-	// show channel div
-	//cJSCore.instance.CPANEL.fOnSignal(cConst.SIGNAL_CHANNELDIV_SHOW, null, null);
+	// everything done!!! START!!!
+	this.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
 }
 
 
@@ -311,33 +192,25 @@ fDbg("*** cJSCore, fGetChannelInfoReturn()");
 
 
 
+
+
+
+
+
+
 // -------------------------------------------------------------------------------------------------
-//	fPreloadChannelThumbnails
+//	fSimulateTestingData
 // -------------------------------------------------------------------------------------------------
-cJSCore.prototype.fPreloadChannelThumbnails = function(
-	vChannelObj,
-	vReturnFun
+cJSCore.prototype.fSimulateTestingData = function(
 )
 {
-	var o, i;
-	o = [];
-	
-	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
-		o.push(vChannelObj.mWidgetList[i].mWidget.mThumbnail.mHref);
-	
-	var fLoadTN = function() {
-		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
-			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
-			o.splice(0, 1);
-			if (o.length == 0)
-			{
-				if (vReturnFun)
-					vReturnFun();
-				return;
-			}
-			fLoadTN();
-		});
-	};
-	
-	fLoadTN();
+	// force write over GUID and URLs
+	if (!cJSCore.kProductionMode)
+	{
+		cModel.instance.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUIDfDbg2("yes!!!");
+	}
+	else
+	{
+		
+	}
 }

@@ -31,10 +31,7 @@ cXAPI.prototype.fInit = function(
 )
 {
 fDbg2("*** cXAPI, fInit(), ");
+
 	
-	cProxy.xmlhttpPost("", "post", {cmd : "GetXML", value : "<value>http://www.google.com</value>"}, function(vData) {
-		//~ fDbg2(vData);
-		fDbg2(vData.length);
-	});
 	
 }

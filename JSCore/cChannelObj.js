@@ -1,8 +1,43 @@
 // -------------------------------------------------------------------------------------------------
-//	cChannelObj class
+//	cChannelObj class (cProfile)
 //
 //
 //
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+	<profile id="98E703D4-81FD-11E0-927E-0021288EC192">
+		<name>chumby picks</name>
+		<description>Default mix for your Chumby</description>
+		<user id="920ED424-81FD-11E0-96B7-001B24F07EF4">qinchuan</user>
+		<info type="Profile" created="Thu May 19 02:51:41 -0700 2011" pending="0" unaccepted="0" updated="Tue Apr 05 14:17:34 -0700 2011" origin="" master="true" published="Wed Jun 11 13:19:41 -0700 2008"/>
+		<widget_instances count="35">
+			<widget_instance id="98E8057C-81FD-11E0-927E-0021288EC192">
+				<name>Local Info</name>
+				<info created="Thu May 19 02:51:41 -0700 2011" secure="" updated="Thu May 19 02:51:41 -0700 2011" origin="default" access="private"/>
+				<play mode="default" time="15"/>
+				<rating value="0"/>
+				<widget id="8664F0CE-C50E-11DF-91A6-001B24E044BE">
+					<name>Local Info</name>
+					<description>Local news, sports, weather, and traffic, all at a glance.</description>
+					<play mode="default" time="30"/>
+					<user username="chumby" type="chumby" id="00000000-0000-0000-0000-000000000001"/>
+					<security previewable="true" virtualable="true" approval="approved" deletable="true" access="public" overlay="true" sendable="true"/>
+					<rating count="169" value="4.1479"/>
+					<thumbnail href="http://s3movies.chumby.com/cdn/xmlthumbnail/86976CD4-C50E-11DF-91A6-001B24E044BE"/>
+					<template href="http://s3movies.chumby.com/cdn/xmltemplate/86A733EE-C50E-11DF-91A6-001B24E044BE"/>
+					<movie contenttype="application/x-shockwave-flash" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE"/>
+					<swfs>
+						<swf bgcolor="000000" camera="false" previewable="true" supports_browser="false" content-type="application/x-shockwave-flash" height="240" width="320" microphone="false" resolution="" scalable="false" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE" accelerometer="false" pointing="false" as_version="2" requires_sound="false" swf_version="8" kb="false"/>
+					</swfs>
+				</widget>
+				<parameters></parameters>
+			</widget_instance>
+			*
+			*
+			*
+		</widget_instances>
+	</profile>
+*/
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
@@ -16,45 +51,54 @@ function cChannelObj(
 	vData		// xml String
 )
 {
-	this.mInterval = "";
-	this.mToken = "";
-	this.mId = "";
+	this.mID = "";
 	this.mName = "";
 	this.mDescription = "";
-
-	this.mSkin = new Object();
-	this.mSkin.mHref = "";
-	this.mSkin.mName = "";
-	this.mSkin.mId = "";
-
-	this.mAccess = new Object();
-	this.mAccess.mAccess = "";
-	this.mAccess.mId = "";
-
+	this.mUser = {
+		mUser : "",
+		mID : ""
+	};
+	this.mInfo = {
+		mType : "",
+		mCreated : "",
+		mPending : "",
+		mUnaccepted : "",
+		mUpdated : "",
+		mOrigin : "",
+		mMaster : "",
+		mPublished : ""
+	};
 	this.mWidgetList = [];
 	
 	if (!vData)
 		return;
-
 		
 	// parse
 	var i, o;
 	vData = vData.substring(vData.indexOf("<?xml"));
 	var vParser = new DOMParser();
 	var vXmlDoc = vParser.parseFromString(vData, "text/xml");
-	//fDbg(vXmlDoc);
 
-	this.mInterval = vXmlDoc.getElementsByTagName("profile")[0].getAttribute("interval");
-	this.mToken = vXmlDoc.getElementsByTagName("profile")[0].getAttribute("token");
-	this.mId = vXmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
+	this.mID = vXmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	this.mName = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("name")[0].textContent;
 	this.mDescription = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("description")[0].textContent;
-	this.mSkin.mHref = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("skin")[0].getAttribute("href");
-	this.mSkin.mName = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("skin")[0].getAttribute("name");
-	this.mSkin.mId = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("skin")[0].getAttribute("id");
-	this.mAccess.mAccess = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("access")[0].getAttribute("access");
-	this.mAccess.mId = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("access")[0].getAttribute("id");
-
+	this.mUser = {
+		mUserName : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].textContent,
+		mID : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("id")
+	};
+	this.mInfo = {
+		mType : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("id"),
+		mCreated : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("created"),
+		mPending : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("pending"),
+		mUnaccepted : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("unaccepted"),
+		mUpdated : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("updated"),
+		mOrigin : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("origin"),
+		mMaster : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("master"),
+		mPublished : vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("user")[0].getAttribute("published")
+	};
+	this.mWidgetList = [];
+	
+	
 	o = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("widget_instances")[0].getElementsByTagName("widget_instance");
 	for (i = 0; i < o.length; i++)
 		this.mWidgetList.push(new cWidgetObj(o[i]));
@@ -69,24 +113,4 @@ cChannelObj.prototype.toXML = function(
 	var vXML;
 
 	return vXML;
-}
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-//	parse to XML
-// -------------------------------------------------------------------------------------------------
-cChannelObj.prototype.fPreloadThumbnails = function(
-)
-{
-	var o, i;
-
-	
-	fDbg2("asdg");
-	fDbg2("asdg");
-	fDbg2("asdg");
-	
 }

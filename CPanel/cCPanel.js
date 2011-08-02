@@ -9,7 +9,17 @@
 //	static members
 // -------------------------------------------------------------------------------------------------
 var mGCPanelStatic = {
-	mShowDbg : false
+	mShowDbg : false,
+	mPluginClassList : [
+		"./CPanel/cSCPMessage.js",
+		"./CPanel/cSCPChannels.js",
+		"./CPanel/cSCPWidgets.js",
+		"./CPanel/cSCPInfo.js",
+		"./CPanel/cWEEvent.js",
+		"./CPanel/cWEFlash.js",
+		"./CPanel/cWEHtml.js",
+		"./CPanel/cPIChromaBg.js"
+	]
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -22,16 +32,7 @@ function cCPanel(
 	this.mModel = null;
 	
 	this.mLocked = false;
-	this.mJSClassList = [
-		"./CPanel/cTempBg.js",
-		"./CPanel/cSCPMessage.js",
-		"./CPanel/cSCPChannels.js",
-		"./CPanel/cSCPWidgets.js",
-		"./CPanel/cSCPInfo.js",
-		"./CPanel/cWEEvent.js",
-		"./CPanel/cWEFlash.js",
-		"./CPanel/cWEHtml.js"
-	];
+
 	
 	this.mSubCPanelList = [
 		{
@@ -62,7 +63,7 @@ function cCPanel(
 	this.mCurrWidgetTimeSpend = 0;
 	
 	// components
-	this.mTempBg = null;
+	this.mPIChromaBg = null;
 	this.mSCPMessage = null;
 	this.mSCPChannelsMain = null;
 	this.mSCPWidgetsMain = null;
@@ -117,6 +118,9 @@ cCPanel.prototype.fInit = function(
 {
 	// hide all
 	this.fHideAll();
+
+	//~ $("#div_qrcodeMain").show();
+	//~ $("#div_toast").show();
 	
 	// show div(s) for initialization
 	$("#div_startup").show();
@@ -138,22 +142,21 @@ cCPanel.prototype.fInit = function(
 		$("#div_CPanel").css("top", (vViewPortSize[1] - 600) / 2 + "px");
 	
 	if ($("#div_widgetPlayer").length)
-	{
+	{	
 		$("#div_widgetPlayer").css("left", (vViewPortSize[0] - parseFloat($("#div_widgetPlayer").css("width").split("px")[0]) - vWidgetEdgeOffset[0]) + "px")
 		$("#div_widgetPlayer").css("top", (vViewPortSize[1] - parseFloat($("#div_widgetPlayer").css("height").split("px")[0]) - vWidgetEdgeOffset[1]) + "px")
 	}
 	
-	mCurrDivVisible = "div_messageBoard";
-	this.pState("controlpanel");
-	
-	// load other js classes
-	fLoadExtJSScript(this.mJSClassList, vReturnFun);
-
-
-	
 	$(window).resize(function() {
 		fDbg2("*** window resize : " + $(window).width() + ", " + $(window).height());
 	});
+
+	mCurrDivVisible = "div_messageBoard";
+	this.pState("controlpanel");
+	
+	
+	// load other js classes
+	fLoadExtJSScript(mGCPanelStatic.mPluginClassList, vReturnFun);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -173,7 +176,6 @@ cCPanel.prototype.fHideAll = function(
 		$("#div_dbg_container").hide();
 	
 	// hide all widget players
-	//~ $("#div_flashWidgetPlayer").hide();
 	$("#div_htmlWidgetPlayer").hide();
 	$("#div_eventWidgetPlayer").hide();
 }
@@ -187,12 +189,12 @@ cCPanel.prototype.fStartUp = function(
 	fDbg("*** cCPanel, fStartUp()");
 	
 	// register all classes
-	this.mTempBg = cTempBg.fGetInstance($("div_tempBg"));
+	this.mPIChromaBg = cPIChromaBg.fGetInstance("div_tempBg");
 	
-	this.mSCPMessage = cSCPMessage.fGetInstance($("#div_messageBoard"));
-	this.mSubCPanelList[1].mSubCPanel = cSCPChannels.fGetInstance($("#div_channelMain"));
-	this.mSCPWidgetsMain = cSCPWidgets.fGetInstance($("#div_flashWidgetMain"));
-	this.mSCPInfo = cSCPInfo.fGetInstance($("#div_infoMain"));
+	this.mSCPMessage = cSCPMessage.fGetInstance("div_messageBoard");
+	this.mSCPChannelsMain = cSCPChannels.fGetInstance("div_channelMain");
+	this.mSCPWidgetsMain = cSCPWidgets.fGetInstance("div_flashWidgetMain");
+	this.mSCPInfo = cSCPInfo.fGetInstance("div_infoMain");
 	
 	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
 	this.mWEFlash = cWEFlash.fGetInstance(null);
@@ -216,13 +218,20 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	//~ if (cCPanel.instance.mLocked == true)
 		//~ return;
 	//~ cCPanel.instance.mLocked = true;
-	
+
+	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET);
+	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET == "");
 	// =========================
 	// JavaScript Injection Signals
 	// =========================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "html_config.html";
+			return;
+		}
 		if (mCPanel.mState != "controlpanel")
 			mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
 		else
@@ -237,6 +246,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "html_config.html";
+			return;
+		}
 		if (cCPanel.instance.mLocked == true)
 			return;
 		cCPanel.instance.mLocked = true;
@@ -289,45 +303,48 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if (mCPanel.mState == "controlpanel")
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
 		{
-			switch (mCPanel.mSubState)
-			{
-			case "channelMain":
-				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			case "flashchannelwidgetsmain":
-				cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			case "infomain":
-				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			}
+			location.href = "html_config.html";
+			return;
+		}
+		if (mCPanel.mState != "controlpanel")
+			return;
+			
+		switch (mCPanel.mSubState)
+		{
+		case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "infomain": cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if (mCPanel.mState == "controlpanel")
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
 		{
-			switch (mCPanel.mSubState)
-			{
-			case "channelMain":
-				this.mSubCPanelList[1].mSubCPanel.fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			case "flashchannelwidgetsmain":
-				cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			case "infomain":
-				cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
-				break;
-			}
+			location.href = "html_config.html";
+			return;
+		}
+		if (mCPanel.mState != "controlpanel")
+			return;
+			
+		switch (mCPanel.mSubState)
+		{
+		case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "infomain": cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "html_config.html";
+			return;
+		}
 		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
 		{
-			o = this.mSubCPanelList[1].mSubCPanel.fGetSelected();
+			o = cSCPChannels.fGetInstance().fGetSelected();
 			
 			if (o[0] == 0)
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
@@ -339,6 +356,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "html_config.html";
+			return;
+		}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (mCPanel.mState == "controlpanel")
@@ -377,6 +399,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "html_config.html";
+			return;
+		}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (mCPanel.mState == "controlpanel")
@@ -422,6 +449,14 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	// =========================
 	switch(vSignal)
 	{
+	case cConst.SIGNAL_STARTUP_INIT:
+		cPIChromaBg.fGetInstance().fRefreshScreen();
+		break;
+
+	case cConst.SIGNAL_STARTUP_COMPLETE:
+		this.fOnSignal(cConst.SIGNAL_WIDGETENGINE_SHOW);
+		break;
+		
 	case cConst.SIGNAL_HEARTBEAT:
 		switch (mCPanel.mState)
 		{
@@ -597,13 +632,18 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 
 
 
+
+
 cCPanel.prototype.fToast = function(
 	vMsg
 )
 {
 //~ fDbg2(vMsg);
 	$("#div_toast_content").html(vMsg);
-
+	
+	//~ fDbg2($("#div_toast_content").outerWidth());
+	//~ fDbg2($("#div_toast_content").width());
+	
 	$("#div_toast_content").css("top", "-50px");
 	$("#div_toast_content").animate({
 		top : "10px"
@@ -616,9 +656,8 @@ cCPanel.prototype.fToast = function(
 		}, 5000);
 
 	});
-
+	
 	//~ fDbg2($("#div_toast_content").outerWidth());
-
 }
 
 
@@ -677,8 +716,8 @@ fDbg2("*** cCPanel, fShowControlPanel(), ");
 			break;
 		}
 		
-		cCPanel.instance.mSubCPanelList[1].mSubCPanel.fFadeIn();
-		cCPanel.instance.mSubCPanelList[1].mSubCPanel.fSetSelected([o], function() {
+		cSCPChannels.fGetInstance().fFadeIn();
+		cSCPChannels.fGetInstance().fSetSelected([o], function() {
 			cCPanel.instance.mSubState = "channelMain";
 		});
 		
@@ -716,7 +755,7 @@ cCPanel.prototype.fShowChannelDiv = function(
 
 
 
-
+/*
 cCPanel.prototype.fRefreshScreen = function() {
 	var vInterval = setInterval(function() {
 		$("#div_tempBg").show();
@@ -729,3 +768,4 @@ cCPanel.prototype.fRefreshScreen = function() {
 		}
 	}, 2000);
 }
+*/

@@ -9,10 +9,12 @@
 //	constructor
 // -------------------------------------------------------------------------------------------------
 function cSCPMessage(
-	vDivObj
+	vDiv
 )
 {
-	this.mDiv = vDivObj;
+	this.mDiv = $("#" + vDiv);
+	this.mID = vDiv;
+	
 	this.mMessageList = [];
 	this.mMessageDisplayInProgress = false;
 
@@ -25,10 +27,10 @@ function cSCPMessage(
 // -------------------------------------------------------------------------------------------------
 cSCPMessage.instance = null;
 cSCPMessage.fGetInstance = function(
-	vDivObj
+	vDiv
 )
 {
-	return cSCPMessage.instance ? cSCPMessage.instance : cSCPMessage.instance = new cSCPMessage(vDivObj);
+	return cSCPMessage.instance ? cSCPMessage.instance : cSCPMessage.instance = new cSCPMessage(vDiv);
 }
 
 // -------------------------------------------------------------------------------------------------

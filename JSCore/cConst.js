@@ -16,6 +16,7 @@ var cConst = {};
 cConst.SIGNAL_MESSAGE = "signal_message";
 cConst.SIGNAL_SHOW = "signal_show";
 cConst.SIGNAL_HIDE = "signal_hide";
+
 cConst.SIGNAL_CHANNELDIV_SHOW = "signal_channeldiv_show";
 cConst.SIGNAL_CHANNELDIV_HIDE = "signal_channeldiv_hide";
 cConst.SIGNAL_SCPINFO_SHOW = "signal_scpinfo_hide";
@@ -34,6 +35,15 @@ cConst.SIGNAL_PLAYNEXTWIDGET = "signal_playnextwidget";
 
 cConst.SIGNAL_NETWORKEVENT_DISCONNECTED = "signal_networkevent_disconnnected";
 cConst.SIGNAL_NETWORKEVENT_CONNECTED = "signal_networkevent_connnected";
+
+cConst.SIGNAL_STARTUP_INIT = "signal_startup_init";
+cConst.SINGAL_STARTUP_COMPLETE = "signal_startup_complete";
+
+
+
+
+
+
 
 // -----------------------------------------------------------------------------
 //	widget engine signals
