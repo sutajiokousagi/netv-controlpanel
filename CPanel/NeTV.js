@@ -211,3 +211,16 @@ function fNMDeviceRemoved(  )
 {
 	//Switching TO Access Point mode
 }
+
+// -------------------------------------------------------------------------------------------------
+//	events from system
+// -------------------------------------------------------------------------------------------------
+function fUPDATEEvent( vEventName )
+{
+	vEventName = vEventName.toLowerCase();
+	switch(vEventName)
+	{
+		case "done":	/* Do nothing, should not see this here */;						break;
+		case "large":	location.href="http://localhost/html_update/index.html";		break;
+	}
+}
