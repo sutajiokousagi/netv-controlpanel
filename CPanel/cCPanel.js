@@ -219,11 +219,6 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		//~ return;
 	//~ cCPanel.instance.mLocked = true;
 
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
 	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET);
 	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET == "");
 	// =========================
@@ -232,6 +227,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (mCPanel.mState != "controlpanel")
 			mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
 		else
@@ -246,6 +246,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (cCPanel.instance.mLocked == true)
 			return;
 		cCPanel.instance.mLocked = true;
@@ -298,6 +303,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (mCPanel.mState != "controlpanel")
 			return;
 			
@@ -310,6 +320,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (mCPanel.mState != "controlpanel")
 			return;
 			
@@ -322,6 +337,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
 		{
 			o = cSCPChannels.fGetInstance().fGetSelected();
@@ -336,6 +356,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (mCPanel.mState == "controlpanel")
@@ -374,6 +399,11 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+	{
+		location.href = "./html_config/";
+		return;
+	}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (mCPanel.mState == "controlpanel")
