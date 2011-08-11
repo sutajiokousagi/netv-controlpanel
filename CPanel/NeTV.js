@@ -203,6 +203,7 @@ function fUPDATECOUNTEvent( newPackageCount )
 	fDbg2("-------------------------------------------");
 	fDbg2("Downloading " + newPackageCount + " packages....");
 	fDbg2("-------------------------------------------");
+	return "downloading update";
 }
 
 function fUPDATEREADYEvent( vEventData )
@@ -219,6 +220,7 @@ function fUPDATEREADYEvent( vEventData )
 	
 	//Immediately redirect to update page
 	location.href="http://localhost/html_update/index.html";
+	return "upgrading";
 }
 
 // -------------------------------------------------------------------------------------------------
