@@ -40,28 +40,8 @@ $(function() {
 	});
 
 
-	/*
-	function fLoadExtPageModule(
-		vPagePath,
-		vPageClassPath
-	)
-	{
-		$("#loaderDiv").load("index_activation.html", function() {
-			fLoadExtJSScript([vPageClassPath], function() {
-				var o = cPActivation.fGetInstance($("#div_activation"));
-				fDbg2("Bingo!!!!!!!!!!");
-				fDbg2("Bingo!!!!!!!!!!");
-				fDbg2("Bingo!!!!!!!!!!");
-				fDbg2("Bingo!!!!!!!!!!");
-				fDbg2("Bingo!!!!!!!!!!");
-			});
-		});
-	}
-	*/
-	//fLoadExtPageModule("index_activation.html", "./CPanel/cPActivation.js");
-	
 	var t1 = setInterval(function(){
-		fNMStateChanged("disconnected");
+		//~ fNMStateChanged("disconnected");
 	}, 10000);
 });
 
@@ -82,8 +62,14 @@ $(function() {
 // -------------------------------------------------------------------------------------------------
 function fDbg(v)
 {
-	//$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
-	//document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+	/*
+	if ($("#div_dbg").length > 0)
+	{
+		$("#div_dbg").html($("#div_dbg").html() + "<br />" + v);
+		document.getElementById("div_dbg").scrollTop = document.getElementById("div_dbg").scrollHeight;
+	}
+	*/
+	console.log("|~|" + v);
 }
 function fDbg2(v)
 {
@@ -175,6 +161,28 @@ function fButtonPress(
 	return true;
 }
 
+function fWidgetMsgEvent(
+	vEventData
+)
+{
+fDbg("*** fWidgetMdgEvent(), " + vEventData);
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vEventData, null);
+}
+
+
+function fTickerEvents(
+	vEventMessage,
+	vEventTitle,
+	vEventImage,
+	vEventType,
+	vEventLevel,
+	vEventVer
+)
+{
+//~ fDbg("*** fTickerEvents(), ");
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage], null);	
+}
+
 // -------------------------------------------------------------------------------------------------
 //	events from HDMI/FPGA
 // -------------------------------------------------------------------------------------------------
@@ -185,6 +193,32 @@ function fHDMIEvents( vEventName )
 	if (vEventName == "attach");
 	if (vEventName == "detach");
 	if (vEventName == "trigger");
+}
+
+// -------------------------------------------------------------------------------------------------
+//	events from system
+// -------------------------------------------------------------------------------------------------
+function fUPDATECOUNTEvent( newPackageCount )
+{
+	fDbg2("-------------------------------------------");
+	fDbg2("Downloading " + newPackageCount + " packages....");
+	fDbg2("-------------------------------------------");
+}
+
+function fUPDATEREADYEvent( vEventData )
+{
+	var newPackageCount = vEventData.split(" ")[0];
+	var needReboot = vEventData.split(" ")[1];
+	needReboot = (needReboot == "1") ? true : false;
+	
+	fDbg2("-------------------------------------------");
+	fDbg2("  Update Ready (" + newPackageCount + " packages)");
+	if (needReboot)		fDbg2("  Reboot required");
+	else				fDbg2("  Reboot NOT required");
+	fDbg2("-------------------------------------------");
+	
+	//Immediately redirect to update page
+	location.href="http://localhost/html_update/index.html";
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -213,14 +247,12 @@ function fNMDeviceRemoved(  )
 }
 
 // -------------------------------------------------------------------------------------------------
-//	events from system
+//	events from Android app
 // -------------------------------------------------------------------------------------------------
-function fUPDATEEvent( vEventName )
+function fAndroidEvents( vEventName, vEventData )
 {
-	vEventName = vEventName.toLowerCase();
-	switch(vEventName)
+	//User has just started the Android app & Switch to remote control view
+	if (vEventName == "changeview" && vEventData == "remote")
 	{
-		case "done":	/* Do nothing, should not see this here */;						break;
-		case "large":	location.href="http://localhost/html_update/index.html";		break;
 	}
 }
