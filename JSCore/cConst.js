@@ -33,10 +33,19 @@ cConst.SIGNAL_HEARTBEAT = "signal_heartbeat";
 cConst.SIGNAL_PLAYNEXTWIDGET = "signal_playnextwidget";
 
 
+
+// message events
 cConst.SIGNAL_NETWORKEVENT_DISCONNECTED = "signal_networkevent_disconnnected";
 cConst.SIGNAL_NETWORKEVENT_CONNECTED = "signal_networkevent_connnected";
+cConst.SIGNAL_MESSAGE = "signal_message";
+cConst.SIGNAL_MESSAGE_WIDGETMSG = "signal_message_widgetmsg";
 
+
+
+// startup signals
 cConst.SIGNAL_STARTUP_INIT = "signal_startup_init";
+cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE = "signal_startup_environmentalcheck_complete";
+cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED = "signal_startup_environmentalcheck_failed";
 cConst.SINGAL_STARTUP_COMPLETE = "signal_startup_complete";
 
 
@@ -63,6 +72,12 @@ cConst.SIGNAL_BUTTON_RIGHT = "signal_button_right";
 cConst.SIGNAL_BUTTON_CENTER = "signal_button_center";
 cConst.SIGNAL_BUTTON_UP = "signal_button_up";
 cConst.SIGNAL_BUTTON_DOWN = "signal_button_down";
+
+// -----------------------------------------------------------------------------
+//	Android/iOS events
+// -----------------------------------------------------------------------------
+cConst.SIGNAL_ANDROID_START_CONFIGURING = "signal_android_start_configuring";
+cConst.SIGNAL_IOS_START_CONFIGURING = "signal_ios_start_configuring";
 
 // -----------------------------------------------------------------------------
 //	states

@@ -196,32 +196,6 @@ function fHDMIEvents( vEventName )
 }
 
 // -------------------------------------------------------------------------------------------------
-//	events from system
-// -------------------------------------------------------------------------------------------------
-function fUPDATECOUNTEvent( newPackageCount )
-{
-	fDbg2("-------------------------------------------");
-	fDbg2("Downloading " + newPackageCount + " packages....");
-	fDbg2("-------------------------------------------");
-}
-
-function fUPDATEREADYEvent( vEventData )
-{
-	var newPackageCount = vEventData.split(" ")[0];
-	var needReboot = vEventData.split(" ")[1];
-	needReboot = (needReboot == "1") ? true : false;
-	
-	fDbg2("-------------------------------------------");
-	fDbg2("  Update Ready (" + newPackageCount + " packages)");
-	if (needReboot)		fDbg2("  Reboot required");
-	else				fDbg2("  Reboot NOT required");
-	fDbg2("-------------------------------------------");
-	
-	//Immediately redirect to update page
-	location.href="http://localhost/html_update/index.html";
-}
-
-// -------------------------------------------------------------------------------------------------
 //	events from DBus/NetworkManager
 // -------------------------------------------------------------------------------------------------
 function fNMStateChanged( vEventName )
@@ -247,6 +221,45 @@ function fNMDeviceRemoved(  )
 }
 
 // -------------------------------------------------------------------------------------------------
+//	events from system update machanism
+// -------------------------------------------------------------------------------------------------
+function fUPDATECOUNTEvent( newPackageCount )
+{
+	fDbg2("-------------------------------------------");
+	fDbg2("Downloading " + newPackageCount + " packages....");
+	fDbg2("-------------------------------------------");
+	
+	//Show a small downloading icon here (like Android)
+	
+	return "ok";
+}
+
+function fUPDATEREADYEvent( newPackageCount, needReboot )
+{
+	needReboot = (needReboot == "1") ? "true" : "false";
+	
+	fDbg2("-------------------------------------------");
+	fDbg2("  Update Ready (" + newPackageCount + " packages)");
+	if (needReboot == "true")		fDbg2("  Reboot required");
+	else							fDbg2("  Reboot NOT required");
+	fDbg2("-------------------------------------------");
+	
+	//Gracefully hide everything here
+	mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
+	// TODO： hide whatever on the screen
+	// 
+	
+	
+	//Redirect to update page after all animations are done
+	var locationString = "http://localhost/html_update/index.html?dummy=0";
+	if (newPackageCount != null && newPackageCount != "") 		locationString += "&packageCount=" + newPackageCount;
+	if (needReboot != null && needReboot != "") 				locationString += "&reboot=" + needReboot;
+	setTimeout("location.href=\"" + locationString + "\"", 1000);
+	
+	return "ok";
+}
+
+// -------------------------------------------------------------------------------------------------
 //	events from Android app
 // -------------------------------------------------------------------------------------------------
 function fAndroidEvents( vEventName, vEventData )
@@ -254,5 +267,28 @@ function fAndroidEvents( vEventName, vEventData )
 	//User has just started the Android app & Switch to remote control view
 	if (vEventName == "changeview" && vEventData == "remote")
 	{
+	}
+	
+	//User has just started the Android app & select an unconfigured device
+	if (vEventName == "changeview" && vEventData == "loading")
+	{
+		mCPanel.fOnSignal(cConst.SIGNAL_ANDROID_START_CONFIGURING);
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
+//	events from iOS app (To be decided)
+// -------------------------------------------------------------------------------------------------
+function fIOSEvents( vEventName, vEventData )
+{
+	//User has just started the iOS app & Switch to remote control view
+	if (vEventName == "changeview" && vEventData == "remote")
+	{
+	}
+	
+	//User has just started the iOS app & select an unconfigured device
+	if (vEventName == "changeview" && vEventData == "loading")
+	{
+		mCPanel.fOnSignal(cConst.SIGNAL_IOS_START_CONFIGURING);
 	}
 }
