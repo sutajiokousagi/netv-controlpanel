@@ -219,7 +219,7 @@ function fUPDATEEvents( vEventName, vEventData )
 		
 		fDbg2("-------------------------------------------");
 		fDbg2("  Update Starting");
-		if (needReboot = "true")		fDbg2("  Reboot required");
+		if (needReboot == "true")		fDbg2("  Reboot required");
 		else							fDbg2("  Reboot NOT required");
 		fDbg2("-------------------------------------------");
 	
