@@ -8,17 +8,20 @@
 // -------------------------------------------------------------------------------------------------
 //	static members
 // -------------------------------------------------------------------------------------------------
-var mGCPanelStatic = {
+var kCPanelStatic = {
 	mShowDbg : false,
 	mPluginClassList : [
-		"./CPanel/cSCPMessage.js",
-		"./CPanel/cSCPChannels.js",
-		"./CPanel/cSCPWidgets.js",
-		"./CPanel/cSCPInfo.js",
-		"./CPanel/cWEEvent.js",
+		"./CPanel/cModuleWE.js",
+		"./CPanel/cModuleEventTicker.js",
+		"./CPanel/cModuleChromaBg.js",
 		"./CPanel/cWEFlash.js",
 		"./CPanel/cWEHtml.js",
-		"./CPanel/cPIChromaBg.js"
+		
+		"./CPanel/cPMain.js",
+		"./CPanel/cSPChannels.js",
+		"./CPanel/cSCPWidgets.js",
+		"./CPanel/cSPInfo.js"
+		
 	]
 };
 
@@ -59,25 +62,13 @@ function cCPanel(
 
 	// widget playing
 	this.mCurrWidget = null;
-	this.mCurrWidgetPeriod = 10;
+	this.mCurrWidgetPeriod = 30;
 	this.mCurrWidgetTimeSpend = 0;
 	
-	// components
-	this.mPIChromaBg = null;
-	this.mSCPMessage = null;
-	this.mSCPChannelsMain = null;
-	this.mSCPWidgetsMain = null;
-	this.mSCPInfoMain = null;
-	this.mSCPSettingMain = null;
-	
-	this.mWEEvent = null;
-	this.mWEHtml = null;
-	this.mWEFlash = null;
-
 	// states
 	this.mPrevState = "";
-	this.mState = "";
-	this.mSubState = "";
+	this.mState = "";			//	"controlpanel" | "htmlwidgetengine" | "flashwidgetengine" | "event"
+	this.mSubState = "";		// "cpanel_main" | "cpanel_channels" | "cpanel_configurations" | "cpanel_info"
 	
 }
 
@@ -118,17 +109,14 @@ cCPanel.prototype.fInit = function(
 {
 	// hide all
 	this.fHideAll();
-
-	//~ $("#div_qrcodeMain").show();
-	//~ $("#div_toast").show();
 	
 	// show div(s) for initialization
 	$("#div_startup").show();
-	$("#div_startup_logo").animate({}, 3000, function() { });
+
+	this.pState("controlpanel");
+
 	
-	$("#div_loader").show();
-	$("#div_messageBoard").show();
-	
+	// -------------- resize --------------
 	var vViewPortSize = [];
 	var vWidgetEdgeOffset = [50, 50];
 	if (typeof window.innerWidth != 'undefined')
@@ -140,23 +128,14 @@ cCPanel.prototype.fInit = function(
 		$("#div_CPanel").css("left", (vViewPortSize[0] - 800) / 2 + "px");
 	if (vViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vViewPortSize[1] - 600) / 2 + "px");
-	
-	if ($("#div_widgetPlayer").length)
-	{	
-		$("#div_widgetPlayer").css("left", (vViewPortSize[0] - parseFloat($("#div_widgetPlayer").css("width").split("px")[0]) - vWidgetEdgeOffset[0]) + "px")
-		$("#div_widgetPlayer").css("top", (vViewPortSize[1] - parseFloat($("#div_widgetPlayer").css("height").split("px")[0]) - vWidgetEdgeOffset[1]) + "px")
-	}
-	
 	$(window).resize(function() {
 		fDbg2("*** window resize : " + $(window).width() + ", " + $(window).height());
 	});
+	// -------------- ====== --------------
 
-	mCurrDivVisible = "div_messageBoard";
-	this.pState("controlpanel");
-	
 	
 	// load other js classes
-	fLoadExtJSScript(mGCPanelStatic.mPluginClassList, vReturnFun);
+	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -167,13 +146,10 @@ cCPanel.prototype.fHideAll = function(
 {
 	$("#div_tempBg").hide();
 	$("#div_CPanel").children().hide();
+	$("#div_CPanel").hide();
 	
 	// hide activation div
 	$("#div_activation").hide();
-	
-	// hide all debug div
-	if (!mGCPanelStatic["mShowDbg"])
-		$("#div_dbg_container").hide();
 	
 	// hide all widget players
 	$("#div_htmlWidgetPlayer").hide();
@@ -186,19 +162,20 @@ cCPanel.prototype.fHideAll = function(
 cCPanel.prototype.fStartUp = function(
 )
 {
-	fDbg("*** cCPanel, fStartUp()");
+fDbg("*** cCPanel, fStartUp()");
 	
 	// register all classes
-	this.mPIChromaBg = cPIChromaBg.fGetInstance("div_tempBg");
+	cModuleChromaBg.fGetInstance("div_tempBg");
+
+	cPMain.fGetInstance("div_cpanelMain");
+	cSPChannels.fGetInstance("div_channelMain");
+	cSCPWidgets.fGetInstance("div_flashWidgetMain");
+	cSPInfo.fGetInstance("div_infoMain");
 	
-	this.mSCPMessage = cSCPMessage.fGetInstance("div_messageBoard");
-	this.mSCPChannelsMain = cSCPChannels.fGetInstance("div_channelMain");
-	this.mSCPWidgetsMain = cSCPWidgets.fGetInstance("div_flashWidgetMain");
-	this.mSCPInfo = cSCPInfo.fGetInstance("div_infoMain");
-	
-	this.mWEEvent = cWEEvent.fGetInstance($("#div_eventWidgetPlayer"));
-	this.mWEFlash = cWEFlash.fGetInstance(null);
-	this.mWEHtml = cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
+	cModuleEventTicker.fGetInstance($("#div_eventWidgetPlayer"));
+	cModuleWE.fGetInstance(null);
+	cWEFlash.fGetInstance(null);
+	cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -210,32 +187,52 @@ cCPanel.prototype.fOnSignal = function(
 	vReturnFun		// return function call
 )
 {
-//fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
-	var mCPanel = cCPanel.fGetInstance();
-	var i, o;
+//~ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
+	var vThis, i, o, p;
+	vThis = this;
 	
-	// handle the lock state;
 	//~ if (cCPanel.instance.mLocked == true)
 		//~ return;
 	//~ cCPanel.instance.mLocked = true;
-
-	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET);
-	//~ fDbg2(">>>>>>>> " + cModel.fGetInstance().CHUMBY_INTERNET == "");
-	// =========================
+	// =========================================================================
 	// JavaScript Injection Signals
-	// =========================
+	// =========================================================================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
+		switch (vThis.mState)
+		{
+		case "controlpanel":
+			//~ vThis.fOnSignal(cConst.SIGNAL_GOTO_EVENTTICKER);
+			vThis.fAnimateOutControlPanel(function() {
+				cModuleEventTicker.fGetInstance().fAnimateIn();
+				cModuleEventTicker.fGetInstance().pEnabled(true);
+			});
+			vThis.pState("event");
+			break;
+			
+		case "event":
+			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
+			break;
+		}
+		
+/*
 		if (mCPanel.mState != "controlpanel")
 			mCPanel.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL);
 		else
 		{
+			switch (mCPanel.mPrevState)
+			{
+			case "htmlwidgetengine":
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
+				break;
+			case "flashwidgetengine":
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_FLASHWIDGETENGINE);
+				break;
+			case "eventwidgetengine":
+				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_EVENTWIDGETENGINE);
+				break;
+			}
 			if (mCPanel.mPrevState == "htmlwidgetengine")
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
 			else if (mCPanel.mPrevState == "flashwidgetengine")
@@ -243,19 +240,47 @@ cCPanel.prototype.fOnSignal = function(
 			else if (mCPanel.mPrevState == "eventwidgetengine")
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_EVENTWIDGETENGINE);
 		}
+*/
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
-		if (cCPanel.instance.mLocked == true)
+		if (cCPanel.instance.mLocked == true)									// release lock
 			return;
 		cCPanel.instance.mLocked = true;
-		switch (mCPanel.mState)
+		switch (vThis.mState)
 		{
+		case "controlpanel":
+			//~ vThis.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
+			cCPanel.instance.mLocked = false;
+			break;
+
+		case "event":
+			cModuleEventTicker.fGetInstance().fAnimateOut(function() {
+				vThis.pState("empty");
+			});
+			cCPanel.instance.mLocked = false;
+			break;
+			
+		case "empty":
+			fDbg("==================>>>>> prev : " + vThis.mPrevState);
+			switch (vThis.mPrevState)
+			{
+			case "event":
+				cModuleEventTicker.fGetInstance().fAnimateIn(function() {
+					vThis.pState("event");
+				});
+				break;
+			}
+			cCPanel.instance.mLocked = false;
+			break;
+			
+			
+		case "widgetengine":
+			cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+			cCPanel.instance.mLocked = false;
+			break;
+
+			/*
 		case "htmlwidgetengine":
 			cWEHtml.fGetInstance().fSlideOut(function() {
 				cCPanel.instance.pState("empty");
@@ -296,52 +321,46 @@ cCPanel.prototype.fOnSignal = function(
 				break;
 			}
 			break;
-		case "controlpanel":
-			mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
-			break;
+			*/
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
-		if (mCPanel.mState != "controlpanel")
+		if (vThis.mState != "controlpanel")
 			return;
 			
-		switch (mCPanel.mSubState)
+		switch (vThis.mSubState)
 		{
 		case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		case "infomain": cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		
+		case "cpanel_main":			cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		//~ case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "cpanel_info":		cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
-		if (mCPanel.mState != "controlpanel")
+		if (vThis.mState != "controlpanel")
 			return;
 			
-		switch (mCPanel.mSubState)
+		switch (vThis.mSubState)
 		{
 		case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		case "infomain": cSCPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		
+		case "cpanel_main": 		cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		//~ case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+		case "cpanel_info":		cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
+		/*
 		if (mCPanel.mState == "controlpanel" && mCPanel.mSubState == "channelMain")
 		{
 			o = cSCPChannels.fGetInstance().fGetSelected();
@@ -353,19 +372,68 @@ cCPanel.prototype.fOnSignal = function(
 			else if (o[0] == 2)
 				mCPanel.fOnSignal(cConst.SIGNAL_GOTO_EVENTWIDGETENGINE);
 		}
+		*/
+		if (vThis.mState == "controlpanel")
+		{
+			if (vThis.mSubState == "cpanel_main")
+			{
+				o = cPMain.fGetInstance().pCurrSelection();
+				if (o == "channels")
+				{
+					cPMain.fGetInstance().fAnimateOut(function() {
+						cSPChannels.fGetInstance().fAnimateIn();
+						cSPChannels.fGetInstance().fRenderChannelList();
+						vThis.mSubState = "cpanel_channels";
+					});
+					
+				}
+				else if (o == "configurations")
+				{
+					/*
+					cPMain.fGetInstance().fAnimateOut(function() {
+						cSPConfigurations.fGetInstance().fAnimateIn();
+						vThis.mSubState = "cpanel_configurations";
+					});
+					*/
+				}
+				else if (o == "info")
+				{
+					cPMain.fGetInstance().fAnimateOut(function() {
+						cSPInfo.fGetInstance().fAnimateIn();
+						vThis.mSubState = "cpanel_info";
+					});
+				}
+			}
+			else if (vThis.mSubState == "cpanel_info")
+			{
+				cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+			}
+			else if (vThis.mSubState == "cpanel_channels")
+			{
+				cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+			}
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
-		if (mCPanel.mState == "controlpanel")
+		if (vThis.mState == "controlpanel")
 		{
-			if (mCPanel.mSubState == "flashchannelwidgetsmain")
+			switch (vThis.mSubState)
+			{
+			case "cpanel_info": cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); return;
+			case "cpanel_channels": cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); return;
+			}
+
+
+
+
+
+
+
+			
+			if (vThis.mSubState == "flashchannelwidgetsmain")
 			{
 				if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "485px")
 				{
@@ -375,40 +443,48 @@ cCPanel.prototype.fOnSignal = function(
 				}
 			}
 			
-			for (i = 0; i < mCPanel.mSubCPanelList.length; i++)
-				if (mCPanel.mSubCPanelList[i].mSubStateName == mCPanel.mSubState)
+			for (i = 0; i < vThis.mSubCPanelList.length; i++)
+				if (vThis.mSubCPanelList[i].mSubStateName == vThis.mSubState)
 				{
 					if (i == 0)
-						o = [i, mCPanel.mSubCPanelList.length - 1];
+						o = [i, vThis.mSubCPanelList.length - 1];
 					else
 						o = [i, i - 1];
 					break;
 				}
 			
 			cSCPMessage.fGetInstance().fHide();
-						
-			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
-			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
-			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
 			
-			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
-			if (mCPanel.mSubState == "flashchannelwidgetsmain")
+			$("#" + vThis.mSubCPanelList[o[0]].mDivID).hide();
+			$("#" + vThis.mSubCPanelList[o[1]].mDivID).hide();
+			$("#" + vThis.mSubCPanelList[o[1]].mDivID).fadeIn();
+			
+			vThis.mSubState = vThis.mSubCPanelList[o[1]].mSubStateName;
+			if (vThis.mSubState == "flashchannelwidgetsmain")
 				cSCPWidgets.fGetInstance().fRefreshChannelDiv();
 				//~ cCPanel.instance.fRefreshChannelDiv();
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
-	if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
-	{
-		location.href = "./html_config/";
-		return;
-	}
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
-		if (mCPanel.mState == "controlpanel")
+		if (vThis.mState == "controlpanel")
 		{
-			if (mCPanel.mSubState == "flashchannelwidgetsmain")
+			switch (vThis.mSubState)
+			{
+			case "cpanel_info": cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); return;
+			case "cpanel_channels": cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); return;
+			}
+
+
+
+
+
+
+			
+			
+			if (vThis.mSubState == "flashchannelwidgetsmain")
 			{
 				if ($("#div_flashWidgetMain").children(".bg_focusborder_outer").css("top") == "75px")
 				{
@@ -418,10 +494,10 @@ cCPanel.prototype.fOnSignal = function(
 				}
 			}
 			
-			for (i = 0; i < mCPanel.mSubCPanelList.length; i++)
-				if (mCPanel.mSubCPanelList[i].mSubStateName == mCPanel.mSubState)
+			for (i = 0; i < vThis.mSubCPanelList.length; i++)
+				if (vThis.mSubCPanelList[i].mSubStateName == vThis.mSubState)
 				{
-					if (i == mCPanel.mSubCPanelList.length - 1)
+					if (i == vThis.mSubCPanelList.length - 1)
 						o = [i, 0];
 					else
 						o = [i, i + 1];
@@ -429,11 +505,11 @@ cCPanel.prototype.fOnSignal = function(
 				}
 			cSCPMessage.fGetInstance().fHide();
 			
-			$("#" + mCPanel.mSubCPanelList[o[0]].mDivID).hide();
-			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).hide();
-			$("#" + mCPanel.mSubCPanelList[o[1]].mDivID).fadeIn();
-			mCPanel.mSubState = mCPanel.mSubCPanelList[o[1]].mSubStateName;
-			if (mCPanel.mSubState == "flashchannelwidgetsmain")
+			$("#" + vThis.mSubCPanelList[o[0]].mDivID).hide();
+			$("#" + vThis.mSubCPanelList[o[1]].mDivID).hide();
+			$("#" + vThis.mSubCPanelList[o[1]].mDivID).fadeIn();
+			vThis.mSubState = vThis.mSubCPanelList[o[1]].mSubStateName;
+			if (vThis.mSubState == "flashchannelwidgetsmain")
 				cSCPWidgets.fGetInstance().fRefreshChannelDiv();
 				//~ cCPanel.instance.fRefreshChannelDiv();
 		}
@@ -455,65 +531,106 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		break;
 	}
+
+
+
 	
 
 
 
 
-
-	
-	// =========================
+	// =========================================================================
 	// internal signals
-	// =========================
+	// =========================================================================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_STARTUP_INIT:
-		cPIChromaBg.fGetInstance().fRefreshScreen();
+		cModuleChromaBg.fGetInstance().fRefreshScreen();
+		cModuleEventTicker.fGetInstance().fInit();
+		cModuleEventTicker.fGetInstance().fAddStampEvent(["booting up...", null, null]);
+
+		vThis.pState("event");
+		//~ vThis.pState("widgetplaying");
+		//~ vThis.pState("controlpanel");
+		break;
+
+	case cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE:
+		vThis.fOnSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
+		break;
+
+	case cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED:
+		vThis.fOnSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
+		vThis.fOnSignal(cConst.SIGNAL_SCPINFO_SHOW, null, null);
 		break;
 
 	case cConst.SIGNAL_STARTUP_COMPLETE:
-		this.fOnSignal(cConst.SIGNAL_WIDGETENGINE_SHOW);
+		cModuleEventTicker.fGetInstance().fEndStampEvent();
+		cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[1]);
+		cModuleWE.fGetInstance().fNext();
+
+		
+		
+		/*
+		var tempTimeout = setTimeout(function() {
+			//~ cModuleEventTicker.fGetInstance().fEndStampMessage();
+			cModuleEventTicker.fGetInstance().mStampEventList = [];
+			fDbg("time to die!!!!!!!!!!!!!!!");
+		}, 1000);
+		*/
+		/*
+		// hide loader
+		if ($("#div_loader").is(":visible"))
+			$("#div_loader").fadeOut(200, function() { });
+
+		// hide / slide-out controlpanel
+		vThis.fAnimateOutControlPanel(function() {
+			cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[1]);
+			cModuleWE.fGetInstance().fNext();
+			vThis.pState("widgetengine");
+			return;
+		});
+		*/
 		break;
 		
 	case cConst.SIGNAL_HEARTBEAT:
-		switch (mCPanel.mState)
+		switch (vThis.mState)
 		{
-		case "htmlwidgetengine":
-			mCPanel.mCurrWidgetTimeSpend++;
-			if (mCPanel.mCurrWidgetTimeSpend > mCPanel.mCurrWidgetPeriod)
-			{
-				// play next widget
-				cWEHtml.fGetInstance().fPlayWidget("next");
-				
-				// reset curre widget timer
-				mCPanel.mCurrWidgetTimeSpend = 0;
-			}
+		case "event":
+			cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 			break;
 		}
-		//~ fDbg2(mCPanel.mCurrWidgetTimeSpend);
 		break;
 		
-	case cConst.SIGNAL_MESSAGE:
-		cSCPMessage.fGetInstance().fDisplay(vData[0]);
+	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
+		//~ if (vThis.mState == "widgetengine")
+		cModuleWE.fGetInstance().fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vData, vReturnFun);
+		break;
+		
+		
+		
+		
+		
+	case cConst.SIGNAL_MESSAGE:				// original startup system message, deprecated
+		//~ cSCPMessage.fGetInstance().fDisplay(vData[0]);
+		//~ vThis.fToast(vData[0], "message");
 		break;
 		
 	case cConst.SIGNAL_NETWORKEVENT_DISCONNECTED:
-		mCPanel.fToast("Network Disconnected! Please check your wireless connection.");
+		vThis.fToast("Network Disconnected! Please check your wireless connection.");
 		break;
 		
 	case cConst.SIGNAL_CHANNELDIV_SHOW:
 		switch (mCurrDivVisible)
 		{
 		case "div_messageBoard":
-			//~ mCPanel.fRefreshChannelDiv();
-			
+			//~ vThis.fRefreshChannelDiv();
 			cSCPWidgets.fGetInstance().fRefreshChannelDiv(function() {
 				cCPanel.fGetInstance().fShowChannelDiv();
 			});
 			break;
 		}
 		break;
-
+		
 	case cConst.SIGNAL_SCPINFO_SHOW:
 		if ($("#div_startup").is(":visible"))
 		{
@@ -521,7 +638,7 @@ cCPanel.prototype.fOnSignal = function(
 			cSCPMessage.fGetInstance().fHide();
 			$("#div_startup").fadeOut(function() {
 				cSCPInfo.fGetInstance().fFadeIn();
-				mCPanel.mSubState = "infomain";
+				vThis.mSubState = "infomain";
 			});
 		}
 		else
@@ -536,21 +653,38 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 
 	case cConst.SIGNAL_SCPINFO_UPDATE:
-		cSCPInfo.fGetInstance().fUpdate();
-		break;
-		
-	case cConst.SIGNAL_WIDGETENGINE_SHOW:
-		mCPanel.fOnSignal(cConst.SIGNAL_GOTO_HTMLWIDGETENGINE);
+		cSPInfo.fGetInstance().fUpdate();
 		break;
 		
 	case cConst.SIGNAL_GOTO_CONTROLPANEL:
-		switch (mCPanel.mState)
+		switch (vThis.mState)
 		{
 		case "controlpanel":
 			break;
+
+		case "event":
+			$("#div_cpanelMain").hide();
+			$("#div_infoMain").hide();
+			$("#div_settingMain").hide();
+			cModuleEventTicker.fGetInstance().fAnimateOut(function() {
+				cModuleEventTicker.fGetInstance().fStopAll();
+				vThis.fShowControlPanel();
+			});
+			break;
+
+		case "widgetengine":
+			//~ cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+			cModuleWE.fGetInstance().fStop();
+			vThis.fShowControlPanel();
+			break;
+
+
+
+
+			
 		case "htmlwidgetengine":
 			cWEHtml.fGetInstance().fSlideOut(function() {
-				mCPanel.fShowControlPanel();
+				vThis.fShowControlPanel();
 			});
 			break;
 		case "flashwidgetengine":
@@ -567,23 +701,23 @@ cCPanel.prototype.fOnSignal = function(
 		case "eventwidgetengine":
 			cCPanel.instance.mWEEvent.fSlideDown(function() {
 				cCPanel.instance.mWEEvent.fReset();
-				mCPanel.fShowControlPanel();
+				vThis.fShowControlPanel();
 			});
 			break;
 		case "empty":
-			switch (mCPanel.mPrevState)
+			switch (vThis.mPrevState)
 			{
 			case "flashwidgetengine":
 				cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>hide</value>"}, function() {});
 				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
-				mCPanel.fShowControlPanel();
+				vThis.fShowControlPanel();
 				break;
 			case "htmlwidgetengine":
-				mCPanel.fShowControlPanel();
+				vThis.fShowControlPanel();
 				break;
 		case "eventwidgetengine":
 				cCPanel.instance.mWEEvent.fReset();
-				mCPanel.fShowControlPanel();
+				vThis.fShowControlPanel();
 				break;
 			}
 			break;
@@ -653,22 +787,37 @@ cCPanel.prototype.fOnSignal = function(
 
 
 cCPanel.prototype.fToast = function(
-	vMsg
+	vMsg,
+	vType,
+	vCssObj
 )
 {
 //~ fDbg2(vMsg);
+	
 	$("#div_toast_content").html(vMsg);
+
+	if (!vType || vType == "warning")
+	{
+		$("#div_toast_content").css("background-color", "#FF4444");
+		$("#div_toast_content").css("color", "#FFFFFF");
+		$("#div_toast_content").css("font-size", "18px");
+	}
+	else if (vType = "message")
+	{
+		$("#div_toast_content").css("background-color", "#333");
+		$("#div_toast_content").css("color", "#FFFFFF");
+		$("#div_toast_content").css("font-size", "18px");
+	}
 	
-	//~ fDbg2($("#div_toast_content").outerWidth());
-	//~ fDbg2($("#div_toast_content").width());
 	
-	$("#div_toast_content").css("top", "-50px");
-	$("#div_toast_content").animate({
+	$("#div_toast").show();
+	$("#div_toast").css("top", "-60px");
+	$("#div_toast").animate({
 		top : "10px"
 	}, 200, function() {
 		var vTO = setTimeout(function() {
-			$("#div_toast_content").animate({
-				top : "-50px"
+			$("#div_toast").animate({
+				top : "-60px"
 			}, 200, function() {
 			});
 		}, 5000);
@@ -700,11 +849,18 @@ cCPanel.prototype.fToast = function(
 //	fShowControlPanel
 // -------------------------------------------------------------------------------------------------
 cCPanel.prototype.fShowControlPanel = function(
+	vReturnFun
 )
 {
 fDbg2("*** cCPanel, fShowControlPanel(), ");
-	var o;
-	
+	var o, vThis;
+	vThis = this;
+
+	$("#div_CPanel").show();
+	$("#div_CPanel").children().hide();
+	$("#div_startup").show();
+
+	/*
 	$("#div_tempBg").hide();
 	$("#div_tempBg").show();
 	$("#div_tempBg").css("top", "-720px");
@@ -713,33 +869,20 @@ fDbg2("*** cCPanel, fShowControlPanel(), ");
 	}, 1000, function() {
 		$("#div_tempBg").hide();
 	});
-
+	*/
 	$("#div_CPanel").css("left", "-960px");
 	$("#div_CPanel").animate({
 		left: "+=1200"
 	}, 800, function() {
-		
-		switch (cCPanel.instance.mState)
-		{
-		case "htmlwidgetengine": o = 1; break;
-		case "flashwidgetengine": o = 0; break;
-		case "eventwidgetengine": o = 2; break;
-		case "empty":
-			switch (cCPanel.instance.mPrevState)
-			{
-				case "htmlwidgetengine": o = 1; break;
-				case "flashwidgetengine": o = 0; break;
-				case "eventwidgetengine": o = 2; break;
-			}
-			break;
-		}
-		
-		cSCPChannels.fGetInstance().fFadeIn();
-		cSCPChannels.fGetInstance().fSetSelected([o], function() {
-			cCPanel.instance.mSubState = "channelMain";
-		});
+		$("#div_cpanelMain").show();
 		
 		cCPanel.instance.pState("controlpanel");
+		$("#div_startup").fadeOut(function() {
+			vThis.mSubState = "cpanel_main";
+		});
+		
+		if (vReturnFun)
+			vReturnFun();
 	});
 }
 
@@ -768,6 +911,68 @@ cCPanel.prototype.fShowChannelDiv = function(
 	}, 200, function() {
 		// Animation complete
 	});
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fAnimateInControlPanel
+// -------------------------------------------------------------------------------------------------
+cCPanel.prototype.fAnimateInControlPanel = function(
+	vReturnFun
+)
+{
+	$("#div_CPanel").animate({
+		left: "+=1200"
+	}, 800, function() {
+		if (vReturnFun)
+			vReturnFun();
+	});
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fAnimateOutControlPanel
+// -------------------------------------------------------------------------------------------------
+cCPanel.prototype.fAnimateOutControlPanel = function(
+	vReturnFun
+)
+{
+	$("#div_CPanel").animate({
+		left: "-=1200"
+	}, 800, function() {
+		if (vReturnFun)
+			vReturnFun();
+	});
+}
+
+
+
+
+
+cCPanel.prototype.fBack = function(
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (vThis.mState != "controlpanel")
+		return;
+	
+	switch (vThis.mSubState)
+	{
+	case "cpanel_info":
+		cSPInfo.fGetInstance().fAnimateOut(function() {
+			cPMain.fGetInstance().fAnimateIn(function() {
+				vThis.mSubState = "cpanel_main";
+			});
+		});
+		break;
+	case "cpanel_channels":
+		cSPChannels.fGetInstance().fAnimateOut(function() {
+			cPMain.fGetInstance().fAnimateIn(function() {
+				vThis.mSubState = "cpanel_main";
+			});
+		});
+		break;
+	}
 }
 
 

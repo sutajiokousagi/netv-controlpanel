@@ -30,7 +30,8 @@
 						<swf bgcolor="000000" camera="false" previewable="true" supports_browser="false" content-type="application/x-shockwave-flash" height="240" width="320" microphone="false" resolution="" scalable="false" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE" accelerometer="false" pointing="false" as_version="2" requires_sound="false" swf_version="8" kb="false"/>
 					</swfs>
 				</widget>
-				<parameters></parameters>
+				<parameters>
+				</parameters>
 			</widget_instance>
 			*
 			*
@@ -78,7 +79,7 @@ function cChannelObj(
 	vData = vData.substring(vData.indexOf("<?xml"));
 	var vParser = new DOMParser();
 	var vXmlDoc = vParser.parseFromString(vData, "text/xml");
-
+	
 	this.mID = vXmlDoc.getElementsByTagName("profile")[0].getAttribute("id");
 	this.mName = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("name")[0].textContent;
 	this.mDescription = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("description")[0].textContent;
@@ -102,6 +103,31 @@ function cChannelObj(
 	o = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("widget_instances")[0].getElementsByTagName("widget_instance");
 	for (i = 0; i < o.length; i++)
 		this.mWidgetList.push(new cWidgetObj(o[i]));
+
+
+	// -----------------------------------------------------
+	// members
+	// -----------------------------------------------------
+	this.mPlayMode = "default";		// default | event
+}
+
+// -------------------------------------------------------------------------------------------------
+//	parse to XML
+// -------------------------------------------------------------------------------------------------
+cChannelObj.prototype.pNextWidget = function(
+	v
+)
+{
+	
+	if (typeof(v) == "object" && v != null)
+		v = this.mWidgetList.indexOf(v);
+
+	if (v + 1 >= this.mWidgetList.length)
+		v = 0;
+	else
+		v++;
+	
+	return this.mWidgetList[v];
 }
 
 // -------------------------------------------------------------------------------------------------

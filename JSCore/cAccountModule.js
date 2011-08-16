@@ -29,7 +29,7 @@ cAccountModule.fGetInstance = function()
 cAccountModule.prototype.fInit = function(
 )
 {
-fDbg2("*** cAccountModule, fInit()");
+fDbg("*** cAccountModule, fInit()");
 	
 }
 
@@ -40,7 +40,7 @@ cAccountModule.prototype.fFetchAccountInfo = function(
 	vReturnFun
 )
 {
-fDbg2("*** cAccountModule, fFetchAccountInfo()");
+fDbg("*** cAccountModule, fFetchAccountInfo()");
 	
 	var o, parser, xmlDoc;
 	parser = new DOMParser();
@@ -86,7 +86,7 @@ cAccountModule.prototype.fParseAccountInfo = function(
 	vReturnFun
 )
 {
-fDbg2("*** cAccountModule, fParseAccountInfo()");
+fDbg("*** cAccountModule, fParseAccountInfo()");
 	
 	var parser = new DOMParser();
 	var xmlDoc = parser.parseFromString(vData, "text/xml");

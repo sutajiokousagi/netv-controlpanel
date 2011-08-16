@@ -1,4 +1,4 @@
-// -------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------
 //	cWEHtml class
 //
 //
@@ -14,10 +14,7 @@ function cWEHtml(
 {
 	this.mDiv = vDivObj ? vDivObj : {};
 	this.mCurrWidget = null;
-	this.mCurrWidgetPeriod = 10;
-	this.mHeartbeatN = 0;
-	
-	
+	this.mPlayMode = "default";		// default | event
 	
 	this.fInit();
 }
@@ -30,7 +27,7 @@ cWEHtml.fGetInstance = function(
 	vDivObj
 )
 {
-	return cWEHtml.instance ? cWEHtml.instance : cWEHtml.instance = new cWEHtml(vDivObj);
+	return cWEHtml.instance ? cWEHtml.instance : (cWEHtml.instance = new cWEHtml(vDivObj));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -40,16 +37,20 @@ cWEHtml.prototype.fInit = function(
 )
 {
 fDbg2("*** cWEHtml, fInit(), ");
+	
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fPlayWidget
+//	fReset
 // -------------------------------------------------------------------------------------------------
-cWEHtml.prototype.fReset = function(
-	vReturnFun
+cWEHtml.prototype.pPlayMode = function(
+	v
 )
 {
-	cWEHtml.instance.mHeartbeatN = 0;
+	if (v)
+		this.mPlayMode = v;
+	else
+		return this.mPlayMode;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -90,13 +91,7 @@ cWEHtml.prototype.fOnSignal = function(
 
 	switch (vSignal)
 	{
-	case cConst.SIGNAL_HEARTBEAT:
-		this.mHeartbeatN++;
-		if (this.mHeartbeatN > this.mCurrWidgetPeriod)
-		{
-			cCPanel.fGetInstance().fOnSignal();
-		}
-		break;
+		
 	}
 }
 
@@ -117,10 +112,11 @@ cWEHtml.prototype.fHide = function(
 // -------------------------------------------------------------------------------------------------
 //	fFadeIn / fFadeOut
 // -------------------------------------------------------------------------------------------------
-cWEHtml.prototype.fSlideIn = function(
+cWEHtml.prototype.fAnimateIn = function(
 	vReturnFun
 )
 {
+fDbg("*** cWEEvent, fAnimateOut(), ");
 	$("#div_htmlWidgetPlayer").css("top", "720px");
 	$("#div_htmlWidgetPlayer").animate({
 		top: "-=80"
@@ -129,7 +125,7 @@ cWEHtml.prototype.fSlideIn = function(
 			vReturnFun();
 	});
 }
-cWEHtml.prototype.fSlideOut = function(
+cWEHtml.prototype.fAnimateOut = function(
 	vReturnFun
 )
 {
@@ -152,28 +148,75 @@ cWEHtml.prototype.fPlayWidget = function(
 {
 fDbg2("*** cWEHtml, fPlayWidget(), " + vData);
 	var p, i;
-	
-	if (!cWEHtml.instance.mCurrWidget)
-		i = 0;
-	else
-	{
-		i = cModel.fGetInstance().CHANNEL_LIST[1].mWidgetList.indexOf(cWEHtml.instance.mCurrWidget) + 1;
-		if (i == cModel.fGetInstance().CHANNEL_LIST[1].mWidgetList.length)
-			i = 0;
-	}
-	
-	cWEHtml.instance.mCurrWidget = cModel.fGetInstance().CHANNEL_LIST[1].mWidgetList[i];
-	vData = cWEHtml.instance.mCurrWidget.mWidget.mMovie.mHref;
-	//~ fDbg2(vData);
 
-	$("#div_htmlWidgetPlayer").show();
-	$("#div_htmlWidgetPlayer").css("top", "720px");
-	$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + vData + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="width: 1279px; height: 70px; background-color: white"></iframe>');
-	
-	p = setTimeout(function() {
-		cWEHtml.instance.fSlideIn();
-	}, 1000);
+	if (this.mPlayMode == "default")
+	{
+		// check if curr widget running (on screen)
+		if ($("#div_htmlWidgetPlayer").css("top") == "720px")
+		{
+			// reset and load a new widget
+			$("#div_htmlWidgetPlayer").show();
+			$("#div_htmlWidgetPlayer").css("top", "720px");
+			$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + vData + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 70px; background-color: white"></iframe>');
+			
+			p = setTimeout(function() {
+				cWEHtml.instance.fAnimateIn();
+			}, 1000);
+		}
+		else
+		{
+			// transition between widgets
+			$("#iframe_htmlWidgetPlayer").animate({
+				top: "+=80px"
+			}, 1000, function() {
+				$("#iframe_htmlWidgetPlayer").attr("src", vData);
+				p = setTimeout(function() {
+					$("#iframe_htmlWidgetPlayer").animate({
+						top: "-=80px"
+					}, 1000, function() {
+						
+					});
+				}, 1000);
+			});
+		}
+	}
+	else if (this.mPlayMode == "event")
+	{
+		$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + vData + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 70px; background-color: white"></iframe>');
+	}
 	
 	if (vReturnFun)
 		vReturnFun();
+}
+
+
+// -------------------------------------------------------------------------------------------------
+//	fStop
+// -------------------------------------------------------------------------------------------------
+cWEHtml.prototype.fStop = function(
+	vReturnFun
+)
+{
+fDbg("*** cWEHtml, fStop(), ");
+	var vThis = this;
+
+	$("#div_htmlWidgetPlayer").html("");
+	if (vReturnFun)
+		vReturnFun();
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fExit
+// -------------------------------------------------------------------------------------------------
+cWEHtml.prototype.fExit = function(
+	vReturnFun
+)
+{
+fDbg("*** cWEHtml, fExit(), ");
+	var vThis = this;
+
+	vThis.fAnimateOut(function() {
+		if (vReturnFun)
+			vReturnFun();
+	});
 }

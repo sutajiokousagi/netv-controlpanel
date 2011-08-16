@@ -134,7 +134,7 @@ function fServerReset(
 	vData		// true | false
 )
 {
-fDbg2("fServerReset(), " + vData);
+//~ fDbg2("fServerReset(), " + vData);
 	if (vData == "true" || vData == true)
 		location.href="http://localhost/";
 
@@ -148,6 +148,7 @@ function fButtonPress(
 	vButtonName
 )
 {
+//~ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
 	switch (vButtonName)
 	{
 		case "cpanel": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -165,7 +166,7 @@ function fWidgetMsgEvent(
 	vEventData
 )
 {
-fDbg("*** fWidgetMdgEvent(), " + vEventData);
+//~ fDbg("*** fWidgetMdgEvent(), " + vEventData);
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vEventData, null);
 }
 
@@ -196,55 +197,6 @@ function fHDMIEvents( vEventName )
 }
 
 // -------------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-=======
-//	events from system
-// -------------------------------------------------------------------------------------------------
-function fUPDATECOUNTEvent( newPackageCount )
-{
-	fDbg2("-------------------------------------------");
-	fDbg2("Downloading " + newPackageCount + " packages....");
-	fDbg2("-------------------------------------------");
-	
-	//Show a small downloading icon here (like Android)
-	
-	return "ok";
-}
-
-function fUPDATEEvents( vEventName, vEventData )
-{
-	fDbg2("fUPDATEEvents: " + vEventName + "," + vEventData);
-	
-	if (vEventName == "starting")
-	{
-		var needReboot = (vEventData == "1") ? "true" : "false";
-		
-		fDbg2("-------------------------------------------");
-		fDbg2("  Update Starting");
-		if (needReboot == "true")		fDbg2("  Reboot required");
-		else							fDbg2("  Reboot NOT required");
-		fDbg2("-------------------------------------------");
-	
-		//Gracefully hide everything here
-		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
-		// TODO： hide whatever on the screen
-		// 
-		
-		
-		//Redirect to update page after all animations are done
-		var locationString = "http://localhost/html_update/index.html?dummy=0";
-		if (needReboot != null && needReboot != "") 				locationString += "&reboot=" + needReboot;
-		setTimeout("location.href=\"" + locationString + "\"", 1000);
-	}
-	else
-	{
-		//Let html_update handle the rest
-	}
-	return "ok";
-}
-
-// -------------------------------------------------------------------------------------------------
->>>>>>> 655ad7ef4a7de5779511cef6831efae7b1035313
 //	events from DBus/NetworkManager
 // -------------------------------------------------------------------------------------------------
 function fNMStateChanged( vEventName )
@@ -283,28 +235,35 @@ function fUPDATECOUNTEvent( newPackageCount )
 	return "ok";
 }
 
-function fUPDATEREADYEvent( newPackageCount, needReboot )
+function fUPDATEEvents( vEventName, vEventData )
 {
-	needReboot = (needReboot == "1") ? "true" : "false";
+fDbg("fUPDATEEvents: " + vEventName + "," + vEventData);
 	
-	fDbg2("-------------------------------------------");
-	fDbg2("  Update Ready (" + newPackageCount + " packages)");
-	if (needReboot == "true")		fDbg2("  Reboot required");
-	else							fDbg2("  Reboot NOT required");
-	fDbg2("-------------------------------------------");
+	if (vEventName == "starting")
+	{
+		var needReboot = (vEventData == "1") ? "true" : "false";
+		
+		fDbg2("-------------------------------------------");
+		fDbg2("  Update Starting");
+		if (needReboot = "true")		fDbg2("  Reboot required");
+		else							fDbg2("  Reboot NOT required");
+		fDbg2("-------------------------------------------");
 	
-	//Gracefully hide everything here
-	mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
-	// TODO： hide whatever on the screen
-	// 
-	
-	
-	//Redirect to update page after all animations are done
-	var locationString = "http://localhost/html_update/index.html?dummy=0";
-	if (newPackageCount != null && newPackageCount != "") 		locationString += "&packageCount=" + newPackageCount;
-	if (needReboot != null && needReboot != "") 				locationString += "&reboot=" + needReboot;
-	setTimeout("location.href=\"" + locationString + "\"", 1000);
-	
+		//Gracefully hide everything here
+		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
+		// TODO： hide whatever on the screen
+		// 
+		
+		
+		//Redirect to update page after all animations are done
+		var locationString = "http://localhost/html_update/index.html?dummy=0";
+		if (needReboot != null && needReboot != "") 				locationString += "&reboot=" + needReboot;
+		setTimeout("location.href=\"" + locationString + "\"", 1000);
+	}
+	else
+	{
+		//Let html_update handle the rest
+	}
 	return "ok";
 }
 

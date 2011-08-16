@@ -11,6 +11,8 @@ body{
 </style>
 <script type="text/javascript" src="jquery.min.js"></script>
 <script type="text/javascript" src="twitStream.js"></script>
+<script type="text/javascript" src="cMD5.js"></script>
+
 <script type="text/javascript">
 showTweetLinks='all';
 </script>
@@ -19,6 +21,7 @@ showTweetLinks='all';
 	var vViewPortSize = [];
 	var mInterval = null;
 	var mSpeed = 1;
+	var mPrevTweetID = null;
 	
 	$(function() {
 		if (typeof window.innerWidth != 'undefined')
@@ -30,7 +33,144 @@ showTweetLinks='all';
 		
 		//fStart();
 		mInterval = setTimeout ("fStart()", 20);
+
+
+
+
+
+
+
+
+
+
+
+		var fGetThenDispatchEvent = function() {
+			var url="http://search.twitter.com/search.json?q="+ "harry%20potter" +"&rpp=" + 1 + "&callback=?";
+			$.getJSON(url,function(json){
+				if (!json.results)
+					return;
+				
+				var vTweet_title = "";
+				var vTweet_message = "";
+				var vTweet_image = "";
+				var vID = json.results[0].id;
+				if (vID == mPrevTweetID)
+					return;
+
+				if (json.results[0])
+				{
+					if (json.results[0].from_user)
+						vTweet_title = "Harry Potter Tweet from " + json.results[0].from_user;
+					if (json.results[0].text)
+					{
+						vTweet_message = json.results[0].text;
+						vTweet_message = escape(vTweet_message);
+					}
+					if (json.results[0].profile_image_url)
+						vTweet_image = json.results[0].profile_image_url;
+					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
+					
+					mPrevTweetID = vID;
+					
+					fXMLHttpRequest("http://localhost/bridge", "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+						
+					});
+				}
+			});
+		};
+
+		fGetThenDispatchEvent();
+		var vEventInterval = setInterval(function() {
+			fGetThenDispatchEvent();
+		}, 50000);
+
 	});
+
+
+
+
+
+
+
+
+	
+// -------------------------------------------------------------------------------------------------
+//	override fDbg() function
+// -------------------------------------------------------------------------------------------------
+function fDbg(v)
+{
+	console.log("|~|" + v);
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fXMLHttpRequest
+// -------------------------------------------------------------------------------------------------
+function fXMLHttpRequest(
+	strURL,
+	vType,			// "post" | "get"
+	vData,			// in {} format
+	vCompleteFun
+)
+{
+	var xmlHttpReq = false;
+	var self = this;
+	var parameters = "";
+	
+	if (window.XMLHttpRequest)						// Mozilla/Safari
+		xmlHttpReq = new XMLHttpRequest();
+	
+	if (!strURL || strURL == "")
+		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
+
+//~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);		
+	xmlHttpReq.open(vType, strURL, true);
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	var o = hex_md5(String(Math.round((new Date()).getTime()/1000)));
+//~	fDbg("----time MD5 ----> " + o);
+	xmlHttpReq.setRequestHeader('Authorized-Caller', hex_md5(String(Math.round((new Date()).getTime()/1000))));
+	
+	
+	xmlHttpReq.onreadystatechange = function()
+	{
+//~ fDbg("state: " + xmlHttpReq.readyState);
+		if (xmlHttpReq.readyState == 4)
+		{
+//~ fDbg("status: " + xmlHttpReq.status);
+//~ fDbg("text length : " + xmlHttpReq.responseText.length);
+//~ fDbg("text: " + xmlHttpReq.responseText);
+			switch (xmlHttpReq.status)
+			{
+			case 200:
+				if (vCompleteFun)
+					vCompleteFun(xmlHttpReq.responseText);
+				break;
+			case 0:
+				if (vCompleteFun)
+					vCompleteFun(0);
+				break;
+			}
+		}
+	}
+	
+	if (vType.toLowerCase() == "post")
+	{
+		for (var o in vData)
+			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
+//~ fDbg("para: " + parameters);
+		xmlHttpReq.send(parameters);
+	}
+	else
+		xmlHttpReq.send();
+}
+
+
+
+
+
+
+
+
+
 
 	
 	

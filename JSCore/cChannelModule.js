@@ -64,13 +64,38 @@ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o);
 	
+	// -----------------------------------------------------
 	// simulate a new channel, with some html widgets
+	// -----------------------------------------------------
 	o = new cChannelObj();
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	o.mWidgetList = [new cWidgetObj(), new cWidgetObj(), new cWidgetObj()];
-	o.mWidgetList[0].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.1/index.html";
-	o.mWidgetList[1].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.2/index.html";
-	o.mWidgetList[2].mWidget.mMovie.mHref = "http://localhost/widgets/google_news_0.1/index.html";
+	//~ o.mPlayMode = "default";
+	o.mPlayMode = "event";
+
+	//~ 
+	//~ o.mWidgetList.push(new cWidgetObj());
+	//~ o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "http://localhost/widgets/clock0.1/index.html";
+	//~ o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
+	//~ 
+	o.mWidgetList.push(new cWidgetObj());
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.2/index.html";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "http://localhost/widgets/twitter0.2/tn.jpg";
+	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "http://localhost/widgets/twitter0.2/tn.jpg";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
+	
+	o.mWidgetList.push(new cWidgetObj());
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "http://localhost/widgets/twitter0.1/index.html";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "http://localhost/widgets/twitter0.1/tn.jpg";
+	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "http://localhost/widgets/twitter0.1/tn.jpg";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
+	
+	o.mWidgetList.push(new cWidgetObj());
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "http://localhost/widgets/google_news_0.1/index.html";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "http://localhost/widgets/google_news_0.1/tn.png";
+	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "http://localhost/widgets/google_news_0.1/tn.png";
+	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
+
+	
 	
 	if (vReturnFun)
 		vReturnFun();

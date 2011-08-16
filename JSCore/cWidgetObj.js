@@ -204,5 +204,18 @@ function cWidgetObj(
 	};
 	
 	// local/temp variables
-	this.mLocalThumbnailPath = "";
+	this.mLocalThumbnailPath = "";	
+}
+
+
+cWidgetObj.prototype.pIsFLASH = function(
+)
+{
+	return this.mWidget.mMovie.mContentType.toLowerCase().indexOf("flash") > -1;
+}
+
+cWidgetObj.prototype.pIsHTML = function(
+)
+{
+	return this.mWidget.mMovie.mContentType.toLowerCase().indexOf("html") > -1;
 }

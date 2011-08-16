@@ -51,17 +51,17 @@ cProxy.xmlhttpPost = function(
 		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
 
 		
-//~ fDbg2("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);
+//~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);
 	xmlHttpReq.open(vType, strURL, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()
 	{
-//~ fDbg2("state: " + xmlHttpReq.readyState);
+//~ fDbg("state: " + xmlHttpReq.readyState);
 		if (xmlHttpReq.readyState == 4)
 		{
-//~ fDbg2("status: " + xmlHttpReq.status);
-//~ fDbg2("text length : " + xmlHttpReq.responseText.length);
-//~ fDbg2("text: " + xmlHttpReq.responseText);
+//~ fDbg("status: " + xmlHttpReq.status);
+//~ fDbg("text length : " + xmlHttpReq.responseText.length);
+//~ fDbg("text: " + xmlHttpReq.responseText);
 			switch (xmlHttpReq.status)
 			{
 			case 200:
@@ -80,7 +80,7 @@ cProxy.xmlhttpPost = function(
 	{
 		for (var o in vData)
 			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
-fDbg("para: " + parameters);
+//~ fDbg("para: " + parameters);
 		xmlHttpReq.send(parameters);
 	}
 	else

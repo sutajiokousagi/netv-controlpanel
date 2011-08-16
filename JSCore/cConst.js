@@ -13,7 +13,6 @@ var cConst = {};
 // -----------------------------------------------------------------------------
 //	control panel signals
 // ----------------------------------------------------------------------------- 
-cConst.SIGNAL_MESSAGE = "signal_message";
 cConst.SIGNAL_SHOW = "signal_show";
 cConst.SIGNAL_HIDE = "signal_hide";
 
@@ -27,6 +26,7 @@ cConst.SIGNAL_GOTO_CONTROLPANEL = "signal_goto_controlpanel";
 cConst.SIGNAL_GOTO_FLASHWIDGETENGINE = "signal_goto_flashwidgetengine";
 cConst.SIGNAL_GOTO_HTMLWIDGETENGINE = "signal_goto_htmlwidgetengine";
 cConst.SIGNAL_GOTO_EVENTWIDGETENGINE = "signal_goto_eventwidgetengine";
+cConst.SIGNAL_GOTO_EVENTTICKER = "signal_goto_eventticker";
 
 cConst.SIGNAL_FIRSTTIME_STARTUP = "signal_firsttime_startup";
 cConst.SIGNAL_HEARTBEAT = "signal_heartbeat";

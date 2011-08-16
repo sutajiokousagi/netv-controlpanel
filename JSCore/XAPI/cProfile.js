@@ -45,8 +45,7 @@ cProfile.prototype.fFetchInfo = function(
 )
 {
 fDbg2("*** cProfile, fFetchInfo()");
-	var o;
-	
+
 	vOauthSignatureMethod = "MD5-HEX";
 	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
 	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;
@@ -62,5 +61,32 @@ fDbg2("*** cProfile, fFetchInfo()");
 		oauth_nonce : vOauthNonce,
 		oauth_consumer_key : vOauthConsumerKey
 	}, null, vReturnFun);
+	
+	return;
+}
+
+
+cProfile.fGetProfileListByAccountID = function(
+	vAccountID,		// userID / deviceID
+	vReturnFun
+)
+{
+fDbg2("*** cProfile, fGetProfileListByAccountID()");
+	vOauthSignatureMethod = "MD5-HEX";
+	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
+	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;
+	vOauthSignature = cXAPI.fSignatureMD5Of(["profile", "list", vAccountID], {
+		oauth_signature_method : "MD5-HEX",
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	});
+	
+	cXAPI.fXAPIRequest(["profile", "list", vAccountID], {
+		oauth_signature : vOauthSignature,
+		oauth_signature_method : vOauthSignatureMethod,
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	}, null, vReturnFun);
+	
 	return;
 }
