@@ -1,0 +1,41 @@
+<table cellpadding="5"><td bgcolor="black">
+<img src="dg8.gif" name="yr1"><img src="dg8.gif" name="yr2"><img src="dg8.gif" name="yr3"><img src="dg8.gif" name="yr4"><img src="dgh.gif"><img src="dg8.gif" name="mt1"><img src="dg8.gif" name="mt2"><img src="dgh.gif"><img src="dg8.gif" name="dy1"><img src="dg8.gif" name="dy2"></td></table>
+
+<script type="text/javascript">
+// (c) 2000-2009 ricocheting.com
+// created 2009-07-21
+
+dg0=new Image();dg0.src="dg0.gif";
+dg1=new Image();dg1.src="dg1.gif";
+dg2=new Image();dg2.src="dg2.gif";
+dg3=new Image();dg3.src="dg3.gif";
+dg4=new Image();dg4.src="dg4.gif";
+dg5=new Image();dg5.src="dg5.gif";
+dg6=new Image();dg6.src="dg6.gif";
+dg7=new Image();dg7.src="dg7.gif";
+dg8=new Image();dg8.src="dg8.gif";
+dg9=new Image();dg9.src="dg9.gif";
+
+
+function dodate(){ 
+theDate=setTimeout('dodate()',30000);//30 secs
+d = new Date();
+dy = d.getDate()+100;//zero pads
+mn = d.getMonth()+101;//extra +1. default jan=0
+yr = d.getYear();
+
+if(yr < 1000) yr+= 1900;//fix Y2K problem
+
+tot =''+dy+mn+yr;
+document.dy1.src='dg'+tot.substring(1,2)+'.gif';
+document.dy2.src='dg'+tot.substring(2,3)+'.gif';
+document.mt1.src='dg'+tot.substring(4,5)+'.gif';
+document.mt2.src='dg'+tot.substring(5,6)+'.gif';
+document.yr1.src='dg'+tot.substring(6,7)+'.gif';
+document.yr2.src='dg'+tot.substring(7,8)+'.gif';
+document.yr3.src='dg'+tot.substring(8,9)+'.gif';
+document.yr4.src='dg'+tot.substring(9,10)+'.gif';
+}
+dodate();
+
+</script>
