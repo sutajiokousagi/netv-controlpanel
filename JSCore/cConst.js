@@ -65,6 +65,12 @@ cConst.SIGNAL_BUTTON_UP = "signal_button_up";
 cConst.SIGNAL_BUTTON_DOWN = "signal_button_down";
 
 // -----------------------------------------------------------------------------
+//	Android/iOS events
+// -----------------------------------------------------------------------------
+cConst.SIGNAL_ANDROID_START_CONFIGURING = "signal_android_start_configuring";
+cConst.SIGNAL_IOS_START_CONFIGURING = "signal_ios_start_configuring";
+
+// -----------------------------------------------------------------------------
 //	states
 // -----------------------------------------------------------------------------
 cConst.STATE_CONTROLPANEL = "state_controlpanel";

@@ -210,7 +210,7 @@ cCPanel.prototype.fOnSignal = function(
 	vReturnFun		// return function call
 )
 {
-fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
+//fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	var mCPanel = cCPanel.fGetInstance();
 	var i, o;
 	
@@ -436,6 +436,23 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 			if (mCPanel.mSubState == "flashchannelwidgetsmain")
 				cSCPWidgets.fGetInstance().fRefreshChannelDiv();
 				//~ cCPanel.instance.fRefreshChannelDiv();
+		}
+		break;
+	}
+	
+	case cConst.SIGNAL_ANDROID_START_CONFIGURING:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "./html_config/index_android.html";
+			return;
+		}
+		break;
+		
+	case cConst.SIGNAL_IOS_START_CONFIGURING:
+		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+		{
+			location.href = "./html_config/index_ios.html";
+			return;
 		}
 		break;
 	}

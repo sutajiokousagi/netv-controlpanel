@@ -275,4 +275,27 @@ function fAndroidEvents( vEventName, vEventData )
 	if (vEventName == "changeview" && vEventData == "remote")
 	{
 	}
+	
+	//User has just started the Android app & select an unconfigured device
+	if (vEventName == "changeview" && vEventData == "loading")
+	{
+		mCPanel.fOnSignal(cConst.SIGNAL_ANDROID_START_CONFIGURING);
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
+//	events from iOS app (To be decided)
+// -------------------------------------------------------------------------------------------------
+function fIOSEvents( vEventName, vEventData )
+{
+	//User has just started the iOS app & Switch to remote control view
+	if (vEventName == "changeview" && vEventData == "remote")
+	{
+	}
+	
+	//User has just started the iOS app & select an unconfigured device
+	if (vEventName == "changeview" && vEventData == "loading")
+	{
+		mCPanel.fOnSignal(cConst.SIGNAL_IOS_START_CONFIGURING);
+	}
 }
