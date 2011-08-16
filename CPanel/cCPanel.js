@@ -210,7 +210,7 @@ cCPanel.prototype.fOnSignal = function(
 	vReturnFun		// return function call
 )
 {
-fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
+//fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 	var mCPanel = cCPanel.fGetInstance();
 	var i, o;
 	
@@ -455,6 +455,8 @@ fDbg("*** cCPanel, fOnSignal(), " + vSignal + ", " + vData);
 		}
 		break;
 	}
+	
+
 
 
 
