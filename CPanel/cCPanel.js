@@ -438,8 +438,7 @@ cCPanel.prototype.fOnSignal = function(
 				//~ cCPanel.instance.fRefreshChannelDiv();
 		}
 		break;
-	}
-	
+		
 	case cConst.SIGNAL_ANDROID_START_CONFIGURING:
 		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
 		{
@@ -456,6 +455,8 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		break;
 	}
+	
+
 
 
 
