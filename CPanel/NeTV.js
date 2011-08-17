@@ -151,13 +151,13 @@ function fButtonPress(
 //~ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
 	switch (vButtonName)
 	{
-		case "cpanel": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
-		case "widget": mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE); break;
-		case "left": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_LEFT); break;
-		case "right": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT); break;
-		case "center": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
-		case "up": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
-		case "down": mCPanel.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
+		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
+		case "widget": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE); break;
+		case "left": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_LEFT); break;
+		case "right": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_RIGHT); break;
+		case "center": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
+		case "up": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
+		case "down": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
 	}
 	return true;
 }

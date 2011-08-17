@@ -41,7 +41,6 @@ function cModuleEventTicker(
 	// stamp ticker event
 	this.mStampEventList = [];			// [[ID, [message, title, image], displaycount], [...], [...], ...]
 	this.mStampPlayStatus = null;
-
 	
 	
 	this.mStopAfterLastEvent = false;
@@ -49,10 +48,13 @@ function cModuleEventTicker(
 
 
 
-
+	this.mConfigMode = null; 				// null | configmode1 | configmode2
 	this.mStyle = {
-		mHeight : 50,
-		mBottomOffset : 40
+		mTickerWidth: 80,
+		mTickerHeight: 50,
+		mBottomOffset: 40,
+		mCrawlerHeight: 50,
+		mCrawlerWidth: 1160
 	}
 	
 	//~ this.fInit();
@@ -83,7 +85,8 @@ cModuleEventTicker.prototype.fInit = function(
 		vThis.fOnSignal("timerinterval", null, null);
 	}, 20);
 	this.fReset();
-	
+
+	vThis.pEnabled(true);
 	vThis.fAnimateIn();
 	vThis.mEnabled = true;
 }
@@ -101,6 +104,52 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	var i, o, vThis;
 	vThis = this;
 	
+	switch(vSignal)
+	{
+	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		break;
+		
+	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		break;
+		
+	case cConst.SIGNAL_BUTTON_LEFT:
+		break;
+		
+	case cConst.SIGNAL_BUTTON_RIGHT:
+		break;
+		
+	case cConst.SIGNAL_BUTTON_CENTER:
+		if (!vThis.mConfigMode)
+			vThis.pConfigMode("configmode1");
+		else if (vThis.mConfigMode == "configmode1")
+			vThis.pConfigMode("configmode2");
+		else if (vThis.mConfigMode == "configmode2")
+			vThis.pConfigMode(null);
+		break;
+		
+	case cConst.SIGNAL_BUTTON_UP:
+		if (vThis.mConfigMode)
+		{
+			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + 10 < 710)
+			{
+				vThis.mDiv.css("top", "-=10px");
+				vThis.mStyle.mBottomOffset += 10;
+			}
+		}
+		break;
+		
+	case cConst.SIGNAL_BUTTON_DOWN:
+		if (vThis.mConfigMode)
+		{
+			if (vThis.mStyle.mBottomOffset - 10 > 10)
+			{
+				vThis.mDiv.css("top", "+=10px");
+				vThis.mStyle.mBottomOffset -= 10;
+			}
+		}
+		break;
+	}
+	
 	switch (vSignal)
 	{
 	case "timerinterval":
@@ -113,13 +162,13 @@ cModuleEventTicker.prototype.fOnSignal = function(
 			vThis.fUpdateClock();
 		}
 		
-		if (vThis.mPlayStatus == "playing")
+		if (vThis.mPlayStatus == "playing" && vThis.mEnabled)
 		{	
 			vThis.fCrawlMessages();
 			vThis.fCheckNewMessage();
 			vThis.fCheckLeadingMessage();
 		}
-		if (vThis.mStampPlayStatus == "playing")
+		if (vThis.mStampPlayStatus == "playing" && vThis.mEnabled)
 		{
 			vThis.fCrawlStampMessages();
 			vThis.fCheckStampNewMessage();
@@ -163,15 +212,24 @@ cModuleEventTicker.prototype.fAnimateIn = function(
 	vReturnFun
 )
 {
-fDbg("*** cModuleEventTicker, fAnimateIn(), ");
-	var vThis = this;
+//~ fDbg("*** cModuleEventTicker, fAnimateIn(), ");
+fDbg("----> event list length : " + this.mEventList.length);
+if (this.mEnabled == false)
+	return;
+	var vThis, vTopStart, vTopFinal
+	vThis = this;
+
+	vTopFinal = 719 - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
+	if (vTopFinal < 340)
+		vTopStart = -80;
+	else
+		vTopStart = 719;
+	
 	
 	this.mDiv.show();
-	this.mDiv.css("top", "719px");
+	this.mDiv.css("top", vTopStart + "px");
 	this.mDiv.animate({
-		top: "-=" + (vThis.mStyle.mBottomOffset + vThis.mStyle.mHeight) + "px"
-		//~ top: "-=" + 5 + "px"
-		//~ top: "0px"
+		top: vTopFinal + "px"
 	}, 500, function() {
 		vThis.mVisibleOnScreen = true;
 		if (vReturnFun)
@@ -183,17 +241,25 @@ cModuleEventTicker.prototype.fAnimateOut = function(
 	vReturnFun
 )
 {
-fDbg("*** cModuleEventTicker, fAnimateOut(), ");
-	var vThis = this;
+//~ fDbg("*** cModuleEventTicker, fAnimateOut(), ");
+	var vThis, vTopStart, vTopFinal;
+	vThis = this;
+	vTopFinal = 719 - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
+	if (vTopFinal < 340)
+		vTopStart = -80;
+	else
+		vTopStart = 719;
 	
-	this.mDiv.css("top", (719 - (vThis.mStyle.mBottomOffset + vThis.mStyle.mHeight)) + "px");
+	this.mDiv.css("top", vTopFinal + "px");
 	this.mDiv.animate({
-		top: "719px"
+		top: vTopStart + "px"
 	}, 500, function() {
 		vThis.mVisibleOnScreen = false;
 		if (vReturnFun)
 			vReturnFun();
 	});
+
+	this.pConfigMode(null);
 }
 
 
@@ -260,11 +326,11 @@ cModuleEventTicker.prototype.fAddEvent = function(
 )
 {
 fDbg("*** cModuleEventTicker, fAddEvent(), ");
-if (this.mEnabled == false)
-	return;
 
 	var o = String(new Date().getTime());
 	this.mEventList.push([vEventData, o, 3]);
+if (this.mEnabled == false)
+	return;
 	
 	if (!this.mPlayStatus || this.mPlayStatus == "paused" || this.mPlayStatus == "stopped")
 	{
@@ -697,344 +763,34 @@ cModuleEventTicker.prototype.pEnabled = function(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/** -------------------------------------------------------------------------------------------------
-	fActivate
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fStartStampMessage = function(
+cModuleEventTicker.prototype.pConfigMode = function(
+	vMode
 )
 {
-	var i, vThis, vStampWidth, o, p, vID, vLeft, vWidth;
-	vThis = this;
-	vStampWidth = 80;
-	
-	vID = vThis.fGenerateGUID();
-	vThis.mStampEventList.push([vID, ["booting up...", null, null], 3]);
-	vThis.mStampCurrNewEventN = 0;
-	p = vThis.mStampEventList[vThis.mStampCurrNewEventN];
-	$("#stamp_bottom_message_container").append("<div id='stamp_" + vID + "' style='position: absolute; top: 0px; left: 0px;'>" + p[1][0] + "</div>");
-	
-	vThis.mStampCurrMessageDivQueue.push($("#stamp_bottom_message_container #stamp_" + vID));
-	vThis.mStampCurrMessageDiv = $("#stamp_bottom_message_container #stamp_" + vID);
-	vThis.mStampCurrMessageDiv.css("left", vStampWidth + "px");
-return;
-	this.mStampEventInterval = setInterval(function() {
-		if (vThis.mStopNow)
-		{
-			vThis.mStopNow = false;
-			$("#stamp_bottom_message_container").fadeOut(function() {
-				clearInterval(vThis.mStampEventInterval);
-				$("#stamp_bottom_message_container").html("");
-				vThis.fRenderIconPanel();
-			});
-			return;
-		}
-
-		
-		//~ fDbg("===================");
-		for (i = 0; i < vThis.mStampCurrMessageDivQueue.length; i++)
-		{
-			o = vThis.mStampCurrMessageDivQueue[i];
-			vLeft = parseInt(o.css("left").split("px")[0]) - 1;
-			vWidth = o.width();
-			o.css("left", vLeft + "px");
-		}
-		
-		o = vThis.mStampCurrMessageDiv;
-		vLeft = parseInt(o.css("left").split("px")[0]) - 1;
-		vWidth = o.width();
-		
-		
-		if (vLeft + vWidth < vStampWidth - 20)
-		{
-			// 1, get next event
-			if (vThis.mStampEventList.length == 0)			// 1.1 do nothing
-			{
-				
-			}
-			else 											// 1.2 get next event
-			{
-				fDbg("111");
-				vThis.mStampCurrNewEventN++;
-				if (vThis.mStampCurrNewEventN >= vThis.mStampEventList.length)
-				{
-					vThis.mStampCurrNewEventN = 0;
-					if (vThis.mStopAfterLastEvent)
-					{
-						$("#stamp_bottom_message_container").fadeOut(function() {
-							clearInterval(vThis.mStampEventInterval);
-							$("#stamp_bottom_message_container").html("");
-							vThis.fRenderIconPanel();
-						});
-						return;
-					}
-				}
-				p = vThis.mStampEventList[vThis.mStampCurrNewEventN];
-				
-				fDbg("-----> add event from index" + vThis.mStampCurrNewEventN);
-				// add div with message
-				vID = vThis.fGenerateGUID();
-				$("#stamp_bottom_message_container").append("<div id='stamp_" + vID + "' style='position: absolute; top: 0px; left: 0px;'>" + p[1][0] + "</div>");
-				vThis.mStampCurrMessageDivQueue.push($("#stamp_bottom_message_container #stamp_" + vID));
-				vThis.mStampCurrMessageDiv = $("#stamp_bottom_message_container #stamp_" + vID);
-				vThis.mStampCurrMessageDiv.css("left", vStampWidth + "px");
-			}
-		}
-		if (vLeft < (-vWidth))
-		{
-			// get a new message from eventqueue
-			if (vThis.mStampEventList.length == 0)
-			{
-				// all empty!!! clear all!!! reset all!!!
-			}
-			vThis.mStampCurrMessageDivQueue.splice(0, 1);
-			if (vThis.mStampCurrMessageDivQueue.length == 0)
-			{
-				clearInterval(vThis.mStampEventInterval);
-				vThis.fRenderIconPanel();
-			}
-		}
-	}, 50);
-}
-cModuleEventTicker.prototype.fEndStampMessage = function(
-	vNow	// null | true
-)
-{
-	
-
-	if (vNow)		// end NOW!!
-	{
-
-	}
-	else			// end after current 
-	{
-		this.mStampEventList = [];
-		this.mStampEventInterval = null;
-		this.mStampEventList = [];			// [[ID, [message, title, image], displaycount], [...], [...], ...]
-		this.mStampCurrNewEventN = null;
-		
-		this.mStampCurrMessageQueue = [];
-		this.mStampCurrMessageDivQueue = [];
-		this.mStampCurrMessageDiv = null;
-		
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/** -------------------------------------------------------------------------------------------------
-	fExit
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fExit = function(
-	vReturnFun
-)
-{
-fDbg("*** cModuleEventTicker, fExit(), ");
 	var vThis;
 	vThis = this;
+	
+	if (vMode == vThis.mConfigMode)
+		return;
+	
+	switch (vMode)
+	{
+	case null:
+		vThis.mDiv.css("border", "none");
+		break;
 
-	vThis.fAnimateOut(function() {
-		this.mPlayStatus = null;
-	});
+	case "configmode1":
+		vThis.mDiv.css("border", "solid white 1px");
+		break;
+
+	case "configmode2":
+		vThis.mDiv.css("border", "solid red 1px");
+		vThis.mDiv.css("border", "solid white 1px");
+		vThis.mDiv.css("border-left", "solid #FFFF22 1px");
+		vThis.mDiv.css("border-right", "solid #FFFF22 1px");
+		break;
+	}
+	vThis.mConfigMode = vMode;
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -1044,146 +800,197 @@ cModuleEventTicker.prototype.fReset = function(
 	vReturnFun
 )
 {
-	//~ $("#div_eventWidgetPlayer").children("#div_eventWidgetPlayer_crawling").css("left", "1199px");
-
-	/*
-	$("#div_eventWidgetPlayer_crawling_text_0").html("");
-	$("#div_eventWidgetPlayer_crawling_text_1").html("");
-
-	$("#div_eventWidgetPlayer_crawling_text_0").show();
-	$("#div_eventWidgetPlayer_crawling_text_1").show();
-	
-	$("#div_eventWidgetPlayer_crawling_text_1").css("left", "1200px");
-	*/
-}
-
-/** -------------------------------------------------------------------------------------------------
-	fPlayNext
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fPlayNext = function(
-	vReturnFun
-)
-{
-	var o;
-
-	if (this.mEventList.length > 0)
-	{
-		o = this.mEventList.pop();
-		this.fCrawlMessage(o);
-	}
-	else
-	{
-		this.mPlayStatus = "stopped";
-	}
-}
-
-/** -------------------------------------------------------------------------------------------------
-	fCrawlMessage
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fCrawlMessage = function(
-	vData,
-	vReturnFun
-)
-{
-fDbg("*** cModuleEventTicker, fCrawlMessage(), ");
-	var vThis, vTO;
-	vThis = this;
-
-	$("#div_eventWidgetPlayer_crawling_text_0").css("background-color", "");
-	$("#div_eventWidgetPlayer_crawling_text_1").css("background-color", "");
-	
-	vThis.fSetMessage(vData, $("#div_eventWidgetPlayer_crawling_text_0"));
-	$("#div_eventWidgetPlayer_crawling").animate({
-		left: "-=1179px"
-	}, 1000, function() {
-		this.mPlayStatus = "paused";
-		vTO = setTimeout(function() {
-			vThis.fTransitToNext();
-		}, 6000);
-	});
-}
-
-/** -------------------------------------------------------------------------------------------------
-	fCrawlMessage
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fTransitToNext = function(
-)
-{
-fDbg("*** cModuleEventTicker, fTransitToNext(), ");
-	var vThis, o, p, vTD, vHtml;
-	vThis = this;
-	
-	if (this.mEventList.length == 0)
-	{
-		$("#div_eventWidgetPlayer_crawling").animate({
-			top: "+=68px"
-		}, 500, function() {
-			$("#div_eventWidgetPlayer_crawling").css("top", "0px");
-			$("#div_eventWidgetPlayer_crawling").css("left", "1179px");
-			this.mPlayStatus = "stopped";
-			vThis.fPlayNext();
-		});
-	}
-	else
-	{
-		// transit to next event message
-		o = this.mEventList.pop();
-		p = [parseInt($("#div_eventWidgetPlayer_crawling_text_0").css("left").split("px")[0]), parseInt($("#div_eventWidgetPlayer_crawling_text_1").css("left").split("px")[0])];
-		if (p[0] > p[1])
-			p = [$("#div_eventWidgetPlayer_crawling_text_1"), $("#div_eventWidgetPlayer_crawling_text_0")];
-		else
-			p = [$("#div_eventWidgetPlayer_crawling_text_0"), $("#div_eventWidgetPlayer_crawling_text_1")];
-
-		vThis.fSetMessage(o, p[1]);
-		
-		p[0].animate({left : "-=" + p[0].css("width")}, 1000, function() {
-			p[0].css("left", p[1].css("width"));
-		});
-		p[1].animate({left : "0px"}, 1000, function() {
-
-		});
-
-		// static for N seconds before proceed to next message
-		vTO = setTimeout(function() {
-			vThis.fTransitToNext();
-		}, vThis.mStaticPeriod);
-	}
+	$("#div_eventWidgetPlayer_crawling").css("left", "1199px");
+	$("#crawling_container").html("");
 }
 
 
-/** -------------------------------------------------------------------------------------------------
-	fSetMessage
--------------------------------------------------------------------------------------------------- */
-cModuleEventTicker.prototype.fSetMessage = function(
-	vEvent,		// item from mEventList
-	vDiv		// div
-)
-{
-	var vHtml;
-	var vLeft;
 
-	vLeft = 12;
-	vHtml = "";
-	vHtml += "<div style='position: absolute; top: 0px; left: 0px; font-size: 18px;'>";
-		if (vEvent[2] && vEvent[2].length > 0)
-		{
-			vHtml += "<div style='position: absolute; top: 5px; left: " + vLeft + "px; height: 50px; width: 50px;'>";
-			vHtml += "<img src='" + vEvent[2] + "' width='40px' height='40px'>";
-			vHtml += "</div>";
-			vLeft += 60;
-		}
-		vHtml += "<div style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: 1100px; border: solid black 0px; line-height: 140%'>";
-			vHtml += "<span style='top: 5px; left: 10px; font-weight: bold; text-shadow: #666666 2px 2px 15px;'>";
-			vHtml += vEvent[1] + " : ";
-			vHtml += "</span>";
-			vHtml += "<span style='top: 5px;'>";
-			vHtml += vEvent[0];
-			vHtml += "</span>";
-		vHtml += "</div>";
-	vHtml += "</div>";
-	
-	vDiv.html(vHtml);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

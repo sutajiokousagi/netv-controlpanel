@@ -15,6 +15,7 @@ function cSPInfo(
 	this.mDiv = $("#" + vDiv);
 	this.mID = vDiv;
 
+	this.mEnableBackButton = true;
 	this.mCurrSelection = 0;		//	0 | 1
 	
 	this.fInit();
@@ -135,6 +136,8 @@ cSPInfo.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		if (vThis.mEnableBackButton == false)
+			return;
 		var vCurrSelected, vNewSelected, vSubNaviList;
 		if (vThis.mCurrSelection == null)
 		{
@@ -164,6 +167,8 @@ cSPInfo.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		if (vThis.mEnableBackButton == false)
+			return;
 		var vCurrSelected, vNewSelected, vSubNaviList;
 		if (vThis.mCurrSelection >= 0)
 		{
@@ -172,7 +177,7 @@ cSPInfo.prototype.fOnSignal = function(
 			p = $(p.children()[0]);
 			$("#div_infoMain #item_indicator").animate({
 				left: p.css("left"),
-				top: parseInt($("#subnavi_back").css("top").split("px")[0]) + 25 + "px",
+				top: parseInt($("#div_infoMain #subnavi_back").css("top").split("px")[0]) + 25 + "px",
 				width: p.css("width")
 			}, 100, function() {
 				$(vSubNaviList[vThis.mCurrSelection]).css("opacity", "0.2");
@@ -232,4 +237,27 @@ fDbg2("*** cSPInfo, fUpdate(), ");
 	$("#div_info_mac").html(o.CHUMBY_NETWORK_MAC);
 	
 	$("#div_info_ip").html(o.CHUMBY_NETWORK_IP);
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pEnableBack
+// -------------------------------------------------------------------------------------------------
+cSPInfo.prototype.pEnableBack = function(
+	vData	// true | false
+)
+{
+fDbg2("*** cSPInfo, pEnableBack(), ");
+	var vThis, o;
+	vThis = this;
+
+	if (vData == false)
+	{
+		vThis.mEnableBackButton = vData;
+		$("#div_infoMain #subnavi_back").hide();
+	}
+	else
+	{
+		vThis.mEnableBackButton = vData;
+		$("#div_infoMain #subnavi_back").show();
+	}
 }

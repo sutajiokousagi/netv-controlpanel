@@ -96,6 +96,9 @@ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 				o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
 
 				vReturnFun(true);
+				
+				//~ cModel.fGetInstance().CHUMBY_INTERNET = "false";
+				//~ vReturnFun(false);
 				return;
 				
 			case "false":

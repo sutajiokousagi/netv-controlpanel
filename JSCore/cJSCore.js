@@ -72,8 +72,9 @@ cJSCore.prototype.fOnSignal = function(
 )
 {
 //~ fDbg("*** cJSCore, fOnSignal(), " + vSignal + ", " + vData);
-
-	//~ location.href = "./html_config/";
+	var vThis;
+	vThis = this;
+	
 	switch (vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
@@ -83,11 +84,13 @@ cJSCore.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_CENTER:
 	case cConst.SIGNAL_BUTTON_UP:
 	case cConst.SIGNAL_BUTTON_DOWN:
-		if (cModel.fGetInstance().CHUMBY_INTERNET == "false")					// redirect to html_config.html
-		{
-			location.href = "./html_config/";
-			return;
-		}
+		if (vSignal != cConst.SIGNAL_BUTTON_LEFT && vSignal != cConst.SIGNAL_BUTTON_RIGHT)
+			if (cModel.fGetInstance().CHUMBY_INTERNET == "false")					// redirect to html_config.html
+			{
+				location.href = "./html_config/";
+				return;
+			}
+		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
 		break;
 	}
 
