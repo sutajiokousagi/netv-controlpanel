@@ -46,7 +46,9 @@ function cModuleEventTicker(
 	this.mStopAfterLastEvent = false;
 	this.mStopNow = false;
 
+	
 
+	
 
 	this.mConfigMode = null; 				// null | configmode1 | configmode2
 	this.mStyle = {
@@ -54,7 +56,8 @@ function cModuleEventTicker(
 		mTickerHeight: 50,
 		mBottomOffset: 40,
 		mCrawlerHeight: 50,
-		mCrawlerWidth: 1160
+		mCrawlerWidth: 1160,
+		mRightOffset: 60
 	}
 	
 	//~ this.fInit();
@@ -103,7 +106,7 @@ cModuleEventTicker.prototype.fOnSignal = function(
 //~ fDbg("*** cModuleEventTicker, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o, vThis;
 	vThis = this;
-	
+		
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
@@ -113,9 +116,29 @@ cModuleEventTicker.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
+		if (vThis.mConfigMode && vThis.mConfigMode == "configmode1")
+		{
+			vThis.mDiv.css("left", "-=5px");
+		}
+		else if (vThis.mConfigMode && vThis.mConfigMode == "configmode2")
+		{
+			vThis.mDiv.css("left", "-=5px");
+			vThis.mDiv.css("width", "+=5px");
+			$(vThis.mDiv.children("#div_eventWidgetPlayer_mini")[0]).css("left", "+=5px");
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+		if (vThis.mConfigMode && vThis.mConfigMode == "configmode1")
+		{
+			vThis.mDiv.css("left", "+=5px");
+		}
+		else if (vThis.mConfigMode && vThis.mConfigMode == "configmode2")
+		{
+			vThis.mDiv.css("left", "+=5px");
+			vThis.mDiv.css("width", "-=5px");
+			$(vThis.mDiv.children("#div_eventWidgetPlayer_mini")[0]).css("left", "-=5px");
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
@@ -141,8 +164,10 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (vThis.mConfigMode)
 		{
+			fDbg("==========+>>>>>>>>>>>>>>>>>   1");
 			if (vThis.mStyle.mBottomOffset - 10 > 10)
 			{
+				fDbg("==========+>>>>>>>>>>>>>>>>>   2");
 				vThis.mDiv.css("top", "+=10px");
 				vThis.mStyle.mBottomOffset -= 10;
 			}
@@ -213,7 +238,7 @@ cModuleEventTicker.prototype.fAnimateIn = function(
 )
 {
 //~ fDbg("*** cModuleEventTicker, fAnimateIn(), ");
-fDbg("----> event list length : " + this.mEventList.length);
+//~ fDbg("----> event list length : " + this.mEventList.length);
 if (this.mEnabled == false)
 	return;
 	var vThis, vTopStart, vTopFinal
@@ -529,7 +554,7 @@ cModuleEventTicker.prototype.fAddStampEvent = function(
 	vTop	// true | false
 )
 {
-fDbg("*** cModuleEventTicker, fAddEvent(), ");
+fDbg("*** cModuleEventTicker, fAddStampEvent(), ");
 
 	var o = String(new Date().getTime());
 	this.mStampEventList.push([vEventData, o, 100]);
@@ -584,7 +609,7 @@ cModuleEventTicker.prototype.fAppendStampMessageDivFromEvent = function(
 	vIndex
 )
 {
-fDbg("*** cModuelEventTicker, fAppendStampMessageDivFromEvent(), ");
+//~ fDbg("*** cModuelEventTicker, fAppendStampMessageDivFromEvent(), ");
 	
 	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft;
 	vThis = this;
@@ -786,8 +811,8 @@ cModuleEventTicker.prototype.pConfigMode = function(
 	case "configmode2":
 		vThis.mDiv.css("border", "solid red 1px");
 		vThis.mDiv.css("border", "solid white 1px");
-		vThis.mDiv.css("border-left", "solid #FFFF22 1px");
-		vThis.mDiv.css("border-right", "solid #FFFF22 1px");
+		vThis.mDiv.css("border-left", "solid #22EE22 1px");
+		vThis.mDiv.css("border-right", "solid #22EE22 1px");
 		break;
 	}
 	vThis.mConfigMode = vMode;
@@ -1028,10 +1053,6 @@ cModuleEventTicker.prototype.fGetTextWidth = function(
 
 	var o = $("#div_testing_A");
 	var vWidth = 0;
-	
-	//~ fDbg("++++++++++++>>>>>>>" + o);
-	//~ fDbg("++++++++++++>>>>>>>" + o.length);
-	//~ fDbg("++++++++++++>>>>>>>" + o.width());
 	vWidth = o.width() + 10;
 	$("#div_testing").html("");
 	return vWidth;

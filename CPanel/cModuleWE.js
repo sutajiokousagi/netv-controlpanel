@@ -23,6 +23,7 @@ function cModuleWE(
 	// WE status
 	this.mCurrWE = null;				// cWEHtml | cWEFlash     (cModuleEventTicker will depends on the mCurrChannel.mPlayMode)
 	this.mCurrPlayStatus = null;		// null(stopped) | playing | hidden | paused
+
 	
 	// initialize
 	this.fInit();
@@ -118,6 +119,10 @@ cModuleWE.prototype.fOnSignal = function(
 		{
 			vThis.mCurrWidgetTimeSpend++;
 fDbg(vThis.mCurrWidgetTimeSpend);
+			if (vThis.mCurrWidgetTimeSpend == 15)
+			{
+				//~ window.status = "<xml><cmd>TickerEvent</cmd><data><message>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</message></data></xml>";
+			}
 			if (vThis.mCurrWidgetTimeSpend >= vThis.mCurrWidgetPeriod)
 			{
 				vThis.fNext();

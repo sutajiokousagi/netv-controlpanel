@@ -36,46 +36,11 @@ showTweetLinks='all';
 
 
 
-
-
-
-
-
-
-
-		/*
-		var vEventInterval = setInterval(function() {
-			var url="http://search.twitter.com/search.json?q="+ "chumby" +"&rpp=" + 1 + "&callback=?";
-			$.getJSON(url,function(json){
-				fDbg(json.results);
-				if (!json.results)
-					return;
-				
-				var vTweet_title;
-				var vTweet_message;
-				var vTweet_image;
-				var vID = json.results[0].id;
-				if (vID == mPrevTweetID)
-					return;
-
-				
-				vTweet_title = "Tweet from " + json.results[0].from_user;
-				vTweet_message = json.results[0].text;
-				vTweet_image = json.results[0].profile_image_url;
-				mPrevTweetID = vID;
-				fXMLHttpRequest("http://localhost/bridge", "post", {cmd : "ControlPanel", data : "<value>javascript fWidgetMsgEvent([\"" + vTweet_message + "\", \"" + vTweet_title + "\", \"" + vTweet_image + "\"]);</value>"}, function(vData) {
-					
-				});
-			});
-		}, 5000);
-		*/
-
-
-
-
 		var fGetThenDispatchEvent = function() {
-			var url="http://search.twitter.com/search.json?q="+ "chumby" +"&rpp=" + 1 + "&callback=?";
+			var url="http://search.twitter.com/search.json?q=chumby&rpp=1&callback=?";
 			$.getJSON(url,function(json){
+				console.log("=============================");
+				
 				if (!json.results)
 					return;
 				
@@ -85,7 +50,7 @@ showTweetLinks='all';
 				var vID = json.results[0].id;
 				if (vID == mPrevTweetID)
 					return;
-
+				console.log("message : " + vTweet_message);
 				if (json.results[0])
 				{
 					if (json.results[0].from_user)
@@ -100,7 +65,7 @@ showTweetLinks='all';
 					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
 					
 					mPrevTweetID = vID;
-					
+					console.log("message : " + vTweet_message);
 					fXMLHttpRequest("http://localhost/bridge", "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
 						
 					});
@@ -111,7 +76,7 @@ showTweetLinks='all';
 		fGetThenDispatchEvent();
 		var vEventInterval = setInterval(function() {
 			fGetThenDispatchEvent();
-		}, 5000);
+		}, 20000);
 
 		
 	});

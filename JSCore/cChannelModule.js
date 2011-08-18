@@ -71,7 +71,7 @@ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	//~ o.mPlayMode = "default";
 	o.mPlayMode = "event";
-
+	o.mName = "NeTV Star Channel"
 	//~ 
 	//~ o.mWidgetList.push(new cWidgetObj());
 	//~ o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "http://localhost/widgets/clock0.1/index.html";
@@ -115,7 +115,7 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 	o = [];
 	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
 		o.push(vChannelObj.mWidgetList[i].mWidget.mThumbnail.mHref);
-	
+		
 	var fLoadTN = function() {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
 			vChannelObj.mWidgetList[vChannelObj.mWidgetList.length - o.length].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
