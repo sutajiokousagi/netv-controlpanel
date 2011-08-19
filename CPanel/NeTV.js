@@ -278,8 +278,10 @@ function fAndroidEvents( vEventName, vEventData )
 	}
 	
 	//User has just started the Android app & select an unconfigured device
-	if (vEventName == "changeview" && vEventData == "loading")
+	if ((vEventName == "changeview" && vEventData == "loading")
+		|| vEventName == "wifiscan")
 	{
+		fDbg2("Start configuring with Android app");
 		mCPanel.fOnSignal(cConst.SIGNAL_ANDROID_START_CONFIGURING);
 	}
 }
@@ -295,8 +297,10 @@ function fIOSEvents( vEventName, vEventData )
 	}
 	
 	//User has just started the iOS app & select an unconfigured device
-	if (vEventName == "changeview" && vEventData == "loading")
+	if ((vEventName == "changeview" && vEventData == "loading")
+		|| vEventName == "wifiscan")
 	{
+		fDbg2("Start configuring with iOS app");
 		mCPanel.fOnSignal(cConst.SIGNAL_IOS_START_CONFIGURING);
 	}
 }
