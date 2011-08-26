@@ -300,3 +300,30 @@ function fIOSEvents( vEventName, vEventData )
 		mCPanel.fOnSignal(cConst.SIGNAL_IOS_START_CONFIGURING);
 	}
 }
+
+
+
+function fCheckAlive(
+)
+{
+	var o, p;
+	try {
+		o = cJSCore.fGetInstance().fOnSignal("checkalive");
+		//~ fDbg("--------------->>> " + o);
+
+		if (!o)
+			return false;
+
+		o = cCPanel.fGetInstance().fOnSignal("checkalive");
+		//~ fDbg("--------------->>> " + o);
+		if (!o)
+			return false;
+		else
+			return true;
+	}
+	catch (e) {
+		return false;
+	}
+	return true;
+}
+

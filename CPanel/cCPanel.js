@@ -556,6 +556,10 @@ cCPanel.prototype.fOnSignal = function(
 	// =========================================================================
 	switch(vSignal)
 	{
+	case "checkalive":
+		return true;
+		break;
+		
 	case cConst.SIGNAL_STARTUP_INIT:
 		cModuleChromaBg.fGetInstance().fRefreshScreen();
 		cModuleEventTicker.fGetInstance().fInit();

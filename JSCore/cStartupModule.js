@@ -86,6 +86,8 @@ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 			switch (vData.split("</internet>")[0].split("<internet>")[1])
 			{
 			case "true":
+				cProxy.xmlhttpPost("", "post", {cmd : "FixTime", data: "sa"}, function(vData) {fDbg(">>> FixTime : " + vData)});
+
 				// has network
 				o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
 				o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];

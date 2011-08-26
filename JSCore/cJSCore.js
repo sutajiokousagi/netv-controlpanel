@@ -96,6 +96,10 @@ cJSCore.prototype.fOnSignal = function(
 
 	switch (vSignal)
 	{
+	case "checkalive":
+		return true;
+		break;
+		
 	case cConst.SIGNAL_HEARTBEAT:
 		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
 		break;
