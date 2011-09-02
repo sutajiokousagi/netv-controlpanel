@@ -334,13 +334,6 @@ function fSetIFrame(
 	vUrl
 )
 {
-	switch (vOption)
-	{
-	case "":
-		cCPanel.fGetInstance().fOnSignal("setiframe", [vUrl, vOption], null);
-		break;
-
-	case "fullscreen":
-		break;
-	}
+	//pass everything to cCPanel
+	cCPanel.fGetInstance().fOnSignal("setiframe", [vUrl, vOption], null);
 }

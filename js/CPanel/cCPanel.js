@@ -688,14 +688,83 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 
 	case "setiframe":
-		fDbg("---> set url : " + vData[0] + ", @option : " + vData[1]);
-		$("#iframe_externalUrlPlayer").attr("src", vData[0]);
-		$("#div_externalUrlPlayer").show();
-
-		var vIntervalSetIFrame = setInterval(function() {
+		var url = vData[0];
+		var options = vData[1];
+		var width = $(window).width();
+		var height = $(window).height();
+		var useAnimationIn = false;
+		var useAnimationOut = false;
+		fDbg("Set iFrame: url: " + url + ", option: " + options);
+		
+		var iframe = document.getElementById("iframe_externalUrlPlayer");
+		var doc = iframe.document;
+		if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
+		else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
+			
+		if (options == null || options == "")
+		{				
+			if (url != null && url.indexOf(".jpg") != -1)
+			{
+				$("#iframe_externalUrlPlayer").attr("src", "");
+				doc.open();
+				doc.writeln("<body style='margin:0; overflow:hidden;'> \
+							<table width='100%' height='100%' cell-padding='0' cell-spacing='0'> \
+							<tr><td width='100%' height='100%' align='center' valign='middle'> \
+							<img height='" + height + "px' src='" + url + "' /> \
+							</tr></td> \
+							</table></body>");
+				doc.close();
+			}
+			else
+			{
+				doc.open();
+				doc.writeln("");
+				doc.close();
+				$("#iframe_externalUrlPlayer").attr("src", url);
+			}
+		
+			$("#div_externalUrlPlayer").show();
+			if (useAnimation) {
+				$("#div_externalUrlPlayer").css( "top", 100 + height );
+				var vIntervalSetIFrame1 = setInterval(function() {
+					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
+				}, 1000);
+			} else {
+				$("#div_externalUrlPlayer").css( "top", 0 );
+			}
+		}
+		else if (options == "html")
+		{
 			$("#iframe_externalUrlPlayer").attr("src", "");
-			$("#div_externalUrlPlayer").hide();
-		}, 10000);
+			doc.open();
+			doc.writeln( url );
+			doc.close();
+			
+			$("#div_externalUrlPlayer").show();
+			if (useAnimationIn) {
+				$("#div_externalUrlPlayer").css( "top", 100 + height );
+				var vIntervalSetIFrame1 = setInterval(function() {
+					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
+				}, 1000);
+			} else {
+				$("#div_externalUrlPlayer").css( "top", 0 );
+			}
+		}
+		else if (options == "back" || options == "hide")
+		{
+			if (useAnimationOut) {
+				$("#div_externalUrlPlayer").animate({ top: 100 + height }, 2500);
+			} else {
+				$("#div_externalUrlPlayer").hide();
+				$("#div_externalUrlPlayer").css( "top", 100 + height );
+			}
+			var vIntervalSetIFrame1 = setInterval(function() {
+				$("#iframe_externalUrlPlayer").attr("src", "");
+				doc.open();
+				doc.writeln( url );
+				doc.close();
+			}, 3000);
+		}
 		break;
 	}
 }
