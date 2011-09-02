@@ -1,0 +1,50 @@
+/*-----------------------------
+	Keyboard
+-----------------------------*/
+
+#keyboard {
+	margin: 0 auto;
+}
+
+/*
+.mac_key , .mac_key_selected {
+	width: 36px;
+	height: 36px;
+	float:left;
+	line-height: 38px;
+	text-align: center;
+	background-repeat: no-repeat;
+	border: 0;
+	font-size: 16;
+	font-weight: bold;
+}
+.mac_key {
+	background-image: url('key.png');
+	color: #aaaaaa
+}
+.mac_key_selected {
+	background-image: url('key_selected.png');
+	color: #000000
+}
+*/
+
+.mac_key , .mac_key_selected {
+	width: 36px;
+	height: 36px;
+	float:left;
+	line-height: 38px;
+	text-align: center;
+	font-size: 24;
+	font-weight: bold;
+	border-radius: 8px;
+	margin: 1px;
+}
+.mac_key {
+	border: 2px solid #202020;
+	color: #999999;
+}
+.mac_key_selected {
+	border: 2px solid #6598EB;
+	background-color: #6598EB;
+	color: #FFFFFF;
+}
