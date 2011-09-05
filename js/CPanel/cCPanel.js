@@ -126,17 +126,18 @@ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	if (vThis.mViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vThis.mViewPortSize[1] - 600) / 2 + "px");
 	
-	
-	
 	cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
 
-
 	
-			$("#iframe_externalUrlPlayer").attr("width", vThis.mViewPortSize[0] + 18 + "px");
-			$("#iframe_externalUrlPlayer").attr("height", vThis.mViewPortSize[1] + 18 + "px");
-			$("#div_externalUrlPlayer").css("width", vThis.mViewPortSize[0] + "px");
-			$("#div_externalUrlPlayer").css("height", vThis.mViewPortSize[1] + "px");
+	//Resize iFrame if smaller than viewport
+	var width = vThis.mViewPortSize[0];
+	var height = vThis.mViewPortSize[1];
+	$("#div_externalUrlPlayer").attr("width", width + "px");
+	$("#div_externalUrlPlayer").attr("height", height + "px");
+	$("#iframe_externalUrlPlayer").attr("width", width + "px");
+	if ($("#iframe_externalUrlPlayer").height() < height)
+		$("#iframe_externalUrlPlayer").height(height);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -250,7 +251,6 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
-//~ vThis.fOnSignal("setiframe", ["http://www.google.com", "fullscreen"]);
 		if (cCPanel.instance.mLocked == true)									// release lock
 			return;
 		cCPanel.instance.mLocked = true;
@@ -695,14 +695,14 @@ cCPanel.prototype.fOnSignal = function(
 		var useAnimationIn = false;
 		var useAnimationOut = false;
 		fDbg("Set iFrame: url: " + url + ", option: " + options);
-		
-		var iframe = document.getElementById("iframe_externalUrlPlayer");
-		var doc = iframe.document;
-		if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
-		else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
-			
+					
 		if (options == null || options == "")
-		{				
+		{	
+			var iframe = document.getElementById("iframe_externalUrlPlayer");
+			var doc = iframe.document;
+			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
+			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
+		
 			if (url != null && url.indexOf(".jpg") != -1)
 			{
 				$("#iframe_externalUrlPlayer").attr("src", "");
@@ -717,14 +717,14 @@ cCPanel.prototype.fOnSignal = function(
 			}
 			else
 			{
-				doc.open();
-				doc.writeln("");
-				doc.close();
+				//doc.open();
+				//doc.writeln("");
+				//doc.close();
 				$("#iframe_externalUrlPlayer").attr("src", url);
 			}
 		
 			$("#div_externalUrlPlayer").show();
-			if (useAnimation) {
+			if (useAnimationIn) {
 				$("#div_externalUrlPlayer").css( "top", 100 + height );
 				var vIntervalSetIFrame1 = setInterval(function() {
 					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
@@ -735,6 +735,11 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		else if (options == "html")
 		{
+			var iframe = document.getElementById("iframe_externalUrlPlayer");
+			var doc = iframe.document;
+			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
+			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
+			
 			$("#iframe_externalUrlPlayer").attr("src", "");
 			doc.open();
 			doc.writeln( url );
@@ -761,9 +766,24 @@ cCPanel.prototype.fOnSignal = function(
 			var vIntervalSetIFrame1 = setInterval(function() {
 				$("#iframe_externalUrlPlayer").attr("src", "");
 				doc.open();
-				doc.writeln( url );
+				doc.writeln("");
 				doc.close();
 			}, 3000);
+		}
+		else if (options == "resize")
+		{
+			var width = url.split(",")[0];
+			var height = url.split(",")[1];
+			if (width < vThis.mViewPortSize[0])				width = vThis.mViewPortSize[0];
+			if (height < vThis.mViewPortSize[1])			height = vThis.mViewPortSize[1];
+			$("#iframe_externalUrlPlayer").width(width);
+			$("#iframe_externalUrlPlayer").height(height);
+		}
+		else if (options == "scroll")
+		{
+			var x = url.split(",")[0];
+			var y = url.split(",")[1];
+			$("#div_externalUrlPlayer").scrollTop(y).scrollLeft(x);
 		}
 		break;
 	}
