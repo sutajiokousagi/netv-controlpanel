@@ -717,9 +717,6 @@ cCPanel.prototype.fOnSignal = function(
 			}
 			else
 			{
-				//doc.open();
-				//doc.writeln("");
-				//doc.close();
 				$("#iframe_externalUrlPlayer").attr("src", url);
 			}
 		
@@ -740,7 +737,7 @@ cCPanel.prototype.fOnSignal = function(
 			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
 			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
 			
-			$("#iframe_externalUrlPlayer").attr("src", "");
+			//$("#iframe_externalUrlPlayer").attr("src", "");
 			doc.open();
 			doc.writeln( url );
 			doc.close();
@@ -757,18 +754,17 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		else if (options == "back" || options == "hide")
 		{
+			var iframe = document.getElementById("iframe_externalUrlPlayer");
+			var doc = iframe.document;
+			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
+			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
+			
 			if (useAnimationOut) {
 				$("#div_externalUrlPlayer").animate({ top: 100 + height }, 2500);
 			} else {
 				$("#div_externalUrlPlayer").hide();
 				$("#div_externalUrlPlayer").css( "top", 100 + height );
 			}
-			var vIntervalSetIFrame1 = setInterval(function() {
-				$("#iframe_externalUrlPlayer").attr("src", "");
-				doc.open();
-				doc.writeln("");
-				doc.close();
-			}, 3000);
 		}
 		else if (options == "resize")
 		{
