@@ -1,5 +1,6 @@
 var mJSCore;
 var mCPanel;
+var cConst = null;
 
 
 
