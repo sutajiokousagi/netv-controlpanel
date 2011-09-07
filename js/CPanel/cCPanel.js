@@ -413,6 +413,11 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			cModuleEventTicker.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 		}
+		if ( parseInt($("#div_externalUrlPlayer").css("top")) < 100 )
+		{
+			var height = vThis.mViewPortSize[1];
+			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() - height/7 );
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
@@ -431,6 +436,11 @@ cCPanel.prototype.fOnSignal = function(
 		else if (vThis.mState == "event")
 		{
 			cModuleEventTicker.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+		}
+		if ( parseInt($("#div_externalUrlPlayer").css("top")) < 100 )
+		{
+			var height = vThis.mViewPortSize[1];
+			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() + height/7 );
 		}
 		break;
 		
