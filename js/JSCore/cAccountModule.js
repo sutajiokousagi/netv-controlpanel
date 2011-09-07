@@ -73,6 +73,7 @@ cAccountModule.prototype.fCheckAuthorization = function(
 	vReturnFun
 )
 {
+fDbg("*** cAccountModule, fCheckAuthorization(), ");
 	var vThis;
 	vThis = this;
 	
@@ -92,11 +93,13 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 	
 	if (vData.indexOf("unauthorized") > -1)
 	{
+		cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
 		cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
 		
 		cChannelModule.fGetInstance().fSimulateDefaultChannels();
 		return;
 	}
+	cModel.fGetInstance().CHUMBY_AUTHORIZED = true;
 	xmlDoc = parser.parseFromString(vData, "text/xml");
 	cModel.fGetInstance().CHUMBY_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("name")[0].textContent;
 	vThis.fAuthenticateByDla(vReturnFun);
@@ -109,8 +112,10 @@ cAccountModule.prototype.fAuthenticateByDla = function(
 	vReturnFun
 )
 {
+fDbg("*** cAccountModule, fAuthenticateByDla(), ");
 	var vThis;
 	vThis = this;
+	
 	cXAPI.fGetInstance().fAuthenticateByDla(cModel.fGetInstance().CHUMBY_NAME, cModel.fGetInstance().CHUMBY_GUID, null, function(vData) {
 		vThis.fAuthenticateByDlaReturn(vData, vReturnFun);
 	});
@@ -121,6 +126,7 @@ cAccountModule.prototype.fAuthenticateByDlaReturn = function(
 	vReturnFun
 )
 {
+fDbg("*** cAccountModule, fAuthenticateByDlaReturn(), ");
 	var o, parser, xmlDoc, vThis;
 	vThis = this;
 	parser = new DOMParser();
@@ -137,6 +143,7 @@ cAccountModule.prototype.fFetchDeviceInfo = function(
 	vReturnFun
 )
 {
+fDbg("*** cAccountModule, fFetchDeviceInfo(), ");
 	var vThis;
 	vThis = this;
 	
@@ -164,7 +171,7 @@ cAccountModule.prototype.fParseDeviceInfo = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fParseAccountInfo()");
+fDbg("*** cAccountModule, fParseAccountInfo(), ");
 	
 	var parser = new DOMParser();
 	var xmlDoc = parser.parseFromString(vData, "text/xml");
@@ -194,13 +201,65 @@ fDbg("*** cAccountModule, fParseAccountInfo()");
  * -------------------------------------------------------------------------------------------------
  * 	cDevice related functions
  * ---------------------------------------------------------------------------------------------- */
-cAccountModule.prototype.fActivate = function(
+cAccountModule.prototype.fDoActivate = function(
+	vUsername,
+	vPassword,
+	vDevicename,
+	vReturnFun
 )
 {
-	var o;
-	// TODO: need to complete this function tomorrow.
+	var vThis, o;
+	vThis = this;
+	
 	o = cModel.fGetInstance();
-	cDevice.fGetInstance().fActivateDevice(o.CHUMBY_GUID, null, null, null, null, function() {
+	cDevice.fGetInstance().fActivateDevice(
+		o.CHUMBY_GUID,
+		vDevicename,
+		{dcid_vers: o.CHUMBY_DCID_VERS, dcid_rgin: o.CHUMBY_DCID_RGIN, dcid_skin: o.CHUMBY_DCID_SKIN, dcid_part: o.CHUMBY_DCID_PART, dcid_camp: o.CHUMBY_DCID_CAMP},
+		vUsername,
+		vPassword,
+		function(vData) {
+			if (vReturnFun)
+			{
+				if (vData.indexOf("<success/>") > -1)
+				{
+					vReturnFun(true);
+					vThis.fCheckAccount(function(vData) {
+						cChannelModule.fGetInstance().fFetchChannelInfo(function() {
+							fDbg("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+							fDbg("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+							fDbg("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+						});
+					});
+				}
+				else
+					vReturnFun(vData);
+			}
+		}
+	);
+}
 
-	});
+cAccountModule.prototype.fDoDeActivate = function(
+	vReturnFun
+)
+{
+	var vThis;
+	vThis = this;
+
+	o = cModel.fGetInstance();
+	cDevice.fGetInstance().fDeActivateDevice(
+		o.CHUMBY_GUID,
+		function(vData) {
+			if (vReturnFun)
+			{
+				if (vData.indexOf("<success") > -1)
+				{
+					vReturnFun(true);
+					cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
+				}
+				else
+					vReturnFun(vData);
+			}
+		}
+	);
 }

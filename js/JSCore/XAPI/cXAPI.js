@@ -61,7 +61,7 @@ cXAPI.prototype.fAuthenticateByUsr = function(
 	vReturnFun
 )
 {
-fDbg2("*** cXAPI, fAuthenticateByUsr()");
+fDbg("*** cXAPI, fAuthenticateByUsr()");
 	var o;
 	o = {
 		auth_request : {
@@ -89,7 +89,7 @@ cXAPI.prototype.fAuthenticateByDla = function(
 	vReturnFun
 )
 {
-fDbg2("*** cXAPI, fAuthenticateByDla()");
+fDbg("*** cXAPI, fAuthenticateByDla()");
 	var o;
 	
 	if (cXAPI.instance.mOauthAuthID == null)
@@ -112,6 +112,14 @@ fDbg2("*** cXAPI, fAuthenticateByDla()");
 	cXAPI.fXAPIRequest(["auth", "create"], null, o, vReturnFun);
 	return;
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -168,13 +176,14 @@ cXAPI.fXAPIRequest = function(
 	{
 		vUrl += "?";
 		for (o in vParamList)
-			vUrl += o + "=" + cXAPI.fUrlEscape(String(vParamList[o])) + "&";
+			vUrl += cXAPI.fUrlEscape(o) + "=" + cXAPI.fUrlEscape(String(vParamList[o])) + "&";
 		vUrl = vUrl.substring(0, vUrl.length - 1);
 	}
+	//~ fDbg(vUrl);
+	
 	
 	// 3, process vPostParam
 	vPostParam = vPostParam ? vPostParam : "";
-		
 	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
 		//~ fDbg2(vData);
 		vData = vData.split("<value>")[1].split("</value>")[0];
@@ -238,7 +247,6 @@ cXAPI.fSignatureMD5Of = function(
 )
 {
 	var baseString = cXAPI.fBaseStringOf(pathItems, params);
-	//~ fDbg2("md5 of: " + (baseString + "&" + cXAPI.instance.mOauthConsumerSecret + "&"));
 	return cGUID.fGetMD5(baseString + "&" + cXAPI.instance.mOauthConsumerSecret + "&");
 }
 

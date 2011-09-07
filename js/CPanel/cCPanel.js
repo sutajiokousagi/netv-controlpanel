@@ -11,6 +11,7 @@
 var kCPanelStatic = {
 	mShowDbg : false,
 	mPluginClassList : [
+		"./js/CPanel/cModuleToast.js",
 		"./js/CPanel/cModuleWE.js",
 		"./js/CPanel/cModuleEventTicker.js",
 		"./js/CPanel/cModuleChromaBg.js",
@@ -116,18 +117,23 @@ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	var vThis;
 	
 	vThis = this;
-	if (typeof window.innerWidth != 'undefined')
-	{
-		vThis.mViewPortSize[0] = window.innerWidth,
-		vThis.mViewPortSize[1] = window.innerHeight
-	}
+
+	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
+		return;
+
+	vThis.mViewPortSize[0] = window.innerWidth,
+	vThis.mViewPortSize[1] = window.innerHeight
+	cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
+
+	// resize individual panels
 	if (vThis.mViewPortSize[0] > 800)
 		$("#div_CPanel").css("left", (vThis.mViewPortSize[0] - 800) / 2 + "px");
 	if (vThis.mViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vThis.mViewPortSize[1] - 600) / 2 + "px");
-	
-	cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
+		
+	cModuleToast.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
+	cModuleWE.fGetInstance().fResize(vThis.mViewPortSize);
 
 	
 	//Resize iFrame if smaller than viewport
@@ -170,18 +176,18 @@ fDbg("*** cCPanel, fStartUp()");
 	vThis = this;
 	
 	// register all classes
+	cModuleToast.fGetInstance("div_toast");
 	cModuleChromaBg.fGetInstance("div_tempBg");
+	cModuleEventTicker.fGetInstance($("#div_eventWidgetPlayer"));
+	cModuleWE.fGetInstance(null);
+	cWEFlash.fGetInstance(null);
+	cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
 
 	cPMain.fGetInstance("div_cpanelMain");
 	cSPChannels.fGetInstance("div_channelMain");
 	cSPSettings.fGetInstance("div_settingMain");
 	cSPInfo.fGetInstance("div_infoMain");
 	cSPActivation.fGetInstance("div_activationMain");
-	
-	cModuleEventTicker.fGetInstance($("#div_eventWidgetPlayer"));
-	cModuleWE.fGetInstance(null);
-	cWEFlash.fGetInstance(null);
-	cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -200,14 +206,14 @@ cCPanel.prototype.fOnSignal = function(
 	//~ if (cCPanel.instance.mLocked == true)
 		//~ return;
 	//~ cCPanel.instance.mLocked = true;
-	
+
 	//Prevent error when this is called too early by browser
 	if (!cConst)
 		return;
-	
+
 	// =========================================================================
 	// JavaScript Injection Signals
-	// =========================================================================
+	// ==========================================================================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
@@ -216,8 +222,14 @@ cCPanel.prototype.fOnSignal = function(
 		case "controlpanel":
 			vThis.fAnimateOutControlPanel(function() {
 				cModuleEventTicker.fGetInstance().pEnabled(true);
+				
+				cModuleEventTicker.fGetInstance().fEndStampEvent();
+				cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
+				cModuleWE.fGetInstance().fNext();
+				
 				cModuleEventTicker.fGetInstance().fReset();
 				cModuleEventTicker.fGetInstance().fAnimateIn();
+				
 			});
 			vThis.pState("event");
 			break;
@@ -261,7 +273,6 @@ cCPanel.prototype.fOnSignal = function(
 		switch (vThis.mState)
 		{
 		case "controlpanel":
-			//~ vThis.fOnSignal(cConst.SIGNAL_BUTTON_CENTER);
 			cCPanel.instance.mLocked = false;
 			break;
 
@@ -286,53 +297,10 @@ cCPanel.prototype.fOnSignal = function(
 			cCPanel.instance.mLocked = false;
 			break;
 			
-			
 		case "widgetengine":
 			cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 			cCPanel.instance.mLocked = false;
 			break;
-
-			/*
-		case "htmlwidgetengine":
-			cWEHtml.fGetInstance().fSlideOut(function() {
-				cCPanel.instance.pState("empty");
-				cCPanel.instance.mLocked = false;
-			});
-			break;
-		case "flashwidgetengine":
-			cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1 1</value>"}, null);
-			cCPanel.instance.pState("empty");
-			cCPanel.instance.mLocked = false;
-			break;
-		case "eventwidgetengine":
-			cCPanel.instance.mWEEvent.fSlideDown(function() {
-				cCPanel.instance.pState("empty");
-				cCPanel.instance.mLocked = false;
-			});
-			break;
-		case "empty":
-			switch (mCPanel.mPrevState)
-			{
-			case "htmlwidgetengine":
-				cWEHtml.fGetInstance().fSlideIn(function() {
-					cCPanel.instance.pState("htmlwidgetengine");
-					cCPanel.instance.mLocked = false;
-				});
-				break;
-			case "flashwidgetengine":
-				cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>959 464 320 240</value>"}, null);
-				cCPanel.instance.pState("flashwidgetengine");
-				cCPanel.instance.mLocked = false;
-				break;
-			case "eventwidgetengine":
-				cCPanel.instance.mWEEvent.fSlideUp(function() {
-					cCPanel.instance.pState("eventwidgetengine");
-					cCPanel.instance.mLocked = false;
-				});
-				break;
-			}
-			break;
-			*/
 		}
 		break;
 		
@@ -392,7 +360,6 @@ cCPanel.prototype.fOnSignal = function(
 						cSPChannels.fGetInstance().fRenderChannelList();
 						vThis.mSubState = "cpanel_channels";
 					});
-					
 				}
 				else if (o == "configurations")
 				{
@@ -528,7 +495,7 @@ cCPanel.prototype.fOnSignal = function(
 	
 	case cConst.SIGNAL_STARTUP_COMPLETE:
 		cModuleEventTicker.fGetInstance().fEndStampEvent();
-		cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[1]);
+		cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
 		cModuleWE.fGetInstance().fNext();
 		break;
 
@@ -575,6 +542,10 @@ cCPanel.prototype.fOnSignal = function(
 
 	case cConst.SIGNAL_SCPINFO_UPDATE:
 		cSPInfo.fGetInstance().fUpdate();
+		break;
+
+	case cConst.SIGNAL_PLAYNEXTWIDGET:
+		cModuleEventTicker.fGetInstance().fOnSignal(vSignal, null, null);
 		break;
 		
 	case cConst.SIGNAL_GOTO_CONTROLPANEL:
@@ -803,48 +774,6 @@ cCPanel.prototype.fOnSignal = function(
 
 
 
-cCPanel.prototype.fToast = function(
-	vMsg,
-	vType,
-	vCssObj
-)
-{
-fDbg("*** cCPanel, fToast(), ");
-//~ fDbg2(vMsg);
-	
-	$("#div_toast_content").html(vMsg);
-
-	if (!vType || vType == "warning")
-	{
-		$("#div_toast_content").css("background-color", "#FF4444");
-		$("#div_toast_content").css("color", "#FFFFFF");
-		$("#div_toast_content").css("font-size", "18px");
-	}
-	else if (vType = "message")
-	{
-		$("#div_toast_content").css("background-color", "#333");
-		$("#div_toast_content").css("color", "#FFFFFF");
-		$("#div_toast_content").css("font-size", "18px");
-	}
-	
-	
-	$("#div_toast").show();
-	$("#div_toast").css("top", "-60px");
-	$("#div_toast").animate({
-		top : "10px"
-	}, 200, function() {
-		var vTO = setTimeout(function() {
-			$("#div_toast").animate({
-				top : "-60px"
-			}, 200, function() {
-			});
-		}, 5000);
-
-	});
-	
-	//~ fDbg2($("#div_toast_content").outerWidth());
-}
-
 
 
 
@@ -948,15 +877,19 @@ cCPanel.prototype.fAnimateOutControlPanel = function(
 )
 {
 	var vThis;
-
 	vThis = this;
+
 	$("#div_CPanel").css("left", (vThis.mViewPortSize[0] - 800) / 2 + "px");
-	$("#div_CPanel").animate({
-		left: "-1300px"
-	}, 1200, function() {
-		if (vReturnFun)
-			vReturnFun();
+	$("#div_startup").fadeIn(200, function() {
+		$("#div_CPanel").animate({
+			left: "-1300px"
+		}, 1200, function() {
+			if (vReturnFun)
+				vReturnFun();
+		});
 	});
+	
+	
 }
 
 
@@ -999,6 +932,7 @@ cCPanel.prototype.fBack = function(
 	case "cpanel_activation":
 		if (vData && vData == "all")
 			vThis.fAnimateOutControlPanel(function() {
+				cSPActivation.fGetInstance().fHide();
 				cModuleEventTicker.fGetInstance().pEnabled(true);
 				cModuleEventTicker.fGetInstance().fEndStampEvent();
 				cModuleEventTicker.fGetInstance().fAnimateIn();
@@ -1009,6 +943,7 @@ cCPanel.prototype.fBack = function(
 			});
 		else
 			cSPActivation.fGetInstance().fAnimateOut(function() {
+				cSPActivation.fGetInstance().fHide();
 				cPMain.fGetInstance().fAnimateIn(function() {
 					vThis.mSubState = "cpanel_main";
 				});

@@ -286,7 +286,8 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 	vThis = this;
 	vDiv = $("#div_channelMain #div_channelMain_channels");
 	vChannelList = cModel.fGetInstance().CHANNEL_LIST;
-
+	
+	vForceRender = true;
 	o = "";
 	if (vForceRender || vDiv.children().length == 0)
 	{
@@ -299,7 +300,7 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 				for (j = 0; j < vLen; j++)
 				{
 					vImagePath = vChannelList[i].mWidgetList[j].mLocalThumbnailPath;
-					fDbg(vImagePath);
+					//~ fDbg(vImagePath);
 					if (j == 0)
 						p = [10, 10];
 					else if (j == 1)

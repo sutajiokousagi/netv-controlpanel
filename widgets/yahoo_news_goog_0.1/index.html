@@ -12,12 +12,9 @@ body{
 <script type="text/javascript" src="jquery.min.js"></script>
 <script type="text/javascript" src="twitStream.js"></script>
 <script type="text/javascript" src="cMD5.js"></script>
-
+<!-- <link rel="stylesheet" href="twit-stream.css" /> -->
 <script type="text/javascript">
-showTweetLinks='all';
-</script>
-<link rel="stylesheet" href="twit-stream.css" />
-<script language="javascript">
+	var showTweetLinks='all';
 	var vViewPortSize = [];
 	var mInterval = null;
 	var mSpeed = 1;
@@ -32,7 +29,6 @@ showTweetLinks='all';
 		}
 		$("#twitstream_container").css("left", (vViewPortSize[0] - parseFloat($("#twitstream_container").css("width").split("px")[0])) / 2 + "px");
 		
-		//fStart();
 		mInterval = setTimeout ("fStart()", 20);
 
 
@@ -67,7 +63,7 @@ fResize();
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
-						vTweet_message = encodeURIComponent(escape(vTweet_message));
+						vTweet_message = escape(vTweet_message);
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;
@@ -83,7 +79,18 @@ fResize();
 				}
 			});
 		};
+		/*
+		var vUrl = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%3D'ibm'%3B&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		vUrl = "http://www.google.com";
+		vBridgePath = "http://192.168.1.50/bridge";
+		fDbg(vBridgePath);
+		fXMLHttpRequest(vBridgePath, "post", {cmd : "GetUrl", data : "<url>" + vUrl + "</url>" + "<post>" + "" + "</post>"}, function(vData) {
+			alert(vData);				
+		});
+		*/
 
+
+		return;
 		fGetThenDispatchEvent();
 		var vEventInterval = setInterval(function() {
 			fGetThenDispatchEvent();

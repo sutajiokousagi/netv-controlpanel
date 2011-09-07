@@ -30,7 +30,7 @@ cDevice.fGetInstance = function(
 cDevice.prototype.fInit = function(
 )
 {
-fDbg2("*** cDevice, fInit()");
+fDbg("*** cDevice, fInit()");
 	
 }
 
@@ -93,16 +93,50 @@ cDevice.prototype.fActivateDevice = function(
 	vReturnFun
 )
 {
-	cXAPI.fXAPIRequest(["device", "activate", vDeviceID], {
-		"chumby" : vOauthSignature,
-		"dcid_vers" : vDeviceDCIDVars["dcid_vers"],
-		"dcid_rgin" : vDeviceDCIDVars["dcid_rgin"],
-		"dcid_skin" : vDeviceDCIDVars["dcid_skin"],
-		"dcid_part" : vDeviceDCIDVars["dcid_part"],
-		"dcid_camp" : vDeviceDCIDVars["dcid_camp"],
-		"username" : vUsername,
-		"password" : vPassword
-	}, null, vReturnFun);
+	cXAPI.fXAPIRequest(
+		["device", "activate", vDeviceID],
+		{
+			"chumby[name]" : vDeviceName,
+			"dcid_vers" : vDeviceDCIDVars["dcid_vers"],
+			"dcid_rgin" : vDeviceDCIDVars["dcid_rgin"],
+			"dcid_skin" : vDeviceDCIDVars["dcid_skin"],
+			"dcid_part" : vDeviceDCIDVars["dcid_part"],
+			"dcid_camp" : vDeviceDCIDVars["dcid_camp"],
+			"username" : vUsername,
+			"pw" : vPassword
+		},
+		null,
+		vReturnFun
+	);
 	
+	return;
+}
+
+cDevice.prototype.fDeActivateDevice = function(
+	vDeviceID,
+	vReturnFun
+)
+{
+	var vOauthSignatureMethod, vOauthNonce, vOauthConsumerKey, vOauthSignature;
+	vOauthSignatureMethod = "MD5-HEX";
+	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
+	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;
+	vOauthSignature = cXAPI.fSignatureMD5Of(["device", "deregister"], {
+		oauth_signature_method : "MD5-HEX",
+		oauth_nonce : vOauthNonce,
+		oauth_consumer_key : vOauthConsumerKey
+	});
+	
+	cXAPI.fXAPIRequest(
+		["device", "deregister"],
+		{
+			oauth_signature : vOauthSignature,
+			oauth_signature_method : vOauthSignatureMethod,
+			oauth_nonce : vOauthNonce,
+			oauth_consumer_key : vOauthConsumerKey
+		},
+		null,
+		vReturnFun
+	);
 	return;
 }

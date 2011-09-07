@@ -19,8 +19,6 @@ function cPMain(
 	this.mID = vDiv;
 
 	this.mCurrSelection = 0;
-
-
 	
 	this.fInit();
 }

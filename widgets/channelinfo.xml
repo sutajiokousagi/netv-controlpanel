@@ -1,0 +1,23 @@
+<channel>
+	<name>NeTV Star Channel</name>
+	<playmode>default</playmode>
+	<widgets>
+		<widget>
+			<href>./widgets/twitter0.2/index.html</href>
+			<thumbnail>./widgets/twitter0.2/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		
+		<widget>
+			<href>./widgets/twitter0.1/index.html</href>
+			<thumbnail>./widgets/twitter0.1/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		
+		<widget>
+			<href>./widgets/google_news_0.1/index.html</href>
+			<thumbnail>./widgets/google_news_0.1/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+	</widgets>
+</channel>

@@ -13,46 +13,41 @@ function cModuleEventTicker(
 )
 {
 	this.mDiv = vDivObj;
-
-	// css / style related
+	
+	// ------------------------- main control
+	this.mEnabled = false;
+	this.mState = null;
+	this.mVisibleOnScreen = false;
+	
+	// ------------------------- css / style related
 	this.mViewPortSize = [];
-	this.mTheme = {
-		mStampSize : [80, 50],
-	};
 	this.mStyle = {
 		mTickerWidth: 80,
 		mTickerHeight: 50,
 		mBottomOffset: 40,
 		mCrawlerHeight: 50,
 		mCrawlerWidth: 1160,
-		mRightOffset: 60
+		mRightOffset: 60,
+		mMessageDefaultDisplayN: 2
 	}
 	
-	
-	
+	// ------------------------- DIVs
+	this.mDivTickerMini = null;
 
-	// timer
+	
+	// ------------------------- timer
 	this.mTimer = null;
 	this.mCounterTimer = 0;
 	this.mCounterTimerSec = 0;
-	
 	this.mCounterStampClock = 0;
 	this.mCounterStampClockOrigin = null;
 	this.mTimeSpanStamp = 0;
-
 	this.mTimeSpanConfigModeOn = 0;
 
-
-	//~ this.mStaticPeriod = 5000;
-	this.mVisibleOnScreen = false;
 	
-	
-	// main control
-	this.mEnabled = false;
-
 	// main ticker event 
 	this.mEventList = [];					// [[ID, [message, title, image], displaycount], [...], [...], ...]
-	this.mPlayStatus = null;				//	null | stopped | paused
+	this.mPlayStatus = null;				// null | stopped | paused
 	this.mEnableCrawlMessages = false;
 	
 	// stamp ticker event
@@ -64,7 +59,11 @@ function cModuleEventTicker(
 	this.mStopNow = false;
 
 	
-
+	// ------------------------- states
+	cModuleEventTicker.STATE_STANDBY = "state_standby";
+	cModuleEventTicker.STATE_CRAWLINGIN = "state_crawlingin";
+	cModuleEventTicker.STATE_CRAWLING = "state_crawling";
+	cModuleEventTicker.STATE_CRAWLINGOUT = "state_crawlingout";
 	
 
 	this.mConfigMode = "default"; 			// default | configmode1 | configmode2
@@ -88,14 +87,17 @@ cModuleEventTicker.fGetInstance = function(
 cModuleEventTicker.prototype.fInit = function(
 )
 {
-fDbg("*** cModuleEventTicker, fInit(), ");
+//~ fDbg("*** cModuleEventTicker, fInit(), ");
 	var vThis;
 	vThis = this;
+
+	this.mDivTickerMini = this.mDiv.children("#div_eventWidgetPlayer_mini");
+	
 
 	this.mTimer = setInterval(function() {
 		mCounterStampClockOrigin = 0;
 		vThis.fOnSignal("timerinterval", null, null);
-	}, 10);
+	}, 20);
 	this.fReset();
 
 	vThis.pEnabled(true);
@@ -120,6 +122,24 @@ cModuleEventTicker.prototype.fResize = function(
 
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[0]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px")
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pState
+// -------------------------------------------------------------------------------------------------
+cModuleEventTicker.prototype.pState = function(
+	vState
+)
+{
+	var vThis, o;
+	vThis = this;
+if (!vState) return vThis.mState;
+	
+	switch (vState)
+	{
+	
+	}
+	vThis.mState = vState;
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -270,6 +290,12 @@ cModuleEventTicker.prototype.fOnSignal = function(
 			vThis.mCounterStampClock = o;
 			vThis.fUpdateClock();
 		}
+
+		if (vThis.mPlayStatus == "crawlingin" && vThis.mEnabled)
+		{
+			vThis.fCrawlingIn();
+		}
+		
 		
 		if (vThis.mPlayStatus == "playing" && vThis.mEnabled)
 		{	
@@ -283,6 +309,25 @@ cModuleEventTicker.prototype.fOnSignal = function(
 			vThis.fCheckStampNewMessage();
 			vThis.fCheckStampLeadingMessage();
 		}
+		break;
+
+	case cConst.SIGNAL_PLAYNEXTWIDGET:
+		if (vThis.pState() != cModuleEventTicker.STATE_STANDBY)
+			return;
+		o = $("#stamp_bottom_iconset_container").children();
+		if (o.length > 1)
+			$(o[1]).fadeOut(200, function() {
+				$(o[1]).fadeIn(200, function() {
+					$(o[1]).fadeOut(200, function() {
+						$(o[1]).fadeIn(200, function() {
+							$(o[1]).fadeOut(200, function() {
+								$(o[1]).fadeIn(200, function() {
+								});
+							});
+						});
+					});
+				});
+			});
 		break;
 	}
 }
@@ -321,13 +366,17 @@ cModuleEventTicker.prototype.fAnimateIn = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cModuleEventTicker, fAnimateIn(), ");
-//~ fDbg("----> event list length : " + this.mEventList.length);
 if (this.mEnabled == false)
 	return;
 	var vThis, vTopStart, vTopFinal
 	vThis = this;
 
+if (cModel.fGetInstance().CHUMBY_AUTHORIZED == true)
+	$("#stamp_demo_container").hide();
+else
+	$("#stamp_demo_container").show();
+
+vThis.pState(cModuleEventTicker.STATE_STANDBY);
 	
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
 	if (vTopFinal < 340)
@@ -369,7 +418,7 @@ cModuleEventTicker.prototype.fAnimateOut = function(
 		if (vReturnFun)
 			vReturnFun();
 	});
-
+	
 	this.pConfigMode(null);
 }
 
@@ -427,27 +476,40 @@ cModuleEventTicker.prototype.fUpdateClock = function(
  * -------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
  *	
- * ------------------------------------------------------------------------------------------------- */
-/** -------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------- */
+/** ------------------------------------------------------------------------------------------------
 	fAddEvent
--------------------------------------------------------------------------------------------------- */
+------------------------------------------------------------------------------------------------- */
 cModuleEventTicker.prototype.fAddEvent = function(
 	vEventData,
 	vTop	// true | false
 )
 {
-fDbg("*** cModuleEventTicker, fAddEvent(), ");
-	//~ var o;
+//~ fDbg("*** cModuleEventTicker, fAddEvent(), ");
+	var vThis, o;
+	vThis = this;
+	o = String(new Date().getTime());
 
-	var o = String(new Date().getTime());
-	this.mEventList.push([vEventData, o, 3]);
+	// TODO : for type-"sms" 2 times only, high piority !!!
+	if (vEventData[3] == "sms")
+	{
+		vEventData.push('color: #FFFF00; text-shadow: #FFFF00 2px 2px 2px; font-size: 24px; margin-top: 5px;');
+		if (this.mEventList.length == 0)
+			this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+		else
+			this.mEventList.splice(1, 0, [vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+	}
+	else
+		this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+	
 if (this.mEnabled == false)
 	return;
 	
 	if (!this.mPlayStatus || this.mPlayStatus == "paused" || this.mPlayStatus == "stopped")
 	{
+		//~ this.mPlayStatus = "paused";
+		//~ fDbg("+++++++++>>> " + vThis.mPlayStatus);
 		this.fActivateMainTicker();
-		this.mPlayStatus = "paused";
 	}
 }
 
@@ -459,22 +521,41 @@ cModuleEventTicker.prototype.fActivateMainTicker = function(
 {
 	var vThis, i, o, p, vLeft, vWidth, vRight, vContainerWidth, vID, vTraceInterval;
 	vThis = this;
+
 	vContainerWidth = cModel.fGetInstance().VIEWPORTSIZE[0] - 80;
-	
 	if (vThis.mEventList.length == 0 || $("#crawling_container").children().length > 0)
 		return;
 		
-	fDbg("==================================== ACTIVATE =========================================");
+	//~ fDbg("==================================== ACTIVATE =========================================");
+	vThis.pState(cModuleEventTicker.STATE_CRAWLINGIN);
 	vThis.fAddNextEventToContainer(0, true);
 	$("#div_eventWidgetPlayer_crawling").css("left", vContainerWidth + "px");
-	$("#div_eventWidgetPlayer_crawling").animate({
-		left : "0px"
-	}, 5000, function() {
-		fDbg("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		fDbg("DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE");
-		fDbg("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+	vThis.mPlayStatus = "crawlingin";
+}
+
+/** -------------------------------------------------------------------------------------------------
+	fCrawlMessage
+-------------------------------------------------------------------------------------------------- */
+cModuleEventTicker.prototype.fCrawlingIn = function(
+)
+{
+//~ fDbg("*** cModuleEventTicker, fCrawlingIn(), ");
+	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
+	vThis = this;
+	vStep = 4;
+	
+	$("#div_eventWidgetPlayer_crawling").css("left", "-=" + vStep + "px");
+	vLeft = parseInt($("#div_eventWidgetPlayer_crawling").css("left").split("px")[0]);
+	if (vLeft <= 0)
+	{
+		$("#div_eventWidgetPlayer_crawling").css("left", "opx");
+		//~ fDbg("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		//~ fDbg("DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE DONE");
+		//~ fDbg("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		vThis.pState(cModuleEventTicker.STATE_CRAWLING);
 		vThis.mPlayStatus = "playing";
-	});
+	}
 }
 
 cModuleEventTicker.prototype.fAddNextEventToContainer = function(
@@ -486,7 +567,7 @@ cModuleEventTicker.prototype.fAddNextEventToContainer = function(
 	vThis = this;
 	
 	if (vIsFirstMessage)
-		vThis.fAppendMessageDivFromEvent(vIndex, vThis.mViewPortSize[0] - 80, null);
+		vThis.fAppendMessageDivFromEvent(vIndex, vThis.mViewPortSize[0] - 80 - 200, null);
 	else
 		vThis.fAppendMessageDivFromEvent(vIndex, null, vThis.mViewPortSize[0] - 80);
 	
@@ -501,11 +582,10 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	vForceLeft
 )
 {
-	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft;
+	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft, o, vCSS;
 	vThis = this;
 	
 	vID = vThis.fGenerateGUID();
-	
 	vWidth = vThis.fGetTextWidth("<span style='font-weight: bold;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + vThis.mEventList[vIndex][0][0]);
 	vWidth = parseInt(vWidth / 2) + 400;
 	if (vWidth > 1100)
@@ -515,20 +595,29 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	if (vForceLeft)
 		vLeft = vForceLeft;
 	else
-		vLeft = 0;
+		vLeft = 20;
 	
 	vInnerLeft = 0;
 	vHtml = "";
 	vHtml += "<div id='message_" + vThis.mEventList[vIndex][1] + "_" + vID + "' style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: " + vWidth + "px;'>";
-	if (vThis.mEventList[vIndex][0][2] && vThis.mEventList[vIndex][0][2].length > 0)
+	if (vThis.mEventList[vIndex][0][2] && vThis.mEventList[vIndex][0][2].length > 0)		// if image exist
 	{
 		vHtml += "<div style='position: absolute; top: 4px; left: " + 10 + "px; height: 40px; width: 40px; border: solid white 2px;'>";
 		vHtml += "<img src='" + vThis.mEventList[vIndex][0][2] + "' width='40px' height='40px'>";
 		vHtml += "</div>";
 		vInnerLeft += 70;
 	}
-	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 50px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; color: #EEEEEE; font-size: 17px; line-height: 130%;'>";	
-		vHtml += "<span style='font-weight: bold; text-shadow: #AAAAAA 1px 1px 2px;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + unescape(vThis.mEventList[vIndex][0][0]);
+	if (vThis.mEventList[vIndex][0][6])
+		vCSS = vThis.mEventList[vIndex][0][6];
+	else
+		vCSS = "color: #EEEEEE; ";
+	
+	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 50px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; font-size: 17px; line-height: 130%;" + vCSS + "'>";
+
+		if (vThis.mEventList[vIndex][0][1] && vThis.mEventList[vIndex][0][1] != "")
+			vHtml += "<span style='font-weight: bold; text-shadow: #AAAAAA 1px 1px 2px;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + unescape(vThis.mEventList[vIndex][0][0]);
+		else
+			vHtml += unescape(vThis.mEventList[vIndex][0][0]);
 	vHtml += "</div>";
 	vHtml += "</div>";
 	
@@ -543,7 +632,7 @@ cModuleEventTicker.prototype.fCrawlMessages = function(
 {
 	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
 	vThis = this;
-	vStep = 2;
+	vStep = 4;
 	
 	vList = $("#crawling_container").children();
 	vLen = vList.length;
@@ -578,7 +667,7 @@ cModuleEventTicker.prototype.fCheckNewMessage = function(
 		vWidth = parseInt(o.css("width").split("px")[0]);
 		vRight = vLeft + vWidth;
 		
-		if (vRight < vContainerWidth - 100)
+		if (vRight < vContainerWidth - 400)
 		{
 			if (vThis.mEventList.length > 0)
 			{
@@ -588,6 +677,7 @@ cModuleEventTicker.prototype.fCheckNewMessage = function(
 			else
 			{
 				vThis.mPlayStatus = null;
+				vThis.pState(cModuleEventTicker.STATE_CRAWLINGOUT);
 				$("#div_eventWidgetPlayer_crawling").animate({
 					top: "+=70px"
 				}, 1000, function() {
@@ -595,6 +685,7 @@ cModuleEventTicker.prototype.fCheckNewMessage = function(
 					$("#div_eventWidgetPlayer_crawling").css("top", "0px");
 					$("#div_eventWidgetPlayer_crawling").css("left", vContainerWidth + "px");
 					vThis.mPlayStatus = null;
+					vThis.pState(cModuleEventTicker.STATE_STANDBY);
 				});
 			}
 		}
@@ -641,7 +732,7 @@ cModuleEventTicker.prototype.fAddStampEvent = function(
 	vTop	// true | false
 )
 {
-fDbg("*** cModuleEventTicker, fAddStampEvent(), ");
+//~ fDbg("*** cModuleEventTicker, fAddStampEvent(), ");
 
 	var o = String(new Date().getTime());
 	this.mStampEventList.push([vEventData, o, 100]);
@@ -814,7 +905,7 @@ cModuleEventTicker.prototype.fEndStampEvent = function(
 
 	vThis.mStampEventList = [];
 
-	fDbg("********** HIDE HIDE HIDE!!! ************");
+	//~ fDbg("********** HIDE HIDE HIDE!!! ************");
 	vThis.mStampPlayStatus = null;
 	$("#stamp_bottom_message_container").fadeOut(300, function() {
 		vThis.mStampPlayStatus = null;
@@ -825,15 +916,33 @@ cModuleEventTicker.prototype.fEndStampEvent = function(
 }
 
 
-
+ 
 cModuleEventTicker.prototype.fRenderIconPanel = function(
 )
 {
 	o = "";
-	o += "<div style='position: absolute; top: 2px; left: 55px; width:10px; height:10px;'><img src='./images/wifi3.png' width='20px' height='20px' /></div>";
-	
+	if (cModel.fGetInstance().CHUMBY_INTERNET == "true")
+	{
+		o += "<div style='position: absolute; top: 2px; left: 55px; width:10px; height:10px; opacity: 1;'><img src='./images/wifi3.png' width='20px' height='20px' /></div>";
+		o += "<div style='position: absolute; top: 7px; left: 40px; width:10px; height:10px; opacity: 1;'>";
+			o += "<img src='./images/tx_ico_inactive.png' width='11px' height='11px'/>";
+		o += "</div>";
+	}
+	else
+	{
+		o += "<div style='position: absolute; top: 2px; left: 55px; width:10px; height:10px; opacity: 0.2;'><img src='./images/wifi3.png' width='20px' height='20px' /></div>";
+		o += "<div style='position: absolute; top: 7px; left: 2px; width:10px; height:10px; opacity: 1;'>";
+			o += "<img src='./images/tx_ico_inactive.png' width='11px' height='11px'/>";
+		o += "</div>";
+	}
+		
 	$("#stamp_bottom_iconset_container").html(o);
 	$("#stamp_bottom_iconset_container").fadeIn();
+
+if (cModel.fGetInstance().CHUMBY_AUTHORIZED == true)
+	$("#stamp_demo_container").hide();
+else
+	$("#stamp_demo_container").show();
 
 	return;
 }
@@ -915,12 +1024,12 @@ cModuleEventTicker.prototype.fReset = function(
 	vReturnFun
 )
 {
-fDbg("*** cModuleEventTicker, fReset(), ");
+//~ fDbg("*** cModuleEventTicker, fReset(), ");
 	var vThis, vContainerWidth;
 	vThis = this;
 	
 	vContainerWidth = vThis.mViewPortSize[0] - 80;
-	fDbg("vContainerWidth : " + vContainerWidth);
+	
 	$("#div_eventWidgetPlayer_crawling").css("left", vContainerWidth + "px");
 	$("#crawling_container").html("");
 }

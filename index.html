@@ -6,15 +6,9 @@
 <link rel="stylesheet" href="./css/reset.css" type="text/css">
 <link rel="stylesheet" href="./css/cpanel.css" type="text/css">
 
-<!--
-<script type='text/javascript' src='./CPanel/jquery-1.6.1.min.js'></script>
-<script type='text/javascript' src='./JSCore/cJSCore.js'></script>
-<script type='text/javascript' src='./CPanel/cCPanel.js'></script>
-<script type='text/javascript' src='./CPanel/NeTV.js'></script>
--->
 
 <script type='text/javascript' src='./js/jquery-1.6.1.min.js'></script>
-<script type='text/javascript' src='js/NeTV.js'></script>
+<script type='text/javascript' src='./js/NeTV.js'></script>
 <script type='text/javascript' src='./js/JSCore/cJSCore.js'></script>
 <script type='text/javascript' src='./js/CPanel/cCPanel.js'></script>
 
@@ -51,11 +45,7 @@
 <div id="div_CPanel" style="position: absolute; left: 240px; top: 60px; width: 800px; height: 600px; background-color: #000000; overflow: hidden; border-radius: 24px;">
 
 
-<!--
------------------------------------------------ level I
--------------CPanel - page - activation
------------------------------------------------
--->
+<!-- ----------------------- activation module ---------------------- level II -->
 <div id="div_activationMain" style="position: absolute; left: 0px; top: 0px; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_activationMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px; "></div>
 	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
@@ -64,14 +54,18 @@
 	
 	<div id="div_activationMain_activatestep1" style="position: absolute; top: 120px; left: 0px; color: #FFFFFF; font-size: 18px; ">
 		<div id="div_username_container" style="position: absolute; top: 40px; left: 160px; opacity: 1;">
-			<div style="position: absolute; padding-top: 10px; width: 140px; font-weight: bold;">USERNAME : </div>
-			<div id="input_username" style="position: absolute; top: 0px; left: 140px; width: 300px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; "></div>
+			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold;">USERNAME : </div>
+			<div id="input_username" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; "></div>
 		</div>
 		<div id="div_password_container" style="position: absolute; top: 100px; left: 160px; opacity: 0.2;">
-			<div style="position: absolute; padding-top: 10px; width: 140px; font-weight: bold;">PASSWORD : </div>
-			<div id="input_password" style="position: absolute; top: 0px; left: 140px; width: 300px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; "></div>
+			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold;">PASSWORD : </div>
+			<div id="input_password" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; "></div>
 		</div>
-		<div id="div_keyboard" class="div_keyboardset" style="position: absolute; top: 180px; left: 210px; height: 220px; width: 380px; border: solid #FFFFEE 0px; opacity: 0.2;">
+		<div id="div_devicename_container" style="position: absolute; top: 160px; left: 160px; opacity: 0.2;">
+			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold;">DEVICE NAME : </div>
+			<div id="input_devicename" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; ">NeTV</div>
+		</div>
+		<div id="div_keyboard" class="div_keyboardset" style="position: absolute; top: 210px; left: 210px; height: 220px; width: 380px; border: solid #FFFFEE 0px; opacity: 0.2;">
 			<div id="keyboard">
 				<div style="float: top;">
 					<div class="mac_key" id="key_a">a</div>
@@ -128,19 +122,23 @@
 		</div>
 	</div>
 	<div id="div_activationMain_activatestep2" style="position: absolute; top: 0px; left: 0px;">
-
+		
 	</div>
 
+	<div id="div_activationMain_deactivatestep1" style="position: absolute; top: 120px; left: 0px; color: #FFFFFF; font-size: 18px; ">
+		<div id="div_info" style="position: absolute; top: 80px; left: 120px; width: 560px; height: 400px; opacity: 1; font-size: 32px">
+			This device is already activated. <br/><br/>You may select the option below to deactivate this device.
+		</div>
+	</div>
 	
 	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;">
-<!--
-		<div style="position: absolute; top: 0px; left: 300px; width: 200px; height: 32px; opacity: 1; margin-top: 4px; background-color: #000000; border: solid white 0px;"></div>
--->
 		<div style="position: absolute; top: 10px; left: 350px; ">Activation</div>
 	</div>
 	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
-		<div style="position: absolute; top: 0px; left: 300px; width: 57px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">BACK</div>
-		<div style="position: absolute; top: 0px; left: 400px; width: 57px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">ACTIVATE</div>
+		<div style="position: absolute; top: 0px; left: 280px; width: 100px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">BACK</div>
+		<div style="position: absolute; top: 0px; left: 260px; width: 100px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">NOT NOW</div>
+		<div style="position: absolute; top: 0px; left: 450px; width: 100px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">ACTIVATE</div>
+		<div style="position: absolute; top: 0px; left: 450px; width: 100px; opacity: 0.2; border: solid #FFFFFF 0px; color: #FFFFFF;">DEACTIVATE</div>
 	</div>
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
 		<div style="margin-top: 30px;">NeTV Activation</div>
@@ -218,22 +216,33 @@
 
 
 
-<!-- ----------------------- configuration module ------------------------ level II -->
+<!-- ----------------------- setting module ------------------------ level II -->
 <div id="div_settingMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
-
-
-
-	
-	<div id="subnavi_back" style="position: absolute; top: 560px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
-		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 0.2; border: solid #FFFFFF 0px;">BACK</div>
-	</div>
 	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
-		<div id="item_indicator" style="position: absolute; top: 580px; left: 540px; width: 100px; height: 4px; background-color: #FF2222;"></div>
+		<div id="item_indicator" style="position: absolute; top: 120px; left: 200px; background-color: #6598EB; width: 400px; height: 40px; border-radius: 10px;"></div>
 	</div>
 	
+	<div id="setting_group" style="position: absolute; top: 80px; left: 0px; width: 800px; height: 520px; color: #FFFFFF; font-weight: bold; font-size: 24px; text-shadow: #000000 3px 3px 3px;">
+		<div style="position: absolute; top: 50px; left: 200px; width: 400px; height: 30px; text-align: center; display: none;">
+			<div>Reset to AP Mode</div>
+		</div>
+		<div style="position: absolute; top: 110px; left: 200px; width: 400px; height: 30px; text-align: center;">
+			<div>Reconnect to WIFI</div>
+		</div>
+		<div style="position: absolute; top: 160px; left: 200px; width: 400px; height: 30px; text-align: center;">
+			<div>Reload Control Panel</div>
+		</div>
+		<div style="position: absolute; top: 210px; left: 200px; width: 400px; height: 30px; text-align: center;">
+			<div>Reboot</div>
+		</div>
+	</div>
+	
+	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
+		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
+	</div>
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
-		<div style="margin-top: 30px;">NeTV Configuration</div>
+		<div style="margin-top: 30px;">NeTV Settings</div>
 		<div style="position: absolute; top: 15px; left: 15px; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 	</div>
 </div>
@@ -248,8 +257,8 @@
 		<div id="div_infoMain_content_mobileapp" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; width: 760px; height: 400px;">
 			<div style="position: absolute; top: 0px; left: 185px; font-weight: bold;">Android</div>
 			<div style="position: absolute; top: 0px; left: 460px; font-weight: bold;">iOS</div>
-			<div style="position: absolute; top: 20px; left: 150px; width: 160px; height: 160px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat; background-size: 90%;"></div>
-			<div style="position: absolute; top: 20px; left: 405px; width: 160px; height: 160px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat; background-size: 90%;"></div>
+			<div style="position: absolute; top: 20px; left: 150px; width: 144px; height: 144px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat; background-size: 100%; border: solid #FFFFFF 0px;"></div>
+			<div style="position: absolute; top: 20px; left: 405px; width: 144px; height: 144px; text-align: center; background-repeat: no-repeat; background-size: 100%; border: dashed #FFFFFF 1px;"><div style="margin-top: 60px;">Coming Soon ...</div></div>
 			<div class="bigline chumbyblue font20" style="position: absolute; top: 200px; left: 100px; width: 500px; height: 250px; text-align: justify; color: #FFFFFF; font-size: 16px;">
 Please pick one of three easy ways to configure your NeTV:
 <br />
@@ -311,7 +320,6 @@ Please pick one of three easy ways to configure your NeTV:
 		<div id="item_indicator" style="position: absolute; top: 86px; left: 305px; width: 190px; height: 30px; background-color: #6598EB; border-radius: 10px;"></div>
 	</div>
 	
-	
 	<div id="item_images" style="position: absolute; top: 300px; left: 400px; color: #FFFFFF; font-size: 18px; height: 400px; width: 80px">
 		<div id="item_image_channels" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 1px 1px 2px; opacity:0.2; filter:alpha(opacity=20)">
 			<img src="./images/dockicons/iphoto_128.png" width="256px" height="256px" />
@@ -327,22 +335,12 @@ Please pick one of three easy ways to configure your NeTV:
 		</div>
 	</div>
 	
-
 	<div id="subnavi" style="position: absolute; top: 80px; left: 0px;">
 		<div style="position: absolute; top: 0px; left: 0px; width: 140px; opacity: 1; margin-top: 11px; color: #FFFFFF; font-size: 19px; font-weight: bold; border: solid white 0px; text-shadow: #333333 2px 2px 2px;">My Channels</div>
-		<div style="position: absolute; top: 0px; left: 0px; width: 160px; opacity: 0.2; margin-top: 11px; color: #FFFFFF; font-size: 19px; font-weight: bold; border: solid white 0px; text-shadow: #333333 2px 2px 2px;">Configurations</div>
+		<div style="position: absolute; top: 0px; left: 0px; width: 95px; opacity: 0.2; margin-top: 11px; color: #FFFFFF; font-size: 19px; font-weight: bold; border: solid white 0px; text-shadow: #333333 2px 2px 2px;">Settings</div>
 		<div style="position: absolute; top: 0px; left: 0px; width: 130px; opacity: 0.2; margin-top: 11px; color: #FFFFFF; font-size: 19px; font-weight: bold; border: solid white 0px; text-shadow: #333333 2px 2px 2px;">System Info</div>
 		<div style="position: absolute; top: 0px; left: 0px; width: 110px; opacity: 0.2; margin-top: 11px; color: #FFFFFF; font-size: 19px; font-weight: bold; border: solid white 0px; text-shadow: #333333 2px 2px 2px;">Activation</div>
-	<!--
-		<div style="position: absolute; top: 0px; left: 950px; width: 125px; opacity: 0.2; margin-top: 11px; color: #6598EB; font-size: 18px; font-weight: bold; border: solid white 1px;">ACTIVATION</div>
-	-->
 	</div>
-
-	<!--
-	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
-		<div id="item_indicator" style="position: absolute; top: 115px; left: 140px; width: 135px; height: 4px; background-color: #FF2222;"></div>
-	</div>
-	-->
 	
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
 		<div style="margin-top: 30px;">Control Center</div>
@@ -379,6 +377,19 @@ Please pick one of three easy ways to configure your NeTV:
 </div>
 
 </div>
+<!-------------- div_CPanel END---------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -397,21 +408,16 @@ Please pick one of three easy ways to configure your NeTV:
 </div>
 
 
+
 <!--
 ----------------------------------------------- level I
 -------------widget rendering engine (HTML5 + Javascript)
 -----------------------------------------------
 -->
 <div id="div_externalUrlPlayer" style="position: absolute; left: 0px; top: 0px; width: 1279px; height: 719px; padding: 0; margin: 0; overflow: hidden;">
-<iframe id="iframe_externalUrlPlayer" name="iframe_externalUrlPlayer" width="1279px" height="719px" border="0" margin="0" frameborder="0" scrolling="no" style="overflow: hidden;">
+<iframe id="iframe_externalUrlPlayer" width="1279px" height="719px" border="0" margin="0" frameborder="0" scrolling="no" style="overflow: hidden;">
 </iframe>
 </div>
-
-
-
-
-
-
 
 
 
@@ -432,7 +438,11 @@ Please pick one of three easy ways to configure your NeTV:
 </div>
 
 <div id="div_eventWidgetPlayer_mini" style="position: absolute; top: 0px; left: 1080px; width: 80px; height: 60px; background-color: #222222; font-size: 18px;">
-	<div id="stamp_top" style="position: absolute; top: 0px; left: 0px; width: 80px; height: 30px; padding: 4px 0 0 0; text-align: center">
+	<div id="stamp_demo_container"><div style="position: absolute; top: 10px; left: 7px; width: 80px; height: 40px; -webkit-transform: rotate(-20deg); font-size: 24px; color: #FFFFFF; opacity: 0.1;">DEMO</div></div>
+<!--
+	<div><div style="position: absolute; top: 1px; left: 65px; width: 80px; height: 40px; font-size: 7px; color: #FFFFFF; opacity: 0.5;">888</div></div>
+-->
+	<div id="stamp_top" style="position: absolute; top: 0px; left: 0px; width: 80px; height: 30px; padding: 4px 0 0 0; text-align: center;">
 		<img id="stamp_logo" src="./images/chumby_logo_48x48.png" width="24px" height="24px" style="position: absolute; top: 4px; left: 28px; width: 24px; height: 24px;" />
 		<div id="stamp_text_container" style="position: absolute; top: 4px; left: 0px; width: 80px; height: 30px; color: #CCCCCC; display: none;">00:00</div>
 	</div>
@@ -441,8 +451,6 @@ Please pick one of three easy ways to configure your NeTV:
 		<div id="stamp_bottom_message_container" style="position: absolute; top: 4px; left: 0px; width: 80px; height: 26px; white-space: nowrap; font-size: 14px; color: #EEEEEE; "></div>
 		<div id="stamp_bottom_iconset_container" style="position: absolute; top: 0px; left: 0px; width: 80px; height: 30px; white-space: nowrap; text-align: right; font-size: 14px; color: #094fa6; display: none;"></div>
 	</div>
-		
-	<!-- ----------------------- 4 corners ----------------------------------- level II -->
 	<div id="corner_container">
 		<div style="position: absolute; top: 0px; left: 72px; width: 8px; height: 8px; background-image: url('./images/topright_24.png'); -webkit-transform: rotate(0deg); background-size: 100%;"></div>
 		<div style="position: absolute; top: 42px; left: 72px; width: 8px; height: 8px; background-image: url('./images/topright_24.png'); -webkit-transform: rotate(90deg); background-size: 100%;"></div>
@@ -458,109 +466,6 @@ Please pick one of three easy ways to configure your NeTV:
 
 
 
-<div id="div_eventWIdgetPlayer_visualaids" style="position: absolute; top: 0px; left: 0px;">
-<div id="div_configmode1" style="position: absolute; top: 500px; left: 620px; width: 100px; height: 100px;">
-	<div style="position: absolute; top: -2px; left: -3px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid green;"></div>
-	<div style="position: absolute; top: 0px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 6px solid black;"></div>
-	<div id="arrow_top_white" style="position: absolute; top: 0px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 6px solid white; display: none;"></div>
-
-	<div style="position: absolute; top: 38px; left: -3px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid green;"></div>
-	<div style="
-		position: absolute;
-		top: 40px;
-		left: 0px;
-		width: 0;
-		height: 0;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 6px solid black;
-	"></div>
-	<div id="arrow_bottom_white" style="
-		position: absolute;
-		top: 40px;
-		left: 0px;
-		width: 0;
-		height: 0;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 6px solid white;
-		display: none;
-	"></div>
-	
-	<div style="
-		position: absolute;
-		top: 14px;
-		left: -16px;
-		width: 0;
-		height: 0;
-		border-top: 10px solid transparent;
-		border-bottom: 10px solid transparent;
-		border-right: 10px solid green;
-	"></div>
-	<div style="
-		position: absolute;
-		top: 17px;
-		left: -14px;
-		width: 0;
-		height: 0;
-		border-top: 6px solid transparent;
-		border-bottom: 6px solid transparent;
-		border-right: 6px solid black;
-	"></div>
-	<div id="arrow_left_white" style="
-		position: absolute;
-		top: 17px;
-		left: -14px;
-		width: 0;
-		height: 0;
-		border-top: 6px solid transparent;
-		border-bottom: 6px solid transparent;
-		border-right: 6px solid white;
-		display: none;
-	"></div>
-	
-	<div style="
-		position: absolute;
-		top: 20px;
-		left: 36px;
-		width: 0;
-		height: 0;
-		border-top: 10px solid transparent;
-		border-bottom: 10px solid transparent;
-		border-left: 10px solid green;
-	"></div>
-	<div style="
-		position: absolute;
-		top: 23px;
-		left: 38px;
-		width: 0;
-		height: 0;
-		border-top: 6px solid transparent;
-		border-bottom: 6px solid transparent;
-		border-left: 6px solid black;
-	"></div>
-	<div id="arrow_right_white" style="
-		position: absolute;
-		top: 23px;
-		left: 38px;
-		width: 0;
-		height: 0;
-		border-top: 6px solid transparent;
-		border-bottom: 6px solid transparent;
-		border-left: 6px solid white;
-		display: none;
-	"></div>
-</div>
-
-</div>
-
-<!--
------------------------------------------------ level I
--------------loader div
------------------------------------------------
--->
-<div id="loaderDiv" style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px; overflow: hidden;">
-</div>
 
 
 <!--
@@ -568,13 +473,42 @@ Please pick one of three easy ways to configure your NeTV:
 -------------warning message/instruction div
 -----------------------------------------------
 -->
-<div id="div_toast" style="position: absolute; top: 20px; left: 0px; width: 1279px; height: 50px; border: solid blue 0px; display: none;">
-	<div id="div_toast_content" style="position: relative; top: 20px; left: 0px; width: 600px; text-align: center; margin: 0 auto; padding: 10px 00px">
+<div id="div_toast" style="position: absolute; top: 20px; left: 0px; width: 1279px; height: 80px; border: solid blue 0px; display: none; ">
+	<div id="div_toast_content" style="position: relative; top: 0px; left: 0px; width: 600px; text-align: center; margin: 0 auto; padding: 20px 0px; border: solid #FFFFFF 2px; border-radius: 10px;">
+		
 	</div>
 </div>
 
 
+
+<!--
+----------------------------------------------- level I
+-------------warning message/instruction div
+-----------------------------------------------
+-->
+
+<div id="div_messagebox" style="position: absolute; top: 100px; left: 100px; width: 400px; height: 280px; background-color: black; border: solid #FFFFFF 2px; border-radius: 32px; overflow: hidden; display: none;">
+	<div id="div_messagebox_title" style="position: absolute; top: 0px; left: 0px; width: 400px; height: 50px; background-color: #EEEE88; border-top-left-radius: 32px; border-top-right-radius: 32px;">
+		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 50px;  text-align: center; font-size: 32px; font-weight: bold; margin-top: 10px;">
+			MESSAGE
+		</div>
+	</div>
+	<div id="div_messagebox_message" style="position: absolute; top: 50px; left: 0px;">
+		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 200px;  text-align: center; font-size: 24px; font-weight: bold; margin-top: 80px; color: #FFFFFF;">
+			NeTV activated!!!
+		</div>
+	</div>
+	<div id="div_messagebox_progressbar">
+		
+	</div>
 </div>
+
+
+
+</div>
+<!-------------- div_all END---------------------------------------------------------------------------------------------------------------------------------->
+
+
 
 
 
@@ -592,125 +526,3 @@ Please pick one of three easy ways to configure your NeTV:
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ----------------------- chumby info module ---------------------- 
-<!--
-<div id="div_infoMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
-	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
-	
-	<div class="bg_innerborder_outer" style="position: absolute; top: 75px; left: 40px; width: 720px; height: 460px; background-color: #333333; ">
-		<div class="bg_innerborder_inner" style="position: absolute;  top: 8px; left: 8px; width: 704px; height: 444px; background-color: #EEEEFF; "></div>
-	</div>
-	
-	<div id="div_infoMain_content" style="position: absolute; top: 8px; left: 0px;">
-		<div style="position: absolute; top: 130px; left: 135px; width: 175px; height: 175px; border: solid black 0px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat;"></div>
-		<div class="bigline chumbyblue font18" style="position: absolute; top: 350px; left: 75px; width: 300px; height: 250px; text-align: justify;"> Use your android device to scan the QR image above, to acquire the web address of NeTV Android App.</div>
-
-		<div id="div_infoMain_content_basic" class="font16" style="position: absolute; top: 90px; left: 420px; width: 360px; height: 400px; border: solid black 0px;">
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div class="bold font20" style="">Basic Info</div>
-			</div>
-			<div style="position: relative; width: 350px; height: 15px;"></div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">NeTV Name</div><div style="float: left; width: 14px;"> : </div><div style="float: left;">chumby_netv_demo_set</div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">HW Ver</div><div style="float: left; width: 14px;"> : </div><div id="div_info_hwver" style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">FW Ver</div><div style="float: left; width: 14px;"> : </div><div id="div_info_fwver" style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">IP</div><div style="float: left; width: 14px;"> : </div><div id="div_info_ip" style="float: left;">192.168.100.1</div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">MAC</div><div style="float: left; width: 14px;"> : </div><div id="div_info_mac" style="float: left;"> </div>
-			</div>
-		</div>
-		<div id="div_infoMain_content_advanced" style="position: absolute; top: 90px; left: 420px; width: 360px; height: 400px; border: solid black 0px;">
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div class="bold font20" style="">Advanced Info</div>
-			</div>
-			<div style="position: relative; width: 350px; height: 15px;"></div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">ID</div><div style="float: left; width: 14px;"> : </div><div style="float: left;">chumby_netv_1</div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">HW</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">SW</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">FW</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">HW#</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 15px;"></div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 130px; border: solid black 0px;">Registered To</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 130px; border: solid black 0px;">NeTV Name</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 15px;"></div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">MAC</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">SSID</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">IP</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">Netmask</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">Gateway</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">DNS</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-			<div style="position: relative; width: 350px; height: 25px;">
-				<div style="float: left; width: 110px; border: solid black 0px;">Link Quality</div><div style="float: left; width: 14px;"> : </div><div style="float: left;"> </div>
-			</div>
-		</div>
-		
-		<div style="position: absolute; top: 90px; left: 700px;">
-			<div class="arrow-left" style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #094fa6;"></div>
-			<div class="arrow-right" style="position: absolute; left: 15px; top: 0px; width: 0px; height: 0px; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 10px solid #094fa6;"></div>
-		</div>
-	</div>
-	
-	<div class="subcpanel_title">NeTV Info</div>
-	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
-</div>
--->
-
-
-
-
-<!-- ----------------------- message module ---------------------- -->
-<!--
-<div id="div_messageBoard" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
-	<div id="div_messageBoard_bg" style="position: absolute; width: 800px; height: 600px; background-color: #EEEEFF;"></div>
-	<div id="div_messageBoard_text" class="chumbyblue" style="position: absolute; top: 12px; left: 70px; width: 400px; height: 100px; font-size: 24px;">Initializing...</div>
-	<div style="position: absolute; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
-</div>
--->

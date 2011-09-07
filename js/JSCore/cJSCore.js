@@ -110,7 +110,21 @@ cJSCore.prototype.fOnSignal = function(
 
 	// --------- from subpanel ---------------------------------------
 	case cConst.SIGNAL_ACTIVATE:
-		cAccountModule.fGetInstance().fActivate();
+		cAccountModule.fGetInstance().fDoActivate(vData[0], vData[1], vData[2], function(vData) { vReturnFun(vData); });
+		//~ cAccountModule.fGetInstance().fDoActivate("demosg", "ddddd", "NeTV Device", function(vData) { vReturnFun(vData); });
+		break;
+	case cConst.SIGNAL_DEACTIVATE:
+		cAccountModule.fGetInstance().fDoDeActivate(function(vData) {
+			if (vData == "true" || vData == true)
+			{
+				cModel.fGetInstance().CHANNEL_LIST.splice(1, 100);
+			}
+			else
+			{
+
+			}
+			vReturnFun(vData);
+		});
 		break;
 	}
 }
@@ -210,7 +224,7 @@ fDbg2("*** cJSCore, fStartUpReturn()");
 cJSCore.prototype.fSimulateTestingData = function(
 )
 {
-	//~ return;
+	return;
 	
 	// force write over GUID and URLs
 	if (!cJSCore.kProductionMode)
@@ -270,26 +284,7 @@ fDbg("*** cJSCore, fTestingFuns(), ");
 
 		cProfile.fGetProfileListByAccountID(cModel.fGetInstance().CHUMBY_GUID, function(vData) {
 			fDbg(vData);
-
 		});
 	});
 
 }
-
-
-
-
-
-
-	/*
-	cAccountModule.fGetInstance().fFetchAccountInfo(function() {
-		//~ cProxy.fCPanelMsgBoardDisplay("Fetching Channel Info...");
-		cChannelModule.fGetInstance().fFetchChannelInfo(function() {
-			if (vReturnFun)
-				vReturnFun(vData);
-				
-			// all DONE!!! START!!!!!
-			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
-		});
-	});
-	*/

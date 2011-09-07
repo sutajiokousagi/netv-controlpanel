@@ -39,8 +39,6 @@ showTweetLinks='all';
 		var fGetThenDispatchEvent = function() {
 			var url="http://search.twitter.com/search.json?q=chumby&rpp=1&callback=?";
 			$.getJSON(url,function(json){
-				console.log("=============================");
-				
 				if (!json.results)
 					return;
 				
@@ -48,6 +46,8 @@ showTweetLinks='all';
 				var vTweet_message = "";
 				var vTweet_image = "";
 				var vID = json.results[0].id;
+
+				fDbg(vID + ", prevID : " + mPrevTweetID);
 				if (vID == mPrevTweetID)
 					return;
 				console.log("message : " + vTweet_message);
@@ -58,7 +58,7 @@ showTweetLinks='all';
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
-						vTweet_message = escape(vTweet_message);
+						vTweet_message = encodeURIComponent(escape(vTweet_message));
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;

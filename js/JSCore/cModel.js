@@ -51,7 +51,8 @@ function cModel(
 	this.CURR_WIDGET_INDEX = null;
 	this.PREV_WIDGET_INDEX = null;
 
-
+	this.PLAYMODE = "event";
+	//~ this.PLAYMODE = "default";
 
 
 

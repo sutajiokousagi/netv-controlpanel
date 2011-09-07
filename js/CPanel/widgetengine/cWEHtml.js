@@ -16,6 +16,15 @@ function cWEHtml(
 	this.mCurrWidget = null;
 	this.mPlayMode = "default";		// default | event
 	
+	this.mStyle = {
+		mBottomOffset: 40,
+		mWidgetWidth: 1280,
+		mWidgetHeight: 70
+	}
+
+	this.mViewPortSize = [];
+
+	// init
 	this.fInit();
 }
 
@@ -38,6 +47,19 @@ cWEHtml.prototype.fInit = function(
 {
 //~ fDbg2("*** cWEHtml, fInit(), ");
 	
+}
+
+/** -------------------------------------------------------------------------------------------------
+	fResize
+-------------------------------------------------------------------------------------------------- */
+cWEHtml.prototype.fResize = function(
+	vViewPortSize
+)
+{
+	var vThis = this;
+	vThis.mViewPortSize = vViewPortSize;
+	
+	vThis.mStyle.mWidgetWidth = vViewPortSize[0];
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -101,12 +123,16 @@ cWEHtml.prototype.fOnSignal = function(
 cWEHtml.prototype.fShow = function(
 )
 {
+	var vThis;
+	vThis = this;
 	
+	this.mDiv.show();
+	$("#div_htmlWidgetPlayer").css("top", vThis.mViewPortSize[1] + 20 + "px");
 }
 cWEHtml.prototype.fHide = function(
 )
 {
-	
+	this.mDiv.hide();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -116,22 +142,31 @@ cWEHtml.prototype.fAnimateIn = function(
 	vReturnFun
 )
 {
-fDbg("*** cWEEvent, fAnimateOut(), ");
-	$("#div_htmlWidgetPlayer").css("top", "720px");
+fDbg("*** cWEEvent, fAnimateIn(), ");
+	var vThis;
+	vThis = this;
+	
+	vThis.fShow();
+	$("#div_htmlWidgetPlayer").css("top", vThis.mViewPortSize[1] + 20 + "px");
+	$("#div_htmlWidgetPlayer").css("width", vThis.mViewPortSize[0] + "px");
 	$("#div_htmlWidgetPlayer").animate({
-		top: "-=80"
+		top: vThis.mViewPortSize[1] - vThis.mStyle.mBottomOffset - vThis.mStyle.mWidgetHeight + "px"
 	}, 200, function() {
 		if (vReturnFun)
 			vReturnFun();
+
+		fDbg($("#div_htmlWidgetPlayer").html());
 	});
 }
 cWEHtml.prototype.fAnimateOut = function(
 	vReturnFun
 )
 {
-	$("#div_htmlWidgetPlayer").css("top", "640px");
+fDbg("*** cWEEvent, fAnimateOut(), ");
+	
+	$("#div_htmlWidgetPlayer").css("top", vThis.mViewPortSize[1] - vThis.mStyle.mBottomOffset - vThis.mStyle.mWidgetHeight + "px");
 	$("#div_htmlWidgetPlayer").animate({
-		top: "+=80"
+		top: vThis.mViewPortSize[1] + 20 + "px"
 	}, 200, function() {
 		if (vReturnFun)
 			vReturnFun();
@@ -147,21 +182,23 @@ cWEHtml.prototype.fPlayWidget = function(
 )
 {
 fDbg2("*** cWEHtml, fPlayWidget(), " + vData);
-	var p, i;
-
+	var vThis, p, i;
+	vThis = this;
+	
 	if (this.mPlayMode == "default")
 	{
 		// check if curr widget running (on screen)
-		if ($("#div_htmlWidgetPlayer").css("top") == "720px")
+		if ($("#div_htmlWidgetPlayer").css("top") != vThis.mViewPortSize[1] - vThis.mStyle.mBottomOffset - vThis.mStyle.mWidgetHeight + "px")
 		{
-			// reset and load a new widget
-			$("#div_htmlWidgetPlayer").show();
-			$("#div_htmlWidgetPlayer").css("top", "720px");
-			$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + vData + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="position: absolute; top: 0px; left: 0px; width: 1279px; height: 70px; background-color: white"></iframe>');
-			
+			$("#div_htmlWidgetPlayer").html('<iframe id="iframe_htmlWidgetPlayer" src="' + vData + '" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" style="position: absolute; top: 0px; left: 0px; width: ' + vThis.mViewPortSize[0] + 'px; height: ' + vThis.mStyle.mWidgetHeight + 'px; background-color: white"></iframe>');
+			//~ fDbg($("#div_htmlWidgetPlayer").html());
+
 			p = setTimeout(function() {
+				//~ fDbg($("#div_htmlWidgetPlayer").html());
 				cWEHtml.instance.fAnimateIn();
 			}, 1000);
+			
+			
 		}
 		else
 		{

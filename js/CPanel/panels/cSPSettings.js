@@ -14,10 +14,19 @@ function cSPSettings(
 {
 	this.mDiv = $("#" + vDiv);
 	this.mID = vDiv;
-	
-	this.mMessageList = [];
-	this.mMessageDisplayInProgress = false;
 
+	this.mCurrSelection = null;
+
+	// div elements
+	this.mDivIndicator = null;
+	this.mDivResetToAP = null;
+	this.mDivReconnectToWIFI = null;
+	this.mDivReloadControlPanel = null;
+	this.mDivReboot = null;
+	
+	// view modes
+	this.mViewMode = null;
+	cSPSettings.VIEWMODE_DEFAULT = "viewmode_default";
 
 	this.fInit();
 }
@@ -40,7 +49,52 @@ cSPSettings.prototype.fInit = function(
 )
 {
 //~ fDbg2("*** cSPSettings, fInit(), ");
+	var vThis;
+	vThis = this;
 
+	vThis.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
+	
+	vThis.mDivResetToAP =  $(this.mDiv.children("#setting_group").children()[0]);
+	vThis.mDivResetToAP.pIndicatorStyle = { width: "400px", height: "40px", top: "120px", left: "200px" };
+	vThis.mDivReconnectToWIFI = $(this.mDiv.children("#setting_group").children()[1]);
+	vThis.mDivReconnectToWIFI.pIndicatorStyle = { width: "400px", height: "40px", top: "180px", left: "200px" };
+	vThis.mDivReloadControlPanel = $(this.mDiv.children("#setting_group").children()[2]);
+	vThis.mDivReloadControlPanel.pIndicatorStyle = { width: "400px", height: "40px", top: "230px", left: "200px" };
+	vThis.mDivReboot = $(this.mDiv.children("#setting_group").children()[3]);
+	vThis.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
+	
+	vThis.mDivBack = $(vThis.mDiv.children("#subnavi_action").children()[0]);
+	vThis.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+
+	vThis.pViewMode(cSPSettings.VIEWMODE_DEFAULT);
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *	pViewMode
+ * -----------------------------------------------------------------------------------------------*/
+cSPSettings.prototype.pViewMode = function(
+	vViewMode
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (!vViewMode) return vThis.mViewMode;
+	
+	switch (vViewMode)
+	{
+	case cSPSettings.VIEWMODE_DEFAULT:
+		vThis.mDivResetToAP.css("opacity", "0.2");
+		vThis.mDivReconnectToWIFI.css("opacity", "0.2");
+		vThis.mDivReloadControlPanel.css("opacity", "0.2");
+		vThis.mDivReboot.css("opacity", "0.2");
+		vThis.mDivBack.css("opacity", "0.2");
+		
+		vThis.mCurrSelection = vThis.mDivReconnectToWIFI;
+		vThis.mCurrSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mCurrSelection.pIndicatorStyle);
+		break;
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -52,7 +106,7 @@ cSPSettings.prototype.fOnSignal = function(
 	vReturnFun		// return function call
 )
 {
-fDbg2("*** cSPSettings, fOnSignal(), " + vSignal + ", " + vData);
+//~ fDbg("*** cSPSettings, fOnSignal(), " + vSignal + ", " + vData);
 	var vThis, o, i;
 	vThis = this;
 	
@@ -71,16 +125,52 @@ fDbg2("*** cSPSettings, fOnSignal(), " + vSignal + ", " + vData);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
-		if (vThis.mCurrSelection == null)
+		switch (vThis.mCurrSelection)
 		{
+		case vThis.mDivResetToAP:
+			break;
+		case vThis.mDivReconnectToWIFI:
+			window.location = "./html_config/";
+			break;
+		case vThis.mDivReloadControlPanel:
+			window.location = "http://localhost/";
+			break;
+		case vThis.mDivReboot:
+			break;
+		case vThis.mDivBack:
 			cCPanel.fGetInstance().fBack();
+			break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		switch (vThis.mCurrSelection)
+		{
+		//~ case vThis.mDivReconnectToWIFI:	o = vThis.mDivResetToAP; break;
+		case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
+		case vThis.mDivReboot:	o = vThis.mDivReloadControlPanel; break;
+		case vThis.mDivBack:	o = vThis.mDivReboot; break;
+		default: return;
+		}
+		vThis.mCurrSelection.css("opacity", "0.2");
+		vThis.mCurrSelection = o;
+		vThis.mCurrSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mCurrSelection.pIndicatorStyle);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		switch (vThis.mCurrSelection)
+		{
+		case vThis.mDivResetToAP: 	o = vThis.mDivReconnectToWIFI; break;
+		case vThis.mDivReconnectToWIFI:	o = vThis.mDivReloadControlPanel; break;
+		case vThis.mDivReloadControlPanel:	o = vThis.mDivReboot; break;
+		case vThis.mDivReboot:	o = vThis.mDivBack; break;
+		default: return;
+		}
+		vThis.mCurrSelection.css("opacity", "0.2");
+		vThis.mCurrSelection = o;
+		vThis.mCurrSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mCurrSelection.pIndicatorStyle);
 		break;
 	}
 }

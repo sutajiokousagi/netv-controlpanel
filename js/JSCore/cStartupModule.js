@@ -73,6 +73,11 @@ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 			o = cModel.fGetInstance();
 			o.CHUMBY_GUID = vData.split("</guid>")[0].split("<guid>")[1];
 			o.CHUMBY_DCID = vData.split("</dcid>")[0].split("<dcid>")[1];
+			o.CHUMBY_DCID_VERS = o.CHUMBY_DCID.split("</vers>")[0].split("<vers>")[1];
+			o.CHUMBY_DCID_RGIN = o.CHUMBY_DCID.split("</rgin>")[0].split("<rgin>")[1];
+			o.CHUMBY_DCID_SKIN = o.CHUMBY_DCID.split("</skin>")[0].split("<skin>")[1];
+			o.CHUMBY_DCID_PART = o.CHUMBY_DCID.split("</part>")[0].split("<part>")[1];
+			o.CHUMBY_DCID_CAMP = o.CHUMBY_DCID.split("</camp>")[0].split("<camp>")[1];
 			o.CHUMBY_HWVERSION = vData.split("</hwver>")[0].split("<hwver>")[1];
 			o.CHUMBY_FWVERSION = vData.split("</fwver>")[0].split("<fwver>")[1];
 			o.CHUMBY_FLASHPLUGIN = vData.split("</flashplugin>")[0].split("<flashplugin>")[1];
@@ -80,6 +85,7 @@ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 			o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
 			o.CHUMBY_INTERNET = vData.split("</internet>")[0].split("<internet>")[1];
 			//~ o.CHUMBY_INTERNET = "false";
+			
 			
 			switch (vData.split("</internet>")[0].split("<internet>")[1])
 			{

@@ -1,8 +1,6 @@
 var mJSCore;
 var mCPanel;
-var cConst = null;
-
-
+var cConst;
 
 var o = new DOMParser();
 o = o.parseFromString("<data>null</data>", "text/xml");
@@ -149,7 +147,8 @@ function fServerReset(
 //	press button on D-pad / android
 // -------------------------------------------------------------------------------------------------
 function fButtonPress(
-	vButtonName
+	vButtonName,
+	vCount
 )
 {
 //~ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
@@ -162,6 +161,13 @@ function fButtonPress(
 		case "center": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
 		case "up": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
 		case "down": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
+		
+		case "setup":
+			if (vCount == 3)
+			{
+				// fDbg("switched to demo(AP) mode");
+			}
+			break;
 	}
 	//~ keyboard_onRemoteControl(vButtonName, "input_username");
 	return true;
@@ -186,7 +192,17 @@ function fTickerEvents(
 )
 {
 //~ fDbg("*** fTickerEvents(), ");
-	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage], null);	
+/*
+fDbg("------------------------------------------------------");
+fDbg("message : " + vEventMessage.substr(0, 10));
+fDbg("title   : " + vEventTitle.substr(0, 10));
+fDbg("image   : " + vEventImage.substr(0, 10));
+fDbg("type    : " + vEventType);
+fDbg("level   : " + vEventLevel);
+fDbg("------------------------------------------------------");
+*/
+	vEventMessage = decodeURIComponent(vEventMessage);
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
 
 // -------------------------------------------------------------------------------------------------

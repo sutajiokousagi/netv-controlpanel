@@ -42,7 +42,12 @@ cChannelModule.prototype.fFetchChannelInfo = function(
 )
 {
 fDbg("*** cChannelModule, fFetchAccountInfo()");
-
+	// reset channels
+	cModel.fGetInstance().CHANNEL_LIST = [];
+	
+	// ---------- simulate a new channel, with some html widgets ----------
+	this.fSimulateDefaultChannels(function() {});
+	
 	cProfile.fGetInstance().fFetchInfo(cModel.fGetInstance().PROFILE_ID, function(vData) {
 		cChannelModule.instance.fParseChannelInfo(vData, vReturnFun);
 	});
@@ -61,47 +66,52 @@ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	
 	var o;
 	o = new cChannelObj(vData);
+
+
+	// -----------------------------------------------------
+	// parse the fetched channel
+	// -----------------------------------------------------
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o);
-	
-	// -----------------------------------------------------
-	// simulate a new channel, with some html widgets
-	// -----------------------------------------------------
-	this.fSimulateDefaultChannels();
+
 	
 	if (vReturnFun)
 		vReturnFun();
 }
 
 cChannelModule.prototype.fSimulateDefaultChannels = function(
+	vReturnFun
 )
 {
 fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
-	var o;
+	var vThis, o, p, i, vLen, parser, xmlDoc;
+	vThis = this;
+	parser = new DOMParser();
 	
-	o = new cChannelObj();
-	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	//~ o.mPlayMode = "default";
-	o.mPlayMode = "event";
-	o.mName = "NeTV Star Channel";
 	
-	o.mWidgetList.push(new cWidgetObj());
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "./widgets/twitter0.2/index.html";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "./widgets/twitter0.2/tn.jpg";
-	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "./widgets/twitter0.2/tn.jpg";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
-	
-	o.mWidgetList.push(new cWidgetObj());
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "./widgets/twitter0.1/index.html";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "./widgets/twitter0.1/tn.jpg";
-	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "./widgets/twitter0.1/tn.jpg";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
-	
-	o.mWidgetList.push(new cWidgetObj());
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = "./widgets/google_news_0.1/index.html";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = "./widgets/google_news_0.1/tn.png";
-	o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = "./widgets/google_news_0.1/tn.png";
-	o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = "application/html";
+	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+		o = new cChannelObj();
+		xmlDoc = parser.parseFromString(vData, "text/xml");
+		
+		o.mName = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("name")[0].textContent;
+		o.mPlayMode = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("playmode")[0].textContent;
+		//~ o.mPlayMode = "event";
+		p = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("widgets")[0].getElementsByTagName("widget");
+		vLen = p.length;
+		for (i = 0; i < vLen; i++)
+		{
+			o.mWidgetList.push(new cWidgetObj());
+			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = p[i].getElementsByTagName("href")[0].textContent;
+			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
+			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
+			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
+		}
+		cModel.fGetInstance().CHANNEL_LIST.push(o);
+		fDbg(cModel.fGetInstance().CHANNEL_LIST);
+		fDbg(cModel.fGetInstance().CHANNEL_LIST.length);
+		if (vReturnFun)
+			vReturnFun();
+	});
 }
 
 // -------------------------------------------------------------------------------------------------

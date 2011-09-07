@@ -13,6 +13,7 @@ function cModuleWE(
 )
 {
 	this.mDiv = null;
+	this.mState = null;
 
 	// channel/widget playing
 	this.mCurrChannel = null;
@@ -23,6 +24,9 @@ function cModuleWE(
 	// WE status
 	this.mCurrWE = null;				// cWEHtml | cWEFlash     (cModuleEventTicker will depends on the mCurrChannel.mPlayMode)
 	this.mCurrPlayStatus = null;		// null(stopped) | playing | hidden | paused
+
+
+	this.mViewPortSize = [];
 
 	
 	// initialize
@@ -49,6 +53,19 @@ cModuleWE.prototype.fInit = function(
 fDbg("*** cModuleWE, fInit(), ");
 }
 
+/** -------------------------------------------------------------------------------------------------
+	fResize
+-------------------------------------------------------------------------------------------------- */
+cModuleWE.prototype.fResize = function(
+	vViewPortSize
+)
+{
+	var vThis = this;
+	vThis.mViewPortSize = vViewPortSize;
+
+	cWEHtml.fGetInstance().fResize(vViewPortSize);
+}
+
 // -------------------------------------------------------------------------------------------------
 //	pCurrChannel
 // -------------------------------------------------------------------------------------------------
@@ -57,6 +74,26 @@ cModuleWE.prototype.pCurrChannel = function(
 )
 {
 	return typeof(v) === "undefined" ? this.mCurrChannel : this.mCurrChannel = v;
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pState
+// -------------------------------------------------------------------------------------------------
+cModuleWE.prototype.pState = function(
+	vState
+)
+{
+	var vThis, o;
+	vThis = this;
+	
+	if (!vState)
+		return vThis.mState;
+
+	switch (vState)
+	{
+	
+	}
+	vThis.mState = vState;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -83,11 +120,9 @@ cModuleWE.prototype.fOnSignal = function(
 		cModuleEventTicker.fAnimateOut();
 		if (vThis.mCurrWE)
 		{
-			fDbg("playstatus " + vThis.mCurrPlayStatus);
-			fDbg("playmode   " + vThis.mCurrChannel.mPlayMode);
 			if (vThis.mCurrPlayStatus == "playing")
 			{
-				if (vThis.mCurrChannel.mPlayMode == "default")
+				if (cModel.fGetInstance().PLAYMODE == "default")
 				{
 					vThis.mCurrWE.fAnimateOut();
 				}
@@ -99,7 +134,7 @@ cModuleWE.prototype.fOnSignal = function(
 			}
 			else if (vThis.mCurrPlayStatus == "hidden")
 			{
-				if (vThis.mCurrChannel.mPlayMode == "default")
+				if (cModel.fGetInstance().PLAYMODE == "default")
 				{
 					vThis.mCurrWE.fAnimateIn();
 				}
@@ -118,7 +153,8 @@ cModuleWE.prototype.fOnSignal = function(
 		if (vThis.mCurrWE)
 		{
 			vThis.mCurrWidgetTimeSpend++;
-fDbg(vThis.mCurrWidgetTimeSpend);
+if (vThis.mCurrWidgetTimeSpend % 3 == 0)
+	fDbg(vThis.mCurrWidgetTimeSpend);
 			if (vThis.mCurrWidgetTimeSpend == 15)
 			{
 				//~ window.status = "<xml><cmd>TickerEvent</cmd><data><message>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</message></data></xml>";
@@ -136,7 +172,7 @@ fDbg(vThis.mCurrWidgetTimeSpend);
 		break;
 		
 	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
-		if (vThis.mCurrChannel.mPlayMode == "event")
+		if (cModel.fGetInstance().PLAYMODE == "event")
 		{
 			cModuleEventTicker.fGetInstance().fAddEvent(vData);
 		}
@@ -162,6 +198,20 @@ cModuleWE.prototype.fNext = function(
 //~ fDbg("*** cModuleWE, fNext(), ");
 	var i, o, vThis;
 	vThis = this;
+
+if (!this.mCurrChannel)
+{
+	fDbg("NO Current Channel!!!");
+	//~ return;
+
+	fDbg("====>>> " + cModel.fGetInstance().CHANNEL_LIST);
+	if (cModel.fGetInstance().CHANNEL_LIST.length == 1)
+		this.mCurrChannel = cModel.fGetInstance().CHANNEL_LIST[0];
+	else if (cModel.fGetInstance().CHANNEL_LIST.length == 2)
+		this.mCurrChannel = cModel.fGetInstance().CHANNEL_LIST[1];
+	else if (cModel.fGetInstance().CHANNEL_LIST.length == 0)
+		return;
+}
 	
 	// set curr widget
 	if (this.mCurrWidget == null)
@@ -173,11 +223,15 @@ cModuleWE.prototype.fNext = function(
 		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
 	}
 	
-	if (this.mCurrChannel.mPlayMode == "event")
+	if (cModel.fGetInstance().PLAYMODE == "event")
 	{
 		if (!cModuleEventTicker.fGetInstance().mVisibleOnScreen)
 			cModuleEventTicker.fGetInstance().fAnimateIn();
 	}
+
+	
+	cCPanel.fGetInstance().fOnSignal(cConst.SIGNAL_PLAYNEXTWIDGET, null, null);
+
 	
 	// check current WE state (activated | unactivated, playing, paused, stopped)
 	if (!this.mCurrWE)
@@ -185,13 +239,23 @@ cModuleWE.prototype.fNext = function(
 		// load the "new" mCurrWidget
 		if (this.mCurrWidget.pIsHTML())
 		{
+			fDbg("is html");
 			this.mCurrWE = cWEHtml.fGetInstance();
 		}
-		else if (this.mCurrWidget.pIsHTML())
+		else if (this.mCurrWidget.pIsFLASH())
 		{
-			this.mCurrWE = cWEFlash.fGetInstance();
+			fDbg("is flash");
+			this.mCurrWE = cWEHtml.fGetInstance();
+			//~ this.mCurrWE = cWEFlash.fGetInstance();
 		}
-		this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
+		else
+		{
+			fDbg("is default(html)");
+			this.mCurrWE = cWEHtml.fGetInstance();
+		}
+		
+		//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
+		this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
 		this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref, null);
 	}
 	else
@@ -203,7 +267,8 @@ cModuleWE.prototype.fNext = function(
 		if (this.mCurrWidget.pIsHTML())
 		{
 			this.mCurrWE = cWEHtml.fGetInstance();
-			this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
+			//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
+			this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
 			this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref, null);
 		}
 		else if (this.mCurrWidget.pIsHTML())
@@ -227,11 +292,11 @@ cModuleWE.prototype.fStop = function(
 fDbg("*** cModuleWE, fStop(), ");
 	var vThis = this;
 
-	if (vThis.mCurrChannel.mPlayMode == "default")
+	if (cModel.fGetInstance().PLAYMODE == "default")
 	{
 
 	}
-	else if (vThis.mCurrChannel.mPlayMode == "event")
+	else if (cModel.fGetInstance().PLAYMODE == "event")
 	{
 		// pause cCurrWE
 		vThis.mCurrWE.fStop(function() {
