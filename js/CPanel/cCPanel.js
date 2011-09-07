@@ -201,6 +201,10 @@ cCPanel.prototype.fOnSignal = function(
 		//~ return;
 	//~ cCPanel.instance.mLocked = true;
 	
+	//Prevent error when this is called too early by browser
+	if (!cConst)
+		return;
+	
 	// =========================================================================
 	// JavaScript Injection Signals
 	// =========================================================================
