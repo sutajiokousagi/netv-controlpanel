@@ -50,7 +50,7 @@ cModuleWE.fGetInstance = function(
 cModuleWE.prototype.fInit = function(
 )
 {
-fDbg("*** cModuleWE, fInit(), ");
+//~ fDbg("*** cModuleWE, fInit(), ");
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ if (vThis.mCurrWidgetTimeSpend % 3 == 0)
 cModuleWE.prototype.fPlay = function(
 )
 {
-fDbg("*** cModuleWE, fPlay(), ");
+//~ fDbg("*** cModuleWE, fPlay(), ");
 	
 }
 
@@ -201,10 +201,9 @@ cModuleWE.prototype.fNext = function(
 
 if (!this.mCurrChannel)
 {
-	fDbg("NO Current Channel!!!");
+	//~ fDbg("NO Current Channel!!!");
 	//~ return;
-
-	fDbg("====>>> " + cModel.fGetInstance().CHANNEL_LIST);
+	
 	if (cModel.fGetInstance().CHANNEL_LIST.length == 1)
 		this.mCurrChannel = cModel.fGetInstance().CHANNEL_LIST[0];
 	else if (cModel.fGetInstance().CHANNEL_LIST.length == 2)
@@ -239,18 +238,18 @@ if (!this.mCurrChannel)
 		// load the "new" mCurrWidget
 		if (this.mCurrWidget.pIsHTML())
 		{
-			fDbg("is html");
+			//~ fDbg("is html");
 			this.mCurrWE = cWEHtml.fGetInstance();
 		}
 		else if (this.mCurrWidget.pIsFLASH())
 		{
-			fDbg("is flash");
+			//~ fDbg("is flash");
 			this.mCurrWE = cWEHtml.fGetInstance();
 			//~ this.mCurrWE = cWEFlash.fGetInstance();
 		}
 		else
 		{
-			fDbg("is default(html)");
+			//~ fDbg("is default(html)");
 			this.mCurrWE = cWEHtml.fGetInstance();
 		}
 		
@@ -289,7 +288,7 @@ cModuleWE.prototype.fStop = function(
 	vReturnFun
 )
 {
-fDbg("*** cModuleWE, fStop(), ");
+//~ fDbg("*** cModuleWE, fStop(), ");
 	var vThis = this;
 
 	if (cModel.fGetInstance().PLAYMODE == "default")

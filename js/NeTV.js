@@ -201,7 +201,12 @@ fDbg("type    : " + vEventType);
 fDbg("level   : " + vEventLevel);
 fDbg("------------------------------------------------------");
 */
+	fDbg("------------------------------------------------------");
+	fDbg(vEventMessage);
 	vEventMessage = decodeURIComponent(vEventMessage);
+	fDbg("------------------------------------------------------");
+	fDbg(vEventMessage);
+	fDbg("------------------------------------------------------");
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
 
@@ -348,9 +353,9 @@ function fCheckAlive(
 
 function fSetIFrame(
 	vOption,
-	vUrl
+	vData
 )
 {
 	//pass everything to cCPanel
-	cCPanel.fGetInstance().fOnSignal("setiframe", [vUrl, vOption], null);
+	cCPanel.fGetInstance().fOnSignal("setiframe", [vOption, vData], null);
 }

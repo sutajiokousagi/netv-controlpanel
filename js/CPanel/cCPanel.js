@@ -50,6 +50,8 @@ function cCPanel(
 
 	this.mViewPortSize = [];
 	this.mWidgetEdgeOffset = [50, 50];
+	this.mEnableIFrameResize = false;
+	this.mIFrameSizeToSet = [];
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -139,11 +141,12 @@ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	//Resize iFrame if smaller than viewport
 	var width = vThis.mViewPortSize[0];
 	var height = vThis.mViewPortSize[1];
-	$("#div_externalUrlPlayer").attr("width", width + "px");
-	$("#div_externalUrlPlayer").attr("height", height + "px");
-	$("#iframe_externalUrlPlayer").attr("width", width + "px");
-	if ($("#iframe_externalUrlPlayer").height() < height)
-		$("#iframe_externalUrlPlayer").height(height);
+	$("#div_externalUrlPlayer").css("width", width + "px");
+	$("#div_externalUrlPlayer").css("height", height + "px");
+	//~ $("#iframe_externalUrlPlayer").attr("width", width + "px");
+	$("#iframe_externalUrlPlayer").css("width", width + "px");
+	//~ if ($("#iframe_externalUrlPlayer").height() < height)
+	$("#iframe_externalUrlPlayer").css("height", height + "px");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -417,6 +420,7 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() - height/7 );
+			//~ $("#iframe_externalUrlPlayer").css("top", "+=" + height / 7 + "px");
 		}
 		break;
 		
@@ -437,10 +441,13 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			cModuleEventTicker.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 		}
+		
 		if ( parseInt($("#div_externalUrlPlayer").css("top")) < 100 )
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() + height/7 );
+			//~ $("#iframe_externalUrlPlayer").css("top", "-=" + height / 7 + "px");
+			//~ fDbg($("#div_externalUrlPlayer").html());
 		}
 		break;
 		
@@ -528,7 +535,6 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
-		//~ if (vThis.mState == "widgetengine")
 		cModuleWE.fGetInstance().fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vData, vReturnFun);
 		break;
 
@@ -673,13 +679,119 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 
 	case "setiframe":
-		var url = vData[0];
-		var options = vData[1];
+		/*
+		var vIFOption = vData[0];
+		var vIFData = vData[1];
+		
 		var width = $(window).width();
 		var height = $(window).height();
 		var useAnimationIn = false;
 		var useAnimationOut = false;
-		fDbg("Set iFrame: url: " + url + ", option: " + options);
+		fDbg("Set iFrame: option: " + vIFOption + ", data: " + vIFData);
+		
+		switch (vIFOption)
+		{
+		case null:
+		case "":
+			o = document.getElementById("iframe_externalUrlPlayer");
+			o = o.document;
+			
+			if (vIFData && vIFData.indexOf(".jpg") != -1)				// image
+			{
+				$("#iframe_externalUrlPlayer").attr("src", "");
+				doc.open();
+				doc.writeln("<body style='margin:0; overflow:hidden;'> \
+							<table width='100%' height='100%' cell-padding='0' cell-spacing='0'> \
+							<tr><td width='100%' height='100%' align='center' valign='middle'> \
+							<img height='" + height + "px' src='" + vIFData + "' /> \
+							</tr></td> \
+							</table></body>");
+				doc.close();
+			}
+			else 														// url
+			{
+				fDbg("here here....");
+				$("#iframe_externalUrlPlayer").attr("src", vIFData);
+			}
+
+			// display the iframe (div)
+			$("#div_externalUrlPlayer").show();
+			if (useAnimationIn) {
+				$("#div_externalUrlPlayer").css( "top", 100 + height );
+				var vIntervalSetIFrame1 = setInterval(function() {
+					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
+				}, 1000);
+			}
+			else
+				$("#div_externalUrlPlayer").css( "top", 0 );
+
+			$("#iframe_externalUrlPlayer").load(function() {
+				fDbg("++++++++++++++++++++++++++++++++");
+				fDbg("++++++++++++++++++++++++++++++++");
+				fDbg("++++++++++++++++++++++++++++++++");
+				fDbg("loaded!!!!!!!!!!");
+				//~ fDbg($("#iframe_externalUrlPlayer").height());
+				//~ fDbg($("#iframe_externalUrlPlayer").outerHeight());
+				//~ fDbg($("#iframe_externalUrlPlayer",top.document).height());
+				
+
+				
+				//~ fDbg(document.frames['iframe_externalUrlPlayer'].document);
+				//~ fDbg(document.frames['iframe_externalUrlPlayer'].document.body);
+				//~ fDbg(document.frames['iframe_externalUrlPlayer'].document.body.height);
+				//~ fDbg(document.frames['iframe_externalUrlPlayer'].document.body.scrollHeight);
+
+				//~ .contentWindow.document.body.scrollHeight
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer"));
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentWindow);
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentWindow.document);
+
+				
+				//~ fDbg($('#iframe_externalUrlPlayer').contents());
+				//~ fDbg($('#iframe_externalUrlPlayer').contents().height());
+
+				fDbg(vThis.mIFrameSizeToSet);
+				$("#iframe_externalUrlPlayer").css("width", vThis.mIFrameSizeToSet[0] + "px");
+				$("#iframe_externalUrlPlayer").css("height", vThis.mIFrameSizeToSet[1] + 100 + "px");
+
+				//~ .contentDocument.body.offsetHeight
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer"));
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentDocument);
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentDocument.body);
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentDocument.body.height);
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentDocument.body.offsetHeight);
+				//~ fDbg(document.getElementById("iframe_externalUrlPlayer").contentDocument.body.scrollHeight);
+				
+				//~ vThis.mEnableIFrameResize = true;
+				fDbg("++++++++++++++++++++++++++++++++");
+				fDbg("++++++++++++++++++++++++++++++++");
+			});
+			break;
+
+		case "resize":
+			if (!vThis.mEnableIFrameResize)
+				return;
+				
+			vThis.mEnableIFrameResize = false;
+			o = [parseInt(vIFData.split(",")[0]), parseInt(vIFData.split(",")[1])];
+			o[0] = o[0] < vThis.mViewPortSize[0] ? vThis.mViewPortSize[0] : o[0];
+			o[1] = o[1] < vThis.mViewPortSize[1] ? vThis.mViewPortSize[1] : o[1];
+			vThis.mIFrameSizeToSet = [o[0], o[1]];
+			fDbg(vThis.mIFrameSizeToSet);
+			
+			//~ fDbg("        really resized to : " + $("#iframe_externalUrlPlayer").css("width"));
+			//~ fDbg("        really resized to : " + $("#iframe_externalUrlPlayer").css("height"));
+			break;
+		}
+		*/
+		
+		var url = vData[1];
+		var options = vData[0];
+		var width = $(window).width();
+		var height = $(window).height();
+		var useAnimationIn = false;
+		var useAnimationOut = false;
+		//~ fDbg("Set iFrame: url: " + url + ", option: " + options);
 					
 		if (options == null || options == "")
 		{	
@@ -757,8 +869,9 @@ cCPanel.prototype.fOnSignal = function(
 			var height = url.split(",")[1];
 			if (width < vThis.mViewPortSize[0])				width = vThis.mViewPortSize[0];
 			if (height < vThis.mViewPortSize[1])			height = vThis.mViewPortSize[1];
-			$("#iframe_externalUrlPlayer").width(width);
-			$("#iframe_externalUrlPlayer").height(height);
+			$("#iframe_externalUrlPlayer").css("width", width + "px");
+			$("#iframe_externalUrlPlayer").css("height", height + "px");
+			//~ fDbg(width + " ---===--- " + height);
 		}
 		else if (options == "scroll")
 		{

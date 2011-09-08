@@ -89,6 +89,15 @@ cSPChannels.prototype.fOnSignal = function(
 		}, 100, function() {
 			vThis.mCurrSelection = vNewSelected;
 		});
+		switch (vThis.mCurrMode)
+		{
+		case null:
+			break;
+			
+		case "mode_channel":
+			
+			break;
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
@@ -335,9 +344,11 @@ fDbg("*** cSPChannels, fRenderChannelInfo(), ");
 	
 	o = "";
 	o += '<div style="position: absolute; top: 100px; left: 50px; width: 120px; height: 120px; color: #FFFFFF; border: solid white 0px;">';
-		o += '<div style="position: absolute; top: 0px; left: 0px; width: 120px; font-size: 14px; text-align: center;">' + vChannelObj.mName + '</div>';
+		o += '<div style="position: absolute; top: 0px; left: 0px; width: 400px; font-size: 14px; text-align: center; font-size: 24px;">' + vChannelObj.mName + '</div>';
+		/*
 		o += '<div id="channelThumbnail_' + i + '_container" style="position: absolute; top: 30px; left: 10px; border: solid #FFFFFF 0px; width: 100px; height: 82px;">';
 		vLen = vChannelObj.mWidgetList.length < 4 ? vChannelObj.mWidgetList.length : 4;
+		
 		for (j = 0; j < vLen; j++)
 		{
 			vImagePath = vChannelObj.mWidgetList[j].mLocalThumbnailPath;
@@ -354,6 +365,7 @@ fDbg("*** cSPChannels, fRenderChannelInfo(), ");
 			o += '</div>';
 		}
 		o += '</div>';
+		*/
 	o += '</div>';
 	o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 50px; width: 700px; height: 300px; overflow: hidden;">';
 		o += '<div id="widgetstn_content" style="position: absolute; top: 0px; left: 0px;">';
@@ -363,10 +375,10 @@ fDbg("*** cSPChannels, fRenderChannelInfo(), ");
 			vImagePath = vChannelObj.mWidgetList[j].mLocalThumbnailPath;
 			i = j % 18;
 			k = (j - i) / 18;
-			
+			p = [];
 			p[0] = (i - i % 6) / 6 * 100;
 			p[1] = 35 + j % 6 * 110 + k * 700;
-			o += '<div style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; border: solid #FFFFFF 0px; width: 80px; height: 60px; border: solid #666666 0px;">';
+			o += '<div style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; border: solid #FFFFFF 0px; width: 80px; height: 60px; border: solid #666666 0px; box-shadow: 2px 2px 2px #AAAAAA;">';
 			o += '<img src="' + vImagePath + '" width="80px" height="60px"';
 			o += '</div>';
 		}

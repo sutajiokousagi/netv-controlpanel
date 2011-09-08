@@ -101,6 +101,7 @@ function cChannelObj(
 	
 	
 	o = vXmlDoc.getElementsByTagName("profile")[0].getElementsByTagName("widget_instances")[0].getElementsByTagName("widget_instance");
+	
 	for (i = 0; i < o.length; i++)
 		this.mWidgetList.push(new cWidgetObj(o[i]));
 

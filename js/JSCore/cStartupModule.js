@@ -41,7 +41,7 @@ cStartupModule.prototype.fInit = function(
 cStartupModule.prototype.fPrepareSystem = function(
 )
 {
-fDbg2("*** cStartupModule, fPrepareSystem(), ");
+//~ fDbg2("*** cStartupModule, fPrepareSystem(), ");
 	
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
@@ -57,7 +57,7 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 	vReturnFun
 )
 {
-fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
+//~ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 	var i, o;
 
 	cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
@@ -90,7 +90,9 @@ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 			switch (vData.split("</internet>")[0].split("<internet>")[1])
 			{
 			case "true":
-				cProxy.xmlhttpPost("", "post", {cmd : "FixTime", data: "sa"}, function(vData) {fDbg(">>> FixTime : " + vData)});
+				cProxy.xmlhttpPost("", "post", {cmd : "FixTime", data: "sa"}, function(vData) {
+					//~ fDbg(">>> FixTime : " + vData);
+				});
 				
 				// has network
 				o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];

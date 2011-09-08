@@ -181,7 +181,7 @@ cWEHtml.prototype.fPlayWidget = function(
 	vReturnFun
 )
 {
-fDbg2("*** cWEHtml, fPlayWidget(), " + vData);
+fDbg("*** cWEHtml, fPlayWidget(), " + vData);
 	var vThis, p, i;
 	vThis = this;
 	

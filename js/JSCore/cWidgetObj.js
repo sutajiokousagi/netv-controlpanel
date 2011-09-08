@@ -24,7 +24,20 @@
 						<swf bgcolor="000000" camera="false" previewable="true" supports_browser="false" content-type="application/x-shockwave-flash" height="240" width="320" microphone="false" resolution="" scalable="false" href="http://s3movies.chumby.com/cdn/xmlmovie/86A81E9E-C50E-11DF-91A6-001B24E044BE" accelerometer="false" pointing="false" as_version="2" requires_sound="false" swf_version="8" kb="false"/>
 					</swfs>
 				</widget>
-				<parameters></parameters>
+				<parameters>
+					<parameter value="eb0c0eee71fe36b295917c65.0-512911933" name="session_key"/>
+					<parameter value="_chumby_all" name="albumID"/>
+					<parameter value="true" name="showDesc"/>
+					<parameter value="false" name="showFriends"/>
+					<parameter value="false" name="showTags"/>
+					<parameter value="512911933" name="uid"/>
+					<parameter value="" name="tags"/>
+					<parameter value="recent" name="order"/>
+					<parameter value="false" name="shuffle"/>
+					<parameter value="true" name="showMine"/>
+					<parameter value="2dd7a60371b6dd2831ef7f3b337d34fb" name="secret"/>
+					<parameter value="2" name="api_key_version"/>
+				</parameters>
 			</widget_instance>
 			*
 			*
@@ -44,6 +57,8 @@ function cWidgetObj(
 	vDataNode		// xml node
 )
 {
+	var o;
+	
 	this.mID = "";
 	this.mName = "";
 	this.mInfo = {
@@ -123,7 +138,6 @@ function cWidgetObj(
 	if (!vDataNode)
 		return;
 
-
 	
 	// parse vDataNode
 	this.mID = vDataNode.getAttribute("id");
@@ -200,8 +214,9 @@ function cWidgetObj(
 			}
 		]
 	};
-	this.mParameterList = {
-	};
+	o = vDataNode.getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
+	for (i = 0; i < o.length; i++)
+		this.mParameterList[o[i].getAttribute("name")] = o[i].getAttribute("value");
 	
 	// local/temp variables
 	this.mLocalThumbnailPath = "";	
