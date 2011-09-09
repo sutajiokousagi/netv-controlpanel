@@ -315,13 +315,15 @@ cModuleEventTicker.prototype.fOnSignal = function(
 		if (vThis.pState() != cModuleEventTicker.STATE_STANDBY)
 			return;
 		o = $("#stamp_bottom_iconset_container").children();
+		$($(o[1]).children()[0]).attr("src", "./images/tx_ico_active.png");
 		if (o.length > 1)
-			$(o[1]).fadeOut(200, function() {
-				$(o[1]).fadeIn(200, function() {
-					$(o[1]).fadeOut(200, function() {
-						$(o[1]).fadeIn(200, function() {
-							$(o[1]).fadeOut(200, function() {
-								$(o[1]).fadeIn(200, function() {
+			$(o[1]).fadeOut(300, function() {
+				$(o[1]).fadeIn(300, function() {
+					$(o[1]).fadeOut(300, function() {
+						$(o[1]).fadeIn(300, function() {
+							$(o[1]).fadeOut(300, function() {
+								$(o[1]).fadeIn(300, function() {
+									$($(o[1]).children()[0]).attr("src", "./images/tx_ico_inactive.png");
 								});
 							});
 						});

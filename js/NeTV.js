@@ -201,12 +201,20 @@ fDbg("type    : " + vEventType);
 fDbg("level   : " + vEventLevel);
 fDbg("------------------------------------------------------");
 */
+/*
 	fDbg("------------------------------------------------------");
 	fDbg(vEventMessage);
+	fDbg("------------------------------------------------------");
+	fDbg(vEventMessage);
+	fDbg("------------------------------------------------------");
+*/
 	vEventMessage = decodeURIComponent(vEventMessage);
-	fDbg("------------------------------------------------------");
-	fDbg(vEventMessage);
-	fDbg("------------------------------------------------------");
+	vEventTitle = decodeURIComponent(vEventTitle);
+	vEventImage = decodeURIComponent(vEventImage);
+	vEventType = decodeURIComponent(vEventType);
+	vEventLevel = decodeURIComponent(vEventLevel);
+	vEventVer = decodeURIComponent(vEventVer);
+	
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
 

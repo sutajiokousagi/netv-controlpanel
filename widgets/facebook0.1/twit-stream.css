@@ -1,0 +1,41 @@
+.twitStream{
+	position: absolute;
+	left: 0px;
+	font-family: verdana;
+	font-size: 11px;
+	width: 100000px;
+	height: 70px;
+	border: solid black 0px;
+	color: #FFFFFF;
+	background-color: #333333;
+}
+.twitStream a{
+	font-family: verdana;
+	font-size: 11px;
+	
+	text-decoration: none;
+	color: #EEEEEE;
+}
+.tweet{
+	display: block;
+	padding: .4em;
+	margin: .4em 0;
+	font-size: 16px;
+	font-weight: bold;
+	min-width: 300px;
+	max-width: 600px;
+}
+.tweet-time {
+	font-size: 14px;
+}
+.tweet-left{
+	float: left;
+	margin-right: 1em;
+}
+.tweet-left img{
+	border: 2px solid #000000;
+}
+.tweet p.text{
+	margin: 0;
+	padding: 0;
+}

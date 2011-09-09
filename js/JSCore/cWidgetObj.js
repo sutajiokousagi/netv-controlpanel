@@ -219,7 +219,7 @@ function cWidgetObj(
 		this.mParameterList[o[i].getAttribute("name")] = o[i].getAttribute("value");
 	
 	// local/temp variables
-	this.mLocalThumbnailPath = "";	
+	this.mLocalThumbnailPath = "";
 }
 
 

@@ -52,6 +52,9 @@ function cCPanel(
 	this.mWidgetEdgeOffset = [50, 50];
 	this.mEnableIFrameResize = false;
 	this.mIFrameSizeToSet = [];
+
+
+	this.mUserFirstButtonPress = false;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -220,6 +223,7 @@ cCPanel.prototype.fOnSignal = function(
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		vThis.mUserFirstButtonPress = true;
 		switch (vThis.mState)
 		{
 		case "controlpanel":
@@ -232,7 +236,6 @@ cCPanel.prototype.fOnSignal = function(
 				
 				cModuleEventTicker.fGetInstance().fReset();
 				cModuleEventTicker.fGetInstance().fAnimateIn();
-				
 			});
 			vThis.pState("event");
 			break;
@@ -270,6 +273,7 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		vThis.mUserFirstButtonPress = true;
 		if (cCPanel.instance.mLocked == true)									// release lock
 			return;
 		cCPanel.instance.mLocked = true;
@@ -307,14 +311,13 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		break;
 		
-	case cConst.SIGNAL_BUTTON_LEFT:			
+	case cConst.SIGNAL_BUTTON_LEFT:
+		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
 			switch (vThis.mSubState)
 			{
-			//~ case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			
 			case "cpanel_main":			cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
@@ -329,13 +332,12 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
 			switch (vThis.mSubState)
 			{
-			//~ case "channelMain": cSCPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "flashchannelwidgetsmain": cSCPWidgets.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			
 			case "cpanel_main": 		cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
@@ -350,6 +352,7 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
+		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
 			switch (vThis.mSubState)
@@ -360,7 +363,6 @@ cCPanel.prototype.fOnSignal = function(
 				{
 					cPMain.fGetInstance().fAnimateOut(function() {
 						cSPChannels.fGetInstance().fAnimateIn();
-						cSPChannels.fGetInstance().fRenderChannelList();
 						vThis.mSubState = "cpanel_channels";
 					});
 				}
@@ -400,6 +402,7 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		vThis.mUserFirstButtonPress = true;
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (vThis.mState == "controlpanel")
@@ -425,6 +428,7 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		vThis.mUserFirstButtonPress = true;
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
 		if (vThis.mState == "controlpanel")
@@ -507,6 +511,11 @@ cCPanel.prototype.fOnSignal = function(
 		cModuleEventTicker.fGetInstance().fAnimateOut(function() {
 			cModuleEventTicker.fGetInstance().fStopAll();
 			vThis.fShowControlPanel("notactivated");
+			o = setTimeout(function() {
+				if (vThis.mUserFirstButtonPress)
+					return;
+				cCPanel.fGetInstance().fBack("all");
+			}, 10000);
 		});
 		break;
 	

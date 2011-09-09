@@ -2,22 +2,42 @@
 	<name>NeTV Star Channel</name>
 	<playmode>default</playmode>
 	<widgets>
+
 		<widget>
+			<name>Twitter Search Widget 1</name>
 			<href>./widgets/twitter0.2/index.html</href>
 			<thumbnail>./widgets/twitter0.2/tn.jpg</thumbnail>
 			<contenttype>application/html</contenttype>
+			<parameters>
+				<parameter value="" name="keyword"/>
+				<parameter value="" name="interval"/>
+			</parameters>
 		</widget>
 		
+		<!--
 		<widget>
+			<href>./widgets/facebook0.1/index.html</href>
+			<thumbnail>./widgets/facebook0.1/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		-->
+		<widget>
+			<name>Twitter Search Widget 2</name>
 			<href>./widgets/twitter0.1/index.html</href>
 			<thumbnail>./widgets/twitter0.1/tn.jpg</thumbnail>
 			<contenttype>application/html</contenttype>
+			<parameters>
+				<parameter value="" name="keyword"/>
+				<parameter value="" name="interval"/>
+			</parameters>
 		</widget>
 		
 		<widget>
+			<name>Google News</name>
 			<href>./widgets/google_news_0.1/index.html</href>
-			<thumbnail>./widgets/google_news_0.1/tn.jpg</thumbnail>
+			<thumbnail>./widgets/google_news_0.1/tn.png</thumbnail>
 			<contenttype>application/html</contenttype>
 		</widget>
+		
 	</widgets>
 </channel>

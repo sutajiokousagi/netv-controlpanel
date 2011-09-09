@@ -63,7 +63,7 @@ fResize();
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
-						vTweet_message = encodeURIComponent(vTweet_message);
+						vTweet_message = encodeURIComponent(escape(vTweet_message));
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;

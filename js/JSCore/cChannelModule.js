@@ -72,7 +72,8 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	// -----------------------------------------------------
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o);
-
+	
+	/*
 	fDbg("=================================");
 	fDbg("=================================");
 	fDbg("=================================");
@@ -87,6 +88,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 		fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
 	fDbg("=================================");
 	fDbg("=================================");
+	*/
 	
 	if (vReturnFun)
 		vReturnFun();
@@ -97,7 +99,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 )
 {
 //~ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
-	var vThis, o, p, i, vLen, parser, xmlDoc;
+	var vThis, o, p, q, i, j, vLen, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();
 	
@@ -114,10 +116,19 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 		for (i = 0; i < vLen; i++)
 		{
 			o.mWidgetList.push(new cWidgetObj());
+			o.mWidgetList[o.mWidgetList.length - 1].mName = p[i].getElementsByTagName("name")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = p[i].getElementsByTagName("href")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
+
+			q = p[i].getElementsByTagName("parameters");
+			if (q.length > 0)
+			{
+				q = p[i].getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
+				for (j = 0; j < q.length; j++)
+					o.mWidgetList[o.mWidgetList.length - 1].mParameterList[q[j].getAttribute("name")] = q[j].getAttribute("value");
+			}
 		}
 		cModel.fGetInstance().CHANNEL_LIST.push(o);
 		if (vReturnFun)

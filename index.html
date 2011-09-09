@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>NeTV Control Panel</title>
+<meta charset="utf-8" />
 <meta http-equiv="content-script-type" content="text/javascript">
 
 <link rel="stylesheet" href="./css/reset.css" type="text/css">
@@ -196,17 +197,21 @@
 <!-- ----------------------- channelMain module -------------------------- level II -->
 <div id="div_channelMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_channelMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
+	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
+		<div id="item_indicator" style="position: absolute; top: 120px; left: 200px; background-color: #6598EB; width: 400px; height: 40px; border-radius: 10px;"></div>
+	</div>
 	
 
 	<div id="div_channelMain_channels" style="position: absolute; top: 0px; left: 0px;"></div>
-	<div id="div_channelMain_channelinfo" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
+	<div id="div_channelMain_widgets" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
 
 	
-	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
-		<div id="item_indicator" style="position: absolute; top: 290px; left: 100px; background-color: #AA2222; width: 125px; height: 4px;"></div>
+	
+	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
+		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
 	</div>
-	<div id="subnavi_back" style="position: absolute; top: 560px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
-		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 0.2; border: solid #FFFFFF 0px;">BACK</div>
+	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;">
+		<div style="position: absolute; top: 10px; width: 800px; text-align: center; ">Channels</div>
 	</div>
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
 		<div style="margin-top: 30px;">My Channels</div>
