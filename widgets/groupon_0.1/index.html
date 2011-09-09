@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+  <head>
+    <title>Groupon NeTV Widgets</title>
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+    <script type="text/javascript" src="cMD5.js"></script>
+    <script type="text/javascript" src="groupon.js"></script>
+    <script type="text/javascript" src="fXML.js"></script>
+    
+    <script type="text/javascript">
+
+      var vBridgePath = "http://localhost/bridge";
+
+      var i = 0;
+      
+      // Prevent the API down
+      var funtest = function(deals)
+      {
+	  if (deals == null)
+	      Groupon.getDeals('new-york', funtest);
+	  else
+	  {
+	      while (i<deals.length)
+	      {
+		  tmpOjb = deals[i];
+		  var dealTitle = tmpOjb['title'];
+		  var dealImage = tmpOjb['small_image_url'];
+		  var dealPrice = 'Groupon Deals - '+ tmpOjb['discount_percent'] + '% OFF!';
+		  fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + dealTitle +  "</message><title>" + dealPrice + "</title><image>" + dealImage + "</image>"}, function(vData) {console.log(vData)});
+		  
+		  $('#result').append(dealPrice + '<br />'
+				      +dealTitle+'<br /><image>'
+				      +dealImage+'</image><br />');
+
+		  i++;
+	      }
+	  }
+      }
+      
+      // Get the deals in New York 
+      Groupon.getDeals('new-york', function(deals) {funtest(deals);});  
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    <div id="result"></div>
+  </body>
+  
+</html>
