@@ -351,11 +351,13 @@ function fCheckAlive(
 	return true;
 }
 
-function fSetIFrame(
+
+function fMultitab(
 	vOption,
-	vData
+	vData,
+	vTab
 )
 {
 	//pass everything to cCPanel
-	cCPanel.fGetInstance().fOnSignal("setiframe", [vOption, vData], null);
+	cCPanel.fGetInstance().fOnSignal("multitab", [vOption, vData, vTab], null);
 }
