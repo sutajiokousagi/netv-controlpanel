@@ -40,7 +40,7 @@ cAccountModule.prototype.fCheckAccount = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fCheckAccount()");
+//~ fDbg("*** cAccountModule, fCheckAccount()");
 	
 	var o, parser, xmlDoc, vThis;
 	parser = new DOMParser();
@@ -73,7 +73,7 @@ cAccountModule.prototype.fCheckAuthorization = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fCheckAuthorization(), ");
+//~ fDbg("*** cAccountModule, fCheckAuthorization(), ");
 	var vThis;
 	vThis = this;
 	
@@ -112,7 +112,7 @@ cAccountModule.prototype.fAuthenticateByDla = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fAuthenticateByDla(), ");
+//~ fDbg("*** cAccountModule, fAuthenticateByDla(), ");
 	var vThis;
 	vThis = this;
 	
@@ -126,7 +126,7 @@ cAccountModule.prototype.fAuthenticateByDlaReturn = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fAuthenticateByDlaReturn(), ");
+//~ fDbg("*** cAccountModule, fAuthenticateByDlaReturn(), ");
 	var o, parser, xmlDoc, vThis;
 	vThis = this;
 	parser = new DOMParser();
@@ -143,7 +143,7 @@ cAccountModule.prototype.fFetchDeviceInfo = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fFetchDeviceInfo(), ");
+//~ fDbg("*** cAccountModule, fFetchDeviceInfo(), ");
 	var vThis;
 	vThis = this;
 	
@@ -171,7 +171,7 @@ cAccountModule.prototype.fParseDeviceInfo = function(
 	vReturnFun
 )
 {
-fDbg("*** cAccountModule, fParseAccountInfo(), ");
+//~ fDbg("*** cAccountModule, fParseAccountInfo(), ");
 	
 	var parser = new DOMParser();
 	var xmlDoc = parser.parseFromString(vData, "text/xml");

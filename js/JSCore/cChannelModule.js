@@ -41,7 +41,7 @@ cChannelModule.prototype.fFetchChannelInfo = function(
 	vReturnFun
 )
 {
-fDbg("*** cChannelModule, fFetchAccountInfo()");
+//~ fDbg("*** cChannelModule, fFetchAccountInfo()");
 	// reset channels
 	cModel.fGetInstance().CHANNEL_LIST = [];
 	
@@ -62,11 +62,10 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	vReturnFun
 )
 {
-fDbg2("*** cChannelModule, fParseChannelInfo()");
+//~ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	
 	var o;
 	o = new cChannelObj(vData);
-
 
 	// -----------------------------------------------------
 	// parse the fetched channel
@@ -74,6 +73,20 @@ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o);
 
+	fDbg("=================================");
+	fDbg("=================================");
+	fDbg("=================================");
+	fDbg("=================================");
+	//~ fDbg(o.mWidgetList[0].mParameterList);
+	for (var vTempObj in o.mWidgetList[0].mParameterList)
+		fDbg(vTempObj + " : " + o.mWidgetList[0].mParameterList[vTempObj]);
+
+	fDbg("=================================");
+	//~ fDbg(o.mWidgetList[1].mParameterList);
+	for (var vTempObj in o.mWidgetList[1].mParameterList)
+		fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
+	fDbg("=================================");
+	fDbg("=================================");
 	
 	if (vReturnFun)
 		vReturnFun();
@@ -83,7 +96,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 	vReturnFun
 )
 {
-fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
+//~ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
 	var vThis, o, p, i, vLen, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();
@@ -107,8 +120,6 @@ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
 		}
 		cModel.fGetInstance().CHANNEL_LIST.push(o);
-		fDbg(cModel.fGetInstance().CHANNEL_LIST);
-		fDbg(cModel.fGetInstance().CHANNEL_LIST.length);
 		if (vReturnFun)
 			vReturnFun();
 	});

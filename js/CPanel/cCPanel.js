@@ -50,6 +50,8 @@ function cCPanel(
 
 	this.mViewPortSize = [];
 	this.mWidgetEdgeOffset = [50, 50];
+	this.mEnableIFrameResize = false;
+	this.mIFrameSizeToSet = [];
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -139,11 +141,12 @@ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	//Resize iFrame if smaller than viewport
 	var width = vThis.mViewPortSize[0];
 	var height = vThis.mViewPortSize[1];
-	$("#div_externalUrlPlayer").attr("width", width + "px");
-	$("#div_externalUrlPlayer").attr("height", height + "px");
-	$("#iframe_externalUrlPlayer").attr("width", width + "px");
-	if ($("#iframe_externalUrlPlayer").height() < height)
-		$("#iframe_externalUrlPlayer").height(height);
+	$("#div_externalUrlPlayer").css("width", width + "px");
+	$("#div_externalUrlPlayer").css("height", height + "px");
+	//~ $("#iframe_externalUrlPlayer").attr("width", width + "px");
+	$("#iframe_externalUrlPlayer").css("width", width + "px");
+	//~ if ($("#iframe_externalUrlPlayer").height() < height)
+	$("#iframe_externalUrlPlayer").css("height", height + "px");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -417,6 +420,7 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() - height/7 );
+			//~ $("#iframe_externalUrlPlayer").css("top", "+=" + height / 7 + "px");
 		}
 		break;
 		
@@ -437,10 +441,13 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			cModuleEventTicker.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
 		}
+		
 		if ( parseInt($("#div_externalUrlPlayer").css("top")) < 100 )
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() + height/7 );
+			//~ $("#iframe_externalUrlPlayer").css("top", "-=" + height / 7 + "px");
+			//~ fDbg($("#div_externalUrlPlayer").html());
 		}
 		break;
 		
@@ -528,7 +535,6 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
-		//~ if (vThis.mState == "widgetengine")
 		cModuleWE.fGetInstance().fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vData, vReturnFun);
 		break;
 
@@ -671,100 +677,19 @@ cCPanel.prototype.fOnSignal = function(
 			});
 		});
 		break;
-
-	case "setiframe":
-		var url = vData[0];
-		var options = vData[1];
-		var width = $(window).width();
-		var height = $(window).height();
-		var useAnimationIn = false;
-		var useAnimationOut = false;
-		fDbg("Set iFrame: url: " + url + ", option: " + options);
-					
-		if (options == null || options == "")
+		
+	case "multitab":
+		var options = vData[0];
+		var data = vData[1];
+		var tab = vData[2];		//0 is the control panel
+			
+		if (options == null || options == "" || options == "load")
 		{	
-			var iframe = document.getElementById("iframe_externalUrlPlayer");
-			var doc = iframe.document;
-			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
-			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
-		
-			if (url != null && url.indexOf(".jpg") != -1)
-			{
-				$("#iframe_externalUrlPlayer").attr("src", "");
-				doc.open();
-				doc.writeln("<body style='margin:0; overflow:hidden;'> \
-							<table width='100%' height='100%' cell-padding='0' cell-spacing='0'> \
-							<tr><td width='100%' height='100%' align='center' valign='middle'> \
-							<img height='" + height + "px' src='" + url + "' /> \
-							</tr></td> \
-							</table></body>");
-				doc.close();
-			}
-			else
-			{
-				$("#iframe_externalUrlPlayer").attr("src", url);
-			}
-		
-			$("#div_externalUrlPlayer").show();
-			if (useAnimationIn) {
-				$("#div_externalUrlPlayer").css( "top", 100 + height );
-				var vIntervalSetIFrame1 = setInterval(function() {
-					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
-				}, 1000);
-			} else {
-				$("#div_externalUrlPlayer").css( "top", 0 );
-			}
-		}
-		else if (options == "html")
-		{
-			var iframe = document.getElementById("iframe_externalUrlPlayer");
-			var doc = iframe.document;
-			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
-			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
-			
-			//$("#iframe_externalUrlPlayer").attr("src", "");
-			doc.open();
-			doc.writeln( url );
-			doc.close();
-			
-			$("#div_externalUrlPlayer").show();
-			if (useAnimationIn) {
-				$("#div_externalUrlPlayer").css( "top", 100 + height );
-				var vIntervalSetIFrame1 = setInterval(function() {
-					$("#div_externalUrlPlayer").animate({ top: 0 }, 2500);
-				}, 1000);
-			} else {
-				$("#div_externalUrlPlayer").css( "top", 0 );
-			}
+			//Do something about this
 		}
 		else if (options == "back" || options == "hide")
 		{
-			var iframe = document.getElementById("iframe_externalUrlPlayer");
-			var doc = iframe.document;
-			if (iframe.contentDocument)        doc = iframe.contentDocument; 			// For NS6
-			else if (iframe.contentWindow)     doc = iframe.contentWindow.document; 	// For IE5.5 and IE6
-			
-			if (useAnimationOut) {
-				$("#div_externalUrlPlayer").animate({ top: 100 + height }, 2500);
-			} else {
-				$("#div_externalUrlPlayer").hide();
-				$("#div_externalUrlPlayer").css( "top", 100 + height );
-			}
-		}
-		else if (options == "resize")
-		{
-			var width = url.split(",")[0];
-			var height = url.split(",")[1];
-			if (width < vThis.mViewPortSize[0])				width = vThis.mViewPortSize[0];
-			if (height < vThis.mViewPortSize[1])			height = vThis.mViewPortSize[1];
-			$("#iframe_externalUrlPlayer").width(width);
-			$("#iframe_externalUrlPlayer").height(height);
-		}
-		else if (options == "scroll")
-		{
-			var x = url.split(",")[0];
-			var y = url.split(",")[1];
-			$("#div_externalUrlPlayer").scrollTop(y).scrollLeft(x);
+			//Do something about this
 		}
 		break;
 	}

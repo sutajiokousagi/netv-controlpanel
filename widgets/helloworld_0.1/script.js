@@ -10,6 +10,7 @@
 function onLoad()
 {
 	fDebug("Hello World HTML Widget loaded!");
+	Hello();
 }
 
 
@@ -55,9 +56,11 @@ function helloCallback(vData)
 	}
 	
 	var helloData = new Array();
-	for (var idx in cNetConfig.instance.helloParamNamesArray)
+	var helloParamNamesArray = new Array('guid', 'hwver', 'fwver', 'internet', 'mac', 'ip', 'flashplugin', 'flashver');
+	
+	for (var idx in helloParamNamesArray)
 	{
-		var paramName = cNetConfig.instance.helloParamNamesArray[idx];
+		var paramName = helloParamNamesArray[idx];
 		helloData[paramName] = vData.split("</"+paramName+">")[0].split("<"+paramName+">")[1];
 	}
 

@@ -43,7 +43,7 @@ function xmlhttpPost(
 	}
 	
 	if (vUrl == '')
-		vUrl = "../bridge";
+		vUrl = "../../bridge";
 	xmlHttpReq.open(vType, vUrl, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()

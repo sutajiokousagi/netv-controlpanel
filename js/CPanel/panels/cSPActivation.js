@@ -94,6 +94,9 @@ cSPActivation.prototype.pViewMode = function(
 	case cSPActivation.VIEWMODE_ACTIVATE_NOTNOW:
 		vThis.mDiv.children("#div_activationMain_deactivatestep1").hide();
 		vThis.mDiv.children("#div_activationMain_activatestep1").show();
+		vThis.mDivUsername.css("opacity", "0.2");
+		vThis.mDivPassword.css("opacity", "0.2");
+		vThis.mDivDevicename.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.mDivBack.hide();
 		vThis.mDivNotNow.css("opacity", "0.2");
@@ -111,6 +114,9 @@ cSPActivation.prototype.pViewMode = function(
 	case cSPActivation.VIEWMODE_ACTIVATE_BACK:
 		vThis.mDiv.children("#div_activationMain_deactivatestep1").hide();
 		vThis.mDiv.children("#div_activationMain_activatestep1").show();
+		vThis.mDivUsername.css("opacity", "0.2");
+		vThis.mDivPassword.css("opacity", "0.2");
+		vThis.mDivDevicename.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.mDivBack.show();
 		vThis.mDivNotNow.css("opacity", "0.2");
@@ -128,6 +134,9 @@ cSPActivation.prototype.pViewMode = function(
 	case cSPActivation.VIEWMODE_DEACTIVATE:
 		vThis.mDiv.children("#div_activationMain_activatestep1").hide();
 		vThis.mDiv.children("#div_activationMain_deactivatestep1").show();
+		vThis.mDivUsername.css("opacity", "0.2");
+		vThis.mDivPassword.css("opacity", "0.2");
+		vThis.mDivDevicename.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.mDivBack.show();
 		vThis.mDivNotNow.css("opacity", "0.2");
@@ -294,17 +303,26 @@ cSPActivation.prototype.fOnSignal = function(
 		case vThis.mDivUsername:
 			$("#div_activationMain #div_keyboard").css("opacity", "1");
 			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			keyboard_onRemoteControl("down", "input_username");
+			if (keyboard_currentY > 4)
+				keyboard_onRemoteControl("up", "input_username");
+			else if (keyboard_currentY < 0)
+				keyboard_onRemoteControl("down", "input_username");
 			break;
 		case vThis.mDivPassword:
 			$("#div_activationMain #div_keyboard").css("opacity", "1");
 			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			keyboard_onRemoteControl("down", "input_password");
+			if (keyboard_currentY > 4)
+				keyboard_onRemoteControl("up", "input_password");
+			else if (keyboard_currentY < 0)
+				keyboard_onRemoteControl("down", "input_password");
 			break;
 		case vThis.mDivDevicename:
 			$("#div_activationMain #div_keyboard").css("opacity", "1");
 			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			keyboard_onRemoteControl("down", "input_devicename");
+			if (keyboard_currentY > 4)
+				keyboard_onRemoteControl("up", "input_devicename");
+			else if (keyboard_currentY < 0)
+				keyboard_onRemoteControl("down", "input_devicename");
 			break;
 		default:
 			o = vThis.mDiv.children("#div_activationMain_activatestep1");
@@ -336,7 +354,6 @@ cSPActivation.prototype.fOnSignal = function(
 				o = keyboard_onRemoteControl("up", "input_password");
 			else if ($(o.children()[2]).css("opacity") == "1")
 				o = keyboard_onRemoteControl("up", "input_devicename");
-				
 			if (o)
 			{
 				$("#div_activationMain #item_indicator").css("opacity", "1");
@@ -366,11 +383,16 @@ cSPActivation.prototype.fOnSignal = function(
 		{
 			o = vThis.mDiv.children("#div_activationMain_activatestep1");
 			if ($(o.children()[0]).css("opacity") == "1")
-				keyboard_onRemoteControl("down", "input_username");
+				o = keyboard_onRemoteControl("down", "input_username");
 			else if ($(o.children()[1]).css("opacity") == "1")
-				keyboard_onRemoteControl("down", "input_password");
+				o = keyboard_onRemoteControl("down", "input_password");
 			else if ($(o.children()[2]).css("opacity") == "1")
-				keyboard_onRemoteControl("down", "input_devicename");
+				o = keyboard_onRemoteControl("down", "input_devicename");
+			if (o)
+			{
+				$("#div_activationMain #item_indicator").css("opacity", "1");
+				$("#div_activationMain #div_keyboard").css("opacity", "0.2");
+			}
 			return;
 		}
 		
