@@ -680,12 +680,16 @@ cCPanel.prototype.fOnSignal = function(
 		
 	case "multitab":
 		var options = vData[0];
-		var data = vData[1];
-		var tab = vData[2];		//0 is the control panel
+		var param = vData[1];
+		var tab = vData[2];		//0 is the control panel, usually 1
 			
 		if (options == null || options == "" || options == "load")
 		{	
-			//Do something about this
+			//param is URI encoded URL
+		}
+		else if (options == "html")
+		{
+			//param is the URI encoded HTML string, already handled by browser
 		}
 		else if (options == "back" || options == "hide")
 		{

@@ -354,10 +354,10 @@ function fCheckAlive(
 
 function fMultitab(
 	vOption,
-	vData,
+	vParam,
 	vTab
 )
 {
 	//pass everything to cCPanel
-	cCPanel.fGetInstance().fOnSignal("multitab", [vOption, vData, vTab], null);
+	cCPanel.fGetInstance().fOnSignal("multitab", [vOption, vParam, vTab], null);
 }
