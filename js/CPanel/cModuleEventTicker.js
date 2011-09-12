@@ -87,11 +87,20 @@ cModuleEventTicker.fGetInstance = function(
 cModuleEventTicker.prototype.fInit = function(
 )
 {
-//~ fDbg("*** cModuleEventTicker, fInit(), ");
+fDbg("*** cModuleEventTicker, fInit(), ");
 	var vThis;
 	vThis = this;
 
+	cProxy.fGetParams("eventtickerstyledata", function(vData) {
+		//~ fDbg(vData);
+		vData = JSON.parse(vData);
+		vThis.mStyle = vData;
+		//~ fDbg("==============>>> " + vThis.mStyle.mBottomOffset);
+	});
+
+	
 	this.mDivTickerMini = this.mDiv.children("#div_eventWidgetPlayer_mini");
+	this.mDiv.css("top", "400px");
 	
 
 	this.mTimer = setInterval(function() {
@@ -112,6 +121,7 @@ cModuleEventTicker.prototype.fResize = function(
 	vViewPortSize
 )
 {
+fDbg("*** cModuleEventTicker, fResize(), ");
 	var vThis = this;
 	vThis.mViewPortSize = vViewPortSize;
 
@@ -231,17 +241,18 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_UP:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
-			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + 10 < 710)
+			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + 20 < vThis.mViewPortSize[1])
 			{
 				vThis.mDiv.css("top", "-=10px");
 				vThis.mStyle.mBottomOffset += 10;
 			}
 			this.mTimeSpanConfigModeOn = 0;
+			
 
 			if (vThis.mConfigMode == "configmode1")
 			{
-				$("#div_configmode1 #arrow_top_white").show();
-				$("#div_configmode1 #arrow_top_white").fadeOut();
+				//~ $("#div_configmode1 #arrow_top_white").show();
+				//~ $("#div_configmode1 #arrow_top_white").fadeOut();
 			}
 			else if (vThis.mConfigMode == "configmode2")
 			{
@@ -253,7 +264,7 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
-			if (vThis.mStyle.mBottomOffset - 10 > 10)
+			if (vThis.mStyle.mBottomOffset - 20 > 0)
 			{
 				vThis.mDiv.css("top", "+=10px");
 				vThis.mStyle.mBottomOffset -= 10;
@@ -392,6 +403,16 @@ vThis.pState(cModuleEventTicker.STATE_STANDBY);
 	this.mDiv.animate({
 		top: vTopFinal + "px"
 	}, 500, function() {
+		//~ fDbg("==========================>>> " + vThis.mStyle.mBottomOffset);
+		if (vThis.mDiv.css("top") != vThis.mStyle.mBottomOffset + "px")
+		{
+			vThis.mDiv.animate({
+				top: cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight) + "px"
+			}, 500, function() {
+				
+			});
+		}
+		
 		vThis.mVisibleOnScreen = true;
 		if (vReturnFun)
 			vReturnFun();
@@ -405,9 +426,10 @@ cModuleEventTicker.prototype.fAnimateOut = function(
 //~ fDbg("*** cModuleEventTicker, fAnimateOut(), ");
 	var vThis, vTopStart, vTopFinal;
 	vThis = this;
-	
+
+	vThis.pConfigMode("default");
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
-	if (vTopFinal < 340)
+	if (vTopFinal < (vThis.mViewPortSize[1] - vThis.mStyle.mTickerHeight) / 2)
 		vTopStart = -80;
 	else
 		vTopStart = cModel.fGetInstance().VIEWPORTSIZE[1];
@@ -488,7 +510,7 @@ cModuleEventTicker.prototype.fAddEvent = function(
 )
 {
 //~ fDbg("*** cModuleEventTicker, fAddEvent(), ");
-	var vThis, o;
+	var vThis, o, i;
 	vThis = this;
 	o = String(new Date().getTime());
 
@@ -499,7 +521,13 @@ cModuleEventTicker.prototype.fAddEvent = function(
 		if (this.mEventList.length == 0)
 			this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
 		else
-			this.mEventList.splice(1, 0, [vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+		{
+			// TODO filter sms type message, if same message exist in the first N, ignore it.
+			//~ for (i = 0; i < 3; i++)
+			//~ {
+				this.mEventList.splice(1, 0, [vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+			//~ }
+		}
 	}
 	else
 		this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
@@ -1003,6 +1031,10 @@ cModuleEventTicker.prototype.pConfigMode = function(
 	{
 	case "default":
 		vThis.mDiv.css("border", "none");
+		o = vThis.mStyle;
+		o = JSON.stringify(o);
+		//~ fDbg(JSON.stringify(o));
+		cProxy.fSaveParams("eventtickerstyledata", o);
 		break;
 
 	case "configmode1":

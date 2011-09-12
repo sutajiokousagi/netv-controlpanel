@@ -128,6 +128,7 @@ cPMain.prototype.fOnSignal = function(
 				break;
 			}
 		vNewSelected = vCurrSelected + 1;
+		fDbg("==========>> " + vNewSelected);
 		if (vNewSelected > o.children().length - 1)
 			vNewSelected = 0;
 		$(o.children()[vCurrSelected]).fadeOut(150, function() {

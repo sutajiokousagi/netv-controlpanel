@@ -102,9 +102,13 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 	var vThis, o, p, q, i, j, vLen, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();
-	
+
+
 	
 	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+		
+		vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+		
 		o = new cChannelObj();
 		xmlDoc = parser.parseFromString(vData, "text/xml");
 		
@@ -126,13 +130,19 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 			if (q.length > 0)
 			{
 				q = p[i].getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
+				o.mWidgetList[o.mWidgetList.length - 1].mParameterList = {};
 				for (j = 0; j < q.length; j++)
+				{
 					o.mWidgetList[o.mWidgetList.length - 1].mParameterList[q[j].getAttribute("name")] = q[j].getAttribute("value");
+				}
 			}
 		}
 		cModel.fGetInstance().CHANNEL_LIST.push(o);
 		if (vReturnFun)
 			vReturnFun();
+
+
+		vThis.fLoadChannelData();
 	});
 }
 
@@ -165,4 +175,38 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 	};
 	
 	fLoadTN();
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fSaveChannelData
+// -------------------------------------------------------------------------------------------------
+cChannelModule.prototype.fLoadChannelData = function(
+	vChannelN
+)
+{
+//~ fDbg("*** cChannelModel, fSaveChannelData(), ");
+	var o, i;
+
+	cProxy.fGetParams("defaultchanneldata", function(vData) {
+		vData = JSON.parse(vData);
+		for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList.length; i++)
+			cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList[i].mParameterList = vData[i];
+	});
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fSaveChannelData
+// -------------------------------------------------------------------------------------------------
+cChannelModule.prototype.fSaveChannelData = function(
+	vChannelN
+)
+{
+//~ fDbg("*** cChannelModel, fSaveChannelData(), ");
+	var o, i;
+
+	o = [];
+	for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList.length; i++)
+		o.push(cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList[i].mParameterList);
+	o = JSON.stringify(o);
+	cProxy.fSaveParams("defaultchanneldata", o);
 }

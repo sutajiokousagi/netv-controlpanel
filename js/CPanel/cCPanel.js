@@ -12,6 +12,7 @@ var kCPanelStatic = {
 	mShowDbg : false,
 	mPluginClassList : [
 		"./js/CPanel/cModuleToast.js",
+		"./js/CPanel/cModuleInput.js",
 		"./js/CPanel/cModuleWE.js",
 		"./js/CPanel/cModuleEventTicker.js",
 		"./js/CPanel/cModuleChromaBg.js",
@@ -56,6 +57,7 @@ function cCPanel(
 
 
 	this.mUserFirstButtonPress = false;
+	this.mEnableResize = false;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -119,17 +121,29 @@ cCPanel.prototype.fInit = function(
 cCPanel.prototype.fResize = function(
 )
 {
-fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	var vThis;
-	
 	vThis = this;
+//~ fDbg("========================================");
+fDbg("*** window resize : " + $(window).width() + ", " + $(window).height() + ", " + vThis.mEnableResize);
+//~ fDbg("this.mEnableResize : " + vThis.mEnableResize);
+//~ fDbg("this.mEnableResize == false : " + (vThis.mEnableResize == false));
+//~ fDbg("this.mEnableResize == true  : " + (vThis.mEnableResize == true));
+//~ fDbg("========================================");
+if (vThis.mEnableResize == false)
+{
+	fDbg("it's true! return!!!");
+	return;
+}
+	fDbg("ok... resizing......");
+
 
 	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
 		return;
 
-	vThis.mViewPortSize[0] = window.innerWidth,
-	vThis.mViewPortSize[1] = window.innerHeight
-	cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
+	vThis.mViewPortSize[0] = window.innerWidth;
+	vThis.mViewPortSize[1] = window.innerHeight;
+	if (cModel)
+		cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
 
 	// resize individual panels
 	if (vThis.mViewPortSize[0] > 800)
@@ -140,6 +154,7 @@ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height());
 	cModuleToast.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleWE.fGetInstance().fResize(vThis.mViewPortSize);
+	cModuleInput.fGetInstance().fResize(vThis.mViewPortSize);
 
 	
 	//Resize iFrame if smaller than viewport
@@ -184,8 +199,9 @@ fDbg("*** cCPanel, fStartUp()");
 	
 	// register all classes
 	cModuleToast.fGetInstance("div_toast");
-	cModuleChromaBg.fGetInstance("div_tempBg");
+	cModuleInput.fGetInstance("div_inputpanel");
 	cModuleEventTicker.fGetInstance($("#div_eventWidgetPlayer"));
+	cModuleChromaBg.fGetInstance("div_tempBg");
 	cModuleWE.fGetInstance(null);
 	cWEFlash.fGetInstance(null);
 	cWEHtml.fGetInstance($("#div_htmlWidgetPlayer"));
@@ -196,6 +212,33 @@ fDbg("*** cCPanel, fStartUp()");
 	cSPInfo.fGetInstance("div_infoMain");
 	cSPActivation.fGetInstance("div_activationMain");
 	cSPHelp.fGetInstance("div_helpMain");
+
+	
+	vThis.mFullyLoaded = true;
+	//~ fDbg("--- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
+	//~ fDbg("--- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
+
+	if (!cJSCore.fGetInstance().mFullyLoaded)
+	{
+		var o = setTimeout(function() {
+			fDbg("--- --- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
+			fDbg("--- --- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
+			if (cJSCore.fGetInstance().mFullyLoaded)
+			{
+				vThis.mEnableResize = true;
+				vThis.fResize();
+				// signal CPanel
+				vThis.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
+			}
+		}, 500);
+	}
+	else
+	{
+		vThis.mEnableResize = true;
+		vThis.fResize();
+		// signal CPanel
+		vThis.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -225,6 +268,10 @@ cCPanel.prototype.fOnSignal = function(
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fHide();
+		}
 		vThis.mUserFirstButtonPress = true;
 		switch (vThis.mState)
 		{
@@ -234,7 +281,7 @@ cCPanel.prototype.fOnSignal = function(
 				
 				cModuleEventTicker.fGetInstance().fEndStampEvent();
 				cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
-				cModuleWE.fGetInstance().fNext();
+				cModuleWE.fGetInstance().fPlay();
 				
 				cModuleEventTicker.fGetInstance().fReset();
 				cModuleEventTicker.fGetInstance().fAnimateIn();
@@ -275,6 +322,10 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fHide();
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (cCPanel.instance.mLocked == true)									// release lock
 			return;
@@ -314,6 +365,11 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fOnSignal(vSignal, null, null);
+			return;
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
@@ -323,8 +379,8 @@ cCPanel.prototype.fOnSignal = function(
 			case "cpanel_main":			cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			case "cpanel_info":			cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			case "cpanel_activation":	cSPActivation.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	break;
+			case "cpanel_info":		cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+			case "cpanel_activation":	cSPActivation.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	return;
 			case "cpanel_setup":		cSPHelp.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	return;
 			}
 		}
@@ -335,6 +391,11 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fOnSignal(vSignal, null, null);
+			return;
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
@@ -344,8 +405,8 @@ cCPanel.prototype.fOnSignal = function(
 			case "cpanel_main": 		cPMain.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_channels":		cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
 			case "cpanel_settings":		cSPSettings.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			case "cpanel_info":			cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
-			case "cpanel_activation":	cSPActivation.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	break;
+			case "cpanel_info":		cSPInfo.fGetInstance().fOnSignal(vSignal, vData, vReturnFun); break;
+			case "cpanel_activation":	cSPActivation.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	return;
 			case "cpanel_setup":		cSPHelp.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);	return;
 			}
 		}
@@ -356,6 +417,11 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fOnSignal(vSignal, null, null);
+			return;
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (vThis.mState == "controlpanel")
 		{
@@ -414,6 +480,11 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fOnSignal(vSignal, null, null);
+			return;
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
@@ -441,6 +512,11 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		if (cModuleInput.fGetInstance().mIsActive)
+		{
+			cModuleInput.fGetInstance().fOnSignal(vSignal, null, null);
+			return;
+		}
 		vThis.mUserFirstButtonPress = true;
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;

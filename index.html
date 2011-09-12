@@ -66,6 +66,7 @@
 			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold; text-shadow: #333333 2px 2px 2px;">DEVICE NAME : </div>
 			<div id="input_devicename" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 20px; font-weight: bold; ">NeTV</div>
 		</div>
+		<!--
 		<div id="div_keyboard" class="div_keyboardset" style="position: absolute; top: 210px; left: 210px; height: 220px; width: 380px; border: solid #FFFFEE 0px; opacity: 0.2;">
 			<div id="keyboard">
 				<div style="float: top;">
@@ -121,6 +122,7 @@
 			</div>
 			<div class="spacer">&nbsp;</div>
 		</div>
+			-->
 	</div>
 	<div id="div_activationMain_activatestep2" style="position: absolute; top: 0px; left: 0px;">
 		
@@ -204,8 +206,7 @@
 
 	<div id="div_channelMain_channels" style="position: absolute; top: 0px; left: 0px;"></div>
 	<div id="div_channelMain_widgets" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
-
-	
+	<div id="div_channelMain_widgetconfig" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
 	
 	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
 		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
@@ -321,7 +322,7 @@ Please pick one of three easy ways to configure your NeTV:
 
 	<div id="div_helpMain_content" style="position: absolute; top: 160px; left: 50px; width: 700px; height: 400px; overflow: hidden;">
 		<div id="div_helpMain_content_mobileapp" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; width: 760px; height: 400px;">
-			<div class="bigline chumbyblue font20" style="position: absolute; top: 0px; left: 100px; width: 500px; height: 250px; text-align: justify; color: #FFFFFF; font-size: 16px;">
+			<div class="bigline chumbyblue font20" style="position: absolute; top: 0px; left: 100px; width: 500px; height: 250px; text-align: justify; color: #FFFFFF; font-size: 24px;">
 				To hide this page, press <font color="6598EB"><b>Setup</b></font> button once.
 				<br />
 				<br />
@@ -370,7 +371,7 @@ Please pick one of three easy ways to configure your NeTV:
 		<div id="item_image_info" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
 			<img src="./images/dockicons/textedit_128.png" width="256px" height="256px" />
 		</div>
-		<div id="item_image_info" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
+		<div id="item_image_activation" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
 			<img src="./images/dockicons/chess_128.png" width="256px" height="256px" />
 		</div>
 		<div id="item_image_help" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
@@ -397,18 +398,23 @@ Please pick one of three easy ways to configure your NeTV:
 <!-- ----------------------- loading... module --------------------------- level II -->
 <div id="div_loader" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div style="position: absolute; top: 250px; left: 350px;">
+<!--
 		<img src="./images/gif-loading.gif">
+-->
 	</div>
 </div>
 
 
 
 <!-- ---------------------- start up page (chumby logo) module ----------- level II -->
-<div id="div_startup" style="position: absolute; width: 800px; height: 600px; background-color: #000000; overflow: hidden; border-radius: 12px;">
+<div id="div_startup" style="position: absolute; width: 800px; height: 600px; background-color: #000000; overflow: hidden; border-radius: 12px; display: none;">
 	<div id="div_startup_logo" style="position: absolute; top: 250px; left: 240px; width: 300px; height: 98px;">
 		<img src="./images/chumby_logo_300x98.png" width="100%" height="100%">
 	</div>
 </div>
+
+
+
 
 
 
@@ -431,6 +437,106 @@ Please pick one of three easy ways to configure your NeTV:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+----------------------------------------------- level I
+-------------input panel
+-----------------------------------------------
+-->
+<div id="div_inputpanel" style="position: absolute; top: 160px; left: 50px; width: 700px; height: 420px; background-color: #000000; border: solid #FFFFFF 5px; border-radius: 50px; display: none;">
+	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
+		<div id="item_indicator" style="position: absolute; top: 350px; left: 180px; background-color: #6598EB; width: 150px; height: 40px; border-radius: 10px;"></div>
+	</div>
+
+	<div id="div_inputcontent" style="position: absolute; top: 40px; left: 80px;">
+		<div id="div_inputcontent_text" style="float: left; width: 500px; height: 40px; border: solid #FFFFFF 2px; padding: 0 0 0 30; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 32px; font-weight: bold; "></div>
+	</div>
+	<div id="div_keyboard" class="div_keyboardset" style="position: absolute; top: 110px; left: 160px; height: 220px; width: 380px; border: solid #FFFFEE 0px;">
+		<div id="keyboard">
+			<div style="float: top;">
+				<div class="mac_key" id="key_a">a</div>
+				<div class="mac_key" id="key_b">b</div>
+				<div class="mac_key" id="key_c">c</div>
+				<div class="mac_key" id="key_d">d</div>
+				<div class="mac_key" id="key_e">e</div>
+				<div class="mac_key" id="key_f">f</div>
+				<div class="mac_key" id="key_g">g</div>
+				<div class="mac_key" id="key_h">h</div>
+				<div class="mac_key" id="key_i">i</div>					
+			</div>
+			<div style="float: top;">
+				<div class="mac_key" id="key_j">j</div>
+				<div class="mac_key" id="key_k">k</div>
+				<div class="mac_key" id="key_l">l</div>
+				<div class="mac_key" id="key_m">m</div>
+				<div class="mac_key" id="key_n">n</div>
+				<div class="mac_key" id="key_o">o</div>
+				<div class="mac_key" id="key_p">p</div>
+				<div class="mac_key" id="key_q">q</div>
+				<div class="mac_key" id="key_r">r</div>					
+			</div>
+			<div style="float: top;">
+				<div class="mac_key" id="key_s">s</div>
+				<div class="mac_key" id="key_t">t</div>
+				<div class="mac_key" id="key_u">u</div>
+				<div class="mac_key" id="key_v">v</div>
+				<div class="mac_key" id="key_w">w</div>
+				<div class="mac_key" id="key_x">x</div>
+				<div class="mac_key" id="key_y">y</div>
+				<div class="mac_key" id="key_z">z</div>
+				<div class="mac_key" id="key_0">0</div>					
+			</div>
+			<div style="float: top;">
+				<div class="mac_key" id="key_1">1</div>
+				<div class="mac_key" id="key_2">2</div>
+				<div class="mac_key" id="key_3">3</div>
+				<div class="mac_key" id="key_4">4</div>
+				<div class="mac_key" id="key_5">5</div>
+				<div class="mac_key" id="key_6">6</div>
+				<div class="mac_key" id="key_7">7</div>
+				<div class="mac_key" id="key_8">8</div>					
+				<div class="mac_key" id="key_9">9</div>
+			</div>
+			<div style="float: top;">
+				<div class="mac_key" id="key_special" style="width: 80px">.@#</div>
+				<div class="mac_key" id="key_shift" style="width: 80px">sh</div>
+				<div class="mac_key" id="key_space" style="width: 114px">space</div>
+				<div class="mac_key" id="key_backspace" style="width: 80px">--</div>
+			</div>
+		</div>
+		<div class="spacer">&nbsp;</div>
+	</div>
+	<div id="div_inputaction" style="position: absolute; top: 360px; left: 0px; color: #FFFFFF; font-size: 24px; font-weight: bold; text-shadow: #000000 3px 3px 3px;">
+		<div style="position: absolute; top: 0px; left: 200px; width: 80px; opacity: 1; border: solid #FFFFFF 0px; ">CANCEL</div>
+		<div style="position: absolute; top: 0px; left: 450px; width: 40px; opacity: 1; border: solid #FFFFFF 0px; ">OK</div>
+	</div>	
+</div>
 
 
 
@@ -472,7 +578,7 @@ Please pick one of three easy ways to configure your NeTV:
 -------------Event Ticker
 -----------------------------------------------
 -->
-<div id="div_eventWidgetPlayer" style="position: absolute; left: 60px; top: 630px; width: 1160px; height: 50px; padding: 0; margin: 0; overflow: hidden; display:none; ">
+<div id="div_eventWidgetPlayer" style="position: absolute; left: 60px; top: 1630px; width: 1160px; height: 50px; padding: 0; margin: 0; overflow: hidden; display:none; ">
 <div id="div_eventWidgetPlayer_crawling" style="position: absolute; top: 0px; left: 1199px; width: 1078px; height: 50px; background-color: #222222; overflow: hidden;">
 	<div id="crawling_container" style="position: absolute; top: 0px; left: 0px; width: auto; height: 50px; background-color: #AA3333;"></div>
 	<div id="corner_container">

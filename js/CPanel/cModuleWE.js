@@ -18,7 +18,7 @@ function cModuleWE(
 	// channel/widget playing
 	this.mCurrChannel = null;
 	this.mCurrWidget = null;
-	this.mCurrWidgetPeriod = 90;
+	this.mCurrWidgetPeriod = 15;
 	this.mCurrWidgetTimeSpend = 0;
 	
 	// WE status
@@ -186,7 +186,16 @@ cModuleWE.prototype.fPlay = function(
 )
 {
 //~ fDbg("*** cModuleWE, fPlay(), ");
+	var o, p;
+
+	fDbg("====>>> " + this.mCurrWE);
+	fDbg("====>>> " + this.mCurrWidget);
 	
+	p = "?";
+	if (this.mCurrWidget.mParameterList)
+		for (o in this.mCurrWidget.mParameterList)
+			p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
+	this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -196,7 +205,7 @@ cModuleWE.prototype.fNext = function(
 )
 {
 //~ fDbg("*** cModuleWE, fNext(), ");
-	var i, o, vThis;
+	var i, o, p, vThis;
 	vThis = this;
 
 if (!this.mCurrChannel)
@@ -255,7 +264,12 @@ if (!this.mCurrChannel)
 		
 		//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
 		this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
-		this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref, null);
+		
+		p = "?";
+		if (this.mCurrWidget.mParameterList)
+			for (o in this.mCurrWidget.mParameterList)
+				p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
+		this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
 	}
 	else
 	{
@@ -268,7 +282,12 @@ if (!this.mCurrChannel)
 			this.mCurrWE = cWEHtml.fGetInstance();
 			//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
 			this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
-			this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref, null);
+			
+			p = "?";
+			if (this.mCurrWidget.mParameterList)
+				for (o in this.mCurrWidget.mParameterList)
+					p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
+			this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
 		}
 		else if (this.mCurrWidget.pIsHTML())
 		{

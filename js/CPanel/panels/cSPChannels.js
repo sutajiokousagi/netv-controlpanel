@@ -29,6 +29,9 @@ function cSPChannels(
 	this.mDivWIdgets = null;
 	this.mDivWidgetList = null;
 	this.mDivWidgetSummary = null;
+	this.mDivWidgetConfig = null;
+	this.mDivWidgetConfigList = null;
+	this.mDivInputPanel = null;
 	
 	this.mDivSubNaviContent = null;
 	this.mDivBack = null;
@@ -44,10 +47,13 @@ function cSPChannels(
 	cSPChannels.MODE_DEFAULT = "mode_default";
 	cSPChannels.MODE_WIDGETLIST = "mode_widgetlist";
 	cSPChannels.MODE_WIDGETCONFIG = "mode_widgetconfig";
+	cSPChannels.MODE_INPUT = "mode_input";
 	
 	
-	
-	
+	this.mCurrWidgetConfigurable = false;
+
+
+	// fInit();
 	this.fInit();
 }
 
@@ -67,6 +73,9 @@ cSPChannels.prototype.fInit = function(
 	this.mDivIndicator = this.mDiv.children("#item_indicators").children("#item_indicator");
 	this.mDivChannels = this.mDiv.children("#div_channelMain_channels");
 	this.mDivWidgets = this.mDiv.children("#div_channelMain_widgets");
+	this.mDivWidgetConfig = this.mDiv.children("#div_channelMain_widgetconfig");
+	this.mDivInputPanel = this.mDiv.children("#div_channelMain_inputpanel");
+	
 	this.mDivSubNaviContent = $(this.mDiv.children("#subnavi").children()[0]);
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
@@ -87,8 +96,10 @@ if (!vMode) return vThis.mMode;
 	switch (vMode)
 	{
 	case cSPChannels.MODE_DEFAULT:
+		vThis.mDivInputPanel.hide();
 		vThis.mDivChannels.show();
 		vThis.mDivWidgets.hide();
+		vThis.mDivWidgetConfig.hide();
 		
 		vThis.mDivSubNaviContent.html("Channels");
 		vThis.fRenderChannelList();
@@ -96,13 +107,14 @@ if (!vMode) return vThis.mMode;
 		vThis.pSelection(vThis.mDivChannelList[0]);
 		break;
 	case cSPChannels.MODE_WIDGETLIST:
+		vThis.mDivInputPanel.hide();
 		vThis.mDivChannels.hide();
 		vThis.mDivWidgets.show();
+		vThis.mDivWidgetConfig.hide();
+		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mName);
 		
-		o = parseInt(vThis.mSelection.attr("id").split("_")[3]);
-		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[o].mName);
-		vThis.fRenderChannelInfo(cModel.fGetInstance().CHANNEL_LIST[o]);
-
+		//~ o = parseInt(vThis.mSelection.attr("id").split("_")[3]);
+		vThis.fRenderChannelInfo(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
 		vThis.mDivIndicator.css({
 			width: "50px",
 			height: "50px",
@@ -111,6 +123,27 @@ if (!vMode) return vThis.mMode;
 		});
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.pSelection(vThis.mDivWidgetList[0]);
+		break;
+	case cSPChannels.MODE_WIDGETCONFIG:
+		vThis.mDivInputPanel.hide();
+		vThis.mDivChannels.hide();
+		vThis.mDivWidgets.hide();
+		vThis.mDivWidgetConfig.show();
+		
+		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN].mName);
+		
+		vThis.fRenderWidgetConfig(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
+		vThis.mDivIndicator.css(vThis.mDivWidgetConfigList[0].pIndicatorStyle);
+		vThis.mDivBack.css("opacity", "0.2");
+		vThis.pSelection(vThis.mDivWidgetConfigList[0]);
+		break;
+	case cSPChannels.MODE_INPUT:
+		
+		vThis.mDivInputPanel.show();
+		if (keyboard_currentY > 4)
+			keyboard_onRemoteControl("up", "input_username");
+		else if (keyboard_currentY < 0)
+			keyboard_onRemoteControl("down", "input_username");
 		break;
 	}
 	vThis.mMode = vMode;
@@ -137,12 +170,15 @@ if (!vSelection) return vThis.mSelection;
 		vThis.mSelection.css("opacity", "1");
 	vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
 
-	o = vThis.mSelection.attr("id").split("widgettn_");
-	if (o[0] == "")
+	if (vThis.mSelection && vThis.mSelection.attr("id"))
 	{
-		o[1] = parseInt(o[1]);
-		vThis.mSelectedWidgetN = o[1];
-		vThis.fRenderWidgetSummary(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
+		o = vThis.mSelection.attr("id").split("widgettn_");
+		if (o[0] == "")
+		{
+			o[1] = parseInt(o[1]);
+			vThis.mSelectedWidgetN = o[1];
+			vThis.fRenderWidgetSummary(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
+		}
 	}
 }
 
@@ -206,11 +242,39 @@ cSPChannels.prototype.fOnSignal = function(
 				break;
 			}
 			break;
-
 		case cSPChannels.MODE_WIDGETLIST:
 			switch (vThis.mSelection)
 			{
 			case vThis.mDivBack:	vThis.pMode(cSPChannels.MODE_DEFAULT); break;
+			default:
+				if (vThis.mCurrWidgetConfigurable)
+					vThis.pMode(cSPChannels.MODE_WIDGETCONFIG);
+				break;
+			}
+			break;
+		case cSPChannels.MODE_WIDGETCONFIG:
+			switch (vThis.mSelection)
+			{
+			case vThis.mDivBack:	vThis.pMode(cSPChannels.MODE_WIDGETLIST); break;
+			default:
+				o = $(vThis.mSelection.children()[2]);
+				if (cModuleInput.fGetInstance().mIsActive)
+					return;
+				cModuleInput.fGetInstance().fShow();
+				cModuleInput.fGetInstance().fAssociate(o, o.html(), null, function() {
+					//~ fDbg(vThis.mSelectedChannelN + " - " + vThis.mSelectedWidgetN);
+					fDbg($(vThis.mSelection.children()[0]).html().toLowerCase());
+					// TODO : MUST finish this on monday!!!!!!
+					o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+					if (!o.mParameterList)
+						o.mParameterList = {};
+
+					o.mParameterList[$(vThis.mSelection.children()[0]).html().toLowerCase()] = $(vThis.mSelection.children()[2]).html();
+					fDbg(o.mName);
+					fDbg(JSON.stringify(o.mParameterList));
+					cChannelModule.fGetInstance().fSaveChannelData();
+				});
+				break;
 			}
 			break;
 		}
@@ -247,6 +311,18 @@ cSPChannels.prototype.fOnSignal = function(
 				break;
 			}
 			break;
+
+		case cSPChannels.MODE_WIDGETCONFIG:
+			i = vThis.mDivWidgetConfigList.indexOf(vThis.mSelection);
+			if (i == -1)
+			{
+				vThis.pSelection(vThis.mPrevSelection, true, false);
+			}
+			else if (i - 1 >= 0)
+			{
+				vThis.pSelection(vThis.mDivWidgetConfigList[i - 1]);
+			}
+			break;
 		}
 		break;
 		
@@ -266,6 +342,21 @@ cSPChannels.prototype.fOnSignal = function(
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
 			o = o + vThis.mStyle.mWidgetListColumn <= vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
 			vThis.pSelection(o, false, true);
+			break;
+
+		case cSPChannels.MODE_WIDGETCONFIG:
+			i = vThis.mDivWidgetConfigList.indexOf(vThis.mSelection);
+			if (i >= 0)
+			{
+				if (i + 1 < vThis.mDivWidgetConfigList.length)
+				{
+					vThis.pSelection(vThis.mDivWidgetConfigList[i + 1]);
+				}
+				else
+				{
+					vThis.pSelection(vThis.mDivBack, false, true);
+				}
+			}
 			break;
 		}
 		break;
@@ -479,12 +570,67 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 	
 	o = "";
 	o += vWidget.mName;
-	fDbg(vWidget.mParameterList);
-	fDbg(vWidget.mParameterList.length);
-	for (p in vWidget.mParameterList)
-		fDbg(p + " : " + vWidget.mParameterList[p]);
-
-
+	if (vWidget.mParameterList)
+	{
+		o += '<div style="position: absolute; top: 56px; left: 360px; font-size: 14px; font-style: italic; color: #AAAAAA;">Configurable. Press the <span style="font-weight: bold; font-style: normal; color: #FFFFFF;">center</span> button to edit.</div>';
+		vThis.mCurrWidgetConfigurable = true;
+	}
+	else
+		vThis.mCurrWidgetConfigurable = false;
+		
+	//~ for (p in vWidget.mParameterList)
+		//~ fDbg(p + " : " + vWidget.mParameterList[p]);
 	
 	vThis.mDivWidgetSummary.html(o);
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *  fRenderWidgetConfig
+ * -----------------------------------------------------------------------------------------------*/
+cSPChannels.prototype.fRenderWidgetConfig = function(
+	vChannelN,
+	vWidgetN
+)
+{
+	var vThis, o, p, i, vWidget, vLeft, vTop;
+	vThis = this;
+	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+
+	vTop = 20;
+	o = '';
+	o += '<div id="widgetconfig_itemcontainer" style="position: absolute; top: 170px; left: 50px; width: 700px; height: 350px; border: dashed #FFFFFF 0px; overflow: hidden;">';
+	o += '<div style="position: absolute; top: 0px; left: 0px;">';
+	for (p in vWidget.mParameterList)
+	{
+		o += '<div style="position: absolute; top: ' + vTop + 'px; left: 50px; width: 600px; height: 40px; border: solid #FFFFFF 0px; ">';
+			o += '<div style="float: left; width: 200px; font-size: 22px; font-weight: bold; margin: 10px 0 0 10px; text-shadow: #333333 2px 2px 2px;">' + p.toUpperCase() + '</div>';
+			o += '<div style="float: left; width: 20px; font-weight: bold; margin: 10px 0 0 10px;"> : </div>';
+			o += '<div style="float: left; width: 320px; height: 25px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 22px; font-weight: bold; ">' + vWidget.mParameterList[p] + '</div>';
+		o += '</div>';
+		vTop += 40 + 30;
+	}
+	o += '</div>';
+	o += '</div>';
+	vThis.mDivWidgetConfig.html(o);
+	
+	vThis.mDivWidgetConfigList = [];
+	$($(vThis.mDivWidgetConfig.children()[0]).children()[0]).children().each(function() {
+		vThis.mDivWidgetConfigList.push($(this));
+		o = vThis.mDivWidgetConfigList[vThis.mDivWidgetConfigList.length - 1];
+		o.pIndicatorStyle = {
+			width: parseInt(o.css("width").split("px")[0]) + 30 + "px",
+			height: parseInt(o.css("height").split("px")[0]) + 10 + "px",
+			top: parseInt(o.css("top").split("px")[0]) + 170 - 5 + "px",
+			left: parseInt(o.css("left").split("px")[0]) + 50 - 15 + "px"
+		};
+	});
+}
+
+cSPChannels.prototype.fRenderInputMode = function() {
+
+}
+{
+
+
+
 }
