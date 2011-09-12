@@ -23,7 +23,7 @@ body{
 	var mPrevTweetID = null;
 	var mViewPortSize = [];
 
-	var mQueryKeyword = "ohssummit";
+	var mQueryKeyword = "ohsummit";
 	var mQueryInterval = 10000;
 
 	
@@ -64,11 +64,14 @@ fResize();
 			//var url="http://search.twitter.com/search.json?q="+ "harry%20potter" +"&rpp=" + 1 + "&callback=?";
 			var url = "http://search.twitter.com/search.json?q="+ encodeURIComponent(mQueryKeyword) +"&rpp=" + 1 + "&callback=?";
 			var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
-			
+			//fDbg(url);
 			$.getJSON(url,function(json){
+				//fDbg(json);
 				if (!json.results)
 					return;
-				
+
+				if (!json.results[0])
+					return;
 				var vTweet_title = "";
 				var vTweet_message = "";
 				var vTweet_image = "";
