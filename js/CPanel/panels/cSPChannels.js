@@ -568,11 +568,11 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
 	
-	o = "";
-	o += vWidget.mName;
+	o = '';
+	o += '<div style="position: absolute; top: 10px; left: 10px; font-size: 20px;">' + vWidget.mName + '</div>';
 	if (vWidget.mParameterList)
 	{
-		o += '<div style="position: absolute; top: 56px; left: 360px; font-size: 14px; font-style: italic; color: #AAAAAA;">Configurable. Press the <span style="font-weight: bold; font-style: normal; color: #FFFFFF;">center</span> button to edit.</div>';
+		o += '<div style="position: absolute; top: 60px; left: 390px; font-size: 13px; font-style: italic; color: #AAAAAA;">Configurable. Press the <span style="font-weight: bold; font-style: normal; color: #FFFFFF;">center</span> button to edit.</div>';
 		vThis.mCurrWidgetConfigurable = true;
 	}
 	else

@@ -82,7 +82,7 @@ fResize();
 				if (json.results[0])
 				{
 					if (json.results[0].from_user)
-						vTweet_title = "OHSummit Tweet from " + json.results[0].from_user;
+						vTweet_title = mQueryKeyword + " Tweet from " + json.results[0].from_user;
 						//vTweet_title = "Harry Potter Tweet from " + json.results[0].from_user;
 					if (json.results[0].text)
 					{

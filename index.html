@@ -66,63 +66,6 @@
 			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold; text-shadow: #333333 2px 2px 2px;">DEVICE NAME : </div>
 			<div id="input_devicename" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 20px; font-weight: bold; ">NeTV</div>
 		</div>
-		<!--
-		<div id="div_keyboard" class="div_keyboardset" style="position: absolute; top: 210px; left: 210px; height: 220px; width: 380px; border: solid #FFFFEE 0px; opacity: 0.2;">
-			<div id="keyboard">
-				<div style="float: top;">
-					<div class="mac_key" id="key_a">a</div>
-					<div class="mac_key" id="key_b">b</div>
-					<div class="mac_key" id="key_c">c</div>
-					<div class="mac_key" id="key_d">d</div>
-					<div class="mac_key" id="key_e">e</div>
-					<div class="mac_key" id="key_f">f</div>
-					<div class="mac_key" id="key_g">g</div>
-					<div class="mac_key" id="key_h">h</div>
-					<div class="mac_key" id="key_i">i</div>					
-				</div>
-				<div style="float: top;">
-					<div class="mac_key" id="key_j">j</div>
-					<div class="mac_key" id="key_k">k</div>
-					<div class="mac_key" id="key_l">l</div>
-					<div class="mac_key" id="key_m">m</div>
-					<div class="mac_key" id="key_n">n</div>
-					<div class="mac_key" id="key_o">o</div>
-					<div class="mac_key" id="key_p">p</div>
-					<div class="mac_key" id="key_q">q</div>
-					<div class="mac_key" id="key_r">r</div>					
-				</div>
-				<div style="float: top;">
-					<div class="mac_key" id="key_s">s</div>
-					<div class="mac_key" id="key_t">t</div>
-					<div class="mac_key" id="key_u">u</div>
-					<div class="mac_key" id="key_v">v</div>
-					<div class="mac_key" id="key_w">w</div>
-					<div class="mac_key" id="key_x">x</div>
-					<div class="mac_key" id="key_y">y</div>
-					<div class="mac_key" id="key_z">z</div>
-					<div class="mac_key" id="key_0">0</div>					
-				</div>
-				<div style="float: top;">
-					<div class="mac_key" id="key_1">1</div>
-					<div class="mac_key" id="key_2">2</div>
-					<div class="mac_key" id="key_3">3</div>
-					<div class="mac_key" id="key_4">4</div>
-					<div class="mac_key" id="key_5">5</div>
-					<div class="mac_key" id="key_6">6</div>
-					<div class="mac_key" id="key_7">7</div>
-					<div class="mac_key" id="key_8">8</div>					
-					<div class="mac_key" id="key_9">9</div>
-				</div>
-				<div style="float: top;">
-					<div class="mac_key" id="key_special" style="width: 80px">.@#</div>
-					<div class="mac_key" id="key_shift" style="width: 80px">sh</div>
-					<div class="mac_key" id="key_space" style="width: 114px">space</div>
-					<div class="mac_key" id="key_backspace" style="width: 80px">--</div>
-				</div>
-			</div>
-			<div class="spacer">&nbsp;</div>
-		</div>
-			-->
 	</div>
 	<div id="div_activationMain_activatestep2" style="position: absolute; top: 0px; left: 0px;">
 		
@@ -320,22 +263,30 @@ Please pick one of three easy ways to configure your NeTV:
 <div id="div_helpMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_helpMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
 
-	<div id="div_helpMain_content" style="position: absolute; top: 120px; left: 50px; width: 700px; height: 400px; overflow: hidden;">
-		<div id="div_helpMain_content_mobileapp" style="position: absolute; top: 70px; left: 0px; color: #FFFFFF;">
-			<div class="bigline chumbyblue" style="position: absolute; top: 0px; left: 0px; width: 350px; height: 360px; text-align: left; color: #FFFFFF; font-size: 22px; border-right: dashed #FFFFFF 0px;">
-				To hide this page, press <span style="color: #6598EB; font-weight: bold;">Setup</span> button once.
-				<br />
-				<br />
-				To reconfigure wifi on NeTV, press the <span style="color: #6598EB; font-weight: bold;">Setup</span> button about 2-4 seconds, and then 2-4 seconds again.
-				<br />
-				<br />
-				To reset NeTV to factory condition, press and hold the <span style="color: #6598EB; font-weight: bold;">Setup</span> button until the system reboots.
+	<div id="div_helpMain_content" style="position: absolute; top: 120px; left: 50px; width: 700px; height: 500px; overflow: hidden;">
+		<div id="div_helpMain_content_mobileapp" style="position: absolute; top: 40px; left: 0px; color: #FFFFFF;">
+			<div class="bigline chumbyblue" style="position: absolute; top: 0px; left: 0px; width: 360px; height: 380px; text-align: left; color: #FFFFFF; font-size: 18px; border-right: dashed #FFFFFF 0px;">
+Pressing the setup button on the back side of NeTV brings up this <span style="color: #6598EB; font-weight: bold;">setup</span> help page.<br />
+<br />
+For help on NeTV, please visit <span style="color: #6598EB;">http://wiki.chumby.com/index.php/Netv</span><br />
+<br />
+<!--
+<img src = netv_help.png>
+-->
+
+To reconfigure wifi by restoring factory settings:<br />
+<br />
+1. Tap the <span style="color: #6598EB; font-weight: bold;">setup</span> button once<br />
+2. Immediately press and hold the <span style="color: #6598EB; font-weight: bold;">setup</span> button until the unit reboots. <br />
+<br />
+The unit will reboot within four seconds of holding down the switch if the initial tap was registered. Do not remove power from the unit while it restarts.
 			</div>
 		</div>
-		<div style="position: absolute; top: 40px; left: 370px; width: 1px; height: 400px; border-left: dashed #FFFFFF 1px;">
+		<div style="position: absolute; top: 30px; left: 380px; width: 1px; height: 400px; border-left: dashed #FFFFFF 1px;">
 		</div>
-		<div style="position: absolute; top: 40px; left: 390px;">
-			<div style="position: absolute; top: 100px; left: 20px; width: 300px; height: 200px; background-image: url('./images/netv_help.png'); background-size: 100%"></div>
+		<div style="position: absolute; top: 40px; left: 400px;">
+			<div style="position: absolute; top: 10px; left: 20px; width: 120px; height: 120px; background-image: url('./images/netv_help_url.png'); background-size: 100%"></div>
+			<div style="position: absolute; top: 160px; left: 0px; width: 300px; height: 200px; background-image: url('./images/netv_help.png'); background-size: 100%"></div>
 		</div>
 	</div>
 	

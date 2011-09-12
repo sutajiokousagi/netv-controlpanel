@@ -6,7 +6,7 @@
 		<widget>
 			<name>Twitter Search Widget 1</name>
 			<href>./widgets/twitter0.2/index.html</href>
-			<thumbnail>./widgets/twitter0.2/tn.jpg</thumbnail>
+			<thumbnail>./widgets/twitter0.2/tn.png</thumbnail>
 			<contenttype>application/html</contenttype>
 			<parameters>
 				<parameter value="" name="keyword"/>

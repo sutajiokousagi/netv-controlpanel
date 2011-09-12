@@ -75,7 +75,7 @@ body{
 				if (json.results[0])
 				{
 					if (json.results[0].from_user)
-						vTweet_title = "Chumby Tweet from " + json.results[0].from_user;
+						vTweet_title = mQueryKeyword + " Tweet from " + json.results[0].from_user;
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
