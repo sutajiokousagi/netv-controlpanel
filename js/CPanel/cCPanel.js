@@ -268,6 +268,7 @@ cCPanel.prototype.fOnSignal = function(
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		cModuleChromaBg.fGetInstance().fRefreshScreen();
 		if (cModuleInput.fGetInstance().mIsActive)
 		{
 			cModuleInput.fGetInstance().fHide();
@@ -285,10 +286,6 @@ cCPanel.prototype.fOnSignal = function(
 				
 				cModuleEventTicker.fGetInstance().fReset();
 				cModuleEventTicker.fGetInstance().fAnimateIn();
-				
-				//~ var aaa = setTimeout(function() {
-					//~ vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, ["help"], null);
-				//~ }, 3000);
 			});
 			vThis.pState("event");
 			break;

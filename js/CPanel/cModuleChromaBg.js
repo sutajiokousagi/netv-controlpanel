@@ -17,8 +17,8 @@ function cModuleChromaBg(
 	this.mID = vDiv ? vDiv : null;
 
 	this.mRefreshInterval = null;
-	this.mRefreshFrequency = 100;
-	this.mRefreshPeriod = 4000;
+	this.mRefreshFrequency = 200;
+	this.mRefreshPeriod = 2000;
 	
 	this.fInit();
 }
@@ -77,7 +77,7 @@ cModuleChromaBg.prototype.fRefreshScreen = function(
 {
 fDbg2("*** cModuleChromaBg, fRefreshScreen(), ");
 	var o, p, f;
-	return;
+	//~ return;
 	if (vAction == "off")
 	{
 		if (this.mRefreshInterval != null)

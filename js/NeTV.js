@@ -24,11 +24,14 @@ $(function() {
 		mCPanel = cCPanel.fGetInstance();
 	else
 		window.location.reload();
-		
-	mJSCore.CPANEL = mCPanel;
-	mCPanel.JSCORE = mJSCore;
-	mJSCore.fInit(function() { mJSCore.fStartUp(); });
-	mCPanel.fInit(function() { mCPanel.fStartUp(); });
+
+	var o = setTimeout(function() {
+		mJSCore.CPANEL = mCPanel;
+		mCPanel.JSCORE = mJSCore;
+		mJSCore.fInit(function() { mJSCore.fStartUp(); });
+		mCPanel.fInit(function() { mCPanel.fStartUp(); });
+	}, 300);
+	
 	
 	$(window).keydown(function(event) {
 		switch (event.which)
@@ -151,7 +154,7 @@ function fButtonPress(
 	vCount
 )
 {
-//~ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
+fDbg("*** NeTV, fButtonPress(), " + vButtonName);
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -168,8 +171,8 @@ function fButtonPress(
 				// fDbg("switched to demo(AP) mode");
 			}
 			else if (vCount == 1)
-			{
-				mCPanel.fOnSignal(SIGNAL_GOTO_CONTROLPANEL, ["help"], null);
+			{	
+				//~ mCPanel.fOnSignal("signal_goto_controlpanel", ["help"], null);
 			}
 			break;
 	}

@@ -106,7 +106,9 @@ cPMain.prototype.fOnSignal = function(
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
 		p = parseInt(p.css("width").split("px")[0]) + 30;
+
 		
+		vThis.mCurrSelection = vNewSelected;
 		$("#div_cpanelMain #item_indicator").animate({
 			width: p + "px",
 			left: (800 - p) / 2 + "px"
@@ -146,7 +148,10 @@ cPMain.prototype.fOnSignal = function(
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
 		p = parseInt(p.css("width").split("px")[0]) + 30;
+
+
 		
+		vThis.mCurrSelection = vNewSelected;
 		$("#div_cpanelMain #item_indicator").animate({
 			width: p + "px",
 			left: (800 - p) / 2 + "px"
