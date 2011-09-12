@@ -167,6 +167,10 @@ function fButtonPress(
 			{
 				// fDbg("switched to demo(AP) mode");
 			}
+			else if (vCount == 1)
+			{
+				mCPanel.fOnSignal(SIGNAL_GOTO_CONTROLPANEL, ["help"], null);
+			}
 			break;
 	}
 	//~ keyboard_onRemoteControl(vButtonName, "input_username");
