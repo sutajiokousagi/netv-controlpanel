@@ -3,7 +3,7 @@
   
   
   <head>
-    <title>Engadget NeTV Widgets</title>
+    <title>Hacker News NeTV Widgets</title>
     
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
@@ -13,10 +13,10 @@
       
       var vBridgePath = "http://localhost/bridge";
       
-      var rssUrl = "http://www.engadget.com/rss.xml";
+      var rssUrl = "http://news.ycombinator.com/rss";
       
-      var picUrl = "./widgets/engadget_0.1/logo.jpg"
-
+      var picUrl = "./widgets/hackernews_0.1/logo.png"
+      
       function processRSS(JSONdata) {
 	  
 	  console.log("ENTER the processRSS");
@@ -31,13 +31,13 @@
 	      content = JSON.stringify(news[i]['content']);
 	      $('#result').append('<h3>' + title + '</h3>');
 	      
-	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>Engadget News</title><image>"+ picUrl + "</image>"}, function(vData) {console.log(vData)});
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>Hacker News</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
 	  }
       }
       
       $(function() {
 	  
-	  var query = "select * from feed where url='"+rssUrl+"' LIMIT 10";
+	  var query = "select * from feed where url='"+rssUrl+"' LIMIT 20";
 
 	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
 
