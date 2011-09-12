@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+  <head>
+    <title>Engadget NeTV Widgets</title>
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+    <script type="text/javascript" src="cMD5.js"></script>
+    <script type="text/javascript" src="fXML.js"></script>
+    
+    <script type="text/javascript">
+      
+      var vBridgePath = "http://localhost/bridge";
+      
+      var rssUrl = "http://www.engadget.com/rss.xml";
+
+      var picUrl = "logo.jpg"
+
+      function processRSS(JSONdata) {
+
+	  console.log("ENTER the processRSS");
+	  
+	  var news = JSONdata['entries'];
+	  
+	  for (var i = 0; i< news.length; i++)
+	  {
+	      // The title of the news
+	      title = JSON.stringify(news[i]['title']);
+	      // Part of the news content;
+	      // replace(/[\n\t\r]+/g, "") will remove all the things like \t
+	      contentPart = JSON.stringify(news[i]['contentSnippet'].replace(/[\n\t\r]+/g,""));
+	      content = JSON.stringify(news[i]['content']);
+	      $('#result').append('<h3>' + title + '</h3>');
+
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message>"}, function(vData) {console.log(vData)});
+	  }
+      }
+      
+      function parseRSS(url, callBack) {
+	  console.log("ENTER the parseRSS");
+
+	  // xmlhttpPost("", "post", { 'cmd' : 'GetUrl' }, callback );
+	  
+	  $.ajax({
+	      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&callback=?&q=' + encodeURIComponent(url),
+	      dataType: 'jsonp',
+	      success: function(data) {
+	  	  callBack(data.responseData.feed);
+	      },
+	      
+	  });
+
+      }
+      
+      
+      $(function() {
+	  
+	  parseRSS(rssUrl, processRSS);
+
+      });
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    <div id="result"></div>
+  </body>
+  
+</html>
