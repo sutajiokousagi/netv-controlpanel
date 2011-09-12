@@ -78,6 +78,7 @@ cJSCore.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_CENTER:
 	case cConst.SIGNAL_BUTTON_UP:
 	case cConst.SIGNAL_BUTTON_DOWN:
+	case cConst.SIGNAL_BUTTON_SETUP:
 		if (vSignal != cConst.SIGNAL_BUTTON_LEFT && vSignal != cConst.SIGNAL_BUTTON_RIGHT)
 			if (cModel.fGetInstance().CHUMBY_INTERNET == "false")					// redirect to html_config.html
 			{

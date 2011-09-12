@@ -5,7 +5,7 @@
 //
 // -------------------------------------------------------------------------------------------------
 var kCPanelStatic = {
-	mSelectionList : ["channels", "configurations", "info", "activation"]
+	mSelectionList : ["channels", "configurations", "info", "activation", "help"]
 };
 
 // -------------------------------------------------------------------------------------------------

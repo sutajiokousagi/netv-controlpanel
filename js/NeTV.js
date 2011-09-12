@@ -163,9 +163,12 @@ function fButtonPress(
 		case "down": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
 		
 		case "setup":
-			if (vCount == 3)
-			{
+			if (vCount == 3) {
 				// fDbg("switched to demo(AP) mode");
+			}
+			else if (vCount == 1) {
+				// go to Help page directly
+				mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_SETUP); break;
 			}
 			break;
 	}
