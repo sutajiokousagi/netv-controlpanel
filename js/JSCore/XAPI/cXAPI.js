@@ -47,7 +47,7 @@ cXAPI.fGetInstance = function(
 cXAPI.prototype.fInit = function(
 )
 {
-fDbg2("*** cXAPI, fInit()");
+fDbg("*** cXAPI, fInit()");
 	
 }
 

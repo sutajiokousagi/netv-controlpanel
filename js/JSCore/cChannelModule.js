@@ -30,7 +30,7 @@ cChannelModule.fGetInstance = function()
 cChannelModule.prototype.fInit = function(
 )
 {
-//~ fDbg("*** cChannelModule, fInit()");
+fDbg("*** cChannelModule, fInit()");
 	
 }
 
@@ -188,7 +188,7 @@ cChannelModule.prototype.fLoadChannelData = function(
 	var o, i;
 
 	cProxy.fGetParams("defaultchanneldata", function(vData) {
-		if (vData == "")
+		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
 		for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList.length; i++)
