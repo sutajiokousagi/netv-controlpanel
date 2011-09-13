@@ -186,11 +186,16 @@ cModuleWE.prototype.fPlay = function(
 )
 {
 //~ fDbg("*** cModuleWE, fPlay(), ");
-	var o, p;
+	var vThis, o, p;
 
 	fDbg("====>>> " + this.mCurrWE);
 	fDbg("====>>> " + this.mCurrWidget);
-	
+
+	if (!this.mCurrWidget)
+	{
+		vThis.fNext();
+		return;
+	}
 	p = "?";
 	if (this.mCurrWidget.mParameterList)
 		for (o in this.mCurrWidget.mParameterList)
