@@ -155,7 +155,7 @@ function fButtonPress(
 	vCount
 )
 {
-fDbg("*** NeTV, fButtonPress(), " + vButtonName);
+fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -171,9 +171,9 @@ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
 			{
 				// fDbg("switched to demo(AP) mode");
 			}
-			else if (vCount == 1)
+			else if (!vCount || vCount == 1)
 			{	
-				//~ mCPanel.fOnSignal("signal_goto_controlpanel", ["help"], null);
+				mCPanel.fOnSignal("signal_goto_controlpanel", ["help"], null);
 			}
 			break;
 	}

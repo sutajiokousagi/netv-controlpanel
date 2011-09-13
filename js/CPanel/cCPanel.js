@@ -707,9 +707,20 @@ cCPanel.prototype.fOnSignal = function(
 			case "htmlwidgetengine":
 				vThis.fShowControlPanel();
 				break;
-		case "eventwidgetengine":
+			case "eventwidgetengine":
 				cCPanel.instance.mWEEvent.fReset();
 				vThis.fShowControlPanel();
+				break;
+			default:
+				if (vData[0] == "help")
+				{
+					cModuleEventTicker.fGetInstance().pEnabled(false);
+					cModuleEventTicker.fGetInstance().fStopAll();
+					if (vData && vData.length > 0)
+						vThis.fShowControlPanel(vData[0]);
+					else
+						vThis.fShowControlPanel();
+				}
 				break;
 			}
 			break;
