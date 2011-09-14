@@ -83,7 +83,6 @@ cConst.SIGNAL_BUTTON_RIGHT = "signal_button_right";
 cConst.SIGNAL_BUTTON_CENTER = "signal_button_center";
 cConst.SIGNAL_BUTTON_UP = "signal_button_up";
 cConst.SIGNAL_BUTTON_DOWN = "signal_button_down";
-cConst.SIGNAL_BUTTON_SETUP = "signal_button_setup";
 
 // -----------------------------------------------------------------------------
 //	Android/iOS events

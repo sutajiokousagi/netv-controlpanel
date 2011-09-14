@@ -11,9 +11,11 @@ o = o.parseFromString("<data>null</data>", "text/xml");
 // -------------------------------------------------------------------------------------------------
 //	window.onload function
 // -------------------------------------------------------------------------------------------------
-$(function() {
+function fOnLoad()  {
+	fDbg("fOnLoad()");
 	keyboard_init();
 	fCheckForRedirection();
+
 	
 	if (cCPanel)
 		mJSCore = cJSCore.fGetInstance();
@@ -24,11 +26,13 @@ $(function() {
 		mCPanel = cCPanel.fGetInstance();
 	else
 		window.location.reload();
-		
-	mJSCore.CPANEL = mCPanel;
-	mCPanel.JSCORE = mJSCore;
-	mJSCore.fInit(function() { mJSCore.fStartUp(); });
-	mCPanel.fInit(function() { mCPanel.fStartUp(); });
+
+	var o = setTimeout(function() {
+		mJSCore.CPANEL = mCPanel;
+		mCPanel.JSCORE = mJSCore;
+		mJSCore.fInit(function() { mJSCore.fStartUp(); });
+		mCPanel.fInit(function() { mCPanel.fStartUp(); });
+	}, 100);
 	
 	$(window).keydown(function(event) {
 		switch (event.which)
@@ -43,10 +47,10 @@ $(function() {
 		}
 	});
 
-	//~ fCheckAlive();
-	// var t1 = setInterval(function(){
-		// fNMStateChanged("disconnected");
-	// }, 10000);
+}
+
+$(function() {
+
 });
 
 
@@ -80,8 +84,8 @@ function fLoadExtJSScript(
 	vReturnFun
 )
 {
-//~ fDbg("cJSCore, fLoadExtJSScript()");
 	var vUrl = vFileList.pop();
+//~ fDbg("cJSCore, fLoadExtJSScript()" + vUrl);
 	var script = document.createElement("script");
 	
 	script.type = "text/javascript";
@@ -138,7 +142,7 @@ function fServerReset(
 {
 //~ fDbg2("fServerReset(), " + vData);
 	if (vData == "true" || vData == true)
-		location.href="http://localhost/";
+		location.href = "http://localhost/";
 
 	return true;
 }
@@ -151,7 +155,7 @@ function fButtonPress(
 	vCount
 )
 {
-//~ fDbg("*** NeTV, fButtonPress(), " + vButtonName);
+fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -163,12 +167,13 @@ function fButtonPress(
 		case "down": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
 		
 		case "setup":
-			if (vCount == 3) {
+			if (vCount == 3)
+			{
 				// fDbg("switched to demo(AP) mode");
 			}
-			else if (vCount == 1) {
-				// go to Help page directly
-				mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_SETUP); break;
+			else if (!vCount || vCount == 1)
+			{	
+				mCPanel.fOnSignal("signal_goto_controlpanel", ["help"], null);
 			}
 			break;
 	}

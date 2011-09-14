@@ -174,8 +174,8 @@ function keyboard_applyCurrentKey(elementID)
 	if (currentKeyValue == "&amp;")				currentKeyValue = "&";
 	else if (currentKeyValue == "&lt;")			currentKeyValue = "<";
 	else if (currentKeyValue == "&gt;")			currentKeyValue = ">";
-		
-	var currentValue = $("#"+elementID).html();
+	
+	var currentValue = $("#" + elementID).html();
 	switch (currentKeyID)
 	{
 		case "space":			currentValue += " ";												break;
@@ -192,5 +192,10 @@ function keyboard_applyCurrentKey(elementID)
 			break;
 		default:				currentValue += currentKeyValue;									break;
 	}
-	$("#"+elementID).html(currentValue);
+	//~ fDbg(currentValue);
+	$("#" + elementID).html(currentValue);
+	//~ fDbg($("#" + elementID));
+	//~ fDbg($("#" + elementID).attr("id"));
+	//~ fDbg($("#" + elementID).html());
+	$("#" + elementID).css("left", "+=10px");
 }

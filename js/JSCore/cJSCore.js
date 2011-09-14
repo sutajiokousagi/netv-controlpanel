@@ -44,6 +44,8 @@ function cJSCore(
 {
 	// CONNECTION LINKS
 	this.CPANEL = null;
+
+	this.mFullyLoaded = false;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -175,9 +177,6 @@ fDbg("*** cJSCore, fStartUp()");
 	var vThis;
 	vThis = this;
 	
-	// signal CPanel
-	this.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
-	
 	// start up tasks
 	cStartupModule.fGetInstance().fPrepareSystem();
 	cStartupModule.fGetInstance().fEnvironmentalCheck(function(vData) {
@@ -196,6 +195,7 @@ fDbg("*** cJSCore, fStartUp()");
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED);
 		}
 	});
+	vThis.mFullyLoaded = true;
 }
 
 cJSCore.prototype.fStartUpReturn = function(

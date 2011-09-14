@@ -51,7 +51,7 @@ cSPActivation.fGetInstance = function(vDiv) {return cSPActivation.instance ? cSP
 cSPActivation.prototype.fInit = function(
 )
 {
-//~ fDbg("*** cSPActivation, fInit(), ");
+fDbg("*** cSPActivation, fInit(), ");
 	var vThis;
 	vThis = this;
 
@@ -163,7 +163,7 @@ cSPActivation.prototype.fOnSignal = function(
 	vReturnFun		// return function call
 )
 {
-//~ fDbg2("*** cSPActivation, fOnSignal(), " + vSignal + ", " + vData);
+//~ fDbg("*** cSPActivation, fOnSignal(), " + vSignal + ", " + vData);
 	var vThis, i, o, p;
 	vThis = this;
 	
@@ -242,7 +242,8 @@ cSPActivation.prototype.fOnSignal = function(
 				return;
 			o = vThis.mDivDeActivate;
 			break;
-		default: return;
+		default:
+			return;
 		}
 		vThis.mCurrSelection.css("opacity", "0.2");
 		vThis.mCurrSelection = o;
@@ -301,28 +302,22 @@ cSPActivation.prototype.fOnSignal = function(
 			});
 			break;
 		case vThis.mDivUsername:
-			$("#div_activationMain #div_keyboard").css("opacity", "1");
-			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			if (keyboard_currentY > 4)
-				keyboard_onRemoteControl("up", "input_username");
-			else if (keyboard_currentY < 0)
-				keyboard_onRemoteControl("down", "input_username");
+			if (cModuleInput.fGetInstance().mIsActive)
+				return;
+			cModuleInput.fGetInstance().fShow();
+			cModuleInput.fGetInstance().fAssociate(vThis.mDivUsernameContent, vThis.mDivUsernameContent.html());
 			break;
 		case vThis.mDivPassword:
-			$("#div_activationMain #div_keyboard").css("opacity", "1");
-			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			if (keyboard_currentY > 4)
-				keyboard_onRemoteControl("up", "input_password");
-			else if (keyboard_currentY < 0)
-				keyboard_onRemoteControl("down", "input_password");
+			if (cModuleInput.fGetInstance().mIsActive)
+				return;
+			cModuleInput.fGetInstance().fShow();
+			cModuleInput.fGetInstance().fAssociate(vThis.mDivPasswordContent, vThis.mDivPasswordContent.html());
 			break;
 		case vThis.mDivDevicename:
-			$("#div_activationMain #div_keyboard").css("opacity", "1");
-			$("#div_activationMain #item_indicator").css("opacity", "0.2");
-			if (keyboard_currentY > 4)
-				keyboard_onRemoteControl("up", "input_devicename");
-			else if (keyboard_currentY < 0)
-				keyboard_onRemoteControl("down", "input_devicename");
+			if (cModuleInput.fGetInstance().mIsActive)
+				return;
+			cModuleInput.fGetInstance().fShow();
+			cModuleInput.fGetInstance().fAssociate(vThis.mDivDevicenameContent, vThis.mDivDevicenameContent.html());
 			break;
 		default:
 			o = vThis.mDiv.children("#div_activationMain_activatestep1");

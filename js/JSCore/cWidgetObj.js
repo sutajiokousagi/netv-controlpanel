@@ -132,8 +132,7 @@ function cWidgetObj(
 			}
 		]
 	};
-	this.mParameterList = {
-	};
+	this.mParameterList = null;
 	
 	if (!vDataNode)
 		return;
@@ -215,6 +214,7 @@ function cWidgetObj(
 		]
 	};
 	o = vDataNode.getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
+	this.mParameterList = {};
 	for (i = 0; i < o.length; i++)
 		this.mParameterList[o[i].getAttribute("name")] = o[i].getAttribute("value");
 	

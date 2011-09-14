@@ -11,7 +11,7 @@
 function cStartupModule(
 )
 {
-
+	this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ cStartupModule.fGetInstance = function(
 cStartupModule.prototype.fInit = function(
 )
 {
-//~ fDbg("*** cStartupModule, fInit()");
+fDbg("*** cStartupModule, fInit()");
 	
 }
 

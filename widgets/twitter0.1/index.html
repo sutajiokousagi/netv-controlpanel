@@ -13,15 +13,17 @@ body{
 <script type="text/javascript" src="twitStream.js"></script>
 <script type="text/javascript" src="json2.js"></script>
 <script type="text/javascript" src="cMD5.js"></script>
-<script type="text/javascript">
-showTweetLinks='all';
-</script>
+
 <link rel="stylesheet" href="twit-stream.css" />
 <script language="javascript">
 	var vViewPortSize = [];
+	var showTweetLinks='all';
 	var mInterval = null;
 	var mSpeed = 1;
 	var mPrevTweetID = null;
+	
+	var mQueryKeyword = "chumby";
+	var mQueryInterval = 10000;
 	
 	$(function() {
 		if (typeof window.innerWidth != 'undefined')
@@ -33,11 +35,29 @@ showTweetLinks='all';
 		
 		mInterval = setTimeout ("fStart()", 20);
 		
-
+		var o, p;
+		o = location.href.split("?")[1];
+		if (o && o != "")
+		{
+			p = o.split("keyword=")[1].split("&")[0];
+			if (p && p != "")
+				mQueryKeyword = p;
+			
+			
+			p = o.split("interval=")[1].split("&")[0];
+			if (p && p != "")
+				mQueryInterval = parseInt(p) * 1000;
+		}
 
 
 		var fGetThenDispatchEvent = function() {
-			var url="http://search.twitter.com/search.json?q=chumby&rpp=1&callback=?";
+			//fDbg(mQueryKeyword);
+			//fDbg(mQueryInterval);
+			
+			//var url = "http://search.twitter.com/search.json?q=chumby&rpp=1&callback=?";
+			var url = "http://search.twitter.com/search.json?q="+ encodeURIComponent(mQueryKeyword) +"&rpp=" + 1 + "&callback=?";
+			var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
+			
 			$.getJSON(url,function(json){
 				if (!json.results)
 					return;
@@ -46,15 +66,16 @@ showTweetLinks='all';
 				var vTweet_message = "";
 				var vTweet_image = "";
 				var vID = json.results[0].id;
-
-				fDbg(vID + ", prevID : " + mPrevTweetID);
 				if (vID == mPrevTweetID)
+				{
+					fDbg("save ID, ignore");
 					return;
-				console.log("message : " + vTweet_message);
+				}
+				
 				if (json.results[0])
 				{
 					if (json.results[0].from_user)
-						vTweet_title = "Chumby Tweet from " + json.results[0].from_user;
+						vTweet_title = mQueryKeyword + " Tweet from " + json.results[0].from_user;
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
@@ -63,10 +84,9 @@ showTweetLinks='all';
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;
 					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
-					
 					mPrevTweetID = vID;
-					console.log("message : " + vTweet_message);
-					fXMLHttpRequest("http://localhost/bridge", "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+					
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
 						
 					});
 				}
@@ -76,7 +96,7 @@ showTweetLinks='all';
 		fGetThenDispatchEvent();
 		var vEventInterval = setInterval(function() {
 			fGetThenDispatchEvent();
-		}, 20000);
+		}, mQueryInterval);
 
 		
 	});

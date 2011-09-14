@@ -29,7 +29,7 @@ cAccountModule.fGetInstance = function()
 cAccountModule.prototype.fInit = function(
 )
 {
-//~ fDbg("*** cAccountModule, fInit()");
+fDbg("*** cAccountModule, fInit()");
 	
 }
 

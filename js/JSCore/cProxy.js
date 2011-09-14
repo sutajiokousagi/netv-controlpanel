@@ -145,3 +145,144 @@ cProxy.fCPanelInfoPanelUpdate = function(
 fDbg2("*** cProxy, fCPanelInfoPanelUpdate(), ");
 	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
 }
+
+
+
+
+
+/** ------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ *	save / read external file
+ * -----------------------------------------------------------------------------------------------*/
+// -------------------------------------------------------------------------------------------------
+//	get/post calls
+// -------------------------------------------------------------------------------------------------
+cProxy.fSaveFile = function(
+	vFileName,
+	vFileContent,
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "SetFileContents", data : ""}, function(vData){
+		if (vReturnFun)
+			vReturnFun();
+	});
+}
+
+
+// -------------------------------------------------------------------------------------------------
+//	get/post calls
+// -------------------------------------------------------------------------------------------------
+cProxy.fReadFile = function(
+	vFileName,
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>" + vFileName + "</value>"}, function(vData) {
+		//~ fDbg(vData.split("</cmd><data><value>")[0]);
+		if (vData)
+			vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
+}
+
+
+
+// -------------------------------------------------------------------------------------------------
+//	get/post calls
+// -------------------------------------------------------------------------------------------------
+cProxy.fReadDefaultChannelData = function(
+	vReturnFun
+)
+{
+	cProxy.fReadFile("/usr/share/netvserver/docroot/widgets/channelinfo.xml", function(vData) {
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
+}
+
+
+
+
+
+
+
+/** ------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ *	save / read parameters
+ * -----------------------------------------------------------------------------------------------*/
+ // -------------------------------------------------------------------------------------------------
+//	fSaveParams
+// -------------------------------------------------------------------------------------------------
+cProxy.fGetParams = function(
+	vTagName,
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "GetParam", data : "<value>" + vTagName + "</value>"}, function(vData) {
+		//~ fDbg(vData);
+		vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
+}
+
+// -------------------------------------------------------------------------------------------------
+//	fSaveParams
+// -------------------------------------------------------------------------------------------------
+cProxy.fSaveParams = function(
+	vTagName,
+	vData,
+	vReturnFun
+)
+{
+	var o, vStr;
+
+	vStr = "";
+	vStr += "<" + vTagName + ">" + vData + "</" + vTagName + ">";
+	//~ for (o in vData)
+		//~ vStr += "<" + o + ">" + vData[o] + "</" + o + ">";
+		
+	cProxy.xmlhttpPost("", "post", {cmd : "SetParam", data : vStr}, function(vData) {
+		//~ fDbg(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
+
+/*	
+<myKey1>myValue1</myKey1>
+<myKey2>myValue2</myKey2>
+<myGroup1/mySubKey1>myValue2</myGroup1/mySubKey1>
+<myGroup2/mySubKey2>myValue2</myGroup1/mySubKey2>
+*/
+
+}
+
+
+ 
+// -------------------------------------------------------------------------------------------------
+//	get/post calls
+// -------------------------------------------------------------------------------------------------
+cProxy.fReadUserData = function(
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+	});
+}
+
+// -------------------------------------------------------------------------------------------------
+//	get/post calls
+// -------------------------------------------------------------------------------------------------
+cProxy.fSaveUserData = function(
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+	});
+}

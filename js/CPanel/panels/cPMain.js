@@ -106,7 +106,9 @@ cPMain.prototype.fOnSignal = function(
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
 		p = parseInt(p.css("width").split("px")[0]) + 30;
+
 		
+		vThis.mCurrSelection = vNewSelected;
 		$("#div_cpanelMain #item_indicator").animate({
 			width: p + "px",
 			left: (800 - p) / 2 + "px"
@@ -128,6 +130,7 @@ cPMain.prototype.fOnSignal = function(
 				break;
 			}
 		vNewSelected = vCurrSelected + 1;
+		fDbg("==========>> " + vNewSelected);
 		if (vNewSelected > o.children().length - 1)
 			vNewSelected = 0;
 		$(o.children()[vCurrSelected]).fadeOut(150, function() {
@@ -145,7 +148,10 @@ cPMain.prototype.fOnSignal = function(
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
 		p = parseInt(p.css("width").split("px")[0]) + 30;
+
+
 		
+		vThis.mCurrSelection = vNewSelected;
 		$("#div_cpanelMain #item_indicator").animate({
 			width: p + "px",
 			left: (800 - p) / 2 + "px"
