@@ -150,6 +150,9 @@ fDbg2("*** cProxy, fCPanelInfoPanelUpdate(), ");
 
 
 
+
+
+
 /** ------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
@@ -210,6 +213,7 @@ cProxy.fReadDefaultChannelData = function(
 
 
 
+
 /** ------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
@@ -245,44 +249,38 @@ cProxy.fSaveParams = function(
 
 	vStr = "";
 	vStr += "<" + vTagName + ">" + vData + "</" + vTagName + ">";
-	//~ for (o in vData)
-		//~ vStr += "<" + o + ">" + vData[o] + "</" + o + ">";
-		
 	cProxy.xmlhttpPost("", "post", {cmd : "SetParam", data : vStr}, function(vData) {
 		//~ fDbg(vData);
 		if (vReturnFun)
 			vReturnFun(vData);
 	});
-
-/*	
-<myKey1>myValue1</myKey1>
-<myKey2>myValue2</myKey2>
-<myGroup1/mySubKey1>myValue2</myGroup1/mySubKey1>
-<myGroup2/mySubKey2>myValue2</myGroup1/mySubKey2>
-*/
-
 }
 
 
- 
-// -------------------------------------------------------------------------------------------------
-//	get/post calls
-// -------------------------------------------------------------------------------------------------
-cProxy.fReadUserData = function(
-	vReturnFun
-)
-{
-	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
-	});
-}
 
+
+
+
+
+
+/** ------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ * -------------------------------------------------------------------------------------------------
+ *	system related functions
+ * -----------------------------------------------------------------------------------------------*/
 // -------------------------------------------------------------------------------------------------
-//	get/post calls
+//	enable SSH
 // -------------------------------------------------------------------------------------------------
-cProxy.fSaveUserData = function(
+cProxy.fEnableSSH = function(
 	vReturnFun
 )
 {
-	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+	cProxy.xmlhttpPost("", "post", {cmd : "EnableSSH", data : ""}, function(vData) {
+		//~ fDbg(vData);
+		if (vData.indexOf("<status>1</status>") > -1)
+			cModel.fGetInstance().CHUMBY_SSH_ENABLED = true;
+		if (vReturnFun)
+			vReturnFun(vData);
 	});
 }

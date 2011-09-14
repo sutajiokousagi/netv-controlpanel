@@ -22,6 +22,7 @@ function cSPSettings(
 	this.mDivResetToAP = null;
 	this.mDivReconnectToWIFI = null;
 	this.mDivReloadControlPanel = null;
+	this.mDivToggleSSH = null;
 	this.mDivReboot = null;
 	
 	// view modes
@@ -60,8 +61,13 @@ cSPSettings.prototype.fInit = function(
 	vThis.mDivReconnectToWIFI.pIndicatorStyle = { width: "400px", height: "40px", top: "180px", left: "200px" };
 	vThis.mDivReloadControlPanel = $(this.mDiv.children("#setting_group").children()[2]);
 	vThis.mDivReloadControlPanel.pIndicatorStyle = { width: "400px", height: "40px", top: "230px", left: "200px" };
-	vThis.mDivReboot = $(this.mDiv.children("#setting_group").children()[3]);
-	vThis.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
+	vThis.mDivToggleSSH = $(this.mDiv.children("#setting_group").children()[3]);
+	vThis.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
+	$(vThis.mDivToggleSSH.children()[1]).hide();
+	$(vThis.mDivToggleSSH.children()[2]).hide();
+	
+	vThis.mDivReboot = $(this.mDiv.children("#setting_group").children()[4]);
+	vThis.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "330px", left: "200px" };
 	
 	vThis.mDivBack = $(vThis.mDiv.children("#subnavi_action").children()[0]);
 	vThis.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
@@ -87,12 +93,26 @@ cSPSettings.prototype.pViewMode = function(
 		vThis.mDivResetToAP.css("opacity", "0.2");
 		vThis.mDivReconnectToWIFI.css("opacity", "0.2");
 		vThis.mDivReloadControlPanel.css("opacity", "0.2");
+		vThis.mDivToggleSSH.css("opacity", "0.2");
 		vThis.mDivReboot.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
 		
 		vThis.mCurrSelection = vThis.mDivReconnectToWIFI;
 		vThis.mCurrSelection.css("opacity", "1");
 		vThis.mDivIndicator.css(vThis.mCurrSelection.pIndicatorStyle);
+		
+		if (!cModel.fGetInstance().CHUMBY_SSH_ENABLED)
+		{
+			$(vThis.mDivToggleSSH.children()[0]).show();
+			$(vThis.mDivToggleSSH.children()[1]).hide();
+			$(vThis.mDivToggleSSH.children()[2]).hide();
+		}
+		else
+		{
+			$(vThis.mDivToggleSSH.children()[0]).hide();
+			$(vThis.mDivToggleSSH.children()[1]).hide();
+			$(vThis.mDivToggleSSH.children()[2]).show();
+		}
 		break;
 	}
 }
@@ -135,6 +155,17 @@ cSPSettings.prototype.fOnSignal = function(
 		case vThis.mDivReloadControlPanel:
 			window.location = "http://localhost/";
 			break;
+		case vThis.mDivToggleSSH:
+			if ($(vThis.mDivToggleSSH.children()[0]).is(":visible"))
+			{
+				fDbg("enable SSH!!!!!!!!!!!!!!!!!");
+				cProxy.fEnableSSH(function() {
+					$(vThis.mDivToggleSSH.children()[0]).hide();
+					$(vThis.mDivToggleSSH.children()[1]).hide();
+					$(vThis.mDivToggleSSH.children()[2]).show();
+				});
+			}
+			break;
 		case vThis.mDivReboot:
 			break;
 		case vThis.mDivBack:
@@ -148,9 +179,10 @@ cSPSettings.prototype.fOnSignal = function(
 		{
 		//~ case vThis.mDivReconnectToWIFI:	o = vThis.mDivResetToAP; break;
 		case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
-		case vThis.mDivReboot:	o = vThis.mDivReloadControlPanel; break;
-		case vThis.mDivBack:	o = vThis.mDivReboot; break;
-		default: return;
+		case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
+		case vThis.mDivReboot:				o = vThis.mDivToggleSSH; break;
+		case vThis.mDivBack:				o = vThis.mDivReboot; break;
+		default: 							return;
 		}
 		vThis.mCurrSelection.css("opacity", "0.2");
 		vThis.mCurrSelection = o;
@@ -161,12 +193,14 @@ cSPSettings.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_DOWN:
 		switch (vThis.mCurrSelection)
 		{
-		case vThis.mDivResetToAP: 	o = vThis.mDivReconnectToWIFI; break;
-		case vThis.mDivReconnectToWIFI:	o = vThis.mDivReloadControlPanel; break;
-		case vThis.mDivReloadControlPanel:	o = vThis.mDivReboot; break;
-		case vThis.mDivReboot:	o = vThis.mDivBack; break;
-		default: return;
+		//~ case vThis.mDivResetToAP: 	o = vThis.mDivReconnectToWIFI; break;
+		case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
+		case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
+		case vThis.mDivToggleSSH:			o = vThis.mDivReboot; break;
+		case vThis.mDivReboot:				o = vThis.mDivBack; break;
+		default: 							return;
 		}
+		
 		vThis.mCurrSelection.css("opacity", "0.2");
 		vThis.mCurrSelection = o;
 		vThis.mCurrSelection.css("opacity", "1");

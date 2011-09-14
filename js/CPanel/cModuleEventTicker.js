@@ -92,12 +92,11 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 	vThis = this;
 
 	cProxy.fGetParams("eventtickerstyledata", function(vData) {
-		fDbg(vData);
+		//~ fDbg(vData);
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
 		vThis.mStyle = vData;
-		//~ fDbg("==============>>> " + vThis.mStyle.mBottomOffset);
 	});
 
 	

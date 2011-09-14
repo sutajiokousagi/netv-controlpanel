@@ -14,9 +14,31 @@ function cSPInfo(
 {
 	this.mDiv = $("#" + vDiv);
 	this.mID = vDiv;
-
+	
 	this.mEnableBackButton = true;
-	this.mCurrSelection = 0;		//	0 | 1
+	this.mSelection = null;
+
+	// divs
+	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
+	
+	this.mDivSubNaviNeTV = $(this.mDiv.children("#subnavi").children()[0]);
+	this.mDivSubNaviNeTV.pIndicatorStyle = { width: "145px", height: "30px", top: "85px", left: "220px" };
+	this.mDivSubNaviSystemInfo = $(this.mDiv.children("#subnavi").children()[1]);
+	this.mDivSubNaviSystemInfo.pIndicatorStyle = { width: "180px", height: "30px", top: "85px", left: "420px" };
+	
+	this.mDivSubNaviNeTVContent = $(this.mDiv.children("#div_infoMain_content").children()[0]);
+	this.mDivSubNaviSystemInfoContent = $(this.mDiv.children("#div_infoMain_content").children()[1]);
+	
+	this.mDivToggleSSH = $(this.mDivSubNaviSystemInfoContent.children("#options")[0]);
+	this.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "350px", left: "200px" };
+	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+	
+	
+	
+	// view modes
+	cSPInfo.VIEWMODE_DEFAULT = "viewmode_default";
+	cSPInfo.VIEWMODE_SYSINFO = "viewmode_sysinfo";
 	
 	this.fInit();
 }
@@ -39,8 +61,115 @@ cSPInfo.prototype.fInit = function(
 )
 {
 //~ fDbg2("*** cSPInfo, fInit(), ");
-	$("#div_infoMain_content_basic").show();
-	$("#div_infoMain_content_advanced").hide();
+	this.pViewMode(cSPInfo.VIEWMODE_DEFAULT);
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *	pViewMode
+ * -----------------------------------------------------------------------------------------------*/
+cSPInfo.prototype.pViewMode = function(
+	vViewMode
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (!vViewMode) return vThis.mViewMode;
+	
+	switch (vViewMode)
+	{
+	case cSPInfo.VIEWMODE_DEFAULT:
+		vThis.mDivSubNaviNeTV.css("opacity", "1");
+		vThis.mDivSubNaviNeTV.css("color", "#FFFFFF");
+		vThis.mDivSubNaviNeTVContent.show();
+		vThis.mDivSubNaviSystemInfo.css("opacity", "0.2");
+		vThis.mDivSubNaviSystemInfo.css("color", "#FFFFFF");
+		vThis.mDivSubNaviSystemInfoContent.hide();
+
+		vThis.mDivToggleSSH.css("opacity", "0.2");
+		vThis.mDivBack.css("opacity", "0.2");
+
+		
+		vThis.mSelection = vThis.mDivSubNaviNeTV;
+		vThis.mSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		
+		break;
+	case cSPInfo.VIEWMODE_SYSINFO:
+		vThis.mDivSubNaviNeTV.css("opacity", "0.2");
+		vThis.mDivSubNaviNeTV.css("color", "#FFFFFF");
+		vThis.mDivSubNaviNeTVContent.hide();
+		vThis.mDivSubNaviSystemInfo.css("opacity", "1");
+		vThis.mDivSubNaviSystemInfo.css("color", "#FFFFFF");
+		vThis.mDivSubNaviSystemInfoContent.show();
+
+		vThis.mDivToggleSSH.css("opacity", "0.2");
+		vThis.mDivBack.css("opacity", "0.2");
+
+		
+		vThis.mSelection = vThis.mDivSubNaviSystemInfo;
+		vThis.mSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		
+		if (!cModel.fGetInstance().CHUMBY_SSH_ENABLED)
+		{
+			$($(vThis.mDivToggleSSH.children()[0]).children()[0]).show();
+			$($(vThis.mDivToggleSSH.children()[0]).children()[1]).hide();
+			$($(vThis.mDivToggleSSH.children()[0]).children()[2]).hide();
+		}
+		else
+		{
+			$($(vThis.mDivToggleSSH.children()[0]).children()[0]).hide();
+			$($(vThis.mDivToggleSSH.children()[0]).children()[1]).hide();
+			$($(vThis.mDivToggleSSH.children()[0]).children()[2]).show();
+		}
+		break;
+	}
+	vThis.mViewMode = vViewMode;
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pSelection
+// -------------------------------------------------------------------------------------------------
+cSPInfo.prototype.pSelection = function(
+	vSelection,
+	vPrevSelectionStyle,		// false | true | {}
+	vNewSelectionStyle,			// false | true | {}
+	vAnimateIndicator			// false | true | time
+)
+{
+if (!vSelection) return this.mSelection;
+	var vThis, o;
+	vThis = this;
+	
+	vDefaultPrevSelectionStyle = {opacity: "0.2"};
+	vDefaultNewSelectionStyle = {opacity: "1"};
+	vDefaultAnimateIndicator = 300;
+
+	if (vPrevSelectionStyle == true)
+		vPrevSelectionStyle = vDefaultPrevSelectionStyle;
+	if (vNewSelectionStyle == true)
+		vNewSelectionStyle = vDefaultNewSelectionStyle;
+	if (vAnimateIndicator == true)
+		vAnimateIndicator = vDefaultAnimateIndicator;
+		
+	vThis.mPrevSelection = vThis.mSelection;
+	if (vPrevSelectionStyle)
+		vThis.mPrevSelection.css(vPrevSelectionStyle);
+	vThis.mSelection = vSelection;
+	
+		
+	if (vAnimateIndicator)
+		vThis.mDivIndicator.animate(vThis.mSelection.pIndicatorStyle, vAnimateIndicator, function() {
+			if (vNewSelectionStyle)
+				vThis.mSelection.css(vNewSelectionStyle);
+		});
+	else
+	{
+		vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		if (vNewSelectionStyle)
+			vThis.mSelection.css(vNewSelectionStyle);
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -65,126 +194,74 @@ cSPInfo.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
-		if (vThis.mCurrSelection == null)
-			return;
-	
-		var vCurrSelected, vNewSelected, vSubNaviList;
-		vSubNaviList = $("#div_infoMain #subnavi").children();
-		for (i = 0; i < vSubNaviList.length; i++)
-			if ($(vSubNaviList[i]).css("opacity") == "1")
-			{
-				vCurrSelected = i;
-				break;
-			}
-		vNewSelected = vCurrSelected - 1;
-		if (vNewSelected < 0)
-			vNewSelected = vSubNaviList.length - 1;
-			
-		$($("#div_infoMain #div_infoMain_content").children()[vCurrSelected]).fadeOut(100, function() {
-			$($("#div_infoMain #div_infoMain_content").children()[vNewSelected]).fadeIn(100);
-		});
-		
-		p = $("#div_infoMain #subnavi");
-		p = $(p.children()[vNewSelected]);
-		$("#div_infoMain #item_indicator").animate({
-			left: p.css("left"),
-			width: p.css("width")
-		}, 100, function() {
-			$(vSubNaviList[vCurrSelected]).css("opacity", "0.2");
-			$(vSubNaviList[vNewSelected]).css("opacity", "1");
-			vThis.mCurrSelection = vNewSelected;
-		});
+		if (vThis.mSelection == vThis.mDivSubNaviSystemInfo)
+			vThis.mDivIndicator.animate(vThis.mDivSubNaviNeTV.pIndicatorStyle, 200, function() { vThis.pViewMode(cSPInfo.VIEWMODE_DEFAULT); });
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
-		if (vThis.mCurrSelection == null)
-			return;
-			
-		var vCurrSelected, vNewSelected, vSubNaviList;
-		vSubNaviList = $("#div_infoMain #subnavi").children();
-		for (i = 0; i < vSubNaviList.length; i++)
-			if ($(vSubNaviList[i]).css("opacity") == "1")
-			{
-				vCurrSelected = i;
-				break;
-			}
-		vNewSelected = vCurrSelected + 1;
-		if (vNewSelected > vSubNaviList.length - 1)
-			vNewSelected = 0;
-			
-		$($("#div_infoMain #div_infoMain_content").children()[vCurrSelected]).fadeOut(100, function() {
-			$($("#div_infoMain #div_infoMain_content").children()[vNewSelected]).fadeIn(100);
-		});
-		
-		p = $("#div_infoMain #subnavi");
-		p = $(p.children()[vNewSelected]);
-		$("#div_infoMain #item_indicator").animate({
-			left: p.css("left"),
-			width: p.css("width")
-		}, 100, function() {
-			$(vSubNaviList[vCurrSelected]).css("opacity", "0.2");
-			$(vSubNaviList[vNewSelected]).css("opacity", "1");
-			vThis.mCurrSelection = vNewSelected;
-		});
+		if (vThis.mSelection == vThis.mDivSubNaviNeTV)
+			vThis.mDivIndicator.animate(vThis.mDivSubNaviSystemInfo.pIndicatorStyle, 200, function() { vThis.pViewMode(cSPInfo.VIEWMODE_SYSINFO); });
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
-		if (vThis.mCurrSelection == null)
+		switch (vThis.mSelection)
 		{
+		case vThis.mDivBack:
 			cCPanel.fGetInstance().fBack();
+			break;
+		case vThis.mDivToggleSSH:
+			if ($($(vThis.mDivToggleSSH.children()[0]).children()[0]).is(":visible"))
+			{
+				fDbg("enable SSH!!!!!!!!!!!!!!!!!");
+				cProxy.fEnableSSH(function() {
+					$($(vThis.mDivToggleSSH.children()[0]).children()[0]).hide();
+					$($(vThis.mDivToggleSSH.children()[0]).children()[1]).hide();
+					$($(vThis.mDivToggleSSH.children()[0]).children()[2]).show();
+				});
+			}
+			break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
-		if (vThis.mEnableBackButton == false)
-			return;
-		var vCurrSelected, vNewSelected, vSubNaviList;
-		if (vThis.mCurrSelection == null)
+		switch (vThis.mViewMode)
 		{
-			var vCurrSelected, vNewSelected, vSubNaviList;
-			vSubNaviList = $("#div_infoMain #div_infoMain_content").children();
-			for (i = 0; i < vSubNaviList.length; i++)
-				if ($(vSubNaviList[i]).is(":visible"))
-				{
-					vNewSelected = i;
-					break;
-				}
-			
-				
-			vSubNaviList = $("#div_infoMain #subnavi").children();
-			p = $("#div_infoMain #subnavi");
-			p = $(p.children()[vNewSelected]);
-			$("#div_infoMain #item_indicator").animate({
-				left: p.css("left"),
-				top: "115px",
-				width: p.css("width")
-			}, 100, function() {
-				$(vSubNaviList[vNewSelected]).css("opacity", "1");
-				$($("#div_infoMain #subnavi_back").children()[0]).css("opacity", "0.2");
-				vThis.mCurrSelection = vNewSelected;
-			});
+		case cSPInfo.VIEWMODE_DEFAULT:
+			if (vThis.mSelection == vThis.mDivBack)
+				vThis.pSelection(vThis.mDivSubNaviNeTV, {opacity: "0.2"}, {color: "#FFFFFF"}, true);
+			break;
+
+		case cSPInfo.VIEWMODE_SYSINFO:
+			if (vThis.mSelection == vThis.mDivBack)
+				vThis.pSelection(vThis.mDivToggleSSH, true, true, true);
+			else if (vThis.mSelection == vThis.mDivToggleSSH)
+				vThis.pSelection(vThis.mDivSubNaviSystemInfo, {opacity: "0.2"}, {color: "#FFFFFF"}, true);
+			break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
-		if (vThis.mEnableBackButton == false)
-			return;
-		var vCurrSelected, vNewSelected, vSubNaviList;
-		if (vThis.mCurrSelection >= 0)
+		switch (vThis.mViewMode)
 		{
-			vSubNaviList = $("#div_infoMain #subnavi").children();
-			p = $("#div_infoMain #subnavi_back");
-			p = $(p.children()[0]);
-			$("#div_infoMain #item_indicator").animate({
-				left: p.css("left"),
-				top: parseInt($("#div_infoMain #subnavi_back").css("top").split("px")[0]) + 25 + "px",
-				width: p.css("width")
-			}, 100, function() {
-				$(vSubNaviList[vThis.mCurrSelection]).css("opacity", "0.2");
-				//~ $(vSubNaviList[vNewSelected]).css("opacity", "1");
-				p.css("opacity", "1");
-				vThis.mCurrSelection = null;
-			});
+		case cSPInfo.VIEWMODE_DEFAULT:
+			if (vThis.mSelection == vThis.mDivSubNaviNeTV)
+			{
+				if (!vThis.mEnableBackButton)
+					return;
+				vThis.pSelection(vThis.mDivBack, {color: "#6598EB"}, {opacity: "1"}, true);
+			}
+			break;
+
+		case cSPInfo.VIEWMODE_SYSINFO:
+			if (vThis.mSelection == vThis.mDivSubNaviSystemInfo)
+				vThis.pSelection(vThis.mDivToggleSSH, {color: "#6598EB"}, {opacity: "1"}, true);
+			else if (vThis.mSelection == vThis.mDivToggleSSH)
+			{
+				if (!vThis.mEnableBackButton)
+					return;
+				vThis.pSelection(vThis.mDivBack, true, true, true);
+			}
+			break;
 		}
 		break;
 	}
@@ -211,6 +288,7 @@ cSPInfo.prototype.fAnimateIn = function(
 	vReturnFun
 )
 {
+	this.pViewMode(cSPInfo.VIEWMODE_DEFAULT);
 	this.mDiv.fadeIn(200, function() { if (vReturnFun) vReturnFun(); });
 }
 cSPInfo.prototype.fAnimateOut = function(

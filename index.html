@@ -167,7 +167,7 @@
 
 <!-- ----------------------- setting module ------------------------ level II -->
 <div id="div_settingMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
-	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
+	<div id="div_settingMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
 	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
 		<div id="item_indicator" style="position: absolute; top: 120px; left: 200px; background-color: #6598EB; width: 400px; height: 40px; border-radius: 10px;"></div>
 	</div>
@@ -183,6 +183,11 @@
 			<div>Reload Control Panel</div>
 		</div>
 		<div style="position: absolute; top: 210px; left: 200px; width: 400px; height: 30px; text-align: center;">
+			<div style="">Enable SSH</div>
+			<div style="">Disable SSH</div>
+			<div style="">SSH enabled</div>
+		</div>
+		<div style="position: absolute; top: 260px; left: 200px; width: 400px; height: 30px; text-align: center;">
 			<div>Reboot</div>
 		</div>
 	</div>
@@ -201,14 +206,18 @@
 <!-- ----------------------- chumby info module -------------------------- level II -->
 <div id="div_infoMain" style="position: absolute; width: 800px; height: 600px; overflow: hidden;">
 	<div id="div_infoMain_bg" style="position: absolute; width: 800px; height: 600px; background-color: #000000; border-radius: 12px;"></div>
+	<div id="subnavi_bg" style="position: absolute; top: 80px; left: 0px; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;"></div>
+	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
+		<div id="item_indicator" style="position: absolute; top: 100px; left: 200px; background-color: #6598EB; width: 400px; height: 40px; border-radius: 10px;"></div>
+	</div>
 
-	<div id="div_infoMain_content" style="position: absolute; top: 160px; left: 50px; width: 700px; height: 400px; overflow: hidden;">
-		<div id="div_infoMain_content_mobileapp" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; width: 760px; height: 400px;">
+	<div id="div_infoMain_content" style="position: absolute; top: 120px; left: 50px; width: 700px; height: 440px; overflow: hidden;">
+		<div id="div_infoMain_content_mobileapp" style="position: absolute; top: 30px; left: 0px; color: #FFFFFF; width: 760px; height: 410px;">
 			<div style="position: absolute; top: 0px; left: 185px; font-weight: bold;">Android</div>
 			<div style="position: absolute; top: 0px; left: 460px; font-weight: bold;">iOS</div>
 			<div style="position: absolute; top: 20px; left: 150px; width: 144px; height: 144px; text-align: center; background-image: url('./images/netv_qr_code.png'); background-repeat: no-repeat; background-size: 100%; border: solid #FFFFFF 0px;"></div>
 			<div style="position: absolute; top: 20px; left: 405px; width: 144px; height: 144px; text-align: center; background-repeat: no-repeat; background-size: 100%; border: dashed #FFFFFF 1px;"><div style="margin-top: 60px;">Coming Soon ...</div></div>
-			<div class="bigline chumbyblue font20" style="position: absolute; top: 200px; left: 100px; width: 500px; height: 250px; text-align: justify; color: #FFFFFF; font-size: 16px;">
+			<div class="bigline chumbyblue font20" style="position: absolute; top: 180px; left: 60px; width: 580px; height: 230px; text-align: justify; color: #FFFFFF; font-size: 18px;">
 Please pick one of three easy ways to configure your NeTV:
 <br />
 <br />
@@ -221,7 +230,7 @@ Please pick one of three easy ways to configure your NeTV:
 3) Connect any wifi device to the "NeTV" access point for the browser-based wifi and remote control wizard.
 			</div>
 		</div>
-		<div id="div_infoMain_content_system" class="font16" style="position: absolute; top: 0px; left: 0px; width: 700px; height: 400px; color: #FFFFFF; display: none;">
+		<div id="div_infoMain_content_system" class="font16" style="position: absolute; top: 40px; left: 0px; width: 700px; height: 400px; color: #FFFFFF; display: none;">
 			<div style="position: relative; width: 500px; height: 25px; left: 100px;">
 				<div style="float: left; width: 110px; border: solid black 0px;">NeTV Name</div><div style="float: left; width: 14px;"> : </div><div style="float: left;">chumby_netv_demo_set</div>
 			</div>
@@ -237,26 +246,31 @@ Please pick one of three easy ways to configure your NeTV:
 			<div style="position: relative; width: 500px; height: 25px; left: 100px">
 				<div style="float: left; width: 110px; border: solid black 0px;">MAC</div><div style="float: left; width: 14px;"> : </div><div id="div_info_mac" style="float: left;"> </div>
 			</div>
+
+			<div id="options" style="position: absolute; top: 200px; left: 0px; width: 700px; height: 120px; color: #FFFFFF; font-weight: bold; font-size: 24px; text-shadow: #000000 3px 3px 3px;">
+				<div style="position: absolute; top: 0px; left: 150px; width: 400px; height: 30px; text-align: center;">
+					<div style="">Enable SSH</div>
+					<div style="">Disable SSH</div>
+					<div style="">SSH enabled</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	
-	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;">
-		<div style="position: absolute; top: 0px; left: 240px; width: 100px; opacity: 1; margin-top: 8px; border: solid white 0px;">NeTV App</div>
-		<div style="position: absolute; top: 0px; left: 450px; width: 125px; opacity: 0.2; margin-top: 8px; border: solid white 0px;">System Info</div>
-	</div>
-	<div id="subnavi_back" style="position: absolute; top: 560px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
-		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 0.2; border: solid #FFFFFF 0px;">BACK</div>
-	</div>
-	<div id="item_indicators" style="position: absolute; top: 0px; left: 0px;">
-		<div id="item_indicator" style="position: absolute; top: 115px; left: 240px; width: 100px; height: 4px; background-color: #FF2222;"></div>
+	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; text-shadow: #333333 2px 2px 2px;">
+		<div style="position: absolute; top: 10px; left: 240px; width: 100px;">NeTV App</div>
+		<div style="position: absolute; top: 10px; left: 450px; width: 150px;">System Info</div>
 	</div>
 	
-	
+	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
+		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
+	</div>
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
 		<div style="margin-top: 30px;">NeTV Information</div>
 		<div style="position: absolute; top: 15px; left: 15px; width: 48px; height: 48px; background-image: url('./images/chumby_logo_48x48.png'); background-repeat: no-repeat;"></div>
 	</div>
 </div>
+
 
 
 <!-- ----------------------- help module -------------------------- level II -->

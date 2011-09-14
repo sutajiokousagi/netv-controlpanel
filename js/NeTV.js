@@ -12,7 +12,7 @@ o = o.parseFromString("<data>null</data>", "text/xml");
 //	window.onload function
 // -------------------------------------------------------------------------------------------------
 function fOnLoad()  {
-	fDbg("fOnLoad()");
+	//~ fDbg("fOnLoad()");
 	keyboard_init();
 	fCheckForRedirection();
 
@@ -155,7 +155,7 @@ function fButtonPress(
 	vCount
 )
 {
-fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
+//~ fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;

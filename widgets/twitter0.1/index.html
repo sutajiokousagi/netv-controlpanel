@@ -51,16 +51,18 @@ body{
 
 
 		var fGetThenDispatchEvent = function() {
-			//fDbg(mQueryKeyword);
-			//fDbg(mQueryInterval);
+			//fDbg("0, " + mQueryKeyword + " at interval " + mQueryInterval);
 			
 			//var url = "http://search.twitter.com/search.json?q=chumby&rpp=1&callback=?";
 			var url = "http://search.twitter.com/search.json?q="+ encodeURIComponent(mQueryKeyword) +"&rpp=" + 1 + "&callback=?";
 			var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
+			//fDbg("1, " + url);
 			
 			$.getJSON(url,function(json){
+				//fDbg("2, " + "json returned");
 				if (!json.results)
 					return;
+				//fDbg("3, " + "json verified");
 				
 				var vTweet_title = "";
 				var vTweet_message = "";
@@ -68,7 +70,7 @@ body{
 				var vID = json.results[0].id;
 				if (vID == mPrevTweetID)
 				{
-					fDbg("save ID, ignore");
+					//fDbg("same ID, ignore");
 					return;
 				}
 				
@@ -85,9 +87,10 @@ body{
 						vTweet_image = json.results[0].profile_image_url;
 					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
 					mPrevTweetID = vID;
-					
+					//fDbg("4, " + "send tickerevent");
+					//fDbg("<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>");
 					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
-						
+						//fDbg("5, " + "tickerevent return - " + vData);
 					});
 				}
 			});

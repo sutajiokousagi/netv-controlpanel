@@ -17,7 +17,7 @@ function cModuleChromaBg(
 	this.mID = vDiv ? vDiv : null;
 
 	this.mRefreshInterval = null;
-	this.mRefreshFrequency = 200;
+	this.mRefreshFrequency = 100;
 	this.mRefreshPeriod = 2000;
 	
 	this.fInit();

@@ -188,7 +188,7 @@ cModuleWE.prototype.fPlay = function(
 //~ fDbg("*** cModuleWE, fPlay(), ");
 	var vThis, o, p;
 	vThis = this;
-
+	
 	fDbg("====>>> " + vThis.mCurrWE);
 	fDbg("====>>> " + vThis.mCurrWidget);
 

@@ -26,6 +26,7 @@ function cModel(
 	this.CHUMBY_FLASHPLUGIN = "";
 	this.CHUMBY_FLASHPLAYER = "";
 	this.CHUMBY_INTERNET = "";
+	this.CHUMBY_SSH_ENABLED = false;
 	
 	this.CHUMBY_NETWORK_IF = "";
 	this.CHUMBY_NETWORK_UP = "";
@@ -51,11 +52,10 @@ function cModel(
 	this.CURR_WIDGET_INDEX = null;
 	this.PREV_WIDGET_INDEX = null;
 
+	
 	this.PLAYMODE = "event";
 	//~ this.PLAYMODE = "default";
-
-
-
+	
 
 	this.VIEWPORTSIZE = [];
 }
@@ -64,8 +64,4 @@ function cModel(
 //	singleton
 // -------------------------------------------------------------------------------------------------
 cModel.instance = null;
-cModel.fGetInstance = function(
-)
-{
-	return cModel.instance ? cModel.instance : (cModel.instance = new cModel());
-}
+cModel.fGetInstance = function() { return cModel.instance ? cModel.instance : (cModel.instance = new cModel()); }
