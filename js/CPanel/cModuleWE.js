@@ -187,20 +187,21 @@ cModuleWE.prototype.fPlay = function(
 {
 //~ fDbg("*** cModuleWE, fPlay(), ");
 	var vThis, o, p;
+	vThis = this;
 
-	fDbg("====>>> " + this.mCurrWE);
-	fDbg("====>>> " + this.mCurrWidget);
+	fDbg("====>>> " + vThis.mCurrWE);
+	fDbg("====>>> " + vThis.mCurrWidget);
 
-	if (!this.mCurrWidget)
+	if (!vThis.mCurrWidget)
 	{
 		vThis.fNext();
 		return;
 	}
 	p = "?";
-	if (this.mCurrWidget.mParameterList)
-		for (o in this.mCurrWidget.mParameterList)
-			p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
-	this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
+	if (vThis.mCurrWidget.mParameterList)
+		for (o in vThis.mCurrWidget.mParameterList)
+			p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
+	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.mWidget.mMovie.mHref + p, null);
 }
 
 // -------------------------------------------------------------------------------------------------
