@@ -10,8 +10,10 @@
 // -------------------------------------------------------------------------------------------------
 cJSCore.kProductionMode = false;
 cJSCore.kSimulatedData = {
-	mGUID : "A620123B-1F0E-B7CB-0E11-921ADB7BE22A",				// the black chumbyR
+	mGUID : "A620123B-1F0E-B7CB-0E11-921ADB7BE22A",			// the black chumbyR
 	//~ mGUID : "84436234-0E47-3AB6-A0C9-95897F243B32",			// the white chumbyR
+
+	//~ mGUID : "4E3C1363-37B2-5FAA-18A5-D391239A526B",				// testing for torin's NeTV board
 	mServerUrl : "http://xml.chumby.com/xml/chumbies/",
 	//~ mLocalBridgeUrl : "http://192.168.1.210/projects/0009.chumbyJSCore/server.php"			// testing/development mode at 192.168.1.210
 	mLocalBridgeUrl : "./bridge"			// production mode
@@ -81,7 +83,7 @@ cJSCore.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_UP:
 	case cConst.SIGNAL_BUTTON_DOWN:
 	case cConst.SIGNAL_BUTTON_SETUP:
-		if (vSignal != cConst.SIGNAL_BUTTON_LEFT && vSignal != cConst.SIGNAL_BUTTON_RIGHT)
+		if (vSignal == cConst.SIGNAL_TOGGLE_CONTROLPANEL || vSignal == cConst.SIGNAL_TOGGLE_WIDGETENGINE)
 			if (cModel.fGetInstance().CHUMBY_INTERNET == "false")					// redirect to html_config.html
 			{
 				location.href = "./html_config/";
