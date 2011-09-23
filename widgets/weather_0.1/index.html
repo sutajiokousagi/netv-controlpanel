@@ -13,13 +13,13 @@
 	
     <script type="text/javascript">
 
-      var weekMap = {"0": "Sun",
-		     "1": "Mon",
-		     "2": "Tue",
-		     "3": "Wed",
-		     "4": "Thu",
-		     "5": "Fri",
-		     "6": "Sat"};
+      var weekMap = {"0": "SUN",
+		     "1": "MON",
+		     "2": "TUE",
+		     "3": "WED",
+		     "4": "THU",
+		     "5": "FRI",
+		     "6": "SAT"};
       
       var vBridgePath = "http://localhost/bridge";
       
@@ -59,7 +59,7 @@
 	  var msgTempL = jsonForecast['@attributes']['lowf'];
 	  var dayofweek = jsonForecast['@attributes']['dayofweek'] ;
 	  var msgWeekday = weekMap[dayofweek];
-	  var msgForecast = '<b>'+ msgWeekday + '  </b>' + msgWeather +
+	  var msgForecast = '<span style="font-weight:bold">' +  msgWeekday + ' </span>' + msgWeather +
 	      '; High Temperature:' + msgTempH + '; Low Temperature:' + msgTempL; 
 	  return msgForecast;
       }
@@ -78,7 +78,7 @@
 	      var msgForecast = getForecast(jsonForecast[i]);
 	      
 	      $('#result').append('<h3>' + msgForecast + '</h3>');
-	      console.log("<message>" + msgForecast +  "</message><title>" + msgTitle +"</title><image>"+picUrl+"</image>");
+	      msgForecast = encodeURIComponent(msgForecast);
 	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgForecast +  "</message><title>" + msgTitle +"</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
 
 	  }
