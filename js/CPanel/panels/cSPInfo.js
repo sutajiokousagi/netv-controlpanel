@@ -36,7 +36,7 @@ function cSPInfo(
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
 	this.mDivGotoHelp = $(this.mDiv.children("#subnavi_action").children()[1]);
-	this.mDivGotoHelp.pIndicatorStyle = { width: "160px", height: "36px", top: "551px", left: "350px" };
+	this.mDivGotoHelp.pIndicatorStyle = { width: "160px", height: "36px", top: "551px", left: "320px" };
 	
 	
 	
@@ -95,6 +95,7 @@ cSPInfo.prototype.pViewMode = function(
 
 		vThis.mDivToggleSSH.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivGotoHelp.css("opacity", "0.2");
 
 		
 		vThis.mSelection = vThis.mDivSubNaviNeTV;
@@ -111,7 +112,7 @@ cSPInfo.prototype.pViewMode = function(
 		vThis.mDivSubNaviSystemInfoContent.show();
 
 		vThis.mDivToggleSSH.css("opacity", "0.2");
-		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivGotoHelp.css("opacity", "0.2");
 
 		
 		vThis.mSelection = vThis.mDivSubNaviSystemInfo;
@@ -152,10 +153,12 @@ cSPInfo.prototype.pSubViewMode = function(
 	case cSPInfo.SUBVIEWMODE_BACK:
 		vThis.mDivBack.show();
 		vThis.mDivGotoHelp.hide();
+		vThis.mDivBack.css("opacity", "0.2");
 		break;
 	case cSPInfo.SUBVIEWMODE_GOTOHELP:
 		vThis.mDivBack.hide();
 		vThis.mDivGotoHelp.show();
+		vThis.mDivGotoHelp.css("opacity", "0.2");
 		break;
 	}
 	vThis.mSubViewMode = vSubViewMode;
