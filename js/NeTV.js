@@ -269,9 +269,9 @@ function fNMDeviceRemoved(  )
 // -------------------------------------------------------------------------------------------------
 function fUPDATECOUNTEvent( newPackageCount )
 {
-	fDbg2("-------------------------------------------");
-	fDbg2("Downloading " + newPackageCount + " packages....");
-	fDbg2("-------------------------------------------");
+	fDbg("-------------------------------------------");
+	fDbg("Downloading " + newPackageCount + " packages....");
+	fDbg("-------------------------------------------");
 	
 	//Show a small downloading icon here (like Android)
 	
@@ -286,11 +286,11 @@ fDbg("fUPDATEEvents: " + vEventName + "," + vEventData);
 	{
 		var needReboot = (vEventData == "1") ? "true" : "false";
 		
-		fDbg2("-------------------------------------------");
-		fDbg2("  Update Starting");
-		if (needReboot == "true")		fDbg2("  Reboot required");
-		else							fDbg2("  Reboot NOT required");
-		fDbg2("-------------------------------------------");
+		fDbg("-------------------------------------------");
+		fDbg("  Update Starting");
+		if (needReboot == "true")		fDbg("  Reboot required");
+		else							fDbg("  Reboot NOT required");
+		fDbg("-------------------------------------------");
 	
 		//Gracefully hide everything here
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);

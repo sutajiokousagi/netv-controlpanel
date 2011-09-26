@@ -106,10 +106,8 @@ cCPanel.prototype.fInit = function(
 	$("#div_cpanel_corner_container").show();
 	vThis.pState("controlpanel");
 	
-	
 	// -------------- resize --------------
 	$(window).resize(function() { vThis.fResize(); });
-	
 	
 	// load other js classes
 	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
@@ -131,12 +129,8 @@ cCPanel.prototype.fResize = function(
 //~ fDbg("========================================");
 if (vThis.mEnableResize == false)
 {
-	//~ fDbg("it's true! return!!!");
 	return;
 }
-	//~ fDbg("ok... resizing......");
-
-
 	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
 		return;
 
@@ -159,8 +153,6 @@ if (vThis.mEnableResize == false)
 	{
 		
 	}
-	
-	
 
 	// resize modules	
 	cModuleToast.fGetInstance().fResize(vThis.mViewPortSize);
@@ -170,20 +162,6 @@ if (vThis.mEnableResize == false)
 	// resize panels
 	
 	//~ cPMain.fResize(vThis.mViewPortSize);
-
-
-
-	/*
-	//Resize iFrame if smaller than viewport
-	var width = vThis.mViewPortSize[0];
-	var height = vThis.mViewPortSize[1];
-	$("#div_externalUrlPlayer").css("width", width + "px");
-	$("#div_externalUrlPlayer").css("height", height + "px");
-	//~ $("#iframe_externalUrlPlayer").attr("width", width + "px");
-	$("#iframe_externalUrlPlayer").css("width", width + "px");
-	//~ if ($("#iframe_externalUrlPlayer").height() < height)
-	$("#iframe_externalUrlPlayer").css("height", height + "px");
-	*/
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -233,14 +211,10 @@ fDbg("*** cCPanel, fStartUp()");
 
 	
 	vThis.mFullyLoaded = true;
-	//~ fDbg("--- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
-	//~ fDbg("--- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
 
 	if (!cJSCore.fGetInstance().mFullyLoaded)
 	{
 		var o = setTimeout(function() {
-			//~ fDbg("--- --- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
-			//~ fDbg("--- --- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
 			if (cJSCore.fGetInstance().mFullyLoaded)
 			{
 				vThis.mEnableResize = true;
@@ -537,8 +511,6 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() + height/7 );
-			//~ $("#iframe_externalUrlPlayer").css("top", "-=" + height / 7 + "px");
-			//~ fDbg($("#div_externalUrlPlayer").html());
 		}
 		break;
 		
@@ -678,7 +650,6 @@ cCPanel.prototype.fOnSignal = function(
 					cSPHelp.fGetInstance().pSubViewMode(cSPHelp.SUBVIEWMODE_GOTOINFO);				
 				$("#div_helpMain").show();
 				vThis.mSubState = "cpanel_help";
-				
 			}
 			break;
 
