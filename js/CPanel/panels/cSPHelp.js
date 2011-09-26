@@ -25,7 +25,7 @@ function cSPHelp(
 	
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
-	this.mDivGotoInfo = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivGotoInfo = $(this.mDiv.children("#subnavi_action").children()[1]);
 	this.mDivGotoInfo.pIndicatorStyle = { width: "150px", height: "36px", top: "551px", left: "350px" };
 
 	// view modes
@@ -96,11 +96,13 @@ cSPHelp.prototype.pSubViewMode = function(
 	switch (vSubViewMode)
 	{
 	case cSPHelp.SUBVIEWMODE_BACK:
-		vThis.mDivBack.html("BACK");
+		vThis.mDivBack.show();
+		vThis.mDivGotoInfo.hide();
 		break;
 	case cSPHelp.SUBVIEWMODE_GOTOINFO:
-		vThis.mDivGotoInfo.css("width", "120px");
-		vThis.mDivGotoInfo.html("GOTO Info");
+		vThis.mDivBack.hide();
+		vThis.mDivGotoInfo.show();
+		
 		if (vThis.mSelection == vThis.mDivBack)
 		{
 			vThis.mSelection = vThis.mDivGotoInfo;

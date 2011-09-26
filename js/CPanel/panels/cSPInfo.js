@@ -35,7 +35,7 @@ function cSPInfo(
 	this.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "350px", left: "200px" };
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
-	this.mDivGotoHelp = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivGotoHelp = $(this.mDiv.children("#subnavi_action").children()[1]);
 	this.mDivGotoHelp.pIndicatorStyle = { width: "160px", height: "36px", top: "551px", left: "350px" };
 	
 	
@@ -150,11 +150,12 @@ cSPInfo.prototype.pSubViewMode = function(
 	switch (vSubViewMode)
 	{
 	case cSPInfo.SUBVIEWMODE_BACK:
-		vThis.mDivBack.html("BACK");
+		vThis.mDivBack.show();
+		vThis.mDivGotoHelp.hide();
 		break;
 	case cSPInfo.SUBVIEWMODE_GOTOHELP:
-		vThis.mDivGotoHelp.css("width", "120px");
-		vThis.mDivGotoHelp.html("GOTO HELP");
+		vThis.mDivBack.hide();
+		vThis.mDivGotoHelp.show();
 		break;
 	}
 	vThis.mSubViewMode = vSubViewMode;
@@ -284,10 +285,11 @@ cSPInfo.prototype.fOnSignal = function(
 			{
 				if (!vThis.mEnableBackButton)
 					return;
+				fDbg("---------->>> " + cSPInfo.SUBVIEWMODE_BACK);
 				switch (vThis.pSubViewMode())
 				{
-				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, {color: "#6598EB"}, {opacity: "1"}, true);
-				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, {color: "#6598EB"}, {opacity: "1"}, true);
+				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, {color: "#6598EB"}, {opacity: "1"}, true); break;
+				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, {color: "#6598EB"}, {opacity: "1"}, true); break;
 				}
 			}
 			break;
@@ -302,8 +304,8 @@ cSPInfo.prototype.fOnSignal = function(
 				
 				switch (vThis.pSubViewMode())
 				{
-				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, true, true, true);
-				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, true, true, true);
+				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, true, true, true); break;
+				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, true, true, true); break;
 				}
 			}
 			break;
