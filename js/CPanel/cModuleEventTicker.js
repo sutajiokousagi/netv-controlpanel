@@ -98,7 +98,6 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 		vData = JSON.parse(vData);
 		vThis.mStyle = vData;
 	});
-
 	
 	this.mDivTickerMini = this.mDiv.children("#div_eventWidgetPlayer_mini");
 	this.mDiv.css("top", "400px");
@@ -123,6 +122,7 @@ cModuleEventTicker.prototype.fResize = function(
 )
 {
 fDbg("*** cModuleEventTicker, fResize(), ");
+	
 	var vThis = this;
 	vThis.mViewPortSize = vViewPortSize;
 
@@ -133,6 +133,12 @@ fDbg("*** cModuleEventTicker, fResize(), ");
 
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[0]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px")
+
+	fDbg(vViewPortSize);
+
+	// check the current pos of the div and move to relative pos.
+
+	//~ if (this.mDiv.css("top")
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -651,7 +657,8 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 			vHtml += unescape(vThis.mEventList[vIndex][0][0]);
 	vHtml += "</div>";
 	vHtml += "</div>";
-	
+
+	//fDbg(vHtml);
 	$("#crawling_container").append(vHtml);
 }
 

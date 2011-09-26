@@ -12,7 +12,7 @@ o = o.parseFromString("<data>null</data>", "text/xml");
 //	window.onload function
 // -------------------------------------------------------------------------------------------------
 function fOnLoad()  {
-	//~ fDbg("fOnLoad()");
+	fDbg("fOnLoad()");
 	keyboard_init();
 	fCheckForRedirection();
 
@@ -201,15 +201,6 @@ function fTickerEvents(
 {
 //~ fDbg("*** fTickerEvents(), ");
 /*
-fDbg("------------------------------------------------------");
-fDbg("message : " + vEventMessage.substr(0, 10));
-fDbg("title   : " + vEventTitle.substr(0, 10));
-fDbg("image   : " + vEventImage.substr(0, 10));
-fDbg("type    : " + vEventType);
-fDbg("level   : " + vEventLevel);
-fDbg("------------------------------------------------------");
-*/
-/*
 	fDbg("------------------------------------------------------");
 	fDbg(vEventMessage);
 	fDbg("------------------------------------------------------");
@@ -222,6 +213,16 @@ fDbg("------------------------------------------------------");
 	vEventType = decodeURIComponent(vEventType);
 	vEventLevel = decodeURIComponent(vEventLevel);
 	vEventVer = decodeURIComponent(vEventVer);
+
+/*
+fDbg("------------------------------------------------------");
+fDbg("message : " + vEventMessage.substr(0, 40));
+fDbg("title   : " + vEventTitle.substr(0, 40));
+fDbg("image   : " + vEventImage.substr(0, 40));
+fDbg("type    : " + vEventType);
+fDbg("level   : " + vEventLevel);
+fDbg("------------------------------------------------------");
+*/
 	
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
@@ -347,6 +348,7 @@ function fIOSEvents( vEventName, vEventData )
 function fCheckAlive(
 )
 {
+	return true;
 	var o, p;
 	try {
 		o = cJSCore.fGetInstance().fOnSignal("checkalive");

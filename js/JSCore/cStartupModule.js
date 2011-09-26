@@ -84,7 +84,7 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 			o.CHUMBY_FLASHPLAYER = vData.split("</flashver>")[0].split("<flashver>")[1];
 			o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
 			o.CHUMBY_INTERNET = vData.split("</internet>")[0].split("<internet>")[1];
-			//~ o.CHUMBY_INTERNET = "false";
+			//o.CHUMBY_INTERNET = "false";
 			
 			
 			switch (vData.split("</internet>")[0].split("<internet>")[1])
@@ -103,9 +103,10 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 				o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
 				o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
 				
-				vReturnFun(true);
-				//~ cModel.fGetInstance().CHUMBY_INTERNET = "false";
-				//~ vReturnFun(false);
+				//~ vReturnFun(true);
+				cModel.fGetInstance().CHUMBY_INTERNET = "false";
+				cModel.fGetInstance().CHUMBY_NETWORK_UP = "false";
+				vReturnFun(false);
 				return;
 				
 			case "false":
