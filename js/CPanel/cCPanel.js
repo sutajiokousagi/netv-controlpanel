@@ -285,6 +285,10 @@ cCPanel.prototype.fOnSignal = function(
 		case "event":
 			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
 			break;
+
+		case "empty":
+			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
+			break;
 		}
 		break;
 		
@@ -710,8 +714,19 @@ cCPanel.prototype.fOnSignal = function(
 				cCPanel.instance.mWEEvent.fReset();
 				vThis.fShowControlPanel();
 				break;
+			case "event":
+				$("#div_cpanelMain").hide();
+				$("#div_infoMain").hide();
+				$("#div_settingMain").hide();
+				cModuleEventTicker.fGetInstance().pEnabled(false);
+				cModuleEventTicker.fGetInstance().fStopAll();
+				if (vData && vData.length > 0)
+					vThis.fShowControlPanel(vData[0]);
+				else
+					vThis.fShowControlPanel();
+				break;
 			default:
-				if (vData[0] == "help")
+				if (vData && vData[0] == "help")
 				{
 					cModuleEventTicker.fGetInstance().pEnabled(false);
 					cModuleEventTicker.fGetInstance().fStopAll();
