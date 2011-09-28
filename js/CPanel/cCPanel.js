@@ -106,10 +106,8 @@ cCPanel.prototype.fInit = function(
 	$("#div_cpanel_corner_container").show();
 	vThis.pState("controlpanel");
 	
-	
 	// -------------- resize --------------
 	$(window).resize(function() { vThis.fResize(); });
-	
 	
 	// load other js classes
 	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
@@ -124,19 +122,15 @@ cCPanel.prototype.fResize = function(
 	var vThis;
 	vThis = this;
 //~ fDbg("========================================");
-fDbg("*** window resize : " + $(window).width() + ", " + $(window).height() + ", " + vThis.mEnableResize);
+//~ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height() + ", " + vThis.mEnableResize);
 //~ fDbg("this.mEnableResize : " + vThis.mEnableResize);
 //~ fDbg("this.mEnableResize == false : " + (vThis.mEnableResize == false));
 //~ fDbg("this.mEnableResize == true  : " + (vThis.mEnableResize == true));
 //~ fDbg("========================================");
 if (vThis.mEnableResize == false)
 {
-	fDbg("it's true! return!!!");
 	return;
 }
-	fDbg("ok... resizing......");
-
-
 	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
 		return;
 
@@ -145,27 +139,29 @@ if (vThis.mEnableResize == false)
 	if (cModel)
 		cModel.fGetInstance().VIEWPORTSIZE = [vThis.mViewPortSize[0], vThis.mViewPortSize[1]];
 
-	// resize individual panels
-	if (vThis.mViewPortSize[0] > 800)
-		$("#div_CPanel").css("left", (vThis.mViewPortSize[0] - 800) / 2 + "px");
+	
+	// resize cPanel
 	if (vThis.mViewPortSize[1] > 600)
 		$("#div_CPanel").css("top", (vThis.mViewPortSize[1] - 600) / 2 + "px");
+
+	if (vThis.mState == "controlpanel")
+	{
+		if (vThis.mViewPortSize[0] > 800)
+			$("#div_CPanel").css("left", (vThis.mViewPortSize[0] - 800) / 2 + "px");
+	}
+	else
+	{
 		
+	}
+
+	// resize modules	
 	cModuleToast.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleWE.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleInput.fGetInstance().fResize(vThis.mViewPortSize);
-
+	// resize panels
 	
-	//Resize iFrame if smaller than viewport
-	var width = vThis.mViewPortSize[0];
-	var height = vThis.mViewPortSize[1];
-	$("#div_externalUrlPlayer").css("width", width + "px");
-	$("#div_externalUrlPlayer").css("height", height + "px");
-	//~ $("#iframe_externalUrlPlayer").attr("width", width + "px");
-	$("#iframe_externalUrlPlayer").css("width", width + "px");
-	//~ if ($("#iframe_externalUrlPlayer").height() < height)
-	$("#iframe_externalUrlPlayer").css("height", height + "px");
+	//~ cPMain.fResize(vThis.mViewPortSize);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -215,14 +211,10 @@ fDbg("*** cCPanel, fStartUp()");
 
 	
 	vThis.mFullyLoaded = true;
-	//~ fDbg("--- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
-	//~ fDbg("--- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
 
 	if (!cJSCore.fGetInstance().mFullyLoaded)
 	{
 		var o = setTimeout(function() {
-			//~ fDbg("--- --- cJSCore fully loaded : " + cJSCore.fGetInstance().mFullyLoaded);
-			//~ fDbg("--- --- cPanel fully loaded : " + cCPanel.fGetInstance().mFullyLoaded);
 			if (cJSCore.fGetInstance().mFullyLoaded)
 			{
 				vThis.mEnableResize = true;
@@ -291,6 +283,10 @@ cCPanel.prototype.fOnSignal = function(
 			break;
 			
 		case "event":
+			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
+			break;
+
+		case "empty":
 			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
 			break;
 		}
@@ -461,8 +457,10 @@ cCPanel.prototype.fOnSignal = function(
 			return;
 		}
 		vThis.mUserFirstButtonPress = true;
+		/*
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
+		*/
 		if (vThis.mState == "controlpanel")
 		{
 			switch (vThis.mSubState)
@@ -484,7 +482,7 @@ cCPanel.prototype.fOnSignal = function(
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() - height/7 );
 			//~ $("#iframe_externalUrlPlayer").css("top", "+=" + height / 7 + "px");
 		}
-		break;
+		break;scribe
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (cModuleInput.fGetInstance().mIsActive)
@@ -493,8 +491,10 @@ cCPanel.prototype.fOnSignal = function(
 			return;
 		}
 		vThis.mUserFirstButtonPress = true;
+		/*
 		if (cModel.fGetInstance().CHUMBY_NETWORK_UP != "true")
 			return;
+		*/
 		if (vThis.mState == "controlpanel")
 		{
 			switch (vThis.mSubState)
@@ -515,8 +515,6 @@ cCPanel.prototype.fOnSignal = function(
 		{
 			var height = vThis.mViewPortSize[1];
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() + height/7 );
-			//~ $("#iframe_externalUrlPlayer").css("top", "-=" + height / 7 + "px");
-			//~ fDbg($("#div_externalUrlPlayer").html());
 		}
 		break;
 		
@@ -573,6 +571,9 @@ cCPanel.prototype.fOnSignal = function(
 	case cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED:
 		vThis.fOnSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
 		vThis.fOnSignal(cConst.SIGNAL_SCPINFO_SHOW, null, null);
+		
+		vThis.mState = "controlpanel";
+		vThis.mSubState = "cpanel_info";
 		break;
 
 	case cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL:
@@ -627,7 +628,7 @@ cCPanel.prototype.fOnSignal = function(
 		
 		
 	case cConst.SIGNAL_NETWORKEVENT_DISCONNECTED:
-		vThis.fToast("Network Disconnected! Please check your wireless connection.");
+		//vThis.fToast("Network Disconnected! Please check your wireless connection.");
 		break;
 		
 	case cConst.SIGNAL_SCPINFO_SHOW:
@@ -649,6 +650,8 @@ cCPanel.prototype.fOnSignal = function(
 			if (vData[0] == "help")
 			{
 				$("#div_CPanel").children().hide();
+				if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+					cSPHelp.fGetInstance().pSubViewMode(cSPHelp.SUBVIEWMODE_GOTOINFO);				
 				$("#div_helpMain").show();
 				vThis.mSubState = "cpanel_help";
 			}
@@ -711,8 +714,19 @@ cCPanel.prototype.fOnSignal = function(
 				cCPanel.instance.mWEEvent.fReset();
 				vThis.fShowControlPanel();
 				break;
+			case "event":
+				$("#div_cpanelMain").hide();
+				$("#div_infoMain").hide();
+				$("#div_settingMain").hide();
+				cModuleEventTicker.fGetInstance().pEnabled(false);
+				cModuleEventTicker.fGetInstance().fStopAll();
+				if (vData && vData.length > 0)
+					vThis.fShowControlPanel(vData[0]);
+				else
+					vThis.fShowControlPanel();
+				break;
 			default:
-				if (vData[0] == "help")
+				if (vData && vData[0] == "help")
 				{
 					cModuleEventTicker.fGetInstance().pEnabled(false);
 					cModuleEventTicker.fGetInstance().fStopAll();
@@ -841,13 +855,15 @@ cCPanel.prototype.fShowControlPanel = function(
 
 	vThis.fAnimateInControlPanel(function() {
 		cCPanel.instance.pState("controlpanel");
-
+		
 		if (!vData)
 			$("#div_cpanelMain").show();
 		else if (vData == "nointernet")
 		{
-			$("#div_infoMain").show();
-			cSPInfo.fGetInstance().pEnableBack(false);
+			// startup -> AP-mode
+			cSPInfo.fGetInstance().fShow();
+			cSPInfo.fGetInstance().pSubViewMode(cSPInfo.SUBVIEWMODE_GOTOHELP);
+			//~ cSPInfo.fGetInstance().pEnableBack(false);
 		}
 		else if (vData == "notactivated")
 			cSPActivation.fGetInstance().fShow();
@@ -944,11 +960,20 @@ cCPanel.prototype.fBack = function(
 	switch (vThis.mSubState)
 	{
 	case "cpanel_info":
-		cSPInfo.fGetInstance().fAnimateOut(function() {
-			cPMain.fGetInstance().fAnimateIn(function() {
-				vThis.mSubState = "cpanel_main";
+		if (!vData)
+			cSPInfo.fGetInstance().fAnimateOut(function() {
+				cPMain.fGetInstance().fAnimateIn(function() {
+					vThis.mSubState = "cpanel_main";
+				});
 			});
-		});
+		else if (vData == "help")
+			cSPSettings.fGetInstance().fAnimateOut(function() {
+				if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+					cSPHelp.fGetInstance().pSubViewMode(cSPHelp.SUBVIEWMODE_GOTOINFO);
+				cSPHelp.fGetInstance().fAnimateIn(function() {
+					vThis.mSubState = "cpanel_help";
+				});
+			});
 		break;
 	case "cpanel_channels":
 		cSPChannels.fGetInstance().fAnimateOut(function() {
@@ -985,11 +1010,20 @@ cCPanel.prototype.fBack = function(
 			});
 		break;
 	case "cpanel_help":
-		cSPHelp.fGetInstance().fAnimateOut(function() {
-			cPMain.fGetInstance().fAnimateIn(function() {
-				vThis.mSubState = "cpanel_main";
+		if (!vData)
+			cSPHelp.fGetInstance().fAnimateOut(function() {
+				cPMain.fGetInstance().fAnimateIn(function() {
+					vThis.mSubState = "cpanel_main";
+				});
 			});
-		});
+		else if (vData == "info")
+			cSPHelp.fGetInstance().fAnimateOut(function() {
+				if (cModel.fGetInstance().CHUMBY_INTERNET == "false")
+					cSPInfo.fGetInstance().pSubViewMode(cSPInfo.SUBVIEWMODE_GOTOHELP);
+				cSPInfo.fGetInstance().fAnimateIn(function() {
+					vThis.mSubState = "cpanel_info";
+				});
+			});
 		break;
 	}
 }

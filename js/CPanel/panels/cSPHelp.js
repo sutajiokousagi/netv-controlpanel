@@ -16,6 +16,22 @@ function cSPHelp(
 	this.mID = vDiv;
 
 	this.mEnableBackButton = true;
+	this.mSelection - null;
+	this.mViewMode = null;
+	this.mSubViewMode = null;
+
+	// divs
+	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
+	
+	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+	this.mDivGotoInfo = $(this.mDiv.children("#subnavi_action").children()[1]);
+	this.mDivGotoInfo.pIndicatorStyle = { width: "150px", height: "36px", top: "551px", left: "350px" };
+
+	// view modes
+	cSPHelp.VIEWMODE_DEFAULT = "viewmode_default";
+	cSPHelp.SUBVIEWMODE_BACK = "subviewmode_back";
+	cSPHelp.SUBVIEWMODE_GOTOINFO = "subviewmode_gotoINFO";
 	
 	this.fInit();
 }
@@ -37,9 +53,67 @@ cSPHelp.fGetInstance = function(
 cSPHelp.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSPHelp, fInit(), ");
-	$("#div_helpMain_content_basic").show();
-	$("#div_helpMain_content_advanced").hide();
+//~ fDbg("*** cSPHelp, fInit(), ");
+	this.pViewMode(cSPHelp.VIEWMODE_DEFAULT);
+	this.pSubViewMode(cSPHelp.SUBVIEWMODE_BACK);
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *	pViewMode
+ * -----------------------------------------------------------------------------------------------*/
+cSPHelp.prototype.pViewMode = function(
+	vViewMode
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (!vViewMode) return vThis.mViewMode;
+	
+	switch (vViewMode)
+	{
+	case cSPHelp.VIEWMODE_DEFAULT:
+		vThis.mSelection = vThis.mDivBack;
+		vThis.mSelection.css("opacity", "1");
+		vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		break;
+	}
+	vThis.mViewMode = vViewMode;
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *	pSubViewMode
+ * -----------------------------------------------------------------------------------------------*/
+cSPHelp.prototype.pSubViewMode = function(
+	vSubViewMode
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (!vSubViewMode) return vThis.mSubViewMode;
+	
+	switch (vSubViewMode)
+	{
+	case cSPHelp.SUBVIEWMODE_BACK:
+		vThis.mDivBack.show();
+		vThis.mDivGotoInfo.hide();
+		vThis.mDivBack.css("opacity", "0.2");
+		break;
+	case cSPHelp.SUBVIEWMODE_GOTOINFO:
+		vThis.mDivBack.hide();
+		vThis.mDivGotoInfo.show();
+		vThis.mDivGotoInfo.css("opacity", "0.2");
+		
+		if (vThis.mSelection == vThis.mDivBack)
+		{
+			vThis.mSelection = vThis.mDivGotoInfo;
+			vThis.mSelection.css("opacity", "1");
+			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		}
+		break;
+	}
+	vThis.mSubViewMode = vSubViewMode;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -58,6 +132,11 @@ cSPHelp.prototype.fOnSignal = function(
 	switch(vSignal)
 	{	
 	case cConst.SIGNAL_BUTTON_CENTER:
+		if (vThis.mSelection == vThis.mDivBack)
+			cCPanel.fGetInstance().fBack();
+		else if (vThis.mSelection == vThis.mDivGotoInfo)
+			cCPanel.fGetInstance().fBack("info");
+		break;
 	case cConst.SIGNAL_BUTTON_SETUP:
 		cCPanel.fGetInstance().fBack();
 		break;
@@ -100,7 +179,7 @@ cSPHelp.prototype.fAnimateOut = function(
 cSPHelp.prototype.fUpdate = function(
 )
 {
-fDbg2("*** cSPHelp, fUpdate(), ");
+fDbg("*** cSPHelp, fUpdate(), ");
 	var o;
 	o = cModel.fGetInstance();
 }
@@ -119,11 +198,11 @@ fDbg2("*** cSPHelp, pEnableBack(), ");
 	if (vData == false)
 	{
 		vThis.mEnableBackButton = vData;
-		$("#div_helpMain #subnavi_back").hide();
+		$("#div_helpMain #subnavi").hide();
 	}
 	else
 	{
 		vThis.mEnableBackButton = vData;
-		$("#div_helpMain #subnavi_back").show();
+		$("#div_helpMain #subnavi").show();
 	}
 }

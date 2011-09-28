@@ -284,3 +284,17 @@ cProxy.fEnableSSH = function(
 			vReturnFun(vData);
 	});
 }
+
+// -------------------------------------------------------------------------------------------------
+//	reboot
+// -------------------------------------------------------------------------------------------------
+cProxy.fReboot = function(
+	vReturnFun
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "reboot", data : ""}, function(vData) {
+		//~ fDbg(vData);
+		if (vReturnFun)
+			vReturnFun(vData);
+	});
+}

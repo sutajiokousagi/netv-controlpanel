@@ -17,6 +17,8 @@ function cSPInfo(
 	
 	this.mEnableBackButton = true;
 	this.mSelection = null;
+	this.mViewMode = null;
+	this.mSubViewMode = null;
 
 	// divs
 	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
@@ -33,12 +35,16 @@ function cSPInfo(
 	this.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "350px", left: "200px" };
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+	this.mDivGotoHelp = $(this.mDiv.children("#subnavi_action").children()[1]);
+	this.mDivGotoHelp.pIndicatorStyle = { width: "160px", height: "36px", top: "551px", left: "320px" };
 	
 	
 	
 	// view modes
 	cSPInfo.VIEWMODE_DEFAULT = "viewmode_default";
 	cSPInfo.VIEWMODE_SYSINFO = "viewmode_sysinfo";
+	cSPInfo.SUBVIEWMODE_BACK = "subviewmode_back";
+	cSPInfo.SUBVIEWMODE_GOTOHELP = "subviewmode_gotohelp";
 	
 	this.fInit();
 }
@@ -60,8 +66,9 @@ cSPInfo.fGetInstance = function(
 cSPInfo.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSPInfo, fInit(), ");
+//~ fDbg("*** cSPInfo, fInit(), ");
 	this.pViewMode(cSPInfo.VIEWMODE_DEFAULT);
+	this.pSubViewMode(cSPInfo.SUBVIEWMODE_BACK);
 }
 
 /** ------------------------------------------------------------------------------------------------
@@ -88,6 +95,7 @@ cSPInfo.prototype.pViewMode = function(
 
 		vThis.mDivToggleSSH.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivGotoHelp.css("opacity", "0.2");
 
 		
 		vThis.mSelection = vThis.mDivSubNaviNeTV;
@@ -104,7 +112,7 @@ cSPInfo.prototype.pViewMode = function(
 		vThis.mDivSubNaviSystemInfoContent.show();
 
 		vThis.mDivToggleSSH.css("opacity", "0.2");
-		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivGotoHelp.css("opacity", "0.2");
 
 		
 		vThis.mSelection = vThis.mDivSubNaviSystemInfo;
@@ -127,6 +135,35 @@ cSPInfo.prototype.pViewMode = function(
 	}
 	vThis.mViewMode = vViewMode;
 }
+
+/** ------------------------------------------------------------------------------------------------
+ *	pSubViewMode
+ * -----------------------------------------------------------------------------------------------*/
+cSPInfo.prototype.pSubViewMode = function(
+	vSubViewMode
+)
+{
+	var vThis;
+	vThis = this;
+
+	if (!vSubViewMode) return vThis.mSubViewMode;
+	
+	switch (vSubViewMode)
+	{
+	case cSPInfo.SUBVIEWMODE_BACK:
+		vThis.mDivBack.show();
+		vThis.mDivGotoHelp.hide();
+		vThis.mDivBack.css("opacity", "0.2");
+		break;
+	case cSPInfo.SUBVIEWMODE_GOTOHELP:
+		vThis.mDivBack.hide();
+		vThis.mDivGotoHelp.show();
+		vThis.mDivGotoHelp.css("opacity", "0.2");
+		break;
+	}
+	vThis.mSubViewMode = vSubViewMode;
+}
+
 
 // -------------------------------------------------------------------------------------------------
 //	pSelection
@@ -209,6 +246,9 @@ cSPInfo.prototype.fOnSignal = function(
 		case vThis.mDivBack:
 			cCPanel.fGetInstance().fBack();
 			break;
+		case vThis.mDivGotoHelp:
+			cCPanel.fGetInstance().fBack("help");
+			break;
 		case vThis.mDivToggleSSH:
 			if ($($(vThis.mDivToggleSSH.children()[0]).children()[0]).is(":visible"))
 			{
@@ -227,12 +267,12 @@ cSPInfo.prototype.fOnSignal = function(
 		switch (vThis.mViewMode)
 		{
 		case cSPInfo.VIEWMODE_DEFAULT:
-			if (vThis.mSelection == vThis.mDivBack)
+			if (vThis.mSelection == vThis.mDivBack || vThis.mSelection == vThis.mDivGotoHelp)
 				vThis.pSelection(vThis.mDivSubNaviNeTV, {opacity: "0.2"}, {color: "#FFFFFF"}, true);
 			break;
 
 		case cSPInfo.VIEWMODE_SYSINFO:
-			if (vThis.mSelection == vThis.mDivBack)
+			if (vThis.mSelection == vThis.mDivBack || vThis.mSelection == vThis.mDivGotoHelp)
 				vThis.pSelection(vThis.mDivToggleSSH, true, true, true);
 			else if (vThis.mSelection == vThis.mDivToggleSSH)
 				vThis.pSelection(vThis.mDivSubNaviSystemInfo, {opacity: "0.2"}, {color: "#FFFFFF"}, true);
@@ -248,7 +288,12 @@ cSPInfo.prototype.fOnSignal = function(
 			{
 				if (!vThis.mEnableBackButton)
 					return;
-				vThis.pSelection(vThis.mDivBack, {color: "#6598EB"}, {opacity: "1"}, true);
+				fDbg("---------->>> " + cSPInfo.SUBVIEWMODE_BACK);
+				switch (vThis.pSubViewMode())
+				{
+				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, {color: "#6598EB"}, {opacity: "1"}, true); break;
+				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, {color: "#6598EB"}, {opacity: "1"}, true); break;
+				}
 			}
 			break;
 
@@ -259,7 +304,12 @@ cSPInfo.prototype.fOnSignal = function(
 			{
 				if (!vThis.mEnableBackButton)
 					return;
-				vThis.pSelection(vThis.mDivBack, true, true, true);
+				
+				switch (vThis.pSubViewMode())
+				{
+				case cSPInfo.SUBVIEWMODE_BACK: vThis.pSelection(vThis.mDivBack, true, true, true); break;
+				case cSPInfo.SUBVIEWMODE_GOTOHELP: vThis.pSelection(vThis.mDivGotoHelp, true, true, true); break;
+				}
 			}
 			break;
 		}
@@ -324,18 +374,18 @@ cSPInfo.prototype.pEnableBack = function(
 	vData	// true | false
 )
 {
-fDbg2("*** cSPInfo, pEnableBack(), ");
+fDbg("*** cSPInfo, pEnableBack(), ");
 	var vThis, o;
 	vThis = this;
 
 	if (vData == false)
 	{
 		vThis.mEnableBackButton = vData;
-		$("#div_infoMain #subnavi_back").hide();
+		$("#div_infoMain #subnavi_action").hide();
 	}
 	else
 	{
 		vThis.mEnableBackButton = vData;
-		$("#div_infoMain #subnavi_back").show();
+		$("#div_infoMain #subnavi_action").show();
 	}
 }

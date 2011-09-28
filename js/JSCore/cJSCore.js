@@ -141,7 +141,7 @@ cJSCore.prototype.fInit = function(
 	vReturnFun
 )
 {
-fDbg("*** cJSCore, fInit()");
+//~ fDbg("*** cJSCore, fInit()");
 	
 	// load other js classes
 	fLoadExtJSScript(cJSCore.kPluginClassList, function(vData) {
@@ -175,7 +175,7 @@ cJSCore.prototype.fStartUp = function(
 	vReturnFun
 )
 {
-fDbg("*** cJSCore, fStartUp()");
+//~ fDbg("*** cJSCore, fStartUp()");
 	var vThis;
 	vThis = this;
 	
@@ -204,7 +204,7 @@ cJSCore.prototype.fStartUpReturn = function(
 	vReturnFun
 )
 {
-fDbg2("*** cJSCore, fStartUpReturn()");
+//~ fDbg("*** cJSCore, fStartUpReturn()");
 	var vThis;
 	vThis = this;
 	
@@ -232,7 +232,7 @@ cJSCore.prototype.fSimulateTestingData = function(
 	// force write over GUID and URLs
 	if (!cJSCore.kProductionMode)
 	{
-		cModel.instance.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUIDfDbg2("yes!!!");
+		cModel.instance.CHUMBY_GUID = cJSCore.kSimulatedData.mGUID;							// set GUID
 	}
 }
 

@@ -24,9 +24,11 @@ function cSPChannels(
 
 	// div elements
 	this.mDivIndicator = null;
+	
 	this.mDivChannels = null;
 	this.mDivChannelList = null;
-	this.mDivWIdgets = null;
+	this.mDivWidgets = null;
+	this.mDivWidgetsContent = null;
 	this.mDivWidgetList = null;
 	this.mDivWidgetSummary = null;
 	this.mDivWidgetConfig = null;
@@ -114,7 +116,7 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mName);
 		
 		//~ o = parseInt(vThis.mSelection.attr("id").split("_")[3]);
-		vThis.fRenderChannelInfo(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
+		vThis.fRenderWidgetList(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
 		vThis.mDivIndicator.css({
 			width: "50px",
 			height: "50px",
@@ -169,7 +171,7 @@ if (!vSelection) return vThis.mSelection;
 	if (vLightNewSelection)
 		vThis.mSelection.css("opacity", "1");
 	vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
-
+	
 	if (vThis.mSelection && vThis.mSelection.attr("id"))
 	{
 		o = vThis.mSelection.attr("id").split("widgettn_");
@@ -192,7 +194,7 @@ cSPChannels.prototype.fOnSignal = function(
 )
 {
 //~ fDbg("*** cSPChannels, fOnSignal(), " + vSignal + ", " + vData);
-	var vThis, i, o;
+	var vThis, i, o, p;
 	vThis = this;
 	
 	switch(vSignal)
@@ -206,12 +208,40 @@ cSPChannels.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_LEFT:
 		switch (vThis.mMode)
 		{
+		case cSPChannels.MODE_DEFAULT:
+			if (vThis.mDivChannelList.indexOf(vThis.pSelection()) > -1 && vThis.mDivChannelList.indexOf(vThis.pSelection()) > 0)
+				vThis.pSelection(vThis.mDivChannelList[vThis.mDivChannelList.indexOf(vThis.pSelection()) - 1], true, true);
+			break;
 		case cSPChannels.MODE_WIDGETLIST:
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
-			o = o - 1 >= 0 ?  vThis.mDivWidgetList[o - 1] : null;
+
+			var vRow, vColumn, vGroup, vSlideFlag;
+			vRow = (o % 18 - o % 6) / 6 + 1;
+			vColumn = o % 6 + 1;
+			vGroup = (o - o % 18) / 18 + 1;
+			
+			if (vColumn == 1)
+			{
+				o = (vGroup - 2) * 18 + vRow * 6 - 1;
+				if (o > 0)
+				{
+					o = vThis.mDivWidgetList[o];
+					vSlideFlag = true;
+				}
+				else
+					return;
+			}
+			else
+				o = o - 1 >= 0 ?  vThis.mDivWidgetList[o - 1] : null;
+				
 			if (!o)
 				return;
 			vThis.pSelection(o);
+
+			if (vSlideFlag)
+			{
+				vThis.mDivWidgetsContent.animate({ left: "+=700px" }, 200, function() { });
+			}
 			break;
 		}
 		break;
@@ -219,12 +249,75 @@ cSPChannels.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_RIGHT:
 		switch (vThis.mMode)
 		{
+		case cSPChannels.MODE_DEFAULT:
+			if (vThis.mDivChannelList.indexOf(vThis.pSelection()) > -1 && vThis.mDivChannelList.indexOf(vThis.pSelection()) < vThis.mDivChannelList.length - 1)
+				vThis.pSelection(vThis.mDivChannelList[vThis.mDivChannelList.indexOf(vThis.pSelection()) + 1], true, true);
+			break;
 		case cSPChannels.MODE_WIDGETLIST:
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
-			o = o + 1 < vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + 1] : null;
+			
+			var vRow, vColumn, vGroup, vSlideFlag;
+			vRow = (o % 18 - o % 6) / 6 + 1;
+			vColumn = o % 6 + 1;
+			vGroup = (o - o % 18) / 18 + 1;
+			
+			if (vColumn == 6)
+			{
+				o = vGroup * 18 + vRow * 6 - 5 - 1;
+				
+				if (o < vThis.mDivWidgetList.length)
+				{
+					o = vThis.mDivWidgetList[o];
+					vSlideFlag = true;
+				}
+				else
+				{
+					// has next page, but not in the same row
+					if (vRow == 3)
+					{
+						o = o - 6;
+						if (o < vThis.mDivWidgetList.length)
+						{
+							o = vThis.mDivWidgetList[o];
+							vSlideFlag = true;
+						}
+						else
+						{
+							o = o - 6;
+							if (o < vThis.mDivWidgetList.length)
+							{
+								o = vThis.mDivWidgetList[o];
+								vSlideFlag = true;
+							}
+							else
+								return;
+						}
+					}
+					else if (vRow == 2)
+					{
+						o = o - 6;
+						if (o < vThis.mDivWidgetList.length)
+						{
+							o = vThis.mDivWidgetList[o];
+							vSlideFlag = true;
+						}
+						else
+							return;
+					}
+					else
+						return;
+				}
+			}
+			else
+				o = o + 1 < vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + 1] : null;
 			if (!o)
 				return;
 			vThis.pSelection(o);
+			
+			if (vSlideFlag)
+			{
+				vThis.mDivWidgetsContent.animate({ left: "-=700px" }, 200, function() { });
+			}
 			break;
 		}
 		break;
@@ -262,7 +355,6 @@ cSPChannels.prototype.fOnSignal = function(
 					return;
 				cModuleInput.fGetInstance().fShow();
 				cModuleInput.fGetInstance().fAssociate(o, o.html(), null, function() {
-					//~ fDbg(vThis.mSelectedChannelN + " - " + vThis.mSelectedWidgetN);
 					fDbg($(vThis.mSelection.children()[0]).html().toLowerCase());
 					// TODO : MUST finish this on monday!!!!!!
 					o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
@@ -314,13 +406,31 @@ cSPChannels.prototype.fOnSignal = function(
 
 		case cSPChannels.MODE_WIDGETCONFIG:
 			i = vThis.mDivWidgetConfigList.indexOf(vThis.mSelection);
-			if (i == -1)
+			if (i == -1)	// at mDivBack
 			{
 				vThis.pSelection(vThis.mPrevSelection, true, false);
 			}
 			else if (i - 1 >= 0)
 			{
+				o = {
+					width: vThis.mDivIndicator.css("width"),
+					height: vThis.mDivIndicator.css("height"),
+					top: vThis.mDivIndicator.css("top"),
+					left: vThis.mDivIndicator.css("left")
+				};
 				vThis.pSelection(vThis.mDivWidgetConfigList[i - 1]);
+
+				/*
+				p = [];
+				p[0] = parseInt($("#widgetconfig_itemcontainer").css("top").split("px")[0]);
+				p[1] = parseInt(vThis.mDivIndicator.css("top").split("px")[0]);
+				
+				if (p[1] > p[0])
+				{
+					$($("#widgetconfig_itemcontainer").children()[0]).css("top", "-=70px");
+					vThis.mDivIndicator.css(o);
+				}
+				*/
 			}
 			break;
 		}
@@ -340,7 +450,11 @@ cSPChannels.prototype.fOnSignal = function(
 			
 		case cSPChannels.MODE_WIDGETLIST:
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
-			o = o + vThis.mStyle.mWidgetListColumn <= vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
+			i = (o % 18 - (o % 18 % 6)) / 6;
+			if (i == 2)
+				o = vThis.mDivBack;
+			else
+				o = o + vThis.mStyle.mWidgetListColumn <= vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
 			vThis.pSelection(o, false, true);
 			break;
 
@@ -350,7 +464,23 @@ cSPChannels.prototype.fOnSignal = function(
 			{
 				if (i + 1 < vThis.mDivWidgetConfigList.length)
 				{
+					o = {
+						width: vThis.mDivIndicator.css("width"),
+						height: vThis.mDivIndicator.css("height"),
+						top: vThis.mDivIndicator.css("top"),
+						left: vThis.mDivIndicator.css("left")
+					}
 					vThis.pSelection(vThis.mDivWidgetConfigList[i + 1]);
+					
+					p = [];
+					p[0] = parseInt($("#widgetconfig_itemcontainer").css("top").split("px")[0]) + parseInt($("#widgetconfig_itemcontainer").css("height").split("px")[0]);
+					p[1] = parseInt(vThis.mDivIndicator.css("top").split("px")[0]) + parseInt(vThis.mDivIndicator.css("height").split("px")[0]);
+					
+					if (p[1] > p[0])
+					{
+						$($("#widgetconfig_itemcontainer").children()[0]).css("top", "-=70px");
+						vThis.mDivIndicator.css(o);
+					}
 				}
 				else
 				{
@@ -495,23 +625,23 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 		});
 		for (i = 0; i < vThis.mDivChannelList.length; i++)
 			vThis.mDivChannelList[i].pIndicatorStyle = {
-				width: vThis.mDivChannelList[i].css("width"),
-				height: vThis.mDivChannelList[i].css("height"),
-				top: vThis.mDivChannelList[i].css("top"),
-				left: vThis.mDivChannelList[i].css("left")
+				width: parseInt(vThis.mDivChannelList[i].css("width").split("px")[0]) + 20 + "px",
+				height: parseInt(vThis.mDivChannelList[i].css("height").split("px")[0]) + 20 + "px",
+				top: parseInt(vThis.mDivChannelList[i].css("top").split("px")[0]) - 10 + "px",
+				left: parseInt(vThis.mDivChannelList[i].css("left").split("px")[0]) - 10 + "px"
 			};
 	}
 }
 
 /** ------------------------------------------------------------------------------------------------
- *  fRenderChannelInfo
+ *  fRenderWidgetList
  * -----------------------------------------------------------------------------------------------*/
-cSPChannels.prototype.fRenderChannelInfo = function(
+cSPChannels.prototype.fRenderWidgetList = function(
 	vChannelObj,
 	vForceRender
 )
 {
-fDbg("*** cSPChannels, fRenderChannelInfo(), ");
+fDbg("*** cSPChannels, fRenderWidgetList(), ");
 	var vThis, o, p, i, j, k, vWidgetList, vLen;
 	vThis = this;
 	
@@ -521,17 +651,18 @@ fDbg("*** cSPChannels, fRenderChannelInfo(), ");
 	
 	o = "";
 	o += '<div id="widget_summary" style="position: absolute; top: 140px; left: 50px; width: 700px; height: 80px; color: #FFFFFF; background-color: #222222; border: solid #333333 0px; border-radius: 10px;"></div>';
-	o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 50px; width: 700px; height: 300px; overflow: hidden;">';
-		o += '<div id="widgetstn_content" style="position: absolute; top: 0px; left: 0px;">';
+	//~ o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 50px; width: 700px; height: 300px; overflow: hidden;">';
+	o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 0px; width: 800px; height: 300px; overflow: hidden;">';
+		o += '<div id="widgetstn_content" style="position: absolute; top: 0px; left: 50px;">';
 		vLen = vChannelObj.mWidgetList.length;
 		for (j = 0; j < vLen; j++)
 		{
 			vImagePath = vChannelObj.mWidgetList[j].mLocalThumbnailPath;
-			i = j % 18;
-			k = (j - i) / 18;
+			i = j % (vThis.mStyle.mWidgetListRow * vThis.mStyle.mWidgetListColumn);
+			k = (j - i) / (vThis.mStyle.mWidgetListRow * vThis.mStyle.mWidgetListColumn);
 			p = [];
-			p[0] = (i - i % 6) / 6 * 100;
-			p[1] = 35 + j % 6 * 110 + k * 700;
+			p[0] = (i - i % vThis.mStyle.mWidgetListColumn) / vThis.mStyle.mWidgetListColumn * 100;
+			p[1] = 35 + j % vThis.mStyle.mWidgetListColumn * 110 + k * 700;
 			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px;">';
 			o += '<img src="' + vImagePath + '" width="80px" height="60px" />';
 			o += '</div>';
@@ -542,16 +673,17 @@ fDbg("*** cSPChannels, fRenderChannelInfo(), ");
 
 	vThis.mDivWidgetSummary = $(vDiv.children()[0]);
 	vDiv = $($(vDiv.children()[1]).children()[0]);
+	vThis.mDivWidgetsContent = vThis.mDiv.children("#div_channelMain_widgets").children("#widgetstn_container").children("#widgetstn_content");
 	vThis.mDivWidgetList = [];
 	vDiv.children().each(function() {
 		vThis.mDivWidgetList.push($(this));
 	});
 	for (i = 0; i < vThis.mDivWidgetList.length; i++)
 		vThis.mDivWidgetList[i].pIndicatorStyle = {
-			width: parseInt(vThis.mDivWidgetList[i].css("width").split("px")[0]) + 22 + "px",
-			height: parseInt(vThis.mDivWidgetList[i].css("height").split("px")[0]) + 22 + "px",
-			top: parseInt(vThis.mDivWidgetList[i].css("top").split("px")[0]) + 250 - 10 + "px",
-			left: parseInt(vThis.mDivWidgetList[i].css("left").split("px")[0]) + 50 - 10 + "px"
+			width: parseInt(vThis.mDivWidgetList[i % 18].css("width").split("px")[0]) + 22 + "px",
+			height: parseInt(vThis.mDivWidgetList[i % 18].css("height").split("px")[0]) + 22 + "px",
+			top: parseInt(vThis.mDivWidgetList[i % 18].css("top").split("px")[0]) + 250 - 10 + "px",
+			left: parseInt(vThis.mDivWidgetList[i % 18].css("left").split("px")[0]) + 50 - 10 + "px"
 		};
 }
 
@@ -563,24 +695,32 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 	vWidgetN
 )
 {
-	var vThis, o, p, vWidget;
+	var vThis, o, p, vWidget, n;
 	vThis = this;
 
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+	n = 0;
+	for (p in vWidget.mParameterList)
+		n++;
+		
 	
 	o = '';
 	o += '<div style="position: absolute; top: 10px; left: 10px; font-size: 20px;">' + vWidget.mName + '</div>';
-	if (vWidget.mParameterList)
+	if (vWidget.mParameterList && n > 0)
 	{
 		o += '<div style="position: absolute; top: 60px; left: 390px; font-size: 13px; font-style: italic; color: #AAAAAA;">Configurable. Press the <span style="font-weight: bold; font-style: normal; color: #FFFFFF;">center</span> button to edit.</div>';
 		vThis.mCurrWidgetConfigurable = true;
 	}
 	else
 		vThis.mCurrWidgetConfigurable = false;
-		
-	//~ for (p in vWidget.mParameterList)
-		//~ fDbg(p + " : " + vWidget.mParameterList[p]);
-	
+
+	/*
+	fDbg("======================================");
+	fDbg("======================================");
+	for (p in vWidget.mParameterList)
+		fDbg(p + " : " + vWidget.mParameterList[p]);
+	fDbg("======================================");
+	*/
 	vThis.mDivWidgetSummary.html(o);
 }
 
@@ -595,11 +735,11 @@ cSPChannels.prototype.fRenderWidgetConfig = function(
 	var vThis, o, p, i, vWidget, vLeft, vTop;
 	vThis = this;
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
-
+	
 	vTop = 20;
 	o = '';
-	o += '<div id="widgetconfig_itemcontainer" style="position: absolute; top: 170px; left: 50px; width: 700px; height: 350px; border: dashed #FFFFFF 0px; overflow: hidden;">';
-	o += '<div style="position: absolute; top: 0px; left: 0px;">';
+	o += '<div id="widgetconfig_itemcontainer" style="position: absolute; top: 150px; left: 50px; width: 700px; height: 385px; border: dashed #FFFFFF 0px; overflow: hidden;">';
+	o += '<div id="widgetconfig_itemcontent" style="position: absolute; top: 0px; left: 0px;">';
 	for (p in vWidget.mParameterList)
 	{
 		o += '<div style="position: absolute; top: ' + vTop + 'px; left: 50px; width: 600px; height: 40px; border: solid #FFFFFF 0px; ">';
@@ -620,7 +760,7 @@ cSPChannels.prototype.fRenderWidgetConfig = function(
 		o.pIndicatorStyle = {
 			width: parseInt(o.css("width").split("px")[0]) + 30 + "px",
 			height: parseInt(o.css("height").split("px")[0]) + 10 + "px",
-			top: parseInt(o.css("top").split("px")[0]) + 170 - 5 + "px",
+			top: parseInt(o.css("top").split("px")[0]) + 150 - 5 + "px",
 			left: parseInt(o.css("left").split("px")[0]) + 50 - 15 + "px"
 		};
 	});

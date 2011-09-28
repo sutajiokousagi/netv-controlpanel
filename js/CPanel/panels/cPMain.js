@@ -19,6 +19,7 @@ function cPMain(
 	this.mID = vDiv;
 
 	this.mCurrSelection = 0;
+	this.mViewPortSize = [1280, 720];
 	
 	this.fInit();
 }
@@ -54,6 +55,23 @@ fDbg("*** cPMain, fInit(), ");
 		$(o[i]).css("left", p + "px");
 		p += parseInt($(o[i]).css("width").split("px")[0]);
 	}
+}
+
+/** -------------------------------------------------------------------------------------------------
+	fResize
+-------------------------------------------------------------------------------------------------- */
+cPMain.prototype.fResize = function(
+	vViewPortSize
+)
+{
+fDbg("*** cPMain, fResize(), ");
+	
+	var vThis = this;
+	vThis.mViewPortSize = vViewPortSize;
+
+
+
+	
 }
 
 // -------------------------------------------------------------------------------------------------

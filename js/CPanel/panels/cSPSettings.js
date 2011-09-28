@@ -167,6 +167,7 @@ cSPSettings.prototype.fOnSignal = function(
 			}
 			break;
 		case vThis.mDivReboot:
+			cProxy.fReboot();
 			break;
 		case vThis.mDivBack:
 			cCPanel.fGetInstance().fBack();

@@ -153,7 +153,7 @@ cModuleWE.prototype.fOnSignal = function(
 		if (vThis.mCurrWE)
 		{
 			vThis.mCurrWidgetTimeSpend++;
-if (vThis.mCurrWidgetTimeSpend % 3 == 0)
+if (vThis.mCurrWidgetTimeSpend % 5 == 0)
 	fDbg(vThis.mCurrWidgetTimeSpend);
 			if (vThis.mCurrWidgetTimeSpend == 15)
 			{
