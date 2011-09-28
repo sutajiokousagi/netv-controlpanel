@@ -13,13 +13,13 @@
 	
     <script type="text/javascript">
 
-      var weekMap = {"0": "SUN",
-		     "1": "MON",
-		     "2": "TUE",
-		     "3": "WED",
-		     "4": "THU",
-		     "5": "FRI",
-		     "6": "SAT"};
+      var weekMap = {"0": "SUNDAY",
+		     "1": "MONDAY",
+		     "2": "TUESDAY",
+		     "3": "WEDNESDAY",
+		     "4": "THURSDAY",
+		     "5": "FRIDAY",
+		     "6": "SATURDAY"};
       
       var vBridgePath = "http://localhost/bridge";
       
@@ -47,7 +47,7 @@
 	  var state = jsonLocation['state']['@attributes']['short'];
 	  var country = jsonLocation['country']['@attributes']['short'];
 
-	  var msgTitle = "Weather forcast for " + city + ", " + state + ", " + country;
+	  var msgTitle = "Weather Forcast For " + city + ", " + state + ", " + country;
 	  return msgTitle;
       }
 
@@ -57,10 +57,7 @@
 	  var msgWeather = jsonForecast['@attributes']['condition'];
 	  var msgTempH = jsonForecast['@attributes']['highf'];
 	  var msgTempL = jsonForecast['@attributes']['lowf'];
-	  var dayofweek = jsonForecast['@attributes']['dayofweek'] ;
-	  var msgWeekday = weekMap[dayofweek];
-	  var msgForecast = '<span style="font-weight:bold">' +  msgWeekday + ' </span>' + msgWeather +
-	      '; High Temperature:' + msgTempH + '; Low Temperature:' + msgTempL; 
+	  var msgForecast =  msgWeather + '; High Temperature:' + msgTempH + '; Low Temperature:' + msgTempL; 
 	  return msgForecast;
       }
       
@@ -69,17 +66,23 @@
 
 	  var jsonLocation = jsonDoc['weatheritems']['weatheritem']['location'];
 
-	  var msgTitle = getTitle(jsonLocation);
-
 	  var jsonForecast = jsonDoc['weatheritems']['weatheritem']['forecast']['day'];
 
 	  for (var i=0; i<5; i++)
 	  {
 	      var msgForecast = getForecast(jsonForecast[i]);
+
+	      var dayofweek = jsonForecast[i]['@attributes']['dayofweek'];
 	      
+	      var msgWeekday = weekMap[dayofweek];
+
+	      var msgTitle = msgWeekday + ' ' + getTitle(jsonLocation);
+
+	      var msgIcons = "./widgets/weather_0.1/icons/" + jsonForecast[i]['@attributes']['icons'];
+
 	      $('#result').append('<h3>' + msgForecast + '</h3>');
 	      msgForecast = encodeURIComponent(msgForecast);
-	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgForecast +  "</message><title>" + msgTitle +"</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgForecast +  "</message><title>" + msgTitle +"</title><image>"+msgIcons+"</image>"}, function(vData) {console.log(vData)});
 
 	  }
 
