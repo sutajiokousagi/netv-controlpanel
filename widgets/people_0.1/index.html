@@ -13,7 +13,7 @@
       
       var vBridgePath = "http://localhost/bridge";
       
-      var rssUrl = "http://news.ycombinator.com/rss";
+      var rssUrl = "http://feeds.people.com/people/headlines";
       
       var picUrl = "./widgets/people_0.1/logo.jpg"
       
@@ -23,13 +23,18 @@
 
 	  for (var i = 0; i< news.length; i++)
 	  {
+
 	      // The title of the news
-	      title = JSON.stringify(news[i]['title']);
+	      msgTitle = JSON.stringify(news[i]['title']);
+
+	      msgPic = news[i]["group"]["thumbnail"]["url"];
+
+	      console.log(msgPic);
 
 	      content = JSON.stringify(news[i]['content']);
-	      $('#result').append('<h3>' + title + '</h3>');
+	      $('#result').append('<h3>' + msgTitle + '</h3>');
 	      
-	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>People\.com News</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgTitle +  "</message><title>People\.com News</title><image>"+msgPic+"</image>"}, function(vData) {console.log(vData)});
 	  }
       }
       
