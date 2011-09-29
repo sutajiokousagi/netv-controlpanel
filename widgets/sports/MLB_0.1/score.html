@@ -50,8 +50,8 @@
 	      msgTitle = "NeTV MBL " + sports_title;
 		  // + " " + start_date_time.substring(0,7);
 	      msgBody = team_1_score + " VS " + team_2_score + ". " +
-		  team_1_name + " " + team_1_event_outcome + "! " +
-		  team_2_name + " " + team_2_event_outcome + "...";
+		  team_1_name + " " + team_1_event_outcome + ", " +
+		  team_2_name + " " + team_2_event_outcome + ".";
 
 	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message><title>" + msgTitle+ "</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
 
