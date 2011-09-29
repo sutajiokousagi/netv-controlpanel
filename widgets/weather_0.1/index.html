@@ -20,10 +20,22 @@
 		     "4": "THURSDAY",
 		     "5": "FRIDAY",
 		     "6": "SATURDAY"};
+
+      var mZipCode = '10001';
+
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("=")[1].split("&")[0];
+	  if (p && p != "")
+	     mZipCode  = p;
+      }
+      
       
       var vBridgePath = "http://localhost/bridge";
       
-      var feedUrl = "http://content.chumby.com/weather_items?zipcode=10001";
+      var feedUrl = "http://content.chumby.com/weather_items?zipcode=" + mZipCode;
       
       var picUrl = "http://www.nws.noaa.gov/weather/images/fcicons/bkn.jpg";
       
