@@ -120,7 +120,294 @@ cConst.STATE_SUB_CHANNELMAIN = "state_sub_channelmain";
 
 
 
-
 // -------------------------------------------------------------------------------------------------
-//	constructor
+//	temp channel constants
 // -------------------------------------------------------------------------------------------------
+cConst.DEFAULT_WIDGETPEERLIST = [
+	{
+		mID : "7482B0E8-D9D6-11E0-BDB5-0021288EC192",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "169CDF90-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-twitter02",
+			mHref : "http://localhost/widgets/twitter0.2/index.html"
+		},
+		mPeerParameters : {
+			zipcode : ""
+		}
+	},
+	{
+		mID : "169D98D6-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-weather01",
+			mHref : "http://localhost/widgets/weather_0.1/index.html"
+		},
+		mPeerParameters : {
+			zipcode : ""
+		}
+	},
+	{
+		mID : "169E5082-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "169F1BA2-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-hackernews01",
+			mHref : "http://localhost/widgets/hackernews_0.1/index.html"
+		}
+	},
+	{
+		mID : "169FE2EE-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A0B534-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-groupon01",
+			mHref : "http://localhost/widgets/groupon_0.1/index.html"
+		}
+	},
+	{
+		mID : "16A1523C-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A20DE4-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A2CF4A-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-engadget01",
+			mHref : "http://localhost/widgets/engadget_0.1/index.html"
+		}
+	},
+	{
+		mID : "16A3AB9A-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A4D3D0-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A62DA2-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A71906-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A81540-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A8E9E8-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16A9A824-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AA64DA-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AB2244-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16ABE238-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16ACAA24-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AD7850-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AE3E02-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AEF86A-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16AF7FCE-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16B008E0-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16B14840-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C5C6F8-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C6909C-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C73A38-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C7DDEE-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C8A1FC-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C932FC-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16C9BB96-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	},
+	{
+		mID : "16CA5ACE-D921-11E0-9CCA-0021288EBF58",
+		mNeTVCompatiable : false,
+		mPeerWidget : {
+			mID : null,
+			mHref : null
+		}
+	}
+];

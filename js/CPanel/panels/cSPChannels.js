@@ -409,9 +409,13 @@ cSPChannels.prototype.fOnSignal = function(
 			if (i == -1)	// at mDivBack
 			{
 				vThis.pSelection(vThis.mPrevSelection, true, false);
+				p = parseInt($($("#widgetconfig_itemcontainer").children()[0]).css("top").split("px")[0]) + parseInt(vThis.mDivWidgetConfigList[vThis.mDivWidgetConfigList.length - 1].css("top").split("px")[0]);
+				vThis.mDivIndicator.css("top", p + 145 + "px");
 			}
 			else if (i - 1 >= 0)
 			{
+				// find the actual "next" selection "top"
+				p = parseInt($($("#widgetconfig_itemcontainer").children()[0]).css("top").split("px")[0]) + parseInt(vThis.mDivWidgetConfigList[i - 1].css("top").split("px")[0]);
 				o = {
 					width: vThis.mDivIndicator.css("width"),
 					height: vThis.mDivIndicator.css("height"),
@@ -419,18 +423,11 @@ cSPChannels.prototype.fOnSignal = function(
 					left: vThis.mDivIndicator.css("left")
 				};
 				vThis.pSelection(vThis.mDivWidgetConfigList[i - 1]);
-
-				/*
-				p = [];
-				p[0] = parseInt($("#widgetconfig_itemcontainer").css("top").split("px")[0]);
-				p[1] = parseInt(vThis.mDivIndicator.css("top").split("px")[0]);
-				
-				if (p[1] > p[0])
-				{
-					$($("#widgetconfig_itemcontainer").children()[0]).css("top", "-=70px");
-					vThis.mDivIndicator.css(o);
-				}
-				*/
+				vThis.mDivIndicator.css(o);
+				if (p > 0)
+					vThis.mDivIndicator.css("top", "-=70px");
+				else
+					$($("#widgetconfig_itemcontainer").children()[0]).css("top", "+=70px");
 			}
 			break;
 		}
@@ -455,7 +452,11 @@ cSPChannels.prototype.fOnSignal = function(
 				o = vThis.mDivBack;
 			else
 				o = o + vThis.mStyle.mWidgetListColumn <= vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
-			vThis.pSelection(o, false, true);
+
+			if (o == vThis.mDivBack)
+				vThis.pSelection(o, false, true);
+			else
+				vThis.pSelection(o);
 			break;
 
 		case cSPChannels.MODE_WIDGETCONFIG:
@@ -464,6 +465,9 @@ cSPChannels.prototype.fOnSignal = function(
 			{
 				if (i + 1 < vThis.mDivWidgetConfigList.length)
 				{
+					// find the actual "next" selection "top"
+					p = parseInt($($("#widgetconfig_itemcontainer").children()[0]).css("top").split("px")[0]) + parseInt(vThis.mDivWidgetConfigList[i + 1].css("top").split("px")[0]) + 70;
+					
 					o = {
 						width: vThis.mDivIndicator.css("width"),
 						height: vThis.mDivIndicator.css("height"),
@@ -471,16 +475,11 @@ cSPChannels.prototype.fOnSignal = function(
 						left: vThis.mDivIndicator.css("left")
 					}
 					vThis.pSelection(vThis.mDivWidgetConfigList[i + 1]);
-					
-					p = [];
-					p[0] = parseInt($("#widgetconfig_itemcontainer").css("top").split("px")[0]) + parseInt($("#widgetconfig_itemcontainer").css("height").split("px")[0]);
-					p[1] = parseInt(vThis.mDivIndicator.css("top").split("px")[0]) + parseInt(vThis.mDivIndicator.css("height").split("px")[0]);
-					
-					if (p[1] > p[0])
-					{
+					vThis.mDivIndicator.css(o);
+					if (p < 385)
+						vThis.mDivIndicator.css("top", "+=70px");
+					else
 						$($("#widgetconfig_itemcontainer").children()[0]).css("top", "-=70px");
-						vThis.mDivIndicator.css(o);
-					}
 				}
 				else
 				{
@@ -642,7 +641,7 @@ cSPChannels.prototype.fRenderWidgetList = function(
 )
 {
 fDbg("*** cSPChannels, fRenderWidgetList(), ");
-	var vThis, o, p, i, j, k, vWidgetList, vLen;
+	var vThis, o, p, i, j, k, vWidgetList, vLen, vWidget;
 	vThis = this;
 	
 	if (!vChannelObj)
@@ -657,13 +656,14 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 		vLen = vChannelObj.mWidgetList.length;
 		for (j = 0; j < vLen; j++)
 		{
+			vWidget = vChannelObj.mWidgetList[j];
 			vImagePath = vChannelObj.mWidgetList[j].mLocalThumbnailPath;
 			i = j % (vThis.mStyle.mWidgetListRow * vThis.mStyle.mWidgetListColumn);
 			k = (j - i) / (vThis.mStyle.mWidgetListRow * vThis.mStyle.mWidgetListColumn);
 			p = [];
 			p[0] = (i - i % vThis.mStyle.mWidgetListColumn) / vThis.mStyle.mWidgetListColumn * 100;
 			p[1] = 35 + j % vThis.mStyle.mWidgetListColumn * 110 + k * 700;
-			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px;">';
+			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px; opacity: ' + (vWidget.mNeTVCompatiable ? "1" : "0.1") + '">';
 			o += '<img src="' + vImagePath + '" width="80px" height="60px" />';
 			o += '</div>';
 		}
@@ -695,25 +695,36 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 	vWidgetN
 )
 {
-	var vThis, o, p, vWidget, n;
+	var vThis, o, p, vWidget, n, vKeywordFilterList;
 	vThis = this;
-
+	
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
 	n = 0;
+
+	vKeywordFilterList = ["session_key", "secret", "api_key_version", "_private_secret", "_private_session_key", "_private"];
+	for (p in vWidget.mParameterList)
+	{
+		if (vKeywordFilterList.indexOf(p) > -1)
+			delete vWidget.mParameterList[p];
+	}
+	
 	for (p in vWidget.mParameterList)
 		n++;
 		
-	
 	o = '';
 	o += '<div style="position: absolute; top: 10px; left: 10px; font-size: 20px;">' + vWidget.mName + '</div>';
-	if (vWidget.mParameterList && n > 0)
+	if (!vWidget.mNeTVCompatiable)
+	{
+		o += '<div style="position: absolute; top: 60px; left: 550px; font-size: 13px; font-style: italic; color: #AAAAAA;"><span style="font-weight: bold; font-style: bold; color: #FF3333;">Not Compatiable</span></div>';
+	}
+	else if (vWidget.mParameterList && n > 0)
 	{
 		o += '<div style="position: absolute; top: 60px; left: 390px; font-size: 13px; font-style: italic; color: #AAAAAA;">Configurable. Press the <span style="font-weight: bold; font-style: normal; color: #FFFFFF;">center</span> button to edit.</div>';
 		vThis.mCurrWidgetConfigurable = true;
 	}
 	else
 		vThis.mCurrWidgetConfigurable = false;
-
+	
 	/*
 	fDbg("======================================");
 	fDbg("======================================");
@@ -732,9 +743,16 @@ cSPChannels.prototype.fRenderWidgetConfig = function(
 	vWidgetN
 )
 {
-	var vThis, o, p, i, vWidget, vLeft, vTop;
+	var vThis, o, p, i, vWidget, vLeft, vTop, vKeywordFilterList;
 	vThis = this;
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+
+	vKeywordFilterList = ["session_key", "secret", "api_key_version", "_private_secret", "_private_session_key"];
+	for (p in vWidget.mParameterList)
+	{
+		if (vKeywordFilterList.indexOf(p) > -1)
+			delete vWidget.mParameterList[p];
+	}
 	
 	vTop = 20;
 	o = '';

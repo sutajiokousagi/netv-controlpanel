@@ -201,7 +201,8 @@ cModuleWE.prototype.fPlay = function(
 	if (vThis.mCurrWidget.mParameterList)
 		for (o in vThis.mCurrWidget.mParameterList)
 			p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
-	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.mWidget.mMovie.mHref + p, null);
+	//~ vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.mWidget.mMovie.mHref + p, null);
+	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -229,23 +230,20 @@ if (!this.mCurrChannel)
 	
 	// set curr widget
 	if (this.mCurrWidget == null)
-	{
 		this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
-	}
 	else
+		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
+
+	while (!this.mCurrWidget.mNeTVCompatiable)
 	{
 		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
 	}
 	
 	if (cModel.fGetInstance().PLAYMODE == "event")
-	{
 		if (!cModuleEventTicker.fGetInstance().mVisibleOnScreen)
 			cModuleEventTicker.fGetInstance().fAnimateIn();
-	}
-
 	
 	cCPanel.fGetInstance().fOnSignal(cConst.SIGNAL_PLAYNEXTWIDGET, null, null);
-
 	
 	// check current WE state (activated | unactivated, playing, paused, stopped)
 	if (!this.mCurrWE)
@@ -275,7 +273,8 @@ if (!this.mCurrChannel)
 		if (this.mCurrWidget.mParameterList)
 			for (o in this.mCurrWidget.mParameterList)
 				p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
-		this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
+		
+		this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
 	}
 	else
 	{
@@ -293,7 +292,8 @@ if (!this.mCurrChannel)
 			if (this.mCurrWidget.mParameterList)
 				for (o in this.mCurrWidget.mParameterList)
 					p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
-			this.mCurrWE.fPlayWidget(this.mCurrWidget.mWidget.mMovie.mHref + p, null);
+			
+			this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
 		}
 		else if (this.mCurrWidget.pIsHTML())
 		{

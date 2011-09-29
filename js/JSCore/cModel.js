@@ -15,6 +15,7 @@
 function cModel(
 )
 {
+fDbg("*** cModel, ");
 	this.USER_NAME = "";
 	this.USER_ID = "";
 

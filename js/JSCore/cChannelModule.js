@@ -64,31 +64,69 @@ cChannelModule.prototype.fParseChannelInfo = function(
 {
 //~ fDbg2("*** cChannelModule, fParseChannelInfo()");
 	
-	var o;
+	var o, p, i, j, k;
 	o = new cChannelObj(vData);
 
 	// -----------------------------------------------------
 	// parse the fetched channel
 	// -----------------------------------------------------
+	cModel.fGetInstance().CHANNEL_LIST.splice(0, 1);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o);
 	
-	/*
-	fDbg("=================================");
-	fDbg("=================================");
-	fDbg("=================================");
-	fDbg("=================================");
-	//~ fDbg(o.mWidgetList[0].mParameterList);
-	for (var vTempObj in o.mWidgetList[0].mParameterList)
-		fDbg(vTempObj + " : " + o.mWidgetList[0].mParameterList[vTempObj]);
-
-	fDbg("=================================");
+	
+	//~ fDbg("=================================");
+	//~ fDbg("=================================");
+	//~ fDbg("=================================");
+	//~ fDbg("=================================");
+	for (i = 0; i < o.mWidgetList.length; i++)
+	{
+		//~ fDbg(o.mWidgetList[i].mParameterList);
+		//~ fDbg(o.mWidgetList[i].mID);
+	}
+	//~ for (var vTempObj in o.mWidgetList[0].mParameterList)
+		//~ fDbg(vTempObj + " : " + o.mWidgetList[0].mParameterList[vTempObj]);
+	//~ fDbg("=================================");
 	//~ fDbg(o.mWidgetList[1].mParameterList);
-	for (var vTempObj in o.mWidgetList[1].mParameterList)
-		fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
+	//~ for (var vTempObj in o.mWidgetList[1].mParameterList)
+		//~ fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
+	//~ fDbg("=================================");
+	//~ for (var vTempObj in o.mWidgetList[2].mParameterList)
+		//~ fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
+	//~ fDbg("=================================");
 	fDbg("=================================");
-	fDbg("=================================");
-	*/
+	for (i = 0; i < o.mWidgetList.length; i++)
+	{
+		p = null;
+		for (j = 0; j < cConst.DEFAULT_WIDGETPEERLIST.length; j++)
+			if (cConst.DEFAULT_WIDGETPEERLIST[j].mID == o.mWidgetList[i].mID)
+			{
+				p = cConst.DEFAULT_WIDGETPEERLIST[j];
+				break;
+			}
+		if (p && p.mNeTVCompatiable)
+		{
+			o.mWidgetList[i].mNeTVCompatiable = true;
+			o.mWidgetList[i].mPeerWidget.mID = p.mPeerWidget.mID;
+			o.mWidgetList[i].mPeerWidget.mHref = p.mPeerWidget.mHref;
+		}
+
+		if (i == 1)
+		{
+			for (var vTempObj in p.mPeerParameters)
+			{
+				//~ fDbg(vTempObj + " : " + p.mPeerParameters[vTempObj]);
+				//~ fDbg("widget param : " + o.mWidgetList[i].mParameterList[vTempObj]);
+				if (o.mWidgetList[i].mParameterList[vTempObj] == undefined)
+				{
+					// save to o.mWidgetList[i], data {vTempObj : ""}
+					cWidgetInstance.fGetInstance().fConfigure(o.mWidgetList[i].mID, null, null, null, {"vTempObj" : ""}, function(vData) {
+						fDbg(vData);
+					});
+				}
+			}
+		}
+	}
 	
 	if (vReturnFun)
 		vReturnFun();
@@ -125,6 +163,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
+			o.mWidgetList[o.mWidgetList.length - 1].mNeTVCompatiable = true;
 
 			q = p[i].getElementsByTagName("parameters");
 			if (q.length > 0)
