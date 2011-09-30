@@ -69,7 +69,10 @@
 	  var msgWeather = jsonForecast['@attributes']['condition'];
 	  var msgTempH = jsonForecast['@attributes']['highf'];
 	  var msgTempL = jsonForecast['@attributes']['lowf'];
-	  var msgForecast =  msgWeather + '; High Temperature:' + msgTempH + '; Low Temperature:' + msgTempL; 
+	  if (msgWeather == '')
+	      var msgForecast =  'High Temperature: ' + msgTempH + ';  Low Temperature:' + msgTempL;
+	  else
+	      var msgForecast =  'Weather Condition: ' + msgWeather + ';  High Temperature:' + msgTempH + ';  Low Temperature:' + msgTempL; 
 	  return msgForecast;
       }
       
