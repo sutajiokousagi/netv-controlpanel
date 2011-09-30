@@ -41,17 +41,6 @@
       
       var netvUrl = "http://192.168.1.49/bridge";
       
-      function StringToXML(text) {
-	  if (window.ActiveXObject) {
-	      var doc = new ActiveXObject('Microsoft.XMLDOM');
-	      doc.async = 'false';
-	      doc.loadXML(text);
-	  } else {
-	      var parser = new DOMParser();
-	      var doc = parser.parseFromString(text, 'text/xml')
-	  }
-	  return doc;
-      }
 
       function getTitle(jsonLocation)
       {
