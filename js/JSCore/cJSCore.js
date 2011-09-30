@@ -12,8 +12,7 @@ cJSCore.kProductionMode = false;
 cJSCore.kSimulatedData = {
 	mGUID : "A620123B-1F0E-B7CB-0E11-921ADB7BE22A",			// the black chumbyR
 	//~ mGUID : "84436234-0E47-3AB6-A0C9-95897F243B32",			// the white chumbyR
-
-	//~ mGUID : "4E3C1363-37B2-5FAA-18A5-D391239A526B",				// testing for torin's NeTV board
+	//~ mGUID : "4E3C1363-37B2-5FAA-18A5-D391239A526B",			// testing for torin's NeTV board
 	mServerUrl : "http://xml.chumby.com/xml/chumbies/",
 	//~ mLocalBridgeUrl : "http://192.168.1.210/projects/0009.chumbyJSCore/server.php"			// testing/development mode at 192.168.1.210
 	mLocalBridgeUrl : "./bridge"			// production mode
@@ -34,6 +33,7 @@ cJSCore.kPluginClassList = [
 	"./js/JSCore/XAPI/cXAPI.js",
 	"./js/JSCore/XAPI/cDevice.js",
 	"./js/JSCore/XAPI/cProfile.js",
+	"./js/JSCore/XAPI/cWidgetInstance.js",
 	"./js/JSCore/util/cGUID.js",
 	"./js/JSCore/util/cMD5.js"
 ];
@@ -46,7 +46,7 @@ function cJSCore(
 {
 	// CONNECTION LINKS
 	this.CPANEL = null;
-
+	
 	this.mFullyLoaded = false;
 }
 
@@ -141,7 +141,7 @@ cJSCore.prototype.fInit = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cJSCore, fInit()");
+fDbg("*** cJSCore, fInit()");
 	
 	// load other js classes
 	fLoadExtJSScript(cJSCore.kPluginClassList, function(vData) {
@@ -162,9 +162,10 @@ cJSCore.prototype.fInitReturn = function(
 	cChannelModule.fGetInstance();
 	cXAPI.fGetInstance();
 	cDevice.fGetInstance();
+	cWidgetInstance.fGetInstance();
 	
 	// force write over GUID and URLs
-	cModel.fGetInstance().SERVER_URL = cJSCore.kSimulatedData.mServerUrl;						// set serverUrl
+	cModel.fGetInstance().SERVER_URL = cJSCore.kSimulatedData.mServerUrl;					// set serverUrl
 	cModel.fGetInstance().LOCALBRIDGE_URL = cJSCore.kSimulatedData.mLocalBridgeUrl;			// set local hardware bridge server
 }
 

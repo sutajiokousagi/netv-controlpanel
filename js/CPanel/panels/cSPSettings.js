@@ -18,12 +18,23 @@ function cSPSettings(
 	this.mCurrSelection = null;
 
 	// div elements
-	this.mDivIndicator = null;
-	this.mDivResetToAP = null;
-	this.mDivReconnectToWIFI = null;
-	this.mDivReloadControlPanel = null;
-	this.mDivToggleSSH = null;
-	this.mDivReboot = null;
+	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
+	this.mDivResetToAP =  $(this.mDiv.children("#setting_group").children()[0]);
+	this.mDivResetToAP.pIndicatorStyle = { width: "400px", height: "40px", top: "120px", left: "200px" };
+	this.mDivReconnectToWIFI = $(this.mDiv.children("#setting_group").children()[1]);
+	this.mDivReconnectToWIFI.pIndicatorStyle = { width: "400px", height: "40px", top: "180px", left: "200px" };
+	this.mDivReloadControlPanel = $(this.mDiv.children("#setting_group").children()[2]);
+	this.mDivReloadControlPanel.pIndicatorStyle = { width: "400px", height: "40px", top: "230px", left: "200px" };
+	this.mDivToggleSSH = $(this.mDiv.children("#setting_group").children()[3]);
+	this.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
+	$(this.mDivToggleSSH.children()[1]).hide();
+	$(this.mDivToggleSSH.children()[2]).hide();
+	this.mDivSetTimezone = $(this.mDiv.children("#setting_group").children()[4]);
+	this.mDivSetTimezone.pIndicatorStyle = { width: "400px", height: "40px", top: "330px", left: "200px" };
+	this.mDivReboot = $(this.mDiv.children("#setting_group").children()[5]);
+	this.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "380px", left: "200px" };
+	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
 	
 	// view modes
 	this.mViewMode = null;
@@ -53,25 +64,6 @@ cSPSettings.prototype.fInit = function(
 	var vThis;
 	vThis = this;
 
-	vThis.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
-	
-	vThis.mDivResetToAP =  $(this.mDiv.children("#setting_group").children()[0]);
-	vThis.mDivResetToAP.pIndicatorStyle = { width: "400px", height: "40px", top: "120px", left: "200px" };
-	vThis.mDivReconnectToWIFI = $(this.mDiv.children("#setting_group").children()[1]);
-	vThis.mDivReconnectToWIFI.pIndicatorStyle = { width: "400px", height: "40px", top: "180px", left: "200px" };
-	vThis.mDivReloadControlPanel = $(this.mDiv.children("#setting_group").children()[2]);
-	vThis.mDivReloadControlPanel.pIndicatorStyle = { width: "400px", height: "40px", top: "230px", left: "200px" };
-	vThis.mDivToggleSSH = $(this.mDiv.children("#setting_group").children()[3]);
-	vThis.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
-	$(vThis.mDivToggleSSH.children()[1]).hide();
-	$(vThis.mDivToggleSSH.children()[2]).hide();
-	
-	vThis.mDivReboot = $(this.mDiv.children("#setting_group").children()[4]);
-	vThis.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "330px", left: "200px" };
-	
-	vThis.mDivBack = $(vThis.mDiv.children("#subnavi_action").children()[0]);
-	vThis.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
-
 	vThis.pViewMode(cSPSettings.VIEWMODE_DEFAULT);
 }
 
@@ -94,6 +86,7 @@ cSPSettings.prototype.pViewMode = function(
 		vThis.mDivReconnectToWIFI.css("opacity", "0.2");
 		vThis.mDivReloadControlPanel.css("opacity", "0.2");
 		vThis.mDivToggleSSH.css("opacity", "0.2");
+		vThis.mDivSetTimezone.css("opacity", "0.2");
 		vThis.mDivReboot.css("opacity", "0.2");
 		vThis.mDivBack.css("opacity", "0.2");
 		
@@ -101,7 +94,7 @@ cSPSettings.prototype.pViewMode = function(
 		vThis.mCurrSelection.css("opacity", "1");
 		vThis.mDivIndicator.css(vThis.mCurrSelection.pIndicatorStyle);
 		
-		if (!cModel.fGetInstance().CHUMBY_SSH_ENABLED)
+		if (!cModel || !cModel.fGetInstance().CHUMBY_SSH_ENABLED)
 		{
 			$(vThis.mDivToggleSSH.children()[0]).show();
 			$(vThis.mDivToggleSSH.children()[1]).hide();
@@ -181,7 +174,8 @@ cSPSettings.prototype.fOnSignal = function(
 		//~ case vThis.mDivReconnectToWIFI:	o = vThis.mDivResetToAP; break;
 		case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
 		case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
-		case vThis.mDivReboot:				o = vThis.mDivToggleSSH; break;
+		case vThis.mDivSetTimezone:			o = vThis.mDivToggleSSH; break;
+		case vThis.mDivReboot:				o = vThis.mDivSetTimezone; break;
 		case vThis.mDivBack:				o = vThis.mDivReboot; break;
 		default: 							return;
 		}
@@ -197,7 +191,8 @@ cSPSettings.prototype.fOnSignal = function(
 		//~ case vThis.mDivResetToAP: 	o = vThis.mDivReconnectToWIFI; break;
 		case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
 		case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
-		case vThis.mDivToggleSSH:			o = vThis.mDivReboot; break;
+		case vThis.mDivToggleSSH:			o = vThis.mDivSetTimezone; break;
+		case vThis.mDivSetTimezone:			o = vThis.mDivReboot; break;
 		case vThis.mDivReboot:				o = vThis.mDivBack; break;
 		default: 							return;
 		}

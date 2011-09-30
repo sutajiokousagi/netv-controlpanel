@@ -1,6 +1,7 @@
 var mJSCore;
 var mCPanel;
 var cConst;
+var cModel;
 
 var o = new DOMParser();
 o = o.parseFromString("<data>null</data>", "text/xml");

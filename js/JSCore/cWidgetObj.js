@@ -217,9 +217,14 @@ function cWidgetObj(
 	this.mParameterList = {};
 	for (i = 0; i < o.length; i++)
 		this.mParameterList[o[i].getAttribute("name")] = o[i].getAttribute("value");
-	
+		
 	// local/temp variables
 	this.mLocalThumbnailPath = "";
+	this.mNeTVCompatiable = false;
+	this.mPeerWidget = {
+		mID : null,
+		mHref : null
+	};
 }
 
 
@@ -232,5 +237,16 @@ cWidgetObj.prototype.pIsFLASH = function(
 cWidgetObj.prototype.pIsHTML = function(
 )
 {
+	if (this.mPeerWidget && this.mPeerWidget.mHref)
+		return true;
 	return this.mWidget.mMovie.mContentType.toLowerCase().indexOf("html") > -1;
+}
+
+cWidgetObj.prototype.pPeerWidgetHref = function(
+)
+{
+	if (this.mPeerWidget && this.mPeerWidget.mHref)
+		return this.mPeerWidget.mHref;
+		
+	return this.mWidget.mMovie.mHref;
 }
