@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+  <head>
+    <title>NeTV Stock Quotes</title>
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+    <script type="text/javascript" src="cMD5.js"></script>
+    <script type="text/javascript" src="fXML.js"></script>
+    <script type="text/javascript" src="jquery.xml2json.js"></script>
+	
+    <script type="text/javascript">
+
+      
+      var vBridgePath = "http://localhost/bridge";
+      
+      // the stock feed url
+      var feedUrl = "http://content.chumby.com/stock_quote/?symbols[]=IBM&symbols[]=AMZN&symbols[]=MSFT&symbols[]=AAPL&symbols[]=GOOG";
+
+      var picUrl = "./widgets/StockQuotes_0.1/logo.jpg"
+      
+      function processXML(xmlDoc) {
+
+	  var jsonDoc = $.xml2json(xmlDoc);
+
+	  var quote = jsonDoc["quote"];
+
+	  for (var i = 0; i< quote.length; i++) {
+
+	      var stock_symbol = quote[i]["key"]["symbol"];
+
+	      var stock_name = quote[i]["equityinfo"]["longname"];
+
+	      var pricedata = quote[i]["pricedata"];
+
+	      var price_last = pricedata["last"];
+
+	      var price_open = pricedata["open"];
+
+	      // this is not correct...
+	      // I think the price_change = price_last - price_open;
+	      // var price_change = pricedata["change"];
+
+	      var float_price_change = (parseFloat(price_last) - parseFloat(price_open)).toFixed(2);
+
+	      var price_change = float_price_change.toString();
+
+	      if (parseFloat(price_last) >= parseFloat(price_open))
+		  price_change = "+" + price_change;
+	      
+	      var price_high = pricedata["high"];
+
+	      var price_low = pricedata["low"];
+
+	      var tradevolume = pricedata["tradevolume"];
+
+	      var lasttradedatetime = pricedata["lasttradedatetime"];
+
+	      var msgTitle = "Stock Price for " + stock_symbol
+		  + "(" + stock_name + ")";
+
+	      var msgBody = lasttradedatetime.substring(0,19) + ": "
+		  + "Last Price: " + price_last
+		  + "; Open Price: " + price_open
+		  + "; Price Change: " + price_change
+		  + "; High Price: " + price_high
+		  + "; Low Price: " + price_low;
+
+	      console.log(msgTitle);
+
+	      console.log(msgBody);
+	      
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message><title>" + msgTitle+ "</title><image>"+picUrl+"</image>"}, function(vData) {
+		  // console.log(vData)
+	      });
+
+	  }
+
+      }
+      
+      $(function() {
+
+	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + feedUrl + '"') + '&format=xml&callback=?';
+	  
+	  $.getJSON(yql, function(data) {
+	      var text = JSON.stringify(data['results']);
+	 
+	      xmlStr = text.substring(2, text.length-2);
+
+	      var tmpStr1 = xmlStr.replace(/\\n/g, '');
+
+	      var tmpStr2 = tmpStr1.replace(/\\/g, '');
+
+              xmlDoc = $.parseXML(tmpStr2);
+
+              processXML(xmlDoc);
+      
+	  });
+
+      });
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    <div id="result"></div>
+  </body>
+  
+</html>
