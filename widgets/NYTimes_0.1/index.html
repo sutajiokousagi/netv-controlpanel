@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+  <head>
+    <title>NYTimes Today\'s Paper</title>
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+    <script type="text/javascript" src="cMD5.js"></script>
+    <script type="text/javascript" src="fXML.js"></script>
+    <script type="text/javascript">
+      
+      var vBridgePath = "http://localhost/bridge";
+      
+      var rssUrl = "http://www.nytimes.com/services/xml/rss/nyt/todayspaper.xml";
+      
+      var picUrl = "./widgets/NYTimes_0.1/logo.jpg"
+      
+      function processRSS(JSONdata) {
+
+	  var news = JSONdata['item'];
+
+	  for (var i = 0; i< Math.min(news.length,5) ; i++)
+	  {
+	      console.log(JSON.stringify(news[i]));
+	      
+	      // The title of the news
+	      var title = JSON.stringify(news[i]['title']);
+
+	      if ( 'undefined' != typeof(news[i]['content']) )
+		  msgPic = news[i]['content']['url'];
+	      else
+		  msgPic = picUrl;
+
+	      var description = news[i]['description'];
+	      
+	      // $('#result').append('<h3>' + title + '</h3>');
+	      // $('#result').append('<h3>' + msgPic + '</h3>');
+	      // $('#result').append('<h3>' + description + '</h3>');
+	      
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>"+ "New York Times Today's Paper" +"</title><image>"+msgPic+"</image>"}, function(vData) {
+		  // console.log(vData)
+	      });
+	  }
+      }
+      
+      $(function() {
+	  
+	  var query = "select * from feed where url='"+rssUrl+"' LIMIT 20";
+
+	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
+
+	  // Get the JSON data from yql;
+	  $.getJSON(yql_url, function(data) {
+	      processRSS(data['query']['results']);
+	  });
+	  
+      });
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    <div id="result"></div>
+  </body>
+  
+</html>
