@@ -47,8 +47,14 @@
 
 	      var price_change = float_price_change.toString();
 
-	      if (parseFloat(price_last) >= parseFloat(price_open))
+	      if (parseFloat(price_last) >= parseFloat(price_open)) {
 		  price_change = "+" + price_change;
+		  price_change = '<span style="color:green">' + price_change + '</span>';
+
+	      } else {
+		  price_change = '<span style="color:red">' + price_change + '</span>';
+
+	      }
 	      
 	      var price_high = pricedata["high"];
 
@@ -58,22 +64,27 @@
 
 	      var lasttradedatetime = pricedata["lasttradedatetime"];
 
-	      var msgTitle = "Stock Price for " + stock_symbol
-		  + "(" + stock_name + ")";
+	      var msgTitle =  stock_symbol + " Stock Price: ";
 
-	      var msgBody = lasttradedatetime.substring(0,19) + ": "
-		  + "Last Price: " + price_last
-		  + "; Open Price: " + price_open
-		  + "; Price Change: " + price_change
-		  + "; High Price: " + price_high
-		  + "; Low Price: " + price_low;
+	      // var msgBody = lasttradedatetime.substring(0,19) + ": "
+	      // 	  + "Last Price: " + price_last
+	      // 	  + "; Open Price: " + price_open
+	      // 	  + "; Price Change: " + price_change
+	      // 	  + "; High Price: " + price_high
+	      // 	  + "; Low Price: " + price_low;
 
-	      console.log(msgTitle);
+	      var msgBody = '<div style="font-size:28pt">'
+		  + msgTitle +
+		  + price_last + ' '
+		  + price_change
+		  + '</div>';
 
-	      console.log(msgBody);
+	      //$("#result").append(msgBody);
+
+	      msgBody = encodeURIComponent(msgBody);
 	      
-	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message><title>" + msgTitle+ "</title><image>"+picUrl+"</image>"}, function(vData) {
-		  // console.log(vData)
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
+	      	  // console.log(vData)
 	      });
 
 	  }
