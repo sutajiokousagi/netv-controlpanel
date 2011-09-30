@@ -113,6 +113,8 @@ cChannelModule.prototype.fParseChannelInfo = function(
 
 		if (i == 1)
 		{
+			if (!p)
+				return;
 			for (var vTempObj in p.mPeerParameters)
 			{
 				//~ fDbg(vTempObj + " : " + p.mPeerParameters[vTempObj]);
