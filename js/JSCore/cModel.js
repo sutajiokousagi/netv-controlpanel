@@ -48,8 +48,7 @@ fDbg("*** cModel, ");
 
 
 	this.CHANNEL_LIST = [];
-	this.CURR_CHANNEL_INDEX = null;
-	this.PREV_CHANNEL_INDEX = null;
+	this.CHANNEL_CURRENT = null;
 	this.CURR_WIDGET_INDEX = null;
 	this.PREV_WIDGET_INDEX = null;
 

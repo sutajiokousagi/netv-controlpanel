@@ -216,6 +216,7 @@ cJSCore.prototype.fStartUpReturn = function(
 				vReturnFun(vData);
 				
 			// all DONE!!! START!!!!!
+			//~ fDbg("all done");
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
 		});
 	});

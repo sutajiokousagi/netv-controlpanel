@@ -44,7 +44,7 @@ cProfile.prototype.fFetchInfo = function(
 	vReturnFun
 )
 {
-fDbg2("*** cProfile, fFetchInfo()");
+//~ fDbg2("*** cProfile, fFetchInfo()");
 
 	vOauthSignatureMethod = "MD5-HEX";
 	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
@@ -71,7 +71,7 @@ cProfile.fGetProfileListByAccountID = function(
 	vReturnFun
 )
 {
-fDbg2("*** cProfile, fGetProfileListByAccountID()");
+//~ fDbg("*** cProfile, fGetProfileListByAccountID()");
 	vOauthSignatureMethod = "MD5-HEX";
 	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;
 	vOauthConsumerKey = cXAPI.fGetInstance().mOauthConsumerKey;

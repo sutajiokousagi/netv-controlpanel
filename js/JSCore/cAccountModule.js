@@ -180,10 +180,39 @@ cAccountModule.prototype.fParseDeviceInfo = function(
 	cModel.fGetInstance().USER_ID = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("user")[0].getAttribute("id");
 	cModel.fGetInstance().PROFILE_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("profile")[0].textContent;
 	cModel.fGetInstance().PROFILE_ID = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("profile")[0].getAttribute("id");
-	
+
 	if (vReturnFun)
 		vReturnFun();
+
+	// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
+	cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
+		fDbg("fetching channel list complete... ...");
+	});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
