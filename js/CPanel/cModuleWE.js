@@ -201,12 +201,25 @@ cModuleWE.prototype.fPlay = function(
 			this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 			this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
 		}
+		
+		o = false;
+		for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
+		{
+			if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable)
+			{
+				o = true;
+				break;
+			}
+		}
+		if (!o)
+			return;
+
+		vThis.mCurrWidget = this.mCurrChannel.mWidgetList[i];
 	}
 	p = "?";
 	if (vThis.mCurrWidget.mParameterList)
 		for (o in vThis.mCurrWidget.mParameterList)
 			p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
-	//~ vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.mWidget.mMovie.mHref + p, null);
 	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 }
 

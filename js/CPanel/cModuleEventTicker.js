@@ -1076,6 +1076,9 @@ cModuleEventTicker.prototype.fReset = function(
 	$("#crawling_container").html("");
 }
 
+/** -------------------------------------------------------------------------------------------------
+	fCheckConfigMode
+-------------------------------------------------------------------------------------------------- */
 cModuleEventTicker.prototype.fCheckConfigMode = function(
 )
 {
@@ -1093,6 +1096,19 @@ cModuleEventTicker.prototype.fCheckConfigMode = function(
 	}
 }
 
+/** -------------------------------------------------------------------------------------------------
+	fClearEventList
+-------------------------------------------------------------------------------------------------- */
+cModuleEventTicker.prototype.fClearEventList = function(
+	vReturnFun
+)
+{
+//~ fDbg("*** cModuleEventTicker, fClearEventList(), ");
+	var vThis, vContainerWidth;
+	vThis = this;
+	
+	vThis.mEventList = [];
+}
 
 
 

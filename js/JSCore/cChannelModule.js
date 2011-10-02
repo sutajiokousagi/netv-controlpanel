@@ -77,14 +77,6 @@ cChannelModule.prototype.fParseChannelInfo2 = function(
 	var o, p, i, j, k;
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
-
-
-	//~ fDbg("--->" + o.mName);
-	if (o.mName == "Android Featured")
-		for (i = 0; i < o.mWidgetList.length; i++)
-		{
-			//~ fDbg(o.mWidgetList[i].mWidget.mID);
-		}
 	
 	if (vReturnFun)
 		vReturnFun();
@@ -110,32 +102,15 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o, 4);
 	
-	//~ fDbg("=================================");
-	for (i = 0; i < o.mWidgetList.length; i++)
-	{
-		//~ fDbg(o.mWidgetList[i].mParameterList);
-		//~ fDbg(o.mWidgetList[i].mWidget.mID);
-	}
-	//~ for (var vTempObj in o.mWidgetList[0].mParameterList)
-		//~ fDbg(vTempObj + " : " + o.mWidgetList[0].mParameterList[vTempObj]);
-	//~ fDbg("=================================");
-	//~ fDbg(o.mWidgetList[1].mParameterList);
-	//~ for (var vTempObj in o.mWidgetList[1].mParameterList)
-		//~ fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
-	//~ fDbg("=================================");
-	//~ for (var vTempObj in o.mWidgetList[2].mParameterList)
-		//~ fDbg(vTempObj + " : " + o.mWidgetList[1].mParameterList[vTempObj]);
-	//~ fDbg("=================================");
 	fDbg("=================================");
-
-	/*
+	fDbg(cModel.fGetInstance().CHANNEL_LIST.length);
+	
 	for (i = 0; i < o.mWidgetList.length; i++)
 	{
 		p = null;
 		for (j = 0; j < cConst.DEFAULT_WIDGETPEERLIST.length; j++)
 			if (cConst.DEFAULT_WIDGETPEERLIST[j].mID == o.mWidgetList[i].mWidget.mID)
 			{
-				//~ fDbg(cConst.DEFAULT_WIDGETPEERLIST[j].mPeerWidget.mID);
 				p = cConst.DEFAULT_WIDGETPEERLIST[j];
 				break;
 			}
@@ -160,9 +135,9 @@ cChannelModule.prototype.fParseChannelInfo = function(
 					}
 				}
 			}
-		}	
+		}
 	}
-	*/
+	
 	if (vReturnFun)
 		vReturnFun();
 }
@@ -199,7 +174,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mNeTVCompatiable = true;
-
+			
 			q = p[i].getElementsByTagName("parameters");
 			if (q.length > 0)
 			{
@@ -355,13 +330,60 @@ fDbg("*** cChannelModule, fParseChannelList()");
 	for (i = 0; i < o.length; i++)
 	{
 		cChannelModule.fGetInstance().fFetchChannelInfo2(o[i].getAttribute("id"), function(vData) {
-			fDbg("==============+>>>>>>>>>>>>>>>>");
-			//~ fDbg(cModel.fGetInstance().CHANNEL_LIST.length);
-			//~ fDbg(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1].mWidgetList.length);
-			//~ fDbg(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1].mID);
+			o = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1];
+			vThis.pScanWidgetList(o);
 			vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], 4, function() {
 				
 			});
 		});
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pScanWidgetList
+// -------------------------------------------------------------------------------------------------
+cChannelModule.prototype.pScanWidgetList = function(
+	vChannelObj,
+	vReturnFun
+)
+{
+//~ fDbg("*** cChannelModule, pScanWidgetList()");
+	var vThis, o, p, i;
+	
+	if (vChannelObj.mID == cModel.fGetInstance().CHANNEL_LIST[1].mID)
+	{
+		cModel.fGetInstance().CHANNEL_LIST.splice(cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj), 1);
+		return;
+	}
+
+	// update mHref according to mNeTVCompatiable & mPeerWidget
+	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
+	{
+		p = null;
+		for (j = 0; j < cConst.DEFAULT_WIDGETPEERLIST.length; j++)
+			if (cConst.DEFAULT_WIDGETPEERLIST[j].mID == vChannelObj.mWidgetList[i].mWidget.mID)
+			{
+				p = cConst.DEFAULT_WIDGETPEERLIST[j];
+				break;
+			}
+		
+		if (p && p.mNeTVCompatiable)
+		{
+			//~ fDbg("match ----------------> " + i);
+			vChannelObj.mWidgetList[i].mNeTVCompatiable = true;
+			vChannelObj.mWidgetList[i].mPeerWidget.mID = p.mPeerWidget.mID;
+			vChannelObj.mWidgetList[i].mPeerWidget.mHref = p.mPeerWidget.mHref;
+			/*
+			if (i == 1)
+				for (var vTempObj in p.mPeerParameters)
+					if (o.mWidgetList[i].mParameterList[vTempObj] == undefined)
+					{
+						// save to o.mWidgetList[i], data {vTempObj : ""}
+						cWidgetInstance.fGetInstance().fConfigure(o.mWidgetList[i].mID, null, null, null, {"vTempObj" : ""}, function(vData) {
+							fDbg(vData);
+						});
+					}
+			*/
+		}
 	}
 }

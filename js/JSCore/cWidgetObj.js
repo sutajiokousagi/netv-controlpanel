@@ -247,6 +247,6 @@ cWidgetObj.prototype.pPeerWidgetHref = function(
 {
 	if (this.mPeerWidget && this.mPeerWidget.mHref)
 		return this.mPeerWidget.mHref;
-		
+	
 	return this.mWidget.mMovie.mHref;
 }

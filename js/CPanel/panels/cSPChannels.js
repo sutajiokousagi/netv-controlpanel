@@ -163,7 +163,7 @@ cSPChannels.prototype.pSelection = function(
 	vLightNewSelection		// false | true
 )
 {
-	var vThis, o;
+	var vThis, o, p;
 	vThis = this;
 	
 if (!vSelection) return vThis.mSelection;
@@ -185,6 +185,21 @@ if (!vSelection) return vThis.mSelection;
 			vThis.mSelectedWidgetN = o[1];
 			vThis.fRenderWidgetSummary(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
 		}
+	}
+
+	
+	if (vThis.mDivWidgetList && vThis.mDivWidgetList.indexOf(vThis.mSelection) > -1)
+	{
+		o = vThis.mDivWidgetList.indexOf(vThis.mSelection);
+		p = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[o];
+		if (!p.mNeTVCompatiable)
+			vThis.mDivIndicator.css("opacity", "0.4");
+		else
+			vThis.mDivIndicator.css("opacity", "1");
+	}
+	else
+	{
+		vThis.mDivIndicator.css("opacity", "1");
 	}
 }
 
@@ -398,6 +413,7 @@ cSPChannels.prototype.fOnSignal = function(
 			case vThis.mDivChannelOperation:
 				cModel.fGetInstance().CHANNEL_CURRENT = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN];
 				cModuleToast.fGetInstance().fToast("Sucessfully set as current channel.", "message", {color: "#00FF00"});
+				cModuleEventTicker.fGetInstance().fClearEventList();
 				break;
 			default:
 				if (vThis.mCurrWidgetConfigurable)
@@ -686,7 +702,11 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 	o = "";
 	if (vForceRender || vDiv.children().length == 0)
 	{
-		o += '<div id="div_channelMain_channelThumbnail_container" style="position: absolute; top: 0px; left: 0px;">';
+		
+		o += '<div id="div_channelMain_summary" style="position: absolute; top: 120px; left: 0px; width: 800px; height: 50px; color: #FFFFFF;">';
+			o += '<div style="position: absolute; top: 40px; left: 60px; width: 700px font-size: 20px;"><span>CURRENT CHANNEL : </span>' + cModel.fGetInstance().CHANNEL_CURRENT.mName + '</div>';
+		o += '</div>';
+		o += '<div id="div_channelMain_channelThumbnail_container" style="position: absolute; top: 60px; left: 0px;">';
 		for (i = 0; i < vChannelList.length; i++)
 		{
 			if (vChannelList[i].mID == cModel.fGetInstance().CHANNEL_CURRENT.mID)
@@ -694,7 +714,7 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 			else
 				p = "";
 			vLeft = (i % 8 % 4 * 180 + 70 + (i - i % 8) / 8 * 800);
-			vTop = i % 8 < 4 ? 160 : 360;
+			vTop = i % 8 < 4 ? 160 : 335;
 			o += '<div id="div_channelMain_channelThumbnail_' + i + '_container" style="position: absolute; top: ' + vTop + 'px; left: ' + vLeft + 'px; width: 120px; height: 120px; color: #FFFFFF; opacity: ' + (i == 0 ? 1 : 0.2) + '; ' + p + '">';
 				o += '<div id="channelThumbnail_' + i + '_title" style="position: absolute; top: 10px; left: 0px; width: 120px; font-size: 15px; font-weight: bold; text-align: center; color: #FFFFFF; text-shadow: #000000 2px 2px 2px;">' + vChannelList[i].mName + '</div>';
 				o += '<div id="channelThumbnail_' + i + '_container" style="position: absolute; top: 40px; left: 10px; border: solid #FFFFFF 0px; width: 100px; height: 82px;">';
@@ -730,7 +750,7 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 			vThis.mDivChannelList[i].pIndicatorStyle = {
 				width: parseInt(vThis.mDivChannelList[o].css("width").split("px")[0]) + 20 + "px",
 				height: parseInt(vThis.mDivChannelList[o].css("height").split("px")[0]) + 20 + "px",
-				top: parseInt(vThis.mDivChannelList[o].css("top").split("px")[0]) - 10 + "px",
+				top: parseInt(vThis.mDivChannelList[o].css("top").split("px")[0]) + 50 + "px",
 				left: parseInt(vThis.mDivChannelList[o].css("left").split("px")[0]) - 10 + "px"
 			};
 		}
@@ -757,11 +777,11 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 		{
 			cChannelModule.fGetInstance().fPreloadChannelThumbnails(vChannelObj, null, function() {
 				fDbg("==================> preload complete");
-				vThis.fRenderWidgetList(vChannelObj);
+				for (i = 0; i < vThis.mDivWidgetList.length; i++)
+					vThis.mDivWidgetList[i].children("img").attr("src", vChannelObj.mWidgetList[i].mLocalThumbnailPath);
 			});	
 			break;
 		}
-
 		
 	vDiv = $("#div_channelMain #div_channelMain_widgets");
 	o = "";
@@ -781,7 +801,7 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 			p = [];
 			p[0] = (i - i % vThis.mStyle.mWidgetListColumn) / vThis.mStyle.mWidgetListColumn * 100;
 			p[1] = 35 + j % vThis.mStyle.mWidgetListColumn * 110 + k * 700;
-			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px; opacity: ' + (vWidget.mNeTVCompatiable ? "1" : "0.4") + '">';
+			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px; opacity: ' + (vWidget.mNeTVCompatiable ? "1" : "0.3") + '">';
 			o += '<img src="' + vImagePath + '" width="80px" height="60px" />';
 			o += '</div>';
 		}
