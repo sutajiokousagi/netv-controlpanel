@@ -243,8 +243,22 @@ cSPChannels.prototype.fOnSignal = function(
 						j = i - 5;
 						$("#div_channelMain_channelThumbnail_container").animate({
 							left: "+=800px"
-						}, 500, function() {
+						}, 300, function() {
 							vThis.pSelection(vThis.mDivChannelList[j], true, true);
+							
+							j = $("#div_channelMain_pageindicator").children().length;
+							for (i = 0; i < j; i++)
+								if ($($("#div_channelMain_pageindicator").children()[i]).css("opacity") == "1")
+								{
+									o = i;
+									break;
+								}
+							o = o - 1;												
+							for (i = 0; i < j; i++)
+								if (i == o)
+									$($("#div_channelMain_pageindicator").children()[i]).css("opacity", 1);
+								else
+									$($("#div_channelMain_pageindicator").children()[i]).css("opacity", 0.4);
 						});
 					}
 				}
@@ -300,12 +314,7 @@ cSPChannels.prototype.fOnSignal = function(
 					}
 					else
 					{
-						fDbg(i + " ----> " + j);
 						j = null;
-
-						fDbg((i + 5) + " ----> " + (vThis.mDivChannelList.length - 1));
-						fDbg("====== >>> ============= >>> " + vThis.mDivChannelList.length);
-		
 						if (i + 5 <= vThis.mDivChannelList.length - 1)
 							j = i + 5;
 						else
@@ -319,8 +328,22 @@ cSPChannels.prototype.fOnSignal = function(
 							return;
 						$("#div_channelMain_channelThumbnail_container").animate({
 							left: "-=800px"
-						}, 500, function() {
+						}, 300, function() {
 							vThis.pSelection(vThis.mDivChannelList[j], true, true);
+							
+							j = $("#div_channelMain_pageindicator").children().length;
+							for (i = 0; i < j; i++)
+								if ($($("#div_channelMain_pageindicator").children()[i]).css("opacity") == "1")
+								{
+									o = i;
+									break;
+								}
+							o = o + 1;												
+							for (i = 0; i < j; i++)
+								if (i == o)
+									$($("#div_channelMain_pageindicator").children()[i]).css("opacity", 1);
+								else
+									$($("#div_channelMain_pageindicator").children()[i]).css("opacity", 0.4);
 						});
 					}
 				}
@@ -697,13 +720,11 @@ cSPChannels.prototype.fRenderChannelList = function(
 )
 {
 fDbg("*** cSPChannels, fRenderChannelList(), ");
-	var vThis, vDiv, o, p, i, j, vChannelList, vLen, vImagePath, vTop, vLeft;
+	var vThis, vDiv, o, p, i, j, vChannelList, vLen, vImagePath, vTop, vLeft, vCircleW, vCircleGap;
 	vThis = this;
 	
 	vDiv = $("#div_channelMain #div_channelMain_channels");
 	vChannelList = cModel.fGetInstance().CHANNEL_LIST;
-	fDbg("===================>>> " + vChannelList.length);
-	
 	vForceRender = true;
 	o = "";
 	if (vForceRender || vDiv.children().length == 0)
@@ -744,14 +765,26 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 			o += '</div>';
 		}
 		o += '</div>';
+		
+		j = Math.ceil(vChannelList.length / 8);
+		vCircleW = 6;
+		vCircleGap = 50;
+		o += '<div id="div_channelMain_pageindicator" style="position: absolute; top: 535px; left: 0px; width: 800px; height: 50px; color: #FFFFFF;">';
+		for (i = 0; i < j; i++)
+			o += '<div style="position: absolute; top: 0px; left: ' + ((800 - (vCircleW + vCircleGap) * (j - 1) + vCircleW) / 2 + (vCircleW + vCircleGap) * i) + 'px; width: ' + vCircleW + 'px; height: ' + vCircleW + 'px; background-color: #CCCCCC; border-radius: ' + (vCircleW / 2) + 'px;"></div>';
+		o += '</div>';
 		vDiv.html(o);
 		
+		for (i = 0; i < j; i++)
+			if (i == 0)
+				$(vDiv.children("#div_channelMain_pageindicator").children()[i]).css("opacity", 1);
+			else
+				$(vDiv.children("#div_channelMain_pageindicator").children()[i]).css("opacity", 0.4);
+			
 		vThis.mDivChannelList = [];
 		vDiv.children("#div_channelMain_channelThumbnail_container").children().each(function() {
 			vThis.mDivChannelList.push($(this));
 		});
-
-		fDbg("====== >>> ============= >>> " + vThis.mDivChannelList.length);
 		
 		for (i = 0; i < vThis.mDivChannelList.length; i++)
 		{
@@ -789,11 +822,7 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 		}
 	var fLoadTH = function() {
 		cChannelModule.fGetInstance().fPreloadChannelThumbnails(vChannelObj, [vCount, 1], function() {
-			fDbg("++++++++++++++++++ >>> " + vCount);
 			vThis.mDivWidgetList[vCount].children("img").attr("src", vChannelObj.mWidgetList[vCount].mLocalThumbnailPath);
-			//~ for (i = 0; i < vThis.mDivWidgetList.length; i++)
-				//~ vThis.mDivWidgetList[i].children("img").attr("src", vChannelObj.mWidgetList[i].mLocalThumbnailPath);
-
 			if (vCount < vChannelObj.mWidgetList.length - 1)
 			{
 				vCount++;

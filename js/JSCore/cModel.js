@@ -28,6 +28,7 @@ fDbg("*** cModel, ");
 	this.CHUMBY_FLASHPLAYER = "";
 	this.CHUMBY_INTERNET = "";
 	this.CHUMBY_SSH_ENABLED = false;
+	this.CHUMBY_MAC_ADDRESS = "";
 	
 	this.CHUMBY_NETWORK_IF = "";
 	this.CHUMBY_NETWORK_UP = "";
