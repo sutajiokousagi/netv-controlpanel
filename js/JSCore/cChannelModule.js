@@ -161,7 +161,7 @@ cChannelModule.prototype.fLoadChannelData = function(
 			for (p in o.mParameterList)
 			{
 				for (q in vData[i])
-					if (p == q)
+					if (p.toLowerCase() == q.toLowerCase())
 						o.mParameterList[p] = vData[i][q];
 			}
 		}

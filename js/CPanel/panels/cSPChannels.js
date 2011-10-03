@@ -165,8 +165,8 @@ cSPChannels.prototype.pSelection = function(
 {
 	var vThis, o, p;
 	vThis = this;
-	
 if (!vSelection) return vThis.mSelection;
+
 	vThis.mPrevSelection = vThis.mSelection;
 	if (vDimPrevSelection)
 		vThis.mPrevSelection.css("opacity", "0.2");
@@ -186,7 +186,6 @@ if (!vSelection) return vThis.mSelection;
 			vThis.fRenderWidgetSummary(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
 		}
 	}
-
 	
 	if (vThis.mDivWidgetList && vThis.mDivWidgetList.indexOf(vThis.mSelection) > -1)
 	{
@@ -494,7 +493,15 @@ cSPChannels.prototype.fOnSignal = function(
 					if (!o.mParameterList)
 						o.mParameterList = {};
 
-					o.mParameterList[$(vThis.mSelection.children()[0]).html().toLowerCase()] = $(vThis.mSelection.children()[2]).html();
+					for (p in o.mParameterList)
+					{
+						if (p.toLowerCase() == $(vThis.mSelection.children()[0]).html().toLowerCase())
+						{
+							o.mParameterList[p] = $(vThis.mSelection.children()[2]).html();
+							break;
+						}
+					}
+					//~ o.mParameterList[$(vThis.mSelection.children()[0]).html().toLowerCase()] = $(vThis.mSelection.children()[2]).html();
 					cChannelModule.fGetInstance().fSaveChannelData();
 				});
 				break;
@@ -601,7 +608,7 @@ cSPChannels.prototype.fOnSignal = function(
 				if (i == 2)
 					o = vThis.mDivBack;
 				else
-					o = o + vThis.mStyle.mWidgetListColumn <= vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
+					o = o + vThis.mStyle.mWidgetListColumn < vThis.mDivWidgetList.length ?  vThis.mDivWidgetList[o + vThis.mStyle.mWidgetListColumn] : vThis.mDivBack;
 
 				if (o == vThis.mDivBack)
 					vThis.pSelection(o, false, true);

@@ -17,6 +17,7 @@ function cSPSettings(
 
 	this.mPrevSelection = null;
 	this.mSelection = null;
+	this.mCurrHighlightTimezone = -1;
 
 	// div elements
 	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
@@ -37,7 +38,7 @@ function cSPSettings(
 
 	this.mDivContainerSettingTimezone = this.mDiv.children("#setting_timezone");
 	this.mDivSettingTimezoneTitle = $(this.mDiv.children("#setting_timezone").children()[0]);
-	this.mDivSettingTimezoneTitle.pIndicatorStyle = { width: "740px", height: "36px", top: "110px", left: "30px" };
+	this.mDivSettingTimezoneTitle.pIndicatorStyle = { width: "740px", height: "36px", top: "140px", left: "30px" };
 	this.mDivSettingTimezoneListContainer = $(this.mDiv.children("#setting_timezone").children()[1]);
 	this.mDivSettingTimezoneListContainer.pIndicatorStyle = { width: "640px", height: "36px", top: "260px", left: "80px" };
 	
@@ -117,6 +118,7 @@ if (!v) return vThis.mViewMode;
 			$(vThis.mDivToggleSSH.children()[1]).hide();
 			$(vThis.mDivToggleSSH.children()[2]).show();
 		}
+		$(vThis.mDiv.children("#subnavi").children()[0]).html("Settings");
 		break;
 	case cSPSettings.VIEWMODE_SETTING_TIMEZONE:
 		vThis.mDivContainerSetting.hide();
@@ -124,7 +126,8 @@ if (!v) return vThis.mViewMode;
 		vThis.mDivSettingTimezoneListContainer.css("opacity", "0.3");
 		
 		vThis.pSelection(vThis.mDivSettingTimezoneTitle);
-		$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", "110px");
+		$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", "58px");
+		$(vThis.mDiv.children("#subnavi").children()[0]).html("Timezone Selection");
 		break;
 	}
 	vThis.mViewMode = v;
@@ -220,6 +223,11 @@ cSPSettings.prototype.fOnSignal = function(
 			{
 			case vThis.mDivSettingTimezoneTitle:
 				vThis.pSelection(vThis.mDivSettingTimezoneListContainer, false, true);
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone = 0);
+				break;
+			case vThis.mDivSettingTimezoneListContainer:
+				o = $($($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[vThis.mCurrHighlightTimezone]).children()[0]).html();
+				vThis.mDivSettingTimezoneTitle.children("span").html(o);
 				break;
 			case vThis.mDivBack:
 				break;
@@ -252,7 +260,7 @@ cSPSettings.prototype.fOnSignal = function(
 			case vThis.mDivSettingTimezoneTitle:
 				break;
 			case vThis.mDivSettingTimezoneListContainer:
-				$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", "+=40px");
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone - 1);
 				break;
 			case vThis.mDivBack:
 				vThis.pSelection(vThis.mDivSettingTimezoneTitle, true, true);
@@ -288,7 +296,7 @@ cSPSettings.prototype.fOnSignal = function(
 				vThis.pSelection(vThis.mDivBack, false, true);
 				break;
 			case vThis.mDivSettingTimezoneListContainer:
-				$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", "-=40px");
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone + 1);
 				break;
 			case vThis.mDivBack:
 				break;
@@ -389,4 +397,42 @@ cSPSettings.prototype.fDisplay = function(
 		});
 	}
 	cCPanel.instance.mSubState = "messageBoard";
+}
+
+
+// -------------------------------------------------------------------------------------------------
+//	fUpdate
+// -------------------------------------------------------------------------------------------------
+cSPSettings.prototype.fShiftTimezoneSelection = function(
+	vData
+)
+{
+	var vThis;
+	vThis = this;
+	o = $(vThis.mDivSettingTimezoneListContainer.children()[0]).children().length
+	
+	if (vData >= o)
+	{
+		vData = o - 1;
+		return;
+	}
+	else if (vData < 0)
+	{
+		vData = 0;
+		return;
+	}
+	
+	for (i = 0; i < o; i++)
+		if (i == vData)
+		{
+			$($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[i]).css("opacity", "1");
+			$($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[i]).css("font-weight", "bold");
+		}
+		else
+		{
+			$($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[i]).css("opacity", "0.3");
+			$($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[i]).css("font-weight", "normal");
+		}
+	$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", 58 - 52 * vData + "px");
+	vThis.mCurrHighlightTimezone = vData;
 }
