@@ -83,7 +83,7 @@ cSPChannels.prototype.fInit = function(
 	
 	this.mDivSubNaviContent = $(this.mDiv.children("#subnavi").children()[0]);
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
-	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "360px" };
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -292,7 +292,21 @@ cSPChannels.prototype.fOnSignal = function(
 
 			if (vSlideFlag)
 			{
-				vThis.mDivWidgetsContent.animate({ left: "+=700px" }, 200, function() { });
+				vThis.mDivWidgetsContent.animate({ left: "+=700px" }, 200, function() {
+					j = $("#div_widgetMain_pageindicator").children().length;
+					for (i = 0; i < j; i++)
+						if ($($("#div_widgetMain_pageindicator").children()[i]).css("opacity") == "1")
+						{
+							o = i;
+							break;
+						}
+					o = o - 1;
+					for (i = 0; i < j; i++)
+						if (i == o)
+							$($("#div_widgetMain_pageindicator").children()[i]).css("opacity", 1);
+						else
+							$($("#div_widgetMain_pageindicator").children()[i]).css("opacity", 0.4);
+				});
 			}
 			break;
 		}
@@ -412,7 +426,21 @@ cSPChannels.prototype.fOnSignal = function(
 			
 			if (vSlideFlag)
 			{
-				vThis.mDivWidgetsContent.animate({ left: "-=700px" }, 200, function() { });
+				vThis.mDivWidgetsContent.animate({ left: "-=700px" }, 200, function() {
+					j = $("#div_widgetMain_pageindicator").children().length;
+					for (i = 0; i < j; i++)
+						if ($($("#div_widgetMain_pageindicator").children()[i]).css("opacity") == "1")
+						{
+							o = i;
+							break;
+						}
+					o = o + 1;
+					for (i = 0; i < j; i++)
+						if (i == o)
+							$($("#div_widgetMain_pageindicator").children()[i]).css("opacity", 1);
+						else
+							$($("#div_widgetMain_pageindicator").children()[i]).css("opacity", 0.4);
+				});
 			}
 			break;
 		}
@@ -775,12 +803,15 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 		o += '</div>';
 		vDiv.html(o);
 		
+		
+		
+		
+		
 		for (i = 0; i < j; i++)
 			if (i == 0)
 				$(vDiv.children("#div_channelMain_pageindicator").children()[i]).css("opacity", 1);
 			else
-				$(vDiv.children("#div_channelMain_pageindicator").children()[i]).css("opacity", 0.4);
-			
+				$(vDiv.children("#div_channelMain_pageindicator").children()[i]).css("opacity", 0.4);	
 		vThis.mDivChannelList = [];
 		vDiv.children("#div_channelMain_channelThumbnail_container").children().each(function() {
 			vThis.mDivChannelList.push($(this));
@@ -859,7 +890,25 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 		}
 		o += '</div>';
 	o += '</div>';
+	
+	j = Math.ceil(vLen / 18);
+	vCircleW = 6;
+	vCircleGap = 50;
+	o += '<div id="div_widgetMain_pageindicator" style="position: absolute; top: 535px; left: 0px; width: 800px; height: 50px; color: #FFFFFF;">';
+	for (i = 0; i < j; i++)
+		o += '<div style="position: absolute; top: 0px; left: ' + ((800 - (vCircleW + vCircleGap) * (j - 1) + vCircleW) / 2 + (vCircleW + vCircleGap) * i) + 'px; width: ' + vCircleW + 'px; height: ' + vCircleW + 'px; background-color: #CCCCCC; border-radius: ' + (vCircleW / 2) + 'px;"></div>';
+	o += '</div>';
 	vDiv.html(o);
+	
+	
+	
+	
+	
+	for (i = 0; i < j; i++)
+		if (i == 0)
+			$(vDiv.children("#div_widgetMain_pageindicator").children()[i]).css("opacity", 1);
+		else
+			$(vDiv.children("#div_widgetMain_pageindicator").children()[i]).css("opacity", 0.4);
 
 	vThis.mDivChannelOperation = $($(vDiv.children()[1]).children()[0]);
 	vThis.mDivChannelOperation.pIndicatorStyle = {width: "300px", height: "30px", top: "140px", left: "430px"};
