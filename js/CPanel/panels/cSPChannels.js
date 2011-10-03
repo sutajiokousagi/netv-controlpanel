@@ -265,6 +265,8 @@ cSPChannels.prototype.fOnSignal = function(
 			}
 			break;
 		case cSPChannels.MODE_WIDGETLIST:
+			if (!vThis.mSelection.attr("id"))
+				return;
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
 			
 			var vRow, vColumn, vGroup, vSlideFlag;
@@ -364,6 +366,8 @@ cSPChannels.prototype.fOnSignal = function(
 			}
 			break;
 		case cSPChannels.MODE_WIDGETLIST:
+			if (!vThis.mSelection.attr("id"))
+				return;
 			o = parseInt(vThis.mSelection.attr("id").split("_")[1]);
 			
 			var vRow, vColumn, vGroup, vSlideFlag;
@@ -486,15 +490,11 @@ cSPChannels.prototype.fOnSignal = function(
 					return;
 				cModuleInput.fGetInstance().fShow();
 				cModuleInput.fGetInstance().fAssociate(o, o.html(), null, function() {
-					fDbg($(vThis.mSelection.children()[0]).html().toLowerCase());
-					
 					o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
 					if (!o.mParameterList)
 						o.mParameterList = {};
 
 					o.mParameterList[$(vThis.mSelection.children()[0]).html().toLowerCase()] = $(vThis.mSelection.children()[2]).html();
-					fDbg(o.mName);
-					fDbg(JSON.stringify(o.mParameterList));
 					cChannelModule.fGetInstance().fSaveChannelData();
 				});
 				break;
@@ -747,7 +747,7 @@ cSPChannels.prototype.fRenderChannelList = function(
 	vForceRender
 )
 {
-fDbg("*** cSPChannels, fRenderChannelList(), ");
+//~ fDbg("*** cSPChannels, fRenderChannelList(), ");
 	var vThis, vDiv, o, p, i, j, vChannelList, vLen, vImagePath, vTop, vLeft, vCircleW, vCircleGap;
 	vThis = this;
 	
@@ -838,7 +838,7 @@ cSPChannels.prototype.fRenderWidgetList = function(
 	vForceRender
 )
 {
-fDbg("*** cSPChannels, fRenderWidgetList(), ");
+//~ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 	var vThis, o, p, i, j, k, vWidgetList, vLen, vWidget, vCount;
 	vThis = this;
 	
@@ -968,13 +968,6 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 	else
 		vThis.mCurrWidgetConfigurable = false;
 	
-	/*
-	fDbg("======================================");
-	fDbg("======================================");
-	for (p in vWidget.mParameterList)
-		fDbg(p + " : " + vWidget.mParameterList[p]);
-	fDbg("======================================");
-	*/
 	vThis.mDivWidgetSummary.html(o);
 }
 
@@ -989,7 +982,7 @@ cSPChannels.prototype.fRenderWidgetConfig = function(
 	var vThis, o, p, i, vWidget, vLeft, vTop, vKeywordFilterList;
 	vThis = this;
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
-
+	
 	vKeywordFilterList = ["session_key", "secret", "api_key_version", "_private_secret", "_private_session_key"];
 	for (p in vWidget.mParameterList)
 	{

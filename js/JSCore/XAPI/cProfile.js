@@ -30,7 +30,7 @@ cProfile.fGetInstance = function(
 cProfile.prototype.fInit = function(
 )
 {
-fDbg2("*** cProfile, fInit()");
+fDbg("*** cProfile, fInit()");
 	
 }
 
@@ -44,7 +44,7 @@ cProfile.prototype.fFetchInfo = function(
 	vReturnFun
 )
 {
-//~ fDbg2("*** cProfile, fFetchInfo()");
+//~ fDbg("*** cProfile, fFetchInfo()");
 
 	vOauthSignatureMethod = "MD5-HEX";
 	vOauthNonce = cXAPI.fGetInstance().mOauthNonce;

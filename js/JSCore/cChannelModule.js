@@ -104,9 +104,6 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
 	
-	//~ fDbg("=================================");
-	//~ fDbg(cModel.fGetInstance().CHANNEL_LIST.length);
-	
 	for (i = 0; i < o.mWidgetList.length; i++)
 	{
 		p = null;
@@ -152,14 +149,22 @@ cChannelModule.prototype.fLoadChannelData = function(
 )
 {
 //~ fDbg("*** cChannelModel, fSaveChannelData(), ");
-	var o, i;
+	var o, p, q, i;
 
 	cProxy.fGetParams("defaultchanneldata", function(vData) {
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
 		for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList.length; i++)
-			cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList[i].mParameterList = vData[i];
+		{
+			o = cModel.fGetInstance().CHANNEL_LIST[0].mWidgetList[i];
+			for (p in o.mParameterList)
+			{
+				for (q in vData[i])
+					if (p == q)
+						o.mParameterList[p] = vData[i][q];
+			}
+		}
 	});
 }
 
@@ -237,7 +242,7 @@ cChannelModule.prototype.fFetchChannelListByUserID = function(
 	vReturnFun
 )
 {
-fDbg("*** cChannelModule, fFetchChannelListByUserID(), ");
+//~ fDbg("*** cChannelModule, fFetchChannelListByUserID(), ");
 	cProfile.fGetProfileListByAccountID(cModel.fGetInstance().USER_ID, function(vData) {
 		cChannelModule.fGetInstance().fParseChannelList(vData, vReturnFun);
 	});
@@ -251,7 +256,7 @@ cChannelModule.prototype.fParseChannelList = function(
 	vReturnFun
 )
 {
-fDbg("*** cChannelModule, fParseChannelList()");
+//~ fDbg("*** cChannelModule, fParseChannelList()");
 	
 	var vThis, o, p, i, j, vCount, parser, xmlDoc;
 	vThis = this;
@@ -362,9 +367,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 				q = p[i].getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
 				o.mWidgetList[o.mWidgetList.length - 1].mParameterList = {};
 				for (j = 0; j < q.length; j++)
-				{
 					o.mWidgetList[o.mWidgetList.length - 1].mParameterList[q[j].getAttribute("name")] = q[j].getAttribute("value");
-				}
 			}
 		}
 		cModel.fGetInstance().CHANNEL_LIST.push(o);
