@@ -300,8 +300,13 @@ cSPChannels.prototype.fOnSignal = function(
 					}
 					else
 					{
+						fDbg(i + " ----> " + j);
 						j = null;
-						if (i + 5 < vThis.mDivChannelList.length - 1)
+
+						fDbg((i + 5) + " ----> " + (vThis.mDivChannelList.length - 1));
+						fDbg("====== >>> ============= >>> " + vThis.mDivChannelList.length);
+		
+						if (i + 5 <= vThis.mDivChannelList.length - 1)
 							j = i + 5;
 						else
 						{
@@ -309,7 +314,6 @@ cSPChannels.prototype.fOnSignal = function(
 								if (i + 1 < vThis.mDivChannelList.length - 1)
 									j = i + 1;
 						}
-						
 						
 						if (!j)
 							return;
@@ -698,6 +702,8 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 	
 	vDiv = $("#div_channelMain #div_channelMain_channels");
 	vChannelList = cModel.fGetInstance().CHANNEL_LIST;
+	fDbg("===================>>> " + vChannelList.length);
+	
 	vForceRender = true;
 	o = "";
 	if (vForceRender || vDiv.children().length == 0)
@@ -744,6 +750,9 @@ fDbg("*** cSPChannels, fRenderChannelList(), ");
 		vDiv.children("#div_channelMain_channelThumbnail_container").children().each(function() {
 			vThis.mDivChannelList.push($(this));
 		});
+
+		fDbg("====== >>> ============= >>> " + vThis.mDivChannelList.length);
+		
 		for (i = 0; i < vThis.mDivChannelList.length; i++)
 		{
 			o = i % 8;
@@ -766,7 +775,7 @@ cSPChannels.prototype.fRenderWidgetList = function(
 )
 {
 fDbg("*** cSPChannels, fRenderWidgetList(), ");
-	var vThis, o, p, i, j, k, vWidgetList, vLen, vWidget;
+	var vThis, o, p, i, j, k, vWidgetList, vLen, vWidget, vCount;
 	vThis = this;
 	
 	if (!vChannelObj)
@@ -775,13 +784,27 @@ fDbg("*** cSPChannels, fRenderWidgetList(), ");
 	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
 		if (!vChannelObj.mWidgetList[i].mLocalThumbnailPath)
 		{
-			cChannelModule.fGetInstance().fPreloadChannelThumbnails(vChannelObj, null, function() {
-				fDbg("==================> preload complete");
-				for (i = 0; i < vThis.mDivWidgetList.length; i++)
-					vThis.mDivWidgetList[i].children("img").attr("src", vChannelObj.mWidgetList[i].mLocalThumbnailPath);
-			});	
+			vCount = i;
 			break;
 		}
+	var fLoadTH = function() {
+		cChannelModule.fGetInstance().fPreloadChannelThumbnails(vChannelObj, [vCount, 1], function() {
+			fDbg("++++++++++++++++++ >>> " + vCount);
+			vThis.mDivWidgetList[vCount].children("img").attr("src", vChannelObj.mWidgetList[vCount].mLocalThumbnailPath);
+			//~ for (i = 0; i < vThis.mDivWidgetList.length; i++)
+				//~ vThis.mDivWidgetList[i].children("img").attr("src", vChannelObj.mWidgetList[i].mLocalThumbnailPath);
+
+			if (vCount < vChannelObj.mWidgetList.length - 1)
+			{
+				vCount++;
+				fLoadTH();
+			}
+			else
+				return;
+		});
+	};
+	if (vCount)
+		fLoadTH();
 		
 	vDiv = $("#div_channelMain #div_channelMain_widgets");
 	o = "";

@@ -175,7 +175,25 @@ cAccountModule.prototype.fParseDeviceInfo = function(
 	//~ fDbg(vData);
 	var parser = new DOMParser();
 	var xmlDoc = parser.parseFromString(vData, "text/xml");
-	
+	//~ fDbg(vData);
+	/*
+	<?xml version="1.0" encoding="UTF-8"?>
+	<chumby
+		created="Sun Oct 02 20:25:25 -0700 2011"
+		updated="Sun Oct 02 20:27:05 -0700 2011"
+		authorized="Sun Oct 02 20:27:05 -0700 2011"
+		id="60CF5773-507A-C4DD-24B3-40E4F9A45F14"
+		anonymous="false">
+		<name>NeTV50</name>
+		<user id="0B4B5D44-0F6C-11E0-A0A1-0021288E785A">torinnguyen</user>
+		<mature>allow</mature>
+		<profile id="26F1E8A6-0F6C-11E0-AC8F-0021288EBF58">Default</profile>
+		<dcid version="0002" hash="0006-1000-0001-0001"/>
+		<control_panel enable="true" name="Control Panel"/>
+	</chumby>
+	*/
+
+		
 	cModel.fGetInstance().USER_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("user")[0].textContent;
 	cModel.fGetInstance().USER_ID = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("user")[0].getAttribute("id");
 	cModel.fGetInstance().PROFILE_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("profile")[0].textContent;
@@ -183,11 +201,7 @@ cAccountModule.prototype.fParseDeviceInfo = function(
 
 	if (vReturnFun)
 		vReturnFun();
-
-	// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
-	cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
-		fDbg("fetching channel list complete... ...");
-	});
+		
 }
 
 
