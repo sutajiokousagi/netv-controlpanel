@@ -13,6 +13,18 @@
     
     <script type="text/javascript">
 
+      var msgNum = 2;
+      
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("msgNum=")[1].split("&")[0];
+	  if (p && p != "")
+	      msgNum = p;
+      }
+
+
       var vBridgePath = "http://localhost/bridge";
 
       var i = 0;
@@ -25,7 +37,7 @@
 	  else
 	  {
 	      //while (i<deals.length)
-	      while (i < 2)
+	      while (i < Math.min(msgNum, deals.length))
 	      {
 		  tmpOjb = deals[i];
 		  var dealTitle = tmpOjb['title'];
