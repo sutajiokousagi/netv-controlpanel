@@ -188,20 +188,38 @@ cModuleWE.prototype.fPlay = function(
 //~ fDbg("*** cModuleWE, fPlay(), ");
 	var vThis, o, p;
 	vThis = this;
-	
-	fDbg("====>>> " + vThis.mCurrWE);
-	fDbg("====>>> " + vThis.mCurrWidget);
 
 	if (!vThis.mCurrWidget)
 	{
 		vThis.fNext();
 		return;
 	}
+	else
+	{
+		if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
+		{
+			this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
+			this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
+		}
+		
+		o = false;
+		for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
+		{
+			if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable)
+			{
+				o = true;
+				break;
+			}
+		}
+		if (!o)
+			return;
+
+		vThis.mCurrWidget = this.mCurrChannel.mWidgetList[i];
+	}
 	p = "?";
 	if (vThis.mCurrWidget.mParameterList)
 		for (o in vThis.mCurrWidget.mParameterList)
 			p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
-	//~ vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.mWidget.mMovie.mHref + p, null);
 	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 }
 
@@ -217,16 +235,26 @@ cModuleWE.prototype.fNext = function(
 
 if (!this.mCurrChannel)
 {
-	//~ fDbg("NO Current Channel!!!");
-	//~ return;
-	
-	if (cModel.fGetInstance().CHANNEL_LIST.length == 1)
-		this.mCurrChannel = cModel.fGetInstance().CHANNEL_LIST[0];
-	else if (cModel.fGetInstance().CHANNEL_LIST.length == 2)
-		this.mCurrChannel = cModel.fGetInstance().CHANNEL_LIST[1];
-	else if (cModel.fGetInstance().CHANNEL_LIST.length == 0)
-		return;
+	this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 }
+else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
+{
+	this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
+	this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
+}
+
+	o = false;
+	for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
+	{
+		if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable)
+		{
+			o = true;
+			break;
+		}
+	}
+	if (!o)
+		return;
+
 	
 	// set curr widget
 	if (this.mCurrWidget == null)

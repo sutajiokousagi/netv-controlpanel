@@ -28,6 +28,7 @@ fDbg("*** cModel, ");
 	this.CHUMBY_FLASHPLAYER = "";
 	this.CHUMBY_INTERNET = "";
 	this.CHUMBY_SSH_ENABLED = false;
+	this.CHUMBY_MAC_ADDRESS = "";
 	
 	this.CHUMBY_NETWORK_IF = "";
 	this.CHUMBY_NETWORK_UP = "";
@@ -48,8 +49,7 @@ fDbg("*** cModel, ");
 
 
 	this.CHANNEL_LIST = [];
-	this.CURR_CHANNEL_INDEX = null;
-	this.PREV_CHANNEL_INDEX = null;
+	this.CHANNEL_CURRENT = null;
 	this.CURR_WIDGET_INDEX = null;
 	this.PREV_WIDGET_INDEX = null;
 

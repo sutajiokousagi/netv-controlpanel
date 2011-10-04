@@ -125,15 +125,7 @@ cConst.STATE_SUB_CHANNELMAIN = "state_sub_channelmain";
 // -------------------------------------------------------------------------------------------------
 cConst.DEFAULT_WIDGETPEERLIST = [
 	{
-		mID : "7482B0E8-D9D6-11E0-BDB5-0021288EC192",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "169CDF90-D921-11E0-9CCA-0021288EBF58",
+		mID : "8664F0CE-C50E-11DF-91A6-001B24E044BE",
 		mNeTVCompatiable : true,
 		mPeerWidget : {
 			mID : "0000-hqsg-twitter02",
@@ -144,7 +136,7 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		}
 	},
 	{
-		mID : "169D98D6-D921-11E0-9CCA-0021288EBF58",
+		mID : "E3791136-9AB6-11DB-AC1C-0030485A78AA",
 		mNeTVCompatiable : true,
 		mPeerWidget : {
 			mID : "0000-hqsg-weather01",
@@ -155,15 +147,7 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		}
 	},
 	{
-		mID : "169E5082-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "169F1BA2-D921-11E0-9CCA-0021288EBF58",
+		mID : "5ED92F74-2F36-11DB-AF6D-001372292121",
 		mNeTVCompatiable : true,
 		mPeerWidget : {
 			mID : "0000-hqsg-hackernews01",
@@ -171,15 +155,7 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		}
 	},
 	{
-		mID : "169FE2EE-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A0B534-D921-11E0-9CCA-0021288EBF58",
+		mID : "8D6C6E4C-8ED1-11DF-9C1E-001B24E044BE",
 		mNeTVCompatiable : true,
 		mPeerWidget : {
 			mID : "0000-hqsg-groupon01",
@@ -187,227 +163,53 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		}
 	},
 	{
-		mID : "16A1523C-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A20DE4-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A2CF4A-D921-11E0-9CCA-0021288EBF58",
+		mID : "94705846-FE85-11DB-9DF5-0030485A78AA",
 		mNeTVCompatiable : true,
 		mPeerWidget : {
 			mID : "0000-hqsg-engadget01",
 			mHref : "http://localhost/widgets/engadget_0.1/index.html"
 		}
-	},
-	{
-		mID : "16A3AB9A-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A4D3D0-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A62DA2-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A71906-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A81540-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A8E9E8-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16A9A824-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AA64DA-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AB2244-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16ABE238-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16ACAA24-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AD7850-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AE3E02-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AEF86A-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16AF7FCE-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16B008E0-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16B14840-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C5C6F8-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C6909C-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C73A38-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C7DDEE-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C8A1FC-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C932FC-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16C9BB96-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
-	},
-	{
-		mID : "16CA5ACE-D921-11E0-9CCA-0021288EBF58",
-		mNeTVCompatiable : false,
-		mPeerWidget : {
-			mID : null,
-			mHref : null
-		}
 	}
 ];
+
+
+
+/*
+"8664F0CE-C50E-11DF-91A6-001B24E044BE" 
+"E3791136-9AB6-11DB-AC1C-0030485A78AA" 
+"B5EE068E-B509-11DE-8681-001B24F07EF4" 
+"F46FFB24-34C4-11DB-9616-001372292121" 
+"8D6C6E4C-8ED1-11DF-9C1E-001B24E044BE" 
+"CF362162-6D89-11DD-90AF-001B24E044BE"
+* 
+"59E82B76-AC29-11DB-8062-0030485A78AA" 
+"94705846-FE85-11DB-9DF5-0030485A78AA" 
+"F478EDE2-F70B-11DB-B414-0030485A78AA" 
+"5ED92F74-2F36-11DB-AF6D-001372292121" 
+"5D4D001C-6320-11DC-B7A6-0030485A78AA" 
+"3B8BB512-3AFA-11E0-9D0B-0021288EBF58"
+* 
+"415D4FB4-DC86-11DF-9DE3-001B24E044BE" 
+"8062565E-2E3A-11E0-8446-0021288E720C" 
+"E2357306-BE6C-11DD-97AA-001E681DF646" 
+"2190621C-0AAA-11DD-BD36-0030488D0168" 
+"02E724E0-D235-11DF-B45D-001B24E044BE" 
+"D54AB3CE-A51B-11DC-958C-0016353B4502" 
+"2F257F66-4534-11DC-90E0-0030485A78AA" 
+"925A5CAA-B6C4-11DF-8D80-001B24E044BE" 
+"66F729DC-139A-11DD-8CC4-0030488E34F8" 
+"A950948C-F576-11DB-870C-0030485A78AA" 
+"B85E4B46-2AEC-11DF-8850-001E681DFAC2" 
+"428F3FAC-7374-11DB-A1A6-0030485A78AA" 
+"471198D8-6E43-11DD-B3B1-001B24F07EF4" 
+"266226B8-B3EE-11DB-BDAE-0030485A78AA" 
+"4E63BE5A-3F31-11DC-BD46-0030488E34CA" 
+"0AE84B72-8157-11DE-B248-001B24F07EF4" 
+"8062565E-2E3A-11E0-8446-0021288E720C" 
+"F8809038-A2B0-11DC-99CA-0016353B0686" 
+"A7228412-6BCE-11DC-9FAD-0030488CBE0D" 
+"3D152DB0-CAAE-11DC-8BC4-0016353B4502" 
+"94E04F6A-EE3A-11DD-9C7D-001B24F07EF4" 
+"8062565E-2E3A-11E0-8446-0021288E720C" 
+"5624A3DE-9403-11DD-B835-001B24E044BE"
+*/

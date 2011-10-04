@@ -98,12 +98,12 @@ cSPHelp.prototype.pSubViewMode = function(
 	case cSPHelp.SUBVIEWMODE_BACK:
 		vThis.mDivBack.show();
 		vThis.mDivGotoInfo.hide();
-		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivBack.css("opacity", "1");
 		break;
 	case cSPHelp.SUBVIEWMODE_GOTOINFO:
 		vThis.mDivBack.hide();
 		vThis.mDivGotoInfo.show();
-		vThis.mDivGotoInfo.css("opacity", "0.2");
+		vThis.mDivGotoInfo.css("opacity", "1");
 		
 		if (vThis.mSelection == vThis.mDivBack)
 		{

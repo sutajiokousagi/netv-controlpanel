@@ -75,7 +75,7 @@ cModuleChromaBg.prototype.fRefreshScreen = function(
 	vReturnFun
 )
 {
-fDbg2("*** cModuleChromaBg, fRefreshScreen(), ");
+//~ fDbg2("*** cModuleChromaBg, fRefreshScreen(), ");
 	var o, p, f;
 	//~ return;
 	if (vAction == "off")

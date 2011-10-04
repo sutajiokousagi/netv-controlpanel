@@ -58,10 +58,9 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 )
 {
 //~ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
-	var i, o;
+	var i, o, p;
 
 	cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
-		
 		if (!vData || vData == undefined || vData == null)
 		{
 			if (vReturnFun)
@@ -84,6 +83,9 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 			o.CHUMBY_FLASHPLAYER = vData.split("</flashver>")[0].split("<flashver>")[1];
 			o.CHUMBY_NETWORK_MAC = vData.split("</mac>")[0].split("<mac>")[1];
 			o.CHUMBY_INTERNET = vData.split("</internet>")[0].split("<internet>")[1];
+			
+			o.CHUMBY_NETWORK_IP = vData.split("</ip>")[0].split("<ip>")[1];
+			o.CHUMBY_MAC_ADDRESS = vData.split("</mac>")[0].split("<mac>")[1];
 			//o.CHUMBY_INTERNET = "false";
 			
 			
@@ -94,14 +96,17 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 					//~ fDbg(">>> FixTime : " + vData);
 				});
 				
-				// has network
-				o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_IP = vData.split("ip=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_BROADCAST = vData.split("broadcast=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_NETMASK = vData.split("netmask=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
-				o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
+				if (vData.split("</network>")[0].split("<network>")[1].length > 50)
+				{
+					// has network
+					o.CHUMBY_NETWORK_IF = vData.split("if=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_UP = vData.split("up=\"")[1].split("\"")[0];
+					//~ o.CHUMBY_NETWORK_IP = vData.split("ip=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_BROADCAST = vData.split("broadcast=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_NETMASK = vData.split("netmask=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_GATEWAY = vData.split("gateway=\"")[1].split("\"")[0];
+					o.CHUMBY_NETWORK_NAMESERVER1 = vData.split("nameserver1=\"")[1].split("\"")[0];
+				}
 				
 				vReturnFun(true);
 				

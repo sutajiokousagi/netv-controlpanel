@@ -212,11 +212,20 @@ cJSCore.prototype.fStartUpReturn = function(
 	// load profile/channel data from server
 	cAccountModule.fGetInstance().fCheckAccount(function() {
 		cChannelModule.fGetInstance().fFetchChannelInfo(function() {
-			if (vReturnFun)
-				vReturnFun(vData);
-				
-			// all DONE!!! START!!!!!
-			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
+			fDbg("now we have " + cModel.fGetInstance().CHANNEL_LIST.length + " channels.");
+			fDbg("start fetching channel list by user ID.");
+			
+			// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
+			cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
+				fDbg("fetching channel list complete... ...");
+				if (vReturnFun)
+					vReturnFun(vData);
+					
+				// all DONE!!! START!!!!!
+				//~ fDbg("all done");
+				vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
+			});
+			
 		});
 	});
 	return;
