@@ -3,19 +3,31 @@
   
   
   <head>
-    <title>Engadget NeTV Widgets</title>
+    <title>Engadget News</title>
     
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript">
+
+      var msgNum = 2;
+      
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("msgNum=")[1].split("&")[0];
+	  if (p && p != "")
+	      msgNum = p;
+      }
+
       
       var vBridgePath = "http://localhost/bridge";
       
       var rssUrl = "http://www.engadget.com/rss.xml";
       
-      var picUrl = "logo.jpg"
+      var picUrl = "./widgets/engadget_0.1/logo.jpg";
       
       function processRSS(JSONdata) {
 	  
@@ -24,7 +36,7 @@
 	  var news = JSONdata['item'];
 
 	  //for (var i = 0; i< news.length; i++)
-	  for (var i = 0; i < 2; i++)
+	  for (var i = 0; i < msgNum; i++)
 	  {
 	      // The title of the news
 	      title = JSON.stringify(news[i]['title']);
@@ -32,13 +44,13 @@
 	      content = JSON.stringify(news[i]['content']);
 	      $('#result').append('<h3>' + title + '</h3>');
 	      
-	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>Engadget News</title>"}, function(vData) {console.log(vData)});
+	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>Engadget News</title><image>" + picUrl + "</image>"}, function(vData) {console.log(vData)});
 	  }
       }
       
       $(function() {
 	  
-	  var query = "select * from feed where url='"+rssUrl+"' LIMIT 5";
+	  var query = "select * from feed where url='"+rssUrl+"' LIMIT "+ Math.max(2, msgNum);
 
 	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
 
