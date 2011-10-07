@@ -50,7 +50,7 @@
       
       $(function() {
 	  
-	  var query = "select * from feed where url='"+rssUrl+"' LIMIT " + Math.max(2, msgNum);
+	  var query = "select * from json where url='"+rssUrl+"' LIMIT " + Math.max(2, msgNum);
 	  
 	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
 	  
