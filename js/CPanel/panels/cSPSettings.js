@@ -21,7 +21,7 @@ function cSPSettings(
 
 	// div elements
 	this.mDivIndicator = $(this.mDiv.children("#item_indicators").children()[0]);
-
+	
 	this.mDivContainerSetting = this.mDiv.children("#setting_group");
 	this.mDivResetToAP =  $(this.mDiv.children("#setting_group").children()[0]);
 	this.mDivResetToAP.pIndicatorStyle = { width: "400px", height: "40px", top: "120px", left: "200px" };
@@ -31,23 +31,37 @@ function cSPSettings(
 	this.mDivReloadControlPanel.pIndicatorStyle = { width: "400px", height: "40px", top: "230px", left: "200px" };
 	this.mDivToggleSSH = $(this.mDiv.children("#setting_group").children()[3]);
 	this.mDivToggleSSH.pIndicatorStyle = { width: "400px", height: "40px", top: "280px", left: "200px" };
-	this.mDivSetTimezone = $(this.mDiv.children("#setting_group").children()[4]);
-	this.mDivSetTimezone.pIndicatorStyle = { width: "400px", height: "40px", top: "330px", left: "200px" };
+	this.mDivSetTime = $(this.mDiv.children("#setting_group").children()[4]);
+	this.mDivSetTime.pIndicatorStyle = { width: "400px", height: "40px", top: "330px", left: "200px" };
 	this.mDivReboot = $(this.mDiv.children("#setting_group").children()[5]);
 	this.mDivReboot.pIndicatorStyle = { width: "400px", height: "40px", top: "380px", left: "200px" };
-
+	this.mDivSetEventTicker = $(this.mDiv.children("#setting_group").children()[6]);
+	this.mDivSetEventTicker.pIndicatorStyle = { width: "400px", height: "40px", top: "430px", left: "200px" };
+	
+	// to be DELETED
 	this.mDivContainerSettingTimezone = this.mDiv.children("#setting_timezone");
 	this.mDivSettingTimezoneTitle = $(this.mDiv.children("#setting_timezone").children()[0]);
 	this.mDivSettingTimezoneTitle.pIndicatorStyle = { width: "740px", height: "36px", top: "140px", left: "30px" };
 	this.mDivSettingTimezoneListContainer = $(this.mDiv.children("#setting_timezone").children()[1]);
 	this.mDivSettingTimezoneListContainer.pIndicatorStyle = { width: "640px", height: "36px", top: "260px", left: "80px" };
 	
+	// back
 	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
 	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
+	
+	// sub sub panels
+	this.mSSPTime = cSPSettingsTime.fGetInstance(this.mDiv.children("#setting_time"));
+	this.mSSPTime.pDivIndicator(this.mDivIndicator);
+	this.mSSPEventTicker = cSPSettingsEventTicker.fGetInstance(this.mDiv.children("#setting_eventticker"));
+	this.mSSPEventTicker.pDivIndicator(this.mDivIndicator);
+	this.mSSPEventTicker.pDivBack(this.mDivBack);
+	
 	
 	// view modes
 	this.mViewMode = null;
 	cSPSettings.VIEWMODE_DEFAULT = "viewmode_default";
+	cSPSettings.VIEWMODE_SETTING_TIME = "viewmode_setting_time";
+	cSPSettings.VIEWMODE_SETTING_EVENTTICKER = "viewmode_setting_eventticker";
 	cSPSettings.VIEWMODE_SETTING_TIMEZONE = "viewmode_setting_timezone";
 
 	this.fInit();
@@ -84,27 +98,31 @@ cSPSettings.prototype.pViewMode = function(
 	v
 )
 {
-	var vThis;
+	var vThis, i, o, p;
 	vThis = this;
 if (!v) return vThis.mViewMode;
 	
 	switch (v)
 	{
 	case cSPSettings.VIEWMODE_DEFAULT:
+		$(vThis.mDiv.children("#subnavi").children()[0]).html("Settings");
+		
 		vThis.mDivContainerSetting.show();
 		vThis.mDivContainerSettingTimezone.hide();
+		vThis.mSSPTime.fHide();
+		vThis.mSSPEventTicker.fHide();
+		
 		
 		vThis.mDivResetToAP.css("opacity", "0.2");
 		vThis.mDivReconnectToWIFI.css("opacity", "0.2");
 		vThis.mDivReloadControlPanel.css("opacity", "0.2");
 		vThis.mDivToggleSSH.css("opacity", "0.2");
-		vThis.mDivSetTimezone.css("opacity", "0.2");
+		vThis.mDivSetTime.css("opacity", "0.2");
 		vThis.mDivReboot.css("opacity", "0.2");
-		vThis.mDivBack.css("opacity", "0.2");
+		vThis.mDivSetEventTicker.css("opacity", "0.2");
 		
-		vThis.mSelection = vThis.mDivReconnectToWIFI;
-		vThis.mSelection.css("opacity", "1");
-		vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+		vThis.mDivBack.css("opacity", "0.2");
+		vThis.pSelection(vThis.mDivReconnectToWIFI, false, true);
 		
 		if (!cModel || !cModel.fGetInstance().CHUMBY_SSH_ENABLED)
 		{
@@ -118,7 +136,6 @@ if (!v) return vThis.mViewMode;
 			$(vThis.mDivToggleSSH.children()[1]).hide();
 			$(vThis.mDivToggleSSH.children()[2]).show();
 		}
-		$(vThis.mDiv.children("#subnavi").children()[0]).html("Settings");
 		break;
 	case cSPSettings.VIEWMODE_SETTING_TIMEZONE:
 		vThis.mDivContainerSetting.hide();
@@ -128,6 +145,31 @@ if (!v) return vThis.mViewMode;
 		vThis.pSelection(vThis.mDivSettingTimezoneTitle);
 		$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", "58px");
 		$(vThis.mDiv.children("#subnavi").children()[0]).html("Timezone Selection");
+		
+		o = $(vThis.mDivSettingTimezoneListContainer.children()[0]).children();
+		for (i = 0; i < o.length; i++)
+		{
+			p = $($($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[i]).children()[0]).html();
+			if (p.indexOf(cModel.fGetInstance().TIMEZONE) > -1)
+			{
+				vThis.mDivSettingTimezoneTitle.children("span").html(p);
+				vThis.mCurrHighlightTimezone = i;
+				$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", 58 - 52 * vThis.mCurrHighlightTimezone + "px");
+				break;
+			}
+		}
+		break;
+	case cSPSettings.VIEWMODE_SETTING_TIME:
+		$(vThis.mDiv.children("#subnavi").children()[0]).html("Setup Time");
+		
+		vThis.mDivContainerSetting.hide();
+		vThis.mSSPTime.fShow();
+		break;
+	case cSPSettings.VIEWMODE_SETTING_EVENTTICKER:
+		$(vThis.mDiv.children("#subnavi").children()[0]).html("Setup Event Ticker");
+		
+		vThis.mDivContainerSetting.hide();
+		vThis.mSSPEventTicker.fShow();
 		break;
 	}
 	vThis.mViewMode = v;
@@ -167,6 +209,17 @@ cSPSettings.prototype.fOnSignal = function(
 //~ fDbg("*** cSPSettings, fOnSignal(), " + vSignal + ", " + vData);
 	var vThis, o, i;
 	vThis = this;
+
+	if (vThis.pViewMode() == cSPSettings.VIEWMODE_SETTING_TIME)
+	{
+		vThis.mSSPTime.fOnSignal(vSignal, vData, vReturnFun);
+		return;
+	}
+	else if (vThis.pViewMode() == cSPSettings.VIEWMODE_SETTING_EVENTTICKER)
+	{
+		vThis.mSSPEventTicker.fOnSignal(vSignal, vData, vReturnFun);
+		return;
+	}
 	
 	switch(vSignal)
 	{
@@ -207,11 +260,14 @@ cSPSettings.prototype.fOnSignal = function(
 					});
 				}
 				break;
-			case vThis.mDivSetTimezone:
-				vThis.pViewMode(cSPSettings.VIEWMODE_SETTING_TIMEZONE);
+			case vThis.mDivSetTime:
+				vThis.pViewMode(cSPSettings.VIEWMODE_SETTING_TIME);
 				break;
 			case vThis.mDivReboot:
 				cProxy.fReboot();
+				break;
+			case vThis.mDivSetEventTicker:
+				vThis.pViewMode(cSPSettings.VIEWMODE_SETTING_EVENTTICKER);
 				break;
 			case vThis.mDivBack:
 				cCPanel.fGetInstance().fBack();
@@ -223,13 +279,21 @@ cSPSettings.prototype.fOnSignal = function(
 			{
 			case vThis.mDivSettingTimezoneTitle:
 				vThis.pSelection(vThis.mDivSettingTimezoneListContainer, false, true);
-				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone = 0);
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone);
 				break;
 			case vThis.mDivSettingTimezoneListContainer:
 				o = $($($(vThis.mDivSettingTimezoneListContainer.children()[0]).children()[vThis.mCurrHighlightTimezone]).children()[0]).html();
 				vThis.mDivSettingTimezoneTitle.children("span").html(o);
+				vThis.pSelection(vThis.mDivSettingTimezoneTitle, true, true);
+				
+				$(vThis.mDivSettingTimezoneListContainer.children()[0]).children().each(function() {
+					$(this).css("opacity", "1");
+					$(this).css("font-weight", "normal");
+				});
+				//~ $(vThis.mDivSettingTimezoneListContainer.children()[0]).children().each{$(this).css("font-weight", "normal")};
 				break;
 			case vThis.mDivBack:
+				vThis.pViewMode(cSPSettings.VIEWMODE_DEFAULT);
 				break;
 			}
 			break;
@@ -244,9 +308,10 @@ cSPSettings.prototype.fOnSignal = function(
 			{
 			case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
 			case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivToggleSSH; break;
-			case vThis.mDivReboot:				o = vThis.mDivSetTimezone; break;
-			case vThis.mDivBack:				o = vThis.mDivReboot; break;
+			case vThis.mDivSetTime:				o = vThis.mDivToggleSSH; break;
+			case vThis.mDivReboot:				o = vThis.mDivSetTime; break;
+			case vThis.mDivSetEventTicker:		o = vThis.mDivReboot; break;
+			case vThis.mDivBack:				o = vThis.mDivSetEventTicker; break;
 			default: 							return;
 			}
 			vThis.mSelection.css("opacity", "0.2");
@@ -278,9 +343,10 @@ cSPSettings.prototype.fOnSignal = function(
 			{
 			case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
 			case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
-			case vThis.mDivToggleSSH:			o = vThis.mDivSetTimezone; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivReboot; break;
-			case vThis.mDivReboot:				o = vThis.mDivBack; break;
+			case vThis.mDivToggleSSH:			o = vThis.mDivSetTime; break;
+			case vThis.mDivSetTime:				o = vThis.mDivReboot; break;
+			case vThis.mDivReboot:				o = vThis.mDivSetEventTicker; break;
+			case vThis.mDivSetEventTicker:		o = vThis.mDivBack; break;
 			default: 							return;
 			}
 			
@@ -435,4 +501,32 @@ cSPSettings.prototype.fShiftTimezoneSelection = function(
 		}
 	$(vThis.mDivSettingTimezoneListContainer.children()[0]).css("top", 58 - 52 * vData + "px");
 	vThis.mCurrHighlightTimezone = vData;
+}
+
+
+
+
+
+
+
+
+
+
+
+cSPSettings.prototype.fBack = function(
+	vData
+)
+{
+//~ fDbg("*** cSPSetting, fBack(), ");
+	var vThis;
+	vThis = this;
+	
+	switch (vThis.mViewMode)
+	{
+	case cSPSettings.VIEWMODE_SETTING_TIME:
+		break;
+	case cSPSettings.VIEWMODE_SETTING_EVENTTICKER:
+		vThis.pViewMode(cSPSettings.VIEWMODE_DEFAULT);
+		break;
+	}
 }

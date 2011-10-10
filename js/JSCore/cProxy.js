@@ -221,7 +221,7 @@ cProxy.fReadDefaultChannelData = function(
  *	save / read parameters
  * -----------------------------------------------------------------------------------------------*/
  // -------------------------------------------------------------------------------------------------
-//	fSaveParams
+//	fSaveParams / fLoadParams
 // -------------------------------------------------------------------------------------------------
 cProxy.fGetParams = function(
 	vTagName,
@@ -236,9 +236,6 @@ cProxy.fGetParams = function(
 	});
 }
 
-// -------------------------------------------------------------------------------------------------
-//	fSaveParams
-// -------------------------------------------------------------------------------------------------
 cProxy.fSaveParams = function(
 	vTagName,
 	vData,
@@ -256,7 +253,36 @@ cProxy.fSaveParams = function(
 	});
 }
 
+// -------------------------------------------------------------------------------------------------
+//	pLoadModelData
+// -------------------------------------------------------------------------------------------------
+cProxy.fLoadModelData = function(
+	vReturnFun
+)
+{
+	var o;
+	
+	cProxy.fGetParams("cpanel_cmodel", function(vData) {
+		fDbg(vData);
+		if (!vData || vData == "")
+			return;
+		vData = JSON.parse(vData);
+		cModel.fGetInstance().pData(vData)
+		
+		if (vReturnFun)
+			vReturnFun();
+	});
+}
 
+cProxy.fSaveModelData = function(
+)
+{
+	var o;
+	o = cModel.fGetInstance().pData();
+	o = JSON.stringify(o);
+
+	cProxy.fSaveParams("cpanel_cmodel", o);
+}
 
 
 

@@ -212,8 +212,8 @@ cJSCore.prototype.fStartUpReturn = function(
 	// load profile/channel data from server
 	cAccountModule.fGetInstance().fCheckAccount(function() {
 		cChannelModule.fGetInstance().fFetchChannelInfo(function() {
-			fDbg("now we have " + cModel.fGetInstance().CHANNEL_LIST.length + " channels.");
-			fDbg("start fetching channel list by user ID.");
+			//~ fDbg("now we have " + cModel.fGetInstance().CHANNEL_LIST.length + " channels.");
+			//~ fDbg("start fetching channel list by user ID.");
 			
 			// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
 			cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {

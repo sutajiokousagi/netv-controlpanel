@@ -30,6 +30,9 @@ function cModuleEventTicker(
 		mRightOffset: 60,
 		mMessageDefaultDisplayN: 2
 	}
+	this.mTimeIntervalFrequency = 20;
+	
+	
 	
 	// ------------------------- DIVs
 	this.mDivTickerMini = null;
@@ -106,7 +109,7 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 	this.mTimer = setInterval(function() {
 		mCounterStampClockOrigin = 0;
 		vThis.fOnSignal("timerinterval", null, null);
-	}, 20);
+	}, vThis.mTimeIntervalFrequency);
 	this.fReset();
 
 	vThis.pEnabled(true);
@@ -295,9 +298,10 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	{
 	case "timerinterval":
 		vThis.mCounterTimer++;
-		o = Math.floor((vThis.mCounterTimer - vThis.mCounterStampClockOrigin) / 20);
-		
-		if ((vThis.mCounterTimer - vThis.mCounterStampClockOrigin) % 50 == 0)
+		o = Math.floor((vThis.mCounterTimer - vThis.mCounterStampClockOrigin) / vThis.mTimeIntervalFrequency);
+
+		// second counter
+		if ((vThis.mCounterTimer - vThis.mCounterStampClockOrigin) % (1000 / vThis.mTimeIntervalFrequency) == 0)
 		{
 			vThis.mCounterTimerSec++
 			vThis.fCheckConfigMode();
@@ -309,11 +313,11 @@ cModuleEventTicker.prototype.fOnSignal = function(
 			vThis.fUpdateClock();
 		}
 
+		
 		if (vThis.mPlayStatus == "crawlingin" && vThis.mEnabled)
 		{
 			vThis.fCrawlingIn();
 		}
-		
 		
 		if (vThis.mPlayStatus == "playing" && vThis.mEnabled)
 		{	
@@ -580,7 +584,7 @@ cModuleEventTicker.prototype.fCrawlingIn = function(
 //~ fDbg("*** cModuleEventTicker, fCrawlingIn(), ");
 	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
 	vThis = this;
-	vStep = 4;
+	vStep = cModel.fGetInstance().pTickerStep();
 	
 	$("#div_eventWidgetPlayer_crawling").css("left", "-=" + vStep + "px");
 	vLeft = parseInt($("#div_eventWidgetPlayer_crawling").css("left").split("px")[0]);
@@ -671,6 +675,7 @@ cModuleEventTicker.prototype.fCrawlMessages = function(
 	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
 	vThis = this;
 	vStep = 4;
+	vStep = cModel.fGetInstance().pTickerStep();
 	
 	vList = $("#crawling_container").children();
 	vLen = vList.length;

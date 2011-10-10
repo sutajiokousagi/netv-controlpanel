@@ -93,7 +93,7 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 			{
 			case "true":
 				cProxy.xmlhttpPost("", "post", {cmd : "FixTime", data: "sa"}, function(vData) {
-					//~ fDbg(">>> FixTime : " + vData);
+					fDbg(">>> FixTime : " + vData);
 				});
 				
 				if (vData.split("</network>")[0].split("<network>")[1].length > 50)

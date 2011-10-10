@@ -22,6 +22,8 @@ var kCPanelStatic = {
 		
 		"./js/CPanel/panels/cPMain.js",
 		"./js/CPanel/panels/cSPChannels.js",
+		"./js/CPanel/panels/cSPSettingsTime.js",
+		"./js/CPanel/panels/cSPSettingsEventTicker.js",
 		"./js/CPanel/panels/cSPSettings.js",
 		"./js/CPanel/panels/cSPInfo.js",
 		"./js/CPanel/panels/cSPActivation.js",
@@ -231,6 +233,11 @@ fDbg("*** cCPanel, fStartUp()");
 		// signal CPanel
 		vThis.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
 	}
+
+
+	cProxy.fLoadModelData(function() {
+		fDbg("load model data complete!");
+	});
 }
 
 // -------------------------------------------------------------------------------------------------

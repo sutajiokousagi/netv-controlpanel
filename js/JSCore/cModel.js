@@ -16,6 +16,8 @@ function cModel(
 )
 {
 fDbg("*** cModel, ");
+	this.mData = null;
+
 	this.USER_NAME = "";
 	this.USER_ID = "";
 
@@ -45,9 +47,8 @@ fDbg("*** cModel, ");
 	this.PROFILE_ID = "";
 
 	this.SERVER_URL = "";
-	this.LOCALBRIDGE_URL = "";
-
-
+		this.LOCALBRIDGE_URL = "";
+	
 	this.CHANNEL_LIST = [];
 	this.CHANNEL_CURRENT = null;
 	this.CURR_WIDGET_INDEX = null;
@@ -56,9 +57,12 @@ fDbg("*** cModel, ");
 	
 	this.PLAYMODE = "event";
 	//~ this.PLAYMODE = "default";
-	
+	this.TIMEZONE = "+8:00";
 
 	this.VIEWPORTSIZE = [];
+
+
+	this.EVENTTICKER_SPEED = 3;			// range 1 ~ 5
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -66,3 +70,30 @@ fDbg("*** cModel, ");
 // -------------------------------------------------------------------------------------------------
 cModel.instance = null;
 cModel.fGetInstance = function() { return cModel.instance ? cModel.instance : (cModel.instance = new cModel()); }
+
+cModel.prototype.pData = function(
+	v
+)
+{
+	var vThis, o;
+	vThis = this;
+
+	vThis.mData = {};
+	vThis.mData["EVENTTICKER_SPEED"] = vThis.EVENTTICKER_SPEED;
+	
+if (!v) return vThis.mData;
+	
+	if (v["EVENTTICKER_SPEED"])
+		vThis.EVENTTICKER_SPEED = v["EVENTTICKER_SPEED"];
+}
+
+cModel.prototype.pTickerStep = function(
+)
+{
+	var vThis, o;
+	vThis = this;
+
+	o = [null, 16, 8, 4, 2, 1];
+
+	return o[vThis.EVENTTICKER_SPEED];
+}

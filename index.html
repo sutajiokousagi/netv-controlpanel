@@ -152,7 +152,7 @@
 	<div id="div_channelMain_widgetconfig" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
 	
 	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
-		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
+		<div style="position: absolute; top: 0px; left: 380px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
 	</div>
 	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;">
 		<div style="position: absolute; top: 10px; width: 800px; text-align: center; ">Channels</div>
@@ -188,19 +188,99 @@
 			<div style="">SSH enabled</div>
 		</div>
 		<div style="position: absolute; top: 260px; left: 200px; width: 400px; height: 30px; text-align: center;">
-			<div style="">Set Timezone</div>
+			<div style="">Set Time</div>
 		</div>
 		<div style="position: absolute; top: 310px; left: 200px; width: 400px; height: 30px; text-align: center;">
 			<div>Reboot</div>
 		</div>
+		<div style="position: absolute; top: 360px; left: 200px; width: 400px; height: 30px; text-align: center;">
+			<div>Setup Event Ticker</div>
+		</div>
 	</div>
-	<!--
-	<div id="setting_timezone">
-		<div>Time Zone Selection</div>
+	<div id="setting_time" style="position: absolute; top: 0px; left: 0px; width: 800px; color: #FFFFFF;">
+		<div style="position: absolute; top: 150px; left: 50px; width: 700px; font-weight: bold; text-shadow: #000000 2px 2px 2px;">CURRENT TIME : <span></span></div>
+		<div style="position: absolute; top: 200px; left: 200px; width: 400px; height: 320px; font-size: 20px; font-weight: bold; overflow: hidden;">
+			<div style="width: 400px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">YEAR</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">2011</div></div>
+			</div>
+			<div style="width: 400px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">MONTH</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">JAN</div></div>
+			</div>
+			<div style="width: 400px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">DAY</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">1</div></div>
+			</div>
+			<div style="width: 400px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">HOUR (24 HR)</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">12</div></div>
+			</div>
+			<div style="width: 400px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">MINUTE</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 190px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">30</div></div>
+			</div>
+		</div>
 	</div>
-	-->
+	<div id="setting_eventticker" style="position: absolute; top: 0px; left: 0px; width: 800px; color: #FFFFFF;">
+		<div style="position: absolute; top: 200px; left: 100px; width: 600px; height: 320px; font-size: 20px; font-weight: bold; overflow: hidden; text-shadow: #000000 2px 2px 2px;">
+			<div style="width: 600px; height: 40px; border: solid #FFFFFF 0px;">
+				<div style="float: left; width: 290px; height: 40px; border: solid #999999 0px; text-align: left;"><div style="margin-top: 12px; margin-left: 0px;">Ticker Speed (1 - 5)</div></div>
+				<div style="float: left; width: 20px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">:</div></div>
+				<div style="float: left; width: 290px; height: 40px; border: solid #999999 0px; text-align: center;"><div style="margin-top: 12px; margin-left: 0px;">3</div></div>
+			</div>
+		</div>
+	</div>
+<!--
+	<div id="setting_timezone" style="position: absolute; top: 0px; left: 0px; width: 800px; color: #FFFFFF;">
+		<div style="position: absolute; top: 150px; left: 50px; width: 700px; font-weight: bold; text-shadow: #000000 2px 2px 2px;">CURRENT TIMEZONE : <span></span></div>
+		<div style="position: absolute; top: 200px; left: 100px; width: 600px; height: 320px; font-size: 16px; overflow: hidden;">
+			<div style="position: absolute; top: 0px; left: 0px; text-shadow: #000000 2px 2px 2px;">
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -12:00) Eniwetok, Kwajalein</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -11:00) Midway Island, Samoa</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -10:00) Hawaii</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -9:00) Alaska</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -8:00) Pacific Time (US &amp; Canada)</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -7:00) Mountain Time (US &amp; Canada)</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -3:30) Newfoundland</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -3:00) Brazil, Buenos Aires, Georgetown</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -2:00) Mid-Atlantic</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT -1:00 hour) Azores, Cape Verde Islands</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT) Western Europe Time, London, Lisbon, Casablanca</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +2:00) Kaliningrad, South Africa</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +3:30) Tehran</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +4:30) Kabul</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +5:45) Kathmandu</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +6:00) Almaty, Dhaka, Colombo</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +7:00) Bangkok, Hanoi, Jakarta</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +9:30) Adelaide, Darwin</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +10:00) Eastern Australia, Guam, Vladivostok</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</div></div>
+			<div style="width: 600px; height: 40px; border: solid #999999 0px;"><div style="margin-top: 12px; margin-left: 0px;">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</div></div>
+			</div>
+		</div>
+	</div>
+-->
 	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
 		<div style="position: absolute; top: 0px; left: 370px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">BACK</div>
+	</div>
+	<div id="subnavi" style="position: absolute; top: 80px; left: 0px; color: #6598EB; font-size: 18px; font-weight: bold; width: 800px; height: 40px; overflow: hidden; background-color: #434B56; border-top: dashed #535B66 1px; border-bottom: dashed #535B66 1px;">
+		<div style="position: absolute; top: 10px; width: 800px; text-align: center; ">Settings</div>
 	</div>
 	<div class="subcpanel_title" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 80px; background-color: #232B36; color: #FFFFFF; text-align: center; border-top-left-radius: 12px; border-top-right-radius: 12px;">
 		<div style="margin-top: 30px;">NeTV Settings</div>
@@ -341,19 +421,19 @@ The unit will reboot within four seconds of holding down the switch if the initi
 	
 	<div id="item_images" style="position: absolute; top: 300px; left: 400px; color: #FFFFFF; font-size: 18px; height: 400px; width: 80px">
 		<div id="item_image_channels" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20)">
-			<img src="./images/dockicons/iphoto_128.png" width="256px" height="256px" />
+			<img src="./images/dockicons/iphoto_128.png" width="1px" height="1px" />
 		</div>
 		<div id="item_image_configurations" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
-			<img src="./images/dockicons/pages_128.png" width="256px" height="256px" />
+			<img src="./images/dockicons/pages_128.png" width="1px" height="1px" />
 		</div>
 		<div id="item_image_info" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
-			<img src="./images/dockicons/textedit_128.png" width="256px" height="256px" />
+			<img src="./images/dockicons/textedit_128.png" width="1px" height="1px" />
 		</div>
 		<div id="item_image_activation" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
-			<img src="./images/dockicons/chess_128.png" width="256px" height="256px" />
+			<img src="./images/dockicons/chess_128.png" width="1px" height="1px" />
 		</div>
 		<div id="item_image_help" style="position: absolute; top: 0px; left: 0px; width: 160px; border: solid white 0px; text-shadow: #AAAAAA 2px 2px 2px; opacity:0.2; filter:alpha(opacity=20); display: none;">
-			<img src="./images/dockicons/addressbook_128.png" width="256px" height="256px" />
+			<img src="./images/dockicons/addressbook_128.png" width="1px" height="1px" />
 		</div>
 	</div>
 	
