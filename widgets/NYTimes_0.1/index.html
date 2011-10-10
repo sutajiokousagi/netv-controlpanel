@@ -10,6 +10,18 @@
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript">
+
+      var msgNum = 2;
+      
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("msgNum=")[1].split("&")[0];
+	  if (p && p != "")
+	      msgNum = p;
+      }
+
       
       var vBridgePath = "http://localhost/bridge";
       
@@ -21,7 +33,7 @@
 
 	  var news = JSONdata['item'];
 
-	  for (var i = 0; i< Math.min(news.length,5) ; i++)
+	  for (var i = 0; i< msgNum ; i++)
 	  {
 	      console.log(JSON.stringify(news[i]));
 	      
@@ -47,7 +59,9 @@
       
       $(function() {
 	  
-	  var query = "select * from feed where url='"+rssUrl+"' LIMIT 20";
+	  var query = "select * from feed where url='"+rssUrl+"' LIMIT " + Math.max(2, msgNum);
+
+	  console.log(query);
 
 	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
 

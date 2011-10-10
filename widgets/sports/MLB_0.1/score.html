@@ -14,11 +14,21 @@
 	
     <script type="text/javascript">
 
+      var msgNum = 2;
+      
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("msgNum=")[1].split("&")[0];
+	  if (p && p != "")
+	      msgNum = p;
+      }
       
       var vBridgePath = "http://localhost/bridge";
       
       // the sports feed url
-      var feedUrl = "http://sportfeed.chumby.com/f/searchDocuments?max_age=1000&league-keys=l.mlb.com&fixture-keys=event-score&date-window=9959&revision-control=latest-only&publisher-keys=sportsnetwork.com&max-result-count=5&content-returned=all-content&content-format=sportsml&rendering-engine=xslt&gateway-theme=default&query-debug=false";
+      var feedUrl = "http://sportfeed.chumby.com/f/searchDocuments?max_age=1000&league-keys=l.mlb.com&fixture-keys=event-score&date-window=9959&revision-control=latest-only&publisher-keys=sportsnetwork.com&max-result-count=" + Math.max(2, msgNum) + "&content-returned=all-content&content-format=sportsml&rendering-engine=xslt&gateway-theme=default&query-debug=false";
 
       var picUrl = "./widgets/MLB_0.1/logo.jpg"
       
@@ -28,7 +38,9 @@
 
 	  var sports_content = jsonDoc["sports\_content"];
 
-	  for (var i=0; i<sports_content.length; i++) {
+	  console.log(JSON.stringify(sports_content));
+
+	  for (var i=0; i<msgNum; i++) {
 	      
 	      var sports_metadata = sports_content[i]["sports\_metadata"];
 	      var sports_title = sports_metadata["sports\_title"];
@@ -50,8 +62,8 @@
 	      msgTitle = "NeTV MBL " + sports_title;
 		  // + " " + start_date_time.substring(0,7);
 	      msgBody = team_1_score + " VS " + team_2_score + ". " +
-		  team_1_name + " " + team_1_event_outcome + ", " +
-		  team_2_name + " " + team_2_event_outcome + ".";
+		  team_1_name + " " + team_1_event_outcome + "! " +
+		  team_2_name + " " + team_2_event_outcome + "...";
 
 	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message><title>" + msgTitle+ "</title><image>"+picUrl+"</image>"}, function(vData) {console.log(vData)});
 
@@ -61,11 +73,13 @@
       
       $(function() {
 
-	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + feedUrl + '"') + '&format=xml&callback=?';
+	  var yql_query = 'select * from xml where url="' + feedUrl + '"';
+
+	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(yql_query) + '&format=xml&callback=?';
 	  
 	  $.getJSON(yql, function(data) {
 	      var text = JSON.stringify(data['results']);
-	 
+
 	      xmlStr = text.substring(2, text.length-2);
 
 	      var tmpStr1 = xmlStr.replace(/\\n/g, '');
