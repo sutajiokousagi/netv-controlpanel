@@ -3,6 +3,9 @@ var mCPanel;
 var cConst;
 var cModel;
 
+var mPrevButtonPress;
+var mButtonPressTimeout;
+
 var o = new DOMParser();
 o = o.parseFromString("<data>null</data>", "text/xml");
 // -------------------------------------------------------------------------------------------------
@@ -153,10 +156,12 @@ function fServerReset(
 // -------------------------------------------------------------------------------------------------
 function fButtonPress(
 	vButtonName,
-	vCount
+	vCount,
+	vOnHold
 )
 {
 //~ fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
+	
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;

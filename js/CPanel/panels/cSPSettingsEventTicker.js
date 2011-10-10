@@ -106,7 +106,6 @@ if (!v) return vThis.mViewMode;
 		vThis.pSelection(vThis.mDivItemList[0], false, true);
 
 		// update value according to cModel data
-		
 		$($(vThis.mDivItemList[0].children()[2]).children()[0]).html(cModel.fGetInstance().EVENTTICKER_SPEED);
 		break;
 	}

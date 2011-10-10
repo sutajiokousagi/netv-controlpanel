@@ -33,7 +33,6 @@ function cModuleEventTicker(
 	this.mTimeIntervalFrequency = 20;
 	
 	
-	
 	// ------------------------- DIVs
 	this.mDivTickerMini = null;
 
@@ -46,6 +45,9 @@ function cModuleEventTicker(
 	this.mCounterStampClockOrigin = null;
 	this.mTimeSpanStamp = 0;
 	this.mTimeSpanConfigModeOn = 0;
+
+	this.mPrevClickList = [];
+	this.mTickerShiftStep = 10;
 
 	
 	// main ticker event 
@@ -251,10 +253,75 @@ cModuleEventTicker.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_UP:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
-			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + 20 < vThis.mViewPortSize[1])
+			/*
+			if (vThis.mPrevClickList.length == 0)
 			{
-				vThis.mDiv.css("top", "-=10px");
-				vThis.mStyle.mBottomOffset += 10;
+				vThis.mPrevClickList.push(["up", vThis.mCounterTimer]);
+			}
+			else if (vThis.mPrevClickList.length < 5)
+			{
+				if (vThis.mPrevClickList[vThis.mPrevClickList.length - 1][0] == "up")
+				{
+					vThis.mPrevClickList.push(["up", vThis.mCounterTimer]);
+					if (vThis.mPrevClickList[vThis.mPrevClickList.length - 1][1] - vThis.mPrevClickList[vThis.mPrevClickList.length - 2][1] > 20)
+					{
+						if (vThis.mTickerShiftStep > 10)
+							vThis.mTickerShiftStep /= 2;
+					}
+				}
+				else
+				{
+					vThis.mTickerShiftStep = 10;
+					vThis.mPrevClickList = [];
+				}
+			}
+			else
+			{
+				if (vThis.mPrevClickList[vThis.mPrevClickList.length - 1][0] == "up")
+				{
+					vThis.mPrevClickList.splice(0, 1);
+					vThis.mPrevClickList.push(["up", vThis.mCounterTimer]);
+
+					if (vThis.mPrevClickList[vThis.mPrevClickList.length - 1][1] - vThis.mPrevClickList[vThis.mPrevClickList.length - 2][1] > 20)
+					{
+						if (vThis.mTickerShiftStep > 10)
+							vThis.mTickerShiftStep /= 2;
+					}
+				}
+				else
+				{
+					vThis.mTickerShiftStep = 10;
+					vThis.mPrevClickList = [];
+				}
+			}
+			//~ fDbg(vThis.mPrevClickList);
+			o = "";
+			for (i = 1; i < vThis.mPrevClickList.length; i++)
+				o += (vThis.mPrevClickList[i][1] - vThis.mPrevClickList[i - 1][1]) + "___";
+			fDbg(o);
+			fDbg("++++ speed ++++ : " + vThis.mTickerShiftStep);
+
+			if (vThis.mPrevClickList.length >= 3)
+			{
+				if (vThis.mPrevClickList[vThis.mPrevClickList.length - 1][1] - vThis.mPrevClickList[vThis.mPrevClickList.length - 2][1] < 10 &&
+					vThis.mPrevClickList[vThis.mPrevClickList.length - 2][1] - vThis.mPrevClickList[vThis.mPrevClickList.length - 3][1] < 10 &&
+					vThis.mPrevClickList[vThis.mPrevClickList.length - 3][1] - vThis.mPrevClickList[vThis.mPrevClickList.length - 4][1] < 10)
+				{
+					if (vThis.mTickerShiftStep * 2 < 80)
+					{
+						vThis.mTickerShiftStep *= 2;
+						vThis.mPrevClickList = [];
+					}
+				}
+			}
+			
+			*/
+			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + vThis.mTickerShiftStep < vThis.mViewPortSize[1])
+			{
+				vThis.mDiv.hide();
+				vThis.mDiv.css("top", "-=" + vThis.mTickerShiftStep + "px");
+				vThis.mStyle.mBottomOffset += vThis.mTickerShiftStep;
+				vThis.mDiv.show();
 			}
 			this.mTimeSpanConfigModeOn = 0;
 			
@@ -276,8 +343,8 @@ cModuleEventTicker.prototype.fOnSignal = function(
 		{
 			if (vThis.mStyle.mBottomOffset - 20 > 0)
 			{
-				vThis.mDiv.css("top", "+=10px");
-				vThis.mStyle.mBottomOffset -= 10;
+				vThis.mDiv.css("top", "+=" + vThis.mTickerShiftStep + "px");
+				vThis.mStyle.mBottomOffset -= vThis.mTickerShiftStep;
 			}
 			this.mTimeSpanConfigModeOn = 0;
 
