@@ -120,11 +120,11 @@ cPMain.prototype.fOnSignal = function(
 		}, 600, function() {
 			
 		});
-
+		
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
-		p = parseInt(p.css("width").split("px")[0]) + 30;
-
+		p = parseInt(p.css("width").split("px")[0]) + 80;
+		
 		
 		vThis.mCurrSelection = vNewSelected;
 		$("#div_cpanelMain #item_indicator").animate({
@@ -164,7 +164,7 @@ cPMain.prototype.fOnSignal = function(
 
 		p = $("#div_cpanelMain #subnavi");
 		p = $(p.children()[vNewSelected]);
-		p = parseInt(p.css("width").split("px")[0]) + 30;
+		p = parseInt(p.css("width").split("px")[0]) + 80;
 
 
 		
