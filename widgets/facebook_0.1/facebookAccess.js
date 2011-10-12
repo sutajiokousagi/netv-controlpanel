@@ -1,3 +1,5 @@
+
+
 function getAccessToken()
 {
     fXMLHttpRequest(vBridgePath,
@@ -8,6 +10,7 @@ function getAccessToken()
 			console.log(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
+			var access_token = "19028677355|bb85579d38b613885ca5a6da.0-1420058103|aOI4aQYj5g3YlFFs9DO9nFl6GrE";
 			console.log("Access Token: " + access_token);
 			if ("" != access_token)
 			{
@@ -31,7 +34,13 @@ function accessFacebook(access_token)
     	'https://graph.facebook.com/me/home?access_token='+access_token+'&callback=?',
     	function(data)
     	{
-	    processNewsFeed(data);
+	    console.log(JSON.stringify(data));
+	    if (!data["data"])
+	    {
+		startOAuth();
+	    } else {
+		processNewsFeed(data);
+	    }
     	}
     );
 }
@@ -54,19 +63,5 @@ function processNewsFeed(data)
 
 	sendMsgToBridge(msgTitle, msgBody, msgPic);
     }
-}
-
-function sendMsgToBridge(msgTitle, msgBody, msgPic)
-{
-    fXMLHttpRequest(vBridgePath,
-		    "post",
-		    {
-			cmd : "TickerEvent",
-			data : "<message>" + msgBody +  "</message>" +
-			    "<title>" + msgTitle + "</title>" +
-			    "<image>"+msgPic+"</image>"
-		    },
-		    function(vData) {console.log(vData)}
-		   );
 }
 
