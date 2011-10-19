@@ -24,6 +24,19 @@ function startOAuth()
 			$('#result').append("<b>user_code: </b>" + jsonDevice["user_code"] + "<br />");
 			$('#result').append("<b>verification_uri: </b>" + jsonDevice["verification_uri"] + "<br />");
 			
+			
+			/*
+			fXMLHttpRequest(vBridgePath, "post", {cmd : "ControlPanel", data : "<value>Javascript \"fWidgetMsg('Please go to http://www.facebook.com/device to enter the following code.<p>" + jsonDevice["user_code"] + "')\"</value>"}, function(vData) {
+				console.log("-----------------------------")
+				console.log(vData)
+				console.log("-----------------------------")
+			});
+			*/
+			//~ fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please go to http://www.facebook.com/device to enter the following code.<p>" + jsonDevice["user_code"] +  "</message>"+ "<image>"+picUrl+"</image>" + "<type>foroauth</type>"}, function(vData) {
+			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please go to http://www.facebook.com/device to enter the following code. " + jsonDevice["user_code"] + "</message><type>foroauth</type>"}, function(vData) {
+				
+			});
+			
 			waitingOAuth(jsonDevice["code"]);
 		    });
     
@@ -61,6 +74,9 @@ function processOAuthData(vData, url)
 	var access_token = jsonAuth["access_token"];
 	$('result').append("<b>Access Token: </b>" + access_token + "<br />");
 	saveAccessToken(access_token);
+		fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>Authentication is successful!</message><type>foroauth</type>"}, function(vData) {
+			
+		});
     } else {
 	console.log(typeof jsonAuth["error"]);
 	errMsg = jsonAuth["error"]["message"];
@@ -94,7 +110,7 @@ function saveAccessToken(access_token)
 			var jsonDoc = $.xml2json(vData);
 			console.log(JSON.stringify(jsonDoc));
 			$('#result').append("<b>Access Token Saved: </b>" + JSON.stringify(jsonDoc) + "<br />");
-			getAccessToken();
+			getAccessTokenOAuthTrue();
 		    });
 }
 

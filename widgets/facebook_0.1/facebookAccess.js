@@ -2,6 +2,7 @@
 
 function getAccessTokenOAuthFalse()
 {
+console.log("*** getAccessTokenOAuthFalse()");
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
@@ -29,7 +30,7 @@ function getAccessTokenOAuthFalse()
 
 function getAccessTokenOAuthTrue()
 {
-    
+console.log("*** getAccessTokenOAuthTrue()");    
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
@@ -44,11 +45,18 @@ function getAccessTokenOAuthTrue()
 			{
 			    $('#result').append("<b>Get Saved Access Token: </b>" + access_token + "<br />");
 			    $('#result').append("<b>You have already configured your Facebook account, please go back. ^_^ </b>" + "<br />");
+			    
+			    
+			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>Your facebook account is already authenticated.</message><type>foroauth</type>"}, function(vData) {
+			
+				});
 
 			}
 			else{
 			    $('#result').append("<b>No Access Token, Starting OAuth!</b>" +  "<br />");
+			    
 			    startOAuth();
+			    
 			    // fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Plese go to ControlPanel to config your facebook account!" +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
 	      		    // 	// console.log(vData)
 			    // });

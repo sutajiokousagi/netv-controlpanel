@@ -17,23 +17,26 @@
 
     <script type="text/javascript">
 
-      var oauth = false;
+      var auth = false;
 
       var o, p;
       o = location.href.split("?")[1];
       if (o && o != "")
       {
-	  p = o.split("oauth=")[1].split("&")[0];
-	  if (p && p != "")
-	      oauth = p;
+		if (o.split("auth=").length > 1)
+		{
+		  p = o.split("auth=")[1].split("&")[0];
+		  if (p && p != "")
+			  auth = p;
+		}
       }
 
       
       $(function() {
+		
+	  console.log("needOAuth? " + auth);
 
-	  console.log("needOAuth? " + oauth);
-
-	  if (false == oauth)
+	  if (false == auth)
 	      getAccessTokenOAuthFalse();
 	  else
 	      getAccessTokenOAuthTrue();
