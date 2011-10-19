@@ -16,11 +16,27 @@
     <script type="text/javascript" src="facebookAccess.js"></script>
 
     <script type="text/javascript">
-      
+
+      var oauth = false;
+
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+	  p = o.split("oauth=")[1].split("&")[0];
+	  if (p && p != "")
+	      oauth = p;
+      }
+
       
       $(function() {
-	  
-	  getAccessToken();
+
+	  console.log("needOAuth? " + oauth);
+
+	  if (false == oauth)
+	      getAccessTokenOAuthFalse();
+	  else
+	      getAccessTokenOAuthTrue();
 	  
       });
       

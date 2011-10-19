@@ -1,6 +1,6 @@
 
 
-function getAccessToken()
+function getAccessTokenOAuthFalse()
 {
     fXMLHttpRequest(vBridgePath,
 		    "post",
@@ -10,18 +10,51 @@ function getAccessToken()
 			console.log(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
-			var access_token = "19028677355|bb85579d38b613885ca5a6da.0-1420058103|aOI4aQYj5g3YlFFs9DO9nFl6GrE";
 			console.log("Access Token: " + access_token);
+			
 			if ("" != access_token)
 			{
 			    $('#result').append("<b>Get Saved Access Token: </b>" + access_token + "<br />");
 			    accessFacebook(access_token);
-			} else
-			{
+			}
+			else{
 			    $('#result').append("<b>No Access Token, Starting OAuth!</b>" +  "<br />");
-			    startOAuth();
+			    //startOAuth();
+			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Plese go to ControlPanel to config your facebook account!" +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
+	      			// console.log(vData)
+			    });
 			}
 		    });
+}
+
+function getAccessTokenOAuthTrue()
+{
+    
+    fXMLHttpRequest(vBridgePath,
+		    "post",
+		    {cmd : "GetParam",
+		     data : "<value>facebook_access_token</value>"},
+		    function(vData) {
+			console.log(vData);
+			var jsonDoc = $.xml2json(vData);
+			var access_token = jsonDoc["data"]["value"];
+			console.log("Access Token: " + access_token);
+			
+			if ("" != access_token)
+			{
+			    $('#result').append("<b>Get Saved Access Token: </b>" + access_token + "<br />");
+			    $('#result').append("<b>You have already configured your Facebook account, please go back. ^_^ </b>" + "<br />");
+
+			}
+			else{
+			    $('#result').append("<b>No Access Token, Starting OAuth!</b>" +  "<br />");
+			    startOAuth();
+			    // fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Plese go to ControlPanel to config your facebook account!" +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
+	      		    // 	// console.log(vData)
+			    // });
+			}
+		    });
+
 }
 
 
