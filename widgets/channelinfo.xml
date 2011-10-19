@@ -2,7 +2,19 @@
 	<name>NeTV Star Channel</name>
 	<playmode>default</playmode>
 	<widgets>
-
+		
+		<widget>
+			<name>Facebook Widget 1</name>
+			<href>./widgets/facebook_0.1/index.html</href>
+			<thumbnail>./widgets/facebook_0.1/logo.png</thumbnail>
+			<contenttype>application/html</contenttype>
+			<needauth>true</needauth>
+			<parameters>
+				<parameter value="" name="oauth_secret"/>
+			</parameters>
+		</widget>
+		
+		
 		<widget>
 			<name>Twitter Search Widget 1</name>
 			<href>./widgets/twitter0.2/index.html</href>
@@ -10,7 +22,6 @@
 			<contenttype>application/html</contenttype>
 			<parameters>
 				<parameter value="" name="keyword"/>
-				<parameter value="" name="interval"/>
 			</parameters>
 		</widget>
 		
@@ -28,7 +39,6 @@
 			<contenttype>application/html</contenttype>
 			<parameters>
 				<parameter value="" name="keyword"/>
-				<parameter value="" name="interval"/>
 			</parameters>
 		</widget>
 		<!--

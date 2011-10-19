@@ -1,8 +1,6 @@
 // -------------------------------------------------------------------------------------------------
 //	cWidgetObj class
 //
-//
-//
 /*
 		<widget_instances count="35">
 			<widget_instance id="98E8057C-81FD-11E0-927E-0021288EC192">
@@ -217,17 +215,60 @@ function cWidgetObj(
 	this.mParameterList = {};
 	for (i = 0; i < o.length; i++)
 		this.mParameterList[o[i].getAttribute("name")] = o[i].getAttribute("value");
-		
+	
+	
+	
+	// -------------------------------------------------------------------------	
 	// local/temp variables
+	// -------------------------------------------------------------------------
 	this.mLocalThumbnailPath = "";
-	this.mNeTVCompatiable = false;
 	this.mPeerWidget = {
 		mID : null,
 		mHref : null
 	};
+	this.mNeTVCompatiable = false;
+	this.mEventLock = false;
+	this.mEnabled = true;
+	this.mUpdateInterval = 1;
+	this.mUpdateIntervalList = [15, 60, 300, 600, 1800, 3600];
+	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
+	this.mNeedAuth = false;
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pData
+// -------------------------------------------------------------------------------------------------
+cWidgetObj.prototype.pData = function(
+	v
+)
+{
+	var vThis, o, i;
+	vThis = this;
+	
+	// 1, format mData
+	vThis.mData = {};
+	vThis.mData["ID"] = vThis.mID;
+	vThis.mData["USER_ENABLED"] = vThis.mEnabled;
+	
+	// 2, return mData
+	if (v == undefined) return vThis.mData;
+	
+	// 3, apply/cast mData from v
+	if (v["USER_ENABLED"] != undefined)
+	{
+		vThis.mEnabled = v["USER_ENABLED"];
+	}
 }
 
 
+
+
+
+
+
+// -------------------------------------------------------------------------------------------------
+//	properties
+// -------------------------------------------------------------------------------------------------
 cWidgetObj.prototype.pIsFLASH = function(
 )
 {
@@ -247,6 +288,27 @@ cWidgetObj.prototype.pPeerWidgetHref = function(
 {
 	if (this.mPeerWidget && this.mPeerWidget.mHref)
 		return this.mPeerWidget.mHref;
-	
 	return this.mWidget.mMovie.mHref;
+}
+
+cWidgetObj.prototype.pNeTVCompatiable = function(
+	v
+)
+{
+	if (!v)
+		return this.mNeTVCompatiable ? true : false;
+	
+	if (v == true || v == false)
+		this.mNeTVCompatiable = v;
+}
+
+cWidgetObj.prototype.pEnabled = function(
+	v
+)
+{
+	if (v == undefined)
+		return this.mEnabled ? true : false;
+	
+	if (v == true || v == false)
+		this.mEnabled = v;
 }

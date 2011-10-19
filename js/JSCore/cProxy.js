@@ -43,17 +43,18 @@ cProxy.xmlhttpPost = function(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-	
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();
+	else
+		vCompleteFunction("XMLHttpRequest doens't exist.");
 	
 	if (!strURL || strURL == "")
 		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
 
-		
 //~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);
 	xmlHttpReq.open(vType, strURL, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	//~ xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function()
 	{
 //~ fDbg("state: " + xmlHttpReq.readyState);
@@ -80,6 +81,12 @@ cProxy.xmlhttpPost = function(
 	{
 		for (var o in vData)
 			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
+		if (parameters.substr(parameters.length - 1, 1) == "&")
+			parameters = parameters.substr(0, parameters.length - 1);
+		/*
+		if (parameters.substr(parameters.length - 6, 6) == "&data=")
+			parameters = parameters.substr(0, parameters.length - 6);
+		*/
 //~ fDbg("para: " + parameters);
 		xmlHttpReq.send(parameters);
 	}
@@ -135,14 +142,14 @@ cProxy.fWidgetEngineShow = function(
 cProxy.fCPanelInfoPanelShow = function(
 )
 {
-fDbg2("*** cProxy, fCPanelInfoPanelShow(), ");
+fDbg("*** cProxy, fCPanelInfoPanelShow(), ");
 	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_SHOW, null, null);
 }
 
 cProxy.fCPanelInfoPanelUpdate = function(
 )
 {
-fDbg2("*** cProxy, fCPanelInfoPanelUpdate(), ");
+fDbg("*** cProxy, fCPanelInfoPanelUpdate(), ");
 	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
 }
 
@@ -260,10 +267,11 @@ cProxy.fLoadModelData = function(
 	vReturnFun
 )
 {
+fDbg("cProxy, fLoadModelData(), ");
 	var o;
 	
 	cProxy.fGetParams("cpanel_cmodel", function(vData) {
-		fDbg(vData);
+		//~ fDbg(vData);
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
@@ -277,6 +285,7 @@ cProxy.fLoadModelData = function(
 cProxy.fSaveModelData = function(
 )
 {
+fDbg("cProxy, fSaveModelData(), ");
 	var o;
 	o = cModel.fGetInstance().pData();
 	o = JSON.stringify(o);

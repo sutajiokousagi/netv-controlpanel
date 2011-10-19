@@ -74,7 +74,7 @@ cChannelModule.prototype.fParseChannelInfo2 = function(
 	vReturnFun
 )
 {
-//~ fDbg2("*** cChannelModule, fParseChannelInfo()");
+//~ fDbg2("*** cChannelModule, fParseChannelInfo2()");
 	
 	var o, p, i, j, k;
 	o = new cChannelObj(vData);
@@ -113,12 +113,16 @@ cChannelModule.prototype.fParseChannelInfo = function(
 				p = cConst.DEFAULT_WIDGETPEERLIST[j];
 				break;
 			}
+		
+		//fDbg("----- " + i);
+		//fDbg(JSON.stringify(o.mWidgetList[i].mParameterList));
+		
 		if (p && p.mNeTVCompatiable)
 		{
 			o.mWidgetList[i].mNeTVCompatiable = true;
 			o.mWidgetList[i].mPeerWidget.mID = p.mPeerWidget.mID;
 			o.mWidgetList[i].mPeerWidget.mHref = p.mPeerWidget.mHref;
-			
+
 			if (i == 1)
 			{
 				for (var vTempObj in p.mPeerParameters)
@@ -136,6 +140,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 			}
 		}
 	}
+	
 	
 	if (vReturnFun)
 		vReturnFun();
@@ -256,15 +261,15 @@ cChannelModule.prototype.fParseChannelList = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cChannelModule, fParseChannelList()");
 	
-	var vThis, o, p, i, j, vCount, parser, xmlDoc;
+	var vThis, o, p, q, i, j, vCount, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(vData, "text/xml");
 	
 	o = xmlDoc.getElementsByTagName("profiles")[0].getElementsByTagName("profile");
 	vCount = cModel.fGetInstance().CHANNEL_LIST.length + o.length;
+	
 	for (i = 0; i < o.length; i++)
 	{
 		cChannelModule.fGetInstance().fFetchChannelInfo2(o[i].getAttribute("id"), function(vData) {
@@ -275,18 +280,28 @@ cChannelModule.prototype.fParseChannelList = function(
 			});
 			if (cModel.fGetInstance().CHANNEL_LIST.length == vCount)
 			{
+				// load cModel data from local-copy
+				cProxy.fLoadModelData(function() {
+					fDbg("load model data complete!");
+				});
+				
 				if (vReturnFun)
 					vReturnFun();
 				p = cModel.fGetInstance().CHANNEL_LIST;
 				for (j = p.length - 1; j > 1; j--)
 					if (p[j].mID == p[1].mID)
 					{
-						cModel.fGetInstance().CHANNEL_LIST.splice(j, 1);
+						q = cModel.fGetInstance().CHANNEL_LIST.splice(j, 1);
+						//~ cModel.fGetInstance().CHANNEL_LIST[1] = q;
 						break;
 					}
 			}
 		});
 	}
+	
+	cProxy.fLoadModelData(function() {
+		fDbg("load model data once............");
+	});
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -312,10 +327,12 @@ cChannelModule.prototype.pScanWidgetList = function(
 		
 		if (p && p.mNeTVCompatiable)
 		{
-			//~ fDbg("match ----------------> " + i);
+			fDbg("match ----------------> " + cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj) + " - " + i);
 			vChannelObj.mWidgetList[i].mNeTVCompatiable = true;
 			vChannelObj.mWidgetList[i].mPeerWidget.mID = p.mPeerWidget.mID;
 			vChannelObj.mWidgetList[i].mPeerWidget.mHref = p.mPeerWidget.mHref;
+			vChannelObj.mWidgetList[i].mNeedAuth = p.mNeedAuth;
+			fDbg("need auth : " + vChannelObj.mWidgetList[i].mNeedAuth);
 			/*
 			if (i == 1)
 				for (var vTempObj in p.mPeerParameters)
@@ -354,12 +371,16 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 		for (i = 0; i < vLen; i++)
 		{
 			o.mWidgetList.push(new cWidgetObj());
+			o.mWidgetList[o.mWidgetList.length - 1].mID = "xxxx_0000_" + i;
 			o.mWidgetList[o.mWidgetList.length - 1].mName = p[i].getElementsByTagName("name")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = p[i].getElementsByTagName("href")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
 			o.mWidgetList[o.mWidgetList.length - 1].mNeTVCompatiable = true;
+			o.mWidgetList[o.mWidgetList.length - 1].mEnabled = true;
+			if (p[i].getElementsByTagName("needauth")[0])
+				o.mWidgetList[o.mWidgetList.length - 1].mNeedAuth = p[i].getElementsByTagName("needauth")[0].textContent;
 			
 			q = p[i].getElementsByTagName("parameters");
 			if (q.length > 0)
@@ -403,7 +424,7 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 	var fLoadTN = function() {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
 			vChannelObj.mWidgetList[i].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
-			fDbg(i + " : " + vChannelObj.mWidgetList[i].mLocalThumbnailPath.substr(64));
+//~ fDbg(i + " : " + vChannelObj.mWidgetList[i].mLocalThumbnailPath.substr(64));
 			i++;
 			o.splice(0, 1);
 			if (o.length == 0)

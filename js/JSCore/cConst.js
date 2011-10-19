@@ -55,6 +55,7 @@ cConst.SIGNAL_NETWORKEVENT_DISCONNECTED = "signal_networkevent_disconnnected";
 cConst.SIGNAL_NETWORKEVENT_CONNECTED = "signal_networkevent_connnected";
 cConst.SIGNAL_MESSAGE = "signal_message";
 cConst.SIGNAL_MESSAGE_WIDGETMSG = "signal_message_widgetmsg";
+cConst.SIGNAL_MESSAGE_EVENTMSG = "signal_message_eventmsg";
 
 
 
@@ -133,7 +134,8 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		},
 		mPeerParameters : {
 			zipcode : ""
-		}
+		},
+		mNeedAuth : false
 	},
 	{
 		mID : "E3791136-9AB6-11DB-AC1C-0030485A78AA",
@@ -144,7 +146,8 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		},
 		mPeerParameters : {
 			zipcode : ""
-		}
+		},
+		mNeedAuth : false
 	},
 	{
 		mID : "5ED92F74-2F36-11DB-AF6D-001372292121",
@@ -152,7 +155,8 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		mPeerWidget : {
 			mID : "0000-hqsg-hackernews01",
 			mHref : "http://localhost/widgets/hackernews_0.1/index.html"
-		}
+		},
+		mNeedAuth : false
 	},
 	{
 		mID : "8D6C6E4C-8ED1-11DF-9C1E-001B24E044BE",
@@ -160,7 +164,8 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		mPeerWidget : {
 			mID : "0000-hqsg-groupon01",
 			mHref : "http://localhost/widgets/groupon_0.1/index.html"
-		}
+		},
+		mNeedAuth : false
 	},
 	{
 		mID : "94705846-FE85-11DB-9DF5-0030485A78AA",
@@ -168,7 +173,17 @@ cConst.DEFAULT_WIDGETPEERLIST = [
 		mPeerWidget : {
 			mID : "0000-hqsg-engadget01",
 			mHref : "http://localhost/widgets/engadget_0.1/index.html"
-		}
+		},
+		mNeedAuth : false
+	},
+	{
+		mID : "B5EE068E-B509-11DE-8681-001B24F07EF4",
+		mNeTVCompatiable : true,
+		mPeerWidget : {
+			mID : "0000-hqsg-facebook01",
+			mHref : "http://localhost/widgets/facebook_0.1/index.html"
+		},
+		mNeedAuth : true
 	}
 ];
 

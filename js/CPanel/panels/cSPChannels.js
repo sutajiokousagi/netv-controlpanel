@@ -25,6 +25,9 @@ function cSPChannels(
 	// div elements
 	this.mDivIndicator = null;
 	
+	this.mDivConfigPopup = null;
+	this.mDivConfigPopupList = null;
+	
 	this.mDivChannels = null;
 	this.mDivChannelList = null;
 	
@@ -33,9 +36,10 @@ function cSPChannels(
 	this.mDivWidgetList = null;
 	this.mDivWidgetSummary = null;
 	this.mDivChannelOperation = null;
-
+	
 	this.mDivWidgetConfig = null;
 	this.mDivWidgetConfigList = null;
+	this.mDivWidgetAuth = null;
 	this.mDivInputPanel = null;
 	
 	this.mDivSubNaviContent = null;
@@ -49,9 +53,12 @@ function cSPChannels(
 	
 
 	this.mMode = null; 		// null (default) | mode_channel | mode_widget
+	this.mPrevMode = null;
 	cSPChannels.MODE_DEFAULT = "mode_default";
 	cSPChannels.MODE_WIDGETLIST = "mode_widgetlist";
+	cSPChannels.MODE_WIDGETCONFIG_POPUP = "mode_widgetconfig_popup";
 	cSPChannels.MODE_WIDGETCONFIG = "mode_widgetconfig";
+	cSPChannels.MODE_WIDGETAUTH = "mode_widgetauth";
 	cSPChannels.MODE_INPUT = "mode_input";
 	
 	
@@ -76,9 +83,12 @@ cSPChannels.prototype.fInit = function(
 {
 //~ fDbg("*** cSPChannel, fInit(), ");
 	this.mDivIndicator = this.mDiv.children("#item_indicators").children("#item_indicator");
+	this.mDivConfigPopup = this.mDiv.children("#div_channelMain_config_popup");
+	
 	this.mDivChannels = this.mDiv.children("#div_channelMain_channels");
 	this.mDivWidgets = this.mDiv.children("#div_channelMain_widgets");
 	this.mDivWidgetConfig = this.mDiv.children("#div_channelMain_widgetconfig");
+	this.mDivWidgetAuth = this.mDiv.children("#div_channelMain_widgetauth");
 	this.mDivInputPanel = this.mDiv.children("#div_channelMain_inputpanel");
 	
 	this.mDivSubNaviContent = $(this.mDiv.children("#subnavi").children()[0]);
@@ -93,6 +103,7 @@ cSPChannels.prototype.pMode = function(
 	vMode
 )
 {
+//~ fDbg("*** cSPChannels, pMode(), " + vMode);
 	var vThis;
 	vThis = this;
 	
@@ -102,56 +113,119 @@ if (!vMode) return vThis.mMode;
 	{
 	case cSPChannels.MODE_DEFAULT:
 		vThis.mDivInputPanel.hide();
+		vThis.mDivConfigPopup.hide();
 		vThis.mDivChannels.show();
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.hide();
+		vThis.mDivWidgetAuth.hide();
 		
 		vThis.mDivSubNaviContent.html("Channels");
 		vThis.fRenderChannelList();
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.pSelection(vThis.mDivChannelList[0]);
-		break;
-	case cSPChannels.MODE_WIDGETLIST:
-		vThis.mDivInputPanel.hide();
-		vThis.mDivChannels.hide();
-		vThis.mDivWidgets.show();
-		vThis.mDivWidgetConfig.hide();
-		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mName);
 		
-		//~ o = parseInt(vThis.mSelection.attr("id").split("_")[3]);
-		vThis.fRenderWidgetList(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
-		vThis.mDivIndicator.css({
-			width: "50px",
-			height: "50px",
-			top: "150px",
-			left: "150px"
-		});
-		vThis.mDivBack.css("opacity", "0.2");
-		vThis.pSelection(vThis.mDivWidgetList[0]);
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
 		break;
+		
+	case cSPChannels.MODE_WIDGETLIST:
+		if (vThis.mMode == cSPChannels.MODE_WIDGETCONFIG_POPUP)
+		{
+			vThis.mDivConfigPopup.fadeOut();
+			vThis.mDivWidgets.css("opacity", "1");
+			vThis.mDivIndicator.css("opacity", "1");
+			vThis.mSelection = vThis.mDivWidgetList[vThis.mSelectedWidgetN];
+		}
+		else
+		{
+			vThis.mDivInputPanel.hide();
+			vThis.mDivConfigPopup.hide();
+			vThis.mDivChannels.hide();
+			vThis.mDivWidgets.show();
+			vThis.mDivWidgetConfig.hide();
+			vThis.mDivWidgetAuth.hide();
+			vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mName);
+			
+			vThis.fRenderWidgetList(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
+			vThis.mDivIndicator.css({
+				width: "50px",
+				height: "50px",
+				top: "150px",
+				left: "150px"
+			});
+			vThis.mDivBack.css("opacity", "0.2");
+			vThis.pSelection(vThis.mDivWidgetList[0]);
+		}
+		
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
+		break;
+		
+	case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+		vThis.mDivWidgets.css("opacity", "0.4");
+		vThis.mDivIndicator.css("opacity", "0.4");
+		i = vThis.mDivWidgetList.indexOf(vThis.mSelection);
+		vThis.fShowWidgetConfigPopup(vThis.mSelectedChannelN, i);
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
+		vThis.pSelection(vThis.mDivConfigPopupList[0], false, false);
+		break;
+		
 	case cSPChannels.MODE_WIDGETCONFIG:
+		vThis.mDivWidgets.css("opacity", "1");
+		vThis.mDivIndicator.css("opacity", "1");
+		vThis.mDivConfigPopup.fadeOut();
 		vThis.mDivInputPanel.hide();
 		vThis.mDivChannels.hide();
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.show();
+		vThis.mDivWidgetAuth.hide();
 		
 		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN].mName);
 		
-		vThis.fRenderWidgetConfig(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
+		vThis.fRenderWidgetParamConfig(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
 		vThis.mDivIndicator.css(vThis.mDivWidgetConfigList[0].pIndicatorStyle);
 		vThis.mDivBack.css("opacity", "0.2");
 		vThis.pSelection(vThis.mDivWidgetConfigList[0]);
-		break;
-	case cSPChannels.MODE_INPUT:
 		
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
+		break;
+		
+	case cSPChannels.MODE_WIDGETAUTH:
+		vThis.mDivWidgets.css("opacity", "1");
+		vThis.mDivIndicator.css("opacity", "1");
+		vThis.mDivConfigPopup.fadeOut();
+		vThis.mDivInputPanel.hide();
+		vThis.mDivChannels.hide();
+		vThis.mDivWidgets.hide();
+		vThis.mDivWidgetConfig.hide();
+		vThis.mDivWidgetAuth.show();
+		
+		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN].mName);
+		
+		vThis.fRenderWidgetAuth(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
+		vThis.mDivIndicator.css(vThis.mDivBack.pIndicatorStyle);
+		vThis.mDivBack.css("opacity", "1");
+		vThis.pSelection(vThis.mDivBack);
+		
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
+		break;
+		
+	case cSPChannels.MODE_INPUT:
 		vThis.mDivInputPanel.show();
 		if (keyboard_currentY > 4)
 			keyboard_onRemoteControl("up", "input_username");
 		else if (keyboard_currentY < 0)
 			keyboard_onRemoteControl("down", "input_username");
+			
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
 		break;
 	}
-	vThis.mMode = vMode;
+	
+	//~ fDbg(vThis.mPrevMode + " >>>> " + vThis.mMode);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -163,10 +237,20 @@ cSPChannels.prototype.pSelection = function(
 	vLightNewSelection		// false | true
 )
 {
-	var vThis, o, p;
+//~ fDbg("*** cSPChannels, pSelection(), ");
+	var vThis, o, p, i;
 	vThis = this;
 if (!vSelection) return vThis.mSelection;
-
+	
+	if (vThis.mMode == cSPChannels.MODE_WIDGETCONFIG_POPUP)
+	{
+		if (vThis.mSelection && vThis.mSelection.attr("id") && vThis.mSelection.attr("id").split("config_").length == 2)
+			$(vThis.mSelection.children()[0]).hide();
+		$(vSelection.children()[0]).show();
+		vThis.mSelection = vSelection;
+		return;
+	}
+	
 	vThis.mPrevSelection = vThis.mSelection;
 	if (vDimPrevSelection)
 		vThis.mPrevSelection.css("opacity", "0.2");
@@ -310,6 +394,32 @@ cSPChannels.prototype.fOnSignal = function(
 				});
 			}
 			break;
+		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
+			switch (i)
+			{
+			case 0:
+				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", o + "px");
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				o.pEnabled(true);
+				$($(vThis.mSelection.children()[1]).children()[1]).html("YES");
+				
+				$(vThis.mDivWidgetList[vThis.mSelectedWidgetN].children()[1]).children("img").attr("src", "./images/tick_32.png");
+				
+				cProxy.fSaveModelData();
+				break;
+			case 1:
+				return;
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				if (o.mUpdateInterval > 0)
+					o.mUpdateInterval--;
+				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", p + "px");
+				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
+				break;
+			}
+			break;
 		}
 		break;
 		
@@ -446,6 +556,30 @@ cSPChannels.prototype.fOnSignal = function(
 				});
 			}
 			break;
+		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
+			switch (i)
+			{
+			case 0:
+				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", o + "px");
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				o.pEnabled(false);
+				$($(vThis.mSelection.children()[1]).children()[1]).html("NO");
+				$(vThis.mDivWidgetList[vThis.mSelectedWidgetN].children()[1]).children("img").attr("src", "./images/cross_32.png");
+				cProxy.fSaveModelData();
+				break;
+			case 1:
+				return;
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				if (o.mUpdateInterval < o.mUpdateIntervalList.length - 1)
+					o.mUpdateInterval++;
+				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", p + "px");
+				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
+				break;
+			}
+			break;
 		}
 		break;
 		
@@ -474,15 +608,46 @@ cSPChannels.prototype.fOnSignal = function(
 				cModuleEventTicker.fGetInstance().fClearEventList();
 				break;
 			default:
+				i = vThis.mDivWidgetList.indexOf(vThis.mSelection);
+				if (o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[i].pNeTVCompatiable())
+					vThis.pMode(cSPChannels.MODE_WIDGETCONFIG_POPUP);
+				/*
 				if (vThis.mCurrWidgetConfigurable)
 					vThis.pMode(cSPChannels.MODE_WIDGETCONFIG);
+				*/
+				break;
+			}
+			break;
+		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+			o = vThis.mSelection.attr("id");
+			switch (o)
+			{
+			case "config_0":
+				break;
+			case "config_auth":
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				if (o.mNeedAuth)
+				{
+					vThis.pMode(cSPChannels.MODE_WIDGETAUTH);
+					vThis.fInitAuth();
+				}
+				break;
+			case "config_param":
+				if (vThis.mCurrWidgetConfigurable)
+					vThis.pMode(cSPChannels.MODE_WIDGETCONFIG);
+				break;
+			case "config_ok":
+				vThis.pMode(cSPChannels.MODE_WIDGETLIST);
+				vThis.fEndAuth();
 				break;
 			}
 			break;
 		case cSPChannels.MODE_WIDGETCONFIG:
 			switch (vThis.mSelection)
 			{
-			case vThis.mDivBack:	vThis.pMode(cSPChannels.MODE_WIDGETLIST); break;
+			case vThis.mDivBack:
+				vThis.pMode(cSPChannels.MODE_WIDGETLIST);
+				break;
 			default:
 				o = $(vThis.mSelection.children()[2]);
 				if (cModuleInput.fGetInstance().mIsActive)
@@ -494,18 +659,20 @@ cSPChannels.prototype.fOnSignal = function(
 						o.mParameterList = {};
 
 					for (p in o.mParameterList)
-					{
 						if (p.toLowerCase() == $(vThis.mSelection.children()[0]).html().toLowerCase())
 						{
 							o.mParameterList[p] = $(vThis.mSelection.children()[2]).html();
 							break;
 						}
-					}
 					//~ o.mParameterList[$(vThis.mSelection.children()[0]).html().toLowerCase()] = $(vThis.mSelection.children()[2]).html();
 					cChannelModule.fGetInstance().fSaveChannelData();
 				});
 				break;
 			}
+			break;
+		case cSPChannels.MODE_WIDGETAUTH:
+			vThis.fEndAuth();
+			vThis.pMode(cSPChannels.MODE_WIDGETLIST);
 			break;
 		}
 		break;
@@ -574,6 +741,13 @@ cSPChannels.prototype.fOnSignal = function(
 				else
 					$($("#widgetconfig_itemcontainer").children()[0]).css("top", "+=70px");
 			}
+			break;
+			
+		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+			o = vThis.mDivConfigPopup.children().length;
+			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
+			if (i > 0)
+				vThis.pSelection(vThis.mDivConfigPopupList[i - 1]);
 			break;
 		}
 		break;
@@ -646,7 +820,30 @@ cSPChannels.prototype.fOnSignal = function(
 				}
 			}
 			break;
+			
+		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
+			o = vThis.mDivConfigPopupList.length;
+			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
+			
+			if (i < o - 1)
+				vThis.pSelection(vThis.mDivConfigPopupList[i + 1]);
+			break;
 		}
+		break;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
+		fDbg("msg from widget : ");
+		fDbg(vData);
+		if (vThis.mMode == cSPChannels.MODE_WIDGETAUTH)
+			vThis.fUpdateMessage(vData);
 		break;
 	}
 }
@@ -879,7 +1076,7 @@ cSPChannels.prototype.fRenderWidgetList = function(
 	o += '<div id="channel_operations" style="position: absolute; top: 140px; left: 400px; width: 360px; height: 80px; color: #FFFFFF; font-size: 14px; font-weight: bold; border: solid #333333 0px;">';
 		o += '<div style="position: absolute; top: 10px; left: 30px; width: 300px; text-align: center;">SET AS CURRENT CHANNEL</div>';
 	o += '</div>';
-	o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 0px; width: 800px; height: 300px; overflow: hidden;">';
+	o += '<div id="widgetstn_container" style="position: absolute; top: 250px; left: 0px; width: 800px; height: 300px;">';
 		o += '<div id="widgetstn_content" style="position: absolute; top: 0px; left: 50px;">';
 		vLen = vChannelObj.mWidgetList.length;
 		for (j = 0; j < vLen; j++)
@@ -892,7 +1089,10 @@ cSPChannels.prototype.fRenderWidgetList = function(
 			p[0] = (i - i % vThis.mStyle.mWidgetListColumn) / vThis.mStyle.mWidgetListColumn * 100;
 			p[1] = 35 + j % vThis.mStyle.mWidgetListColumn * 110 + k * 700;
 			o += '<div id="widgettn_' + j + '" style="position: absolute; top: ' + p[0] + 'px; left: ' + p[1] + 'px; width: 80px; height: 60px; border: solid #CCCCCC 2px; opacity: ' + (vWidget.mNeTVCompatiable ? "1" : "0.3") + '">';
-			o += '<img src="' + vImagePath + '" width="80px" height="60px" />';
+				o += '<img src="' + vImagePath + '" width="80px" height="60px" />';
+				o += '<div style="position: absolute; top: -10px; left: 70px;">';
+					o += '<img src="./images/tick_32.png" width="24px" height="24px" />';
+				o += '</div>';
 			o += '</div>';
 		}
 		o += '</div>';
@@ -906,8 +1106,6 @@ cSPChannels.prototype.fRenderWidgetList = function(
 		o += '<div style="position: absolute; top: 0px; left: ' + ((800 - (vCircleW + vCircleGap) * (j - 1) + vCircleW) / 2 + (vCircleW + vCircleGap) * i) + 'px; width: ' + vCircleW + 'px; height: ' + vCircleW + 'px; background-color: #CCCCCC; border-radius: ' + (vCircleW / 2) + 'px;"></div>';
 	o += '</div>';
 	vDiv.html(o);
-	
-	
 	
 	
 	
@@ -935,6 +1133,22 @@ cSPChannels.prototype.fRenderWidgetList = function(
 			top: parseInt(vThis.mDivWidgetList[i % 18].css("top").split("px")[0]) + 250 - 10 + "px",
 			left: parseInt(vThis.mDivWidgetList[i % 18].css("left").split("px")[0]) + 50 - 10 + "px"
 		};
+	for (i = 0; i < vLen; i++)
+	{
+		vWidget = vChannelObj.mWidgetList[i];
+		if (vWidget.pNeTVCompatiable())
+		{
+			$(vThis.mDivWidgetList[i].children()[1]).show();
+			if (vWidget.pEnabled())
+				$(vThis.mDivWidgetList[i].children()[1]).children("img").attr("src", "./images/tick_32.png");
+			else
+				$(vThis.mDivWidgetList[i].children()[1]).children("img").attr("src", "./images/cross_32.png");
+		}
+		else
+		{
+			$(vThis.mDivWidgetList[i].children()[1]).hide();
+		}
+	}
 }
 
 /** ------------------------------------------------------------------------------------------------
@@ -949,6 +1163,7 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 	vThis = this;
 	
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+	fDbg(vWidget.mWidget.mID);
 	n = 0;
 
 	vKeywordFilterList = ["session_key", "secret", "api_key_version", "_private_secret", "_private_session_key", "_private"];
@@ -979,9 +1194,9 @@ cSPChannels.prototype.fRenderWidgetSummary = function(
 }
 
 /** ------------------------------------------------------------------------------------------------
- *  fRenderWidgetConfig
+ *  fRenderWidgetParamConfig
  * -----------------------------------------------------------------------------------------------*/
-cSPChannels.prototype.fRenderWidgetConfig = function(
+cSPChannels.prototype.fRenderWidgetParamConfig = function(
 	vChannelN,
 	vWidgetN
 )
@@ -1027,6 +1242,124 @@ cSPChannels.prototype.fRenderWidgetConfig = function(
 	});
 }
 
+/** ------------------------------------------------------------------------------------------------
+ *  fShowWidgetConfigPopup
+ * -----------------------------------------------------------------------------------------------*/
+cSPChannels.prototype.fShowWidgetConfigPopup = function(
+	vChannelN,
+	vWidgetN
+)
+{
+	var vThis, o, i;
+	vThis = this;
+	
+	vThis.fRenderWidgetConfigPopup(vChannelN, vWidgetN);
+	vThis.mDivConfigPopup.fadeIn();
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *  fRenderWidgetConfigPopup
+ * -----------------------------------------------------------------------------------------------*/
+cSPChannels.prototype.fRenderWidgetConfigPopup = function(
+	vChannelN,
+	vWidgetN
+)
+{
+	var vThis, o, i, vWidget;
+	vThis = this;
+	
+	o = '';
+	o += '<div id="config_0" style="position: absolute; top: 20px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 55px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 10px; left: 10px; width: 260px; text-shadow: #000000 2px 2px 2px;">';
+			o += '<div style="position: absolute; top: 0px; left: 0px; width: 140px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
+			o += 'Enabled';
+			o += '</div>';
+			o += '<div style="position: absolute; top: 0px; left: 140px; width: 100px; text-align: right; font-style:italic; border: solid #EEEEEE 0px;">';
+				o += 'YES';
+			o += '</div>';
+		o += '</div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+	o += '</div>';
+	//~ o += '<div id="config_1" style="position: absolute; top: 90px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
+		/*
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 55px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 10px; left: 10px; width: 260px; text-shadow: #000000 2px 2px 2px;">';
+			o += '<div style="position: absolute; top: 0px; left: 0px; width: 140px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
+			o += 'Time to Update';
+			o += '</div>';
+			o += '<div style="position: absolute; top: 0px; left: 140px; width: 100px; text-align: right; font-style:italic; border: solid #EEEEEE 0px;">';
+			o += 'YES';
+			o += '</div>';
+		o += '</div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+		*/
+	//~ o += '</div>';
+	o += '<div id="config_auth" style="position: absolute; top: 130px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+			o += 'Authentication';
+		o += '</div>';
+	o += '</div>';
+	o += '<div id="config_param" style="position: absolute; top: 190px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+			o += 'Customize Configuration';
+		o += '</div>';
+	o += '</div>';
+	o += '<div id="config_ok" style="position: absolute; top: 250px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+			o += 'OK';
+		o += '</div>';
+	o += '</div>';
+	vThis.mDivConfigPopup.html(o);
+	
+	o = vThis.mDivConfigPopup.children();
+	vThis.mDivConfigPopupList = [];
+	for (i = 0; i < o.length; i++)
+	{
+		$(o[i]).pIndicatorStyle = {
+			width: parseInt(o.css("width").split("px")[0]) + 30 + "px",
+			height: parseInt(o.css("height").split("px")[0]) + 20 + "px",
+			top: parseInt(o.css("top").split("px")[0]) + 200 - 0 + "px",
+			left: parseInt(o.css("left").split("px")[0]) + 250 - 0 + "px"
+		}
+		$($(o[i]).children()[0]).hide();
+		vThis.mDivConfigPopupList.push($(o[i]));
+	}
+	
+	
+	
+	
+	
+	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+	o = vThis.mDivConfigPopupList[0];
+	if (!vWidget.pEnabled())
+	{
+		i = parseInt(o.children(".selector_bar").css("left")) + parseInt(o.children(".selector_bar").css("width")) - parseInt(o.children(".selector_nod").css("width")) / 2;
+		o.children(".selector_nod").css("left", i + "px");
+		$($(o.children()[1]).children()[1]).html("NO");
+	}
+	else
+	{
+		i = parseInt(o.children(".selector_bar").css("left")) - parseInt(o.children(".selector_nod").css("width")) / 2;
+		o.children(".selector_nod").css("left", i + "px");
+		$($(o.children()[1]).children()[1]).html("YES");
+	}
+	
+	o = vThis.mDivConfigPopup.children("#config_auth");
+	fDbg("++++++++++++++++++++++++++++++ >>> " + vWidget.mNeedAuth);
+	if (!vWidget.mNeedAuth)
+		o.css("opacity", "0.4");
+		
+	o = vThis.mDivConfigPopup.children("#config_param");
+	if (!vThis.mCurrWidgetConfigurable)
+		o.css("opacity", "0.4");
+}
+
 cSPChannels.prototype.fRenderInputMode = function() {
 
 }
@@ -1034,4 +1367,65 @@ cSPChannels.prototype.fRenderInputMode = function() {
 
 
 
+}
+
+
+
+
+
+
+
+cSPChannels.prototype.fRenderWidgetAuth = function(
+)
+{
+	var vThis, o;
+	vThis = this;
+	
+	o = '';
+	o += '<div id="widgetauth_itemcontainer" style="position: absolute; top: 150px; left: 50px; width: 700px; height: 385px; border: dashed #FFFFFF 0px; overflow: hidden;">';
+	o += '<div id="widgetauth_itemtitle" style="position: absolute; top: 0px; left: 0px;">';
+		o += "Please follow the instruction below:";
+	o += '</div>';
+	o += '<div id="widgetauth_itemcontent" style="position: absolute; top: 50px; left: 50px; width: 600; height: 330; border: solid #FFFFFF 0px;">';
+	o += '</div>';
+	o += '</div>';
+	vThis.mDivWidgetAuth.html(o);
+}
+
+cSPChannels.prototype.fInitAuth = function(
+)
+{
+fDbg("*** cSPChannels, fInitAuth(), ");
+	var vThis, o, vWidget;
+	vThis = this;
+	
+	vWidget = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+	p = "?";
+	if (vWidget.mParameterList)
+		for (o in vWidget.mParameterList)
+			p += o + "=" + vWidget.mParameterList[o] + "&";
+	
+	$("#div_tempWidgetPlayer").children("#iframe_tempWidgetPlayer").attr("src", vWidget.pPeerWidgetHref() + p + "auth=true");
+}
+
+cSPChannels.prototype.fEndAuth = function(
+)
+{
+fDbg("*** cSPChannels, fEndAuth(), ");
+	var vThis, o, vWidget;
+	vThis = this;
+	
+	$("#div_tempWidgetPlayer").children("#iframe_tempWidgetPlayer").attr("src", "");
+}
+
+cSPChannels.prototype.fUpdateMessage = function(
+	v
+)
+{
+	var vThis;
+	vThis = this;
+	
+	fDbg("v is : " + v);
+	fDbg(vThis.mDivWidgetAuth.children("#widgetauth_itemcontent").attr("id"));
+	$(vThis.mDivWidgetAuth.children()[0]).children("#widgetauth_itemcontent").html(v);
 }

@@ -42,12 +42,13 @@ cStartupModule.prototype.fPrepareSystem = function(
 )
 {
 //~ fDbg2("*** cStartupModule, fPrepareSystem(), ");
-	
+	/*
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 703</value>"}, function() {});
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "SetBox", data : "<value>0 0 1279 719</value>"}, function() {});
 	//~ cProxy.xmlhttpPost("", "post", {cmd : "ControlPanel", data : "<value>Maximize</value>"}, function() {});
-	cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Hide</value>"}, function() {});
-	cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
+	*/
+	//~ cProxy.xmlhttpPost("", "post", {cmd : "WidgetEngine", data : "<value>Hide</value>"}, function() {});
+	//~ cProxy.xmlhttpPost("", "post", {cmd : "SetChromaKey", data : "<value>240,0,240</value>"}, function() {});
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 {
 //~ fDbg2("*** cStartupModule, fEnvironmentalCheck(), ");
 	var i, o, p;
-
+	
 	cProxy.xmlhttpPost("", "post", {cmd : "InitialHello", data: ""}, function(vData) {
 		if (!vData || vData == undefined || vData == null)
 		{

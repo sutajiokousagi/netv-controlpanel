@@ -3,11 +3,11 @@ var mCPanel;
 var cConst;
 var cModel;
 
-var mPrevButtonPress;
-var mButtonPressTimeout;
-
 var o = new DOMParser();
 o = o.parseFromString("<data>null</data>", "text/xml");
+
+var keyPressedArray = new Array();
+
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
@@ -19,7 +19,6 @@ function fOnLoad()  {
 	fDbg("fOnLoad()");
 	keyboard_init();
 	fCheckForRedirection();
-
 	
 	if (cCPanel)
 		mJSCore = cJSCore.fGetInstance();
@@ -30,7 +29,7 @@ function fOnLoad()  {
 		mCPanel = cCPanel.fGetInstance();
 	else
 		window.location.reload();
-
+		
 	var o = setTimeout(function() {
 		mJSCore.CPANEL = mCPanel;
 		mCPanel.JSCORE = mJSCore;
@@ -38,17 +37,28 @@ function fOnLoad()  {
 		mCPanel.fInit(function() { mCPanel.fStartUp(); });
 	}, 100);
 	
-	$(window).keydown(function(event) {
-		switch (event.which)
-		{
-		case 36: fButtonPress("cpanel"); break;
-		case 33: fButtonPress("widget"); break;
-		case 37: fButtonPress("left"); break;
-		case 39: fButtonPress("right"); break;
-		case 38: fButtonPress("up"); break;
-		case 40: fButtonPress("down"); break;
-		case 13: fButtonPress("center"); break;
-		}
+	// Native keyboard events
+	$(document).keydown(function(event)
+	{
+		var keycode = event.which;
+		var isRepeat = (keyPressedArray[""+keycode] == true) ? true : false;
+		keyPressedArray[""+keycode] = true;
+		
+		event.preventDefault();
+		if (keycode == 37)			fButtonPress('left',1,isRepeat);
+		else if (keycode == 39)		fButtonPress('right',1,isRepeat);
+		else if (keycode == 38)		fButtonPress('up',1,isRepeat);	
+		else if (keycode == 40)		fButtonPress('down',1,isRepeat);
+		else if (keycode == 13)		fButtonPress('center',1,isRepeat);
+		else if (keycode == 33)		fButtonPress('cpanel',1,isRepeat);
+		else if (keycode == 34)		fButtonPress('widget',1,isRepeat);
+		return true;
+	});
+	
+	$(document).keyup(function(event)
+	{
+		keyPressedArray[""+event.which] = false;
+		return true;
 	});
 
 }
@@ -161,7 +171,10 @@ function fButtonPress(
 )
 {
 //~ fDbg("*** NeTV, fButtonPress(), " + vButtonName + ", " + vCount);
-	
+
+	if (vOnHold && (vButtonName == "cpanel" || vButtonName == "widget" || vButtonName == "widget" || vButtonName == "setup"))
+		return true;
+		
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -187,12 +200,12 @@ function fButtonPress(
 	return true;
 }
 
-function fWidgetMsgEvent(
-	vEventData
+function fWidgetMsg(
+	vMessage
 )
 {
-//~ fDbg("*** fWidgetMdgEvent(), " + vEventData);
-	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vEventData, null);
+fDbg("*** fWidgetMdgEvent(), " + vMessage);
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vMessage, null);
 }
 
 
@@ -205,20 +218,26 @@ function fTickerEvents(
 	vEventVer
 )
 {
-//~ fDbg("*** fTickerEvents(), ");
-/*
-	fDbg("------------------------------------------------------");
-	fDbg(vEventMessage);
-	fDbg("------------------------------------------------------");
-	fDbg(vEventMessage);
-	fDbg("------------------------------------------------------");
-*/
-	vEventMessage = decodeURIComponent(vEventMessage);
-	vEventTitle = decodeURIComponent(vEventTitle);
-	vEventImage = decodeURIComponent(vEventImage);
-	vEventType = decodeURIComponent(vEventType);
-	vEventLevel = decodeURIComponent(vEventLevel);
-	vEventVer = decodeURIComponent(vEventVer);
+fDbg("*** fTickerEvents(), ");
+if (vEventType && vEventType == "foroauth")
+{
+vEventMessage = decodeURIComponent(vEventMessage);
+	fDbg("message : " + vEventMessage);
+	fWidgetMsg(vEventMessage);
+	return;
+}
+	//~ fDbg("------------------------------------------------------");
+	//~ fDbg(vEventMessage);
+	//~ fDbg(decodeURIComponent(vEventMessage));
+	//~ fDbg(decodeURIComponent(decodeURIComponent(vEventMessage)));
+	//~ fDbg("-----------------------------------");
+
+vEventMessage = decodeURIComponent(vEventMessage);
+vEventTitle = decodeURIComponent(vEventTitle);
+vEventImage = decodeURIComponent(vEventImage);
+vEventType = decodeURIComponent(vEventType);
+vEventLevel = decodeURIComponent(vEventLevel);
+vEventVer = decodeURIComponent(vEventVer);
 
 /*
 fDbg("------------------------------------------------------");
@@ -230,7 +249,7 @@ fDbg("level   : " + vEventLevel);
 fDbg("------------------------------------------------------");
 */
 	
-	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
 
 // -------------------------------------------------------------------------------------------------

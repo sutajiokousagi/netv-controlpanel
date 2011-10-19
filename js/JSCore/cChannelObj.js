@@ -112,6 +112,52 @@ function cChannelObj(
 	this.mPlayMode = "default";		// default | event
 }
 
+
+
+cChannelObj.prototype.pData = function(
+	v
+)
+{
+	var vThis, o, i, j;
+	vThis = this;
+	
+	// 1, format mData
+	vThis.mData = {};
+	o = [];
+	for (i = 0; i < vThis.mWidgetList.length; i++)
+		o.push(vThis.mWidgetList[i].pData());
+	vThis.mData["ID"] = vThis.mID;
+	vThis.mData["WIDGETLIST_DATA"] = o;
+	
+	// 2, return mData
+	if (v == undefined) return vThis.mData;
+	
+	// 3, apply/cast mData from v
+	if (v["WIDGETLIST_DATA"])
+	{
+		for (i = 0; i < vThis.mWidgetList.length; i++)
+			for (j = 0; j < v["WIDGETLIST_DATA"].length; j++)
+				if (vThis.mWidgetList[i].mID == v["WIDGETLIST_DATA"][j]["ID"])
+				{
+					vThis.mWidgetList[i].pData(v["WIDGETLIST_DATA"][j]);
+					break;
+				}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -------------------------------------------------------------------------------------------------
 //	parse to XML
 // -------------------------------------------------------------------------------------------------
@@ -138,6 +184,5 @@ cChannelObj.prototype.toXML = function(
 )
 {
 	var vXML;
-
 	return vXML;
 }

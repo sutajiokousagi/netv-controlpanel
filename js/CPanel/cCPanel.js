@@ -234,10 +234,11 @@ fDbg("*** cCPanel, fStartUp()");
 		vThis.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
 	}
 
-
+	/*
 	cProxy.fLoadModelData(function() {
-		fDbg("load model data complete!");
+		//~ fDbg("load model data complete!");
 	});
+	*/
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -276,6 +277,7 @@ cCPanel.prototype.fOnSignal = function(
 		switch (vThis.mState)
 		{
 		case "controlpanel":
+			cSPChannels.fGetInstance().fEndAuth();
 			vThis.fAnimateOutControlPanel(function() {
 				cModuleEventTicker.fGetInstance().pEnabled(true);
 				
@@ -620,8 +622,16 @@ cCPanel.prototype.fOnSignal = function(
 		}
 		break;
 		
-	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
+	case cConst.SIGNAL_MESSAGE_EVENTMSG:
 		cModuleWE.fGetInstance().fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vData, vReturnFun);
+		break;
+		
+	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
+		if (vThis.mState == "controlpanel")
+		{
+			if (vThis.mSubState == "cpanel_channels")
+				cSPChannels.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+		}
 		break;
 
 

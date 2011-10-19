@@ -96,6 +96,9 @@ cJSCore.prototype.fOnSignal = function(
 	switch (vSignal)
 	{
 	// --------- from NeTVServer -------------------------------------
+	case cConst.SIGNAL_MESSAGE_EVENTMSG:
+		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
+		break;
 	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
 		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
 		break;

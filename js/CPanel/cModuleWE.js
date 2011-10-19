@@ -20,14 +20,16 @@ function cModuleWE(
 	this.mCurrWidget = null;
 	this.mCurrWidgetPeriod = 15;
 	this.mCurrWidgetTimeSpend = 0;
+	this.mWidgetLockList = [];			// [[enabled|disabled, N seconds since last play], [], ]
 	
 	// WE status
 	this.mCurrWE = null;				// cWEHtml | cWEFlash     (cModuleEventTicker will depends on the mCurrChannel.mPlayMode)
 	this.mCurrPlayStatus = null;		// null(stopped) | playing | hidden | paused
-
-
+	
+	
+	// main status
 	this.mViewPortSize = [];
-
+	
 	
 	// initialize
 	this.fInit();
@@ -73,8 +75,34 @@ cModuleWE.prototype.pCurrChannel = function(
 	v
 )
 {
-	return typeof(v) === "undefined" ? this.mCurrChannel : this.mCurrChannel = v;
+	var i;
+	if (v == undefined)
+		return this.mCurrChannel;
+	
+	this.mCurrChannel = v;
+	this.mWidgetLockList = [];
+	for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
+	{
+		this.mWidgetLockList.push(["enabled", -1]);
+	}
+	//~ fDbg("------------------- playing new channel! --------------------");
+	//~ fDbg(this.mWidgetLockList);
+	
+	
+	
+	//~ return typeof(v) === "undefined" ? this.mCurrChannel : this.mCurrChannel = v;
 }
+
+// -------------------------------------------------------------------------------------------------
+//	pCurrWidget
+// -------------------------------------------------------------------------------------------------
+cModuleWE.prototype.pCurrWidget = function(
+	v
+)
+{
+	return typeof(v) === "undefined" ? this.mCurrWidget : this.mCurrWidget = v;
+}
+
 
 // -------------------------------------------------------------------------------------------------
 //	pState
@@ -185,7 +213,7 @@ if (vThis.mCurrWidgetTimeSpend % 5 == 0)
 cModuleWE.prototype.fPlay = function(
 )
 {
-//~ fDbg("*** cModuleWE, fPlay(), ");
+fDbg("*** cModuleWE, fPlay(), ");
 	var vThis, o, p;
 	vThis = this;
 
@@ -198,14 +226,15 @@ cModuleWE.prototype.fPlay = function(
 	{
 		if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 		{
-			this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
+			this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+			//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 			this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
 		}
 		
 		o = false;
 		for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
 		{
-			if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable)
+			if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable && this.mCurrChannel.mWidgetList[i].pEnabled())
 			{
 				o = true;
 				break;
@@ -229,24 +258,26 @@ cModuleWE.prototype.fPlay = function(
 cModuleWE.prototype.fNext = function(
 )
 {
-//~ fDbg("*** cModuleWE, fNext(), ");
+fDbg("*** cModuleWE, fNext(), ");
 	var i, o, p, vThis;
 	vThis = this;
 
 if (!this.mCurrChannel)
 {
-	this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
+	this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+	//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 }
 else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 {
-	this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
+	this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+	//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 	this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
 }
 
 	o = false;
 	for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
 	{
-		if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable)
+		if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable && this.mCurrChannel.mWidgetList[i].pEnabled())
 		{
 			o = true;
 			break;
@@ -262,7 +293,7 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 	else
 		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
 
-	while (!this.mCurrWidget.mNeTVCompatiable)
+	while (!this.mCurrWidget.mNeTVCompatiable || !this.mCurrWidget.pEnabled())
 	{
 		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
 	}
@@ -301,8 +332,6 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 		if (this.mCurrWidget.mParameterList)
 			for (o in this.mCurrWidget.mParameterList)
 				p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
-		
-		this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
 	}
 	else
 	{
@@ -319,18 +348,19 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 			p = "?";
 			if (this.mCurrWidget.mParameterList)
 				for (o in this.mCurrWidget.mParameterList)
-					p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
-			
-			this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
+					p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";		
 		}
 		else if (this.mCurrWidget.pIsHTML())
 		{
-
+			
 		}
 		
 		// show / animatein current WE
 	}
 
+	this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
+	//this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
+	
 	vThis.mCurrPlayStatus = "playing";
 }
 

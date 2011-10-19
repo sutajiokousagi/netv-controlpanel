@@ -58,10 +58,10 @@ fDbg("*** cModel, ");
 	this.PLAYMODE = "event";
 	//~ this.PLAYMODE = "default";
 	this.TIMEZONE = "+8:00";
-
 	this.VIEWPORTSIZE = [];
-
-
+	
+	
+	// user settings
 	this.EVENTTICKER_SPEED = 3;			// range 1 ~ 5
 }
 
@@ -75,16 +75,34 @@ cModel.prototype.pData = function(
 	v
 )
 {
-	var vThis, o;
+	var vThis, o, i, j;
 	vThis = this;
-
+	
+	// 1, format mData
 	vThis.mData = {};
 	vThis.mData["EVENTTICKER_SPEED"] = vThis.EVENTTICKER_SPEED;
+	o = [];
+	for (i = 0; i < vThis.CHANNEL_LIST.length; i++)
+		o.push(vThis.CHANNEL_LIST[i].pData());
+	vThis.mData["CHANNELLIST_DATA"] = o;
 	
-if (!v) return vThis.mData;
+	// 2, return mData
+	if (v == undefined) return vThis.mData;
 	
+	// 3, apply/cast mData from v
 	if (v["EVENTTICKER_SPEED"])
 		vThis.EVENTTICKER_SPEED = v["EVENTTICKER_SPEED"];
+	
+	if (v["CHANNELLIST_DATA"] && v["CHANNELLIST_DATA"].length > 0)
+	{
+		for (i = 0; i < vThis.CHANNEL_LIST.length; i++)
+			for (j = 0; j < v["CHANNELLIST_DATA"].length; j++)
+				if (vThis.CHANNEL_LIST[i].mID == v["CHANNELLIST_DATA"][j]["ID"])
+				{
+					vThis.CHANNEL_LIST[i].pData(v["CHANNELLIST_DATA"][j]);
+					break;
+				}
+	}
 }
 
 cModel.prototype.pTickerStep = function(
