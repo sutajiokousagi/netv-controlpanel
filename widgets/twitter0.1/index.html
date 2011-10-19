@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>TwitStream - Sample</title>
 <style type="text/css">
 body{
@@ -44,9 +45,9 @@ body{
 				mQueryKeyword = p;
 			
 			
-			p = o.split("interval=")[1].split("&")[0];
-			if (p && p != "")
-				mQueryInterval = parseInt(p) * 1000;
+			//p = o.split("interval=")[1].split("&")[0];
+			//if (p && p != "")
+				//mQueryInterval = parseInt(p) * 1000;
 		}
 
 
@@ -81,7 +82,7 @@ body{
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
-						vTweet_message = encodeURIComponent(vTweet_message);
+						//vTweet_message = encodeURIComponent(vTweet_message);
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;

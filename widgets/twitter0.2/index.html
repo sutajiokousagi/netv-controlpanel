@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>TwitStream - Sample</title>
 <style type="text/css">
 body{
@@ -47,9 +48,9 @@ body{
 				mQueryKeyword = p;
 			
 			
-			p = o.split("interval=")[1].split("&")[0];
-			if (p && p != "")
-				mQueryInterval = parseInt(p) * 1000;
+			//p = o.split("interval=")[1].split("&")[0];
+			//if (p && p != "")
+				//mQueryInterval = parseInt(p) * 1000;
 		}
 
 
@@ -99,9 +100,33 @@ fResize();
 					mPrevTweetID = vID;
 					//fDbg("4, " + "send tickerevent");
 					//fDbg("<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>");
+					
+					
+					
+					
 					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
+					
+					
+					
+					/*
+					//vTweet_message = "aaaaa !@#$%^&*()?/";
+					//vTweet_message = "aaaaa?bbbbb!ccccc,";
+					//vTweet_message = encodeURIComponent(vTweet_message);
+					//vTweet_message = encodeURIComponent(vTweet_message);
+					vTweet_message = "测试";
+					vTweet_message = encodeURIComponent(vTweet_message);
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+						//fDbg("5, " + "tickerevent return - " + vData);
+					});
+					
+					vTweet_message = "스티브잡스의 숨은이야";
+					vTweet_message = encodeURIComponent(vTweet_message);
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+						//fDbg("5, " + "tickerevent return - " + vData);
+					});
+					*/
 				}
 			});
 		};
@@ -170,7 +195,8 @@ function fXMLHttpRequest(
 
 //~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);		
 	xmlHttpReq.open(vType, strURL, true);
-	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	//xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=uft-8');
 	var o = hex_md5(String(Math.round((new Date()).getTime()/1000)));
 //~	fDbg("----time MD5 ----> " + o);
 	xmlHttpReq.setRequestHeader('Authorized-Caller', hex_md5(String(Math.round((new Date()).getTime()/1000))));
@@ -202,7 +228,7 @@ function fXMLHttpRequest(
 	{
 		for (var o in vData)
 			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
-//~ fDbg("para: " + parameters);
+//fDbg("para: " + parameters);
 		xmlHttpReq.send(parameters);
 	}
 	else
