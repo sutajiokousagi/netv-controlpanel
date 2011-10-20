@@ -10,7 +10,7 @@ function startOAuth()
 {
     $('#result').append("<h3>Step 1</h3>");
     
-    var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=email,read_stream';
+    var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=email,read_stream,offline_access';
     
     // use bridge to call send the post command
     fXMLHttpRequest(vBridgePath,
@@ -33,7 +33,12 @@ function startOAuth()
 			});
 			*/
 			//~ fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please go to http://www.facebook.com/device to enter the following code.<p>" + jsonDevice["user_code"] +  "</message>"+ "<image>"+picUrl+"</image>" + "<type>foroauth</type>"}, function(vData) {
-			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please go to http://www.facebook.com/device to enter the following code. " + jsonDevice["user_code"] + "</message><type>foroauth</type>"}, function(vData) {
+			var vMsg = "";
+			vMsg += "<div style='margin-top: 30px; line-height: 160%; text-align: center; font-size: 32px; color: FFFFFF;'>";
+			vMsg += "Please go to <br/><span style='color: 3333FF'>http://www.facebook.com/device</span><br /> to enter the following code. <br />" + "<span style='font-family:  DejaVu Sans Mono; font-size: 48px; color: FFFF33; font-weight: bold;'>" + jsonDevice["user_code"] + "</span>";
+			vMsg += "</div>";
+			vMsg = encodeURIComponent(vMsg);
+			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vMsg + "</message><type>foroauth</type>"}, function(vData) {
 				
 			});
 			

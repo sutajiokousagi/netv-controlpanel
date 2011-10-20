@@ -41,13 +41,15 @@ console.log("*** getAccessTokenOAuthTrue()");
 			var access_token = jsonDoc["data"]["value"];
 			console.log("Access Token: " + access_token);
 			
+			//~ access_token = "";
 			if ("" != access_token)
 			{
 			    $('#result').append("<b>Get Saved Access Token: </b>" + access_token + "<br />");
 			    $('#result').append("<b>You have already configured your Facebook account, please go back. ^_^ </b>" + "<br />");
 			    
-			    
-			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>Your facebook account is already authenticated.</message><type>foroauth</type>"}, function(vData) {
+			    var vMsg = "<div style='margin-top: 50px; line-height: 200%; text-align: center; font-size: 36px; color: 33FF33;'>Your facebook account is already authenticated.</div>";
+				vMsg = encodeURIComponent(vMsg);
+			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vMsg + "</message><type>foroauth</type>"}, function(vData) {
 			
 				});
 

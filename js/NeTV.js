@@ -204,7 +204,7 @@ function fWidgetMsg(
 	vMessage
 )
 {
-fDbg("*** fWidgetMdgEvent(), " + vMessage);
+//~ fDbg("*** fWidgetMdgEvent(), " + vMessage);
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_WIDGETMSG, vMessage, null);
 }
 
@@ -218,11 +218,11 @@ function fTickerEvents(
 	vEventVer
 )
 {
-fDbg("*** fTickerEvents(), ");
+//~ fDbg("*** fTickerEvents(), ");
 if (vEventType && vEventType == "foroauth")
 {
 vEventMessage = decodeURIComponent(vEventMessage);
-	fDbg("message : " + vEventMessage);
+	//~ fDbg("message : " + vEventMessage);
 	fWidgetMsg(vEventMessage);
 	return;
 }

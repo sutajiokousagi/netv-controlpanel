@@ -1384,7 +1384,7 @@ cSPChannels.prototype.fRenderWidgetAuth = function(
 	o = '';
 	o += '<div id="widgetauth_itemcontainer" style="position: absolute; top: 150px; left: 50px; width: 700px; height: 385px; border: dashed #FFFFFF 0px; overflow: hidden;">';
 	o += '<div id="widgetauth_itemtitle" style="position: absolute; top: 0px; left: 0px;">';
-		o += "Please follow the instruction below:";
+		o += "Please follow the instructions below:";
 	o += '</div>';
 	o += '<div id="widgetauth_itemcontent" style="position: absolute; top: 50px; left: 50px; width: 600; height: 330; border: solid #FFFFFF 0px;">';
 	o += '</div>';
