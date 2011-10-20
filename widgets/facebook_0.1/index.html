@@ -17,6 +17,11 @@
 
     <script type="text/javascript">
 
+function fDbg(v)
+{
+	console.log("|~|" + v);
+}
+
       var auth = false;
 
       var o, p;
@@ -34,7 +39,7 @@
       
       $(function() {
 		
-	  console.log("needOAuth? " + auth);
+	  fDbg("needOAuth? " + auth);
 
 	  if (false == auth)
 	      getAccessTokenOAuthFalse();

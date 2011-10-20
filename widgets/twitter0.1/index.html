@@ -90,9 +90,21 @@ body{
 					mPrevTweetID = vID;
 					//fDbg("4, " + "send tickerevent");
 					//fDbg("<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>");
-					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+					
+					
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vTweet_message + " - " + vTweet_createdAt, title: vTweet_title, image: vTweet_image}, function(vData) {
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
+					
+					
+					
+					//fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+						//fDbg("5, " + "tickerevent return - " + vData);
+					//});
+					
+					
+					
+					
 				}
 			});
 		};

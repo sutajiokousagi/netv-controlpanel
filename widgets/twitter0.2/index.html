@@ -150,10 +150,11 @@ fResize();
 					if (json.results[0].text)
 					{
 						vTweet_message = json.results[0].text;
-						vTweet_message = encodeURIComponent(vTweet_message);
+						//vTweet_message = encodeURIComponent(vTweet_message);
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;
+						
 					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
 					mPrevTweetID = vID;
 					//fDbg("4, " + "send tickerevent");
@@ -162,23 +163,41 @@ fResize();
 					
 					
 					
-					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+					
+					//vTweet_message = "*&(^*$#^$#@#!@!@#$%*&(&()_+<///></>/\\";
+					//vTweet_message = encodeURIComponent(vTweet_message);
+					//fDbg("************* from widget *************");
+					//fDbg("----------> " + vTweet_message);
+					//fDbg("----------> " + vTweet_image);
+					//fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vTweet_message + " - " + vTweet_createdAt, title: vTweet_title, image: vTweet_image}, function(vData) {
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
 					
 					
 					
-					/*
+					
+					
 					//vTweet_message = "aaaaa !@#$%^&*()?/";
 					//vTweet_message = "aaaaa?bbbbb!ccccc,";
 					//vTweet_message = encodeURIComponent(vTweet_message);
 					//vTweet_message = encodeURIComponent(vTweet_message);
+					/*
 					vTweet_message = "测试";
 					vTweet_message = encodeURIComponent(vTweet_message);
-					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
+					fDbg("************* from widget *************");
+					fDbg("----------> " + vTweet_message);
+					//fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + "</message>"}, function(vData) {
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vTweet_message}, function(vData) {
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
+					*/
 					
+					
+					
+					
+					
+					/*
 					vTweet_message = "스티브잡스의 숨은이야";
 					vTweet_message = encodeURIComponent(vTweet_message);
 					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vTweet_message + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>"}, function(vData) {
@@ -254,7 +273,7 @@ function fXMLHttpRequest(
 //~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);		
 	xmlHttpReq.open(vType, strURL, true);
 	//xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=uft-8');
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	var o = hex_md5(String(Math.round((new Date()).getTime()/1000)));
 //~	fDbg("----time MD5 ----> " + o);
 	xmlHttpReq.setRequestHeader('Authorized-Caller', hex_md5(String(Math.round((new Date()).getTime()/1000))));
@@ -286,7 +305,9 @@ function fXMLHttpRequest(
 	{
 		for (var o in vData)
 			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
-//fDbg("para: " + parameters);
+			
+//fDbg("----- POST para sent ----");
+//fDbg(parameters);
 		xmlHttpReq.send(parameters);
 	}
 	else

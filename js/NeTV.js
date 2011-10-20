@@ -219,35 +219,32 @@ function fTickerEvents(
 )
 {
 //~ fDbg("*** fTickerEvents(), ");
-if (vEventType && vEventType == "foroauth")
-{
-vEventMessage = decodeURIComponent(vEventMessage);
-	//~ fDbg("message : " + vEventMessage);
-	fWidgetMsg(vEventMessage);
-	return;
-}
-	//~ fDbg("------------------------------------------------------");
-	//~ fDbg(vEventMessage);
-	//~ fDbg(decodeURIComponent(vEventMessage));
-	//~ fDbg(decodeURIComponent(decodeURIComponent(vEventMessage)));
-	//~ fDbg("-----------------------------------");
+	if (vEventType && vEventType == "foroauth")
+	{
+	vEventMessage = decodeURIComponent(vEventMessage);
+		//~ fDbg("message : " + vEventMessage);
+		fWidgetMsg(vEventMessage);
+		return;
+	}
+
+//~ fDbg("----- message just received ----");
+//~ fDbg(vEventMessage);
+//~ fDbg("----- image just received ----");
+//~ fDbg(vEventImage);
 
 vEventMessage = decodeURIComponent(vEventMessage);
+//vEventMessage = decodeURIComponent(vEventMessage);
 vEventTitle = decodeURIComponent(vEventTitle);
 vEventImage = decodeURIComponent(vEventImage);
 vEventType = decodeURIComponent(vEventType);
 vEventLevel = decodeURIComponent(vEventLevel);
 vEventVer = decodeURIComponent(vEventVer);
 
-/*
-fDbg("------------------------------------------------------");
-fDbg("message : " + vEventMessage.substr(0, 40));
-fDbg("title   : " + vEventTitle.substr(0, 40));
-fDbg("image   : " + vEventImage.substr(0, 40));
-fDbg("type    : " + vEventType);
-fDbg("level   : " + vEventLevel);
-fDbg("------------------------------------------------------");
-*/
+//~ fDbg("----- message decoded ----");
+//~ fDbg(vEventMessage);
+//~ fDbg("----- image path decoded ----");
+//~ fDbg(vEventImage);
+
 	
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }

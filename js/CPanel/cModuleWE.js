@@ -213,7 +213,7 @@ if (vThis.mCurrWidgetTimeSpend % 5 == 0)
 cModuleWE.prototype.fPlay = function(
 )
 {
-fDbg("*** cModuleWE, fPlay(), ");
+//~ fDbg("*** cModuleWE, fPlay(), ");
 	var vThis, o, p;
 	vThis = this;
 

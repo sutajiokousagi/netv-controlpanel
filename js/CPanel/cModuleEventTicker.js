@@ -525,7 +525,7 @@ cModuleEventTicker.prototype.fAddEvent = function(
 	var vThis, o, i;
 	vThis = this;
 	o = String(new Date().getTime());
-
+	
 	// for type-"sms" 2 times only
 	if (vEventData[3] == "sms")
 	{
@@ -640,6 +640,10 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 		vLeft = 20;
 	
 	vInnerLeft = 0;
+	
+	
+	//~ vThis.mEventList[vIndex][0][0] = "符号测试， 和验证。！";
+	
 	vHtml = "";
 	vHtml += "<div id='message_" + vThis.mEventList[vIndex][1] + "_" + vID + "' style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: " + vWidth + "px;'>";
 	if (vThis.mEventList[vIndex][0][2] && vThis.mEventList[vIndex][0][2].length > 0)		// if image exist
@@ -663,19 +667,8 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	vHtml += "</div>";
 	vHtml += "</div>";
 	
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
-	//~ fDbg(vHtml);
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
 	$("#crawling_container").append(vHtml);
 	//~ fDbg($("#crawling_container").html());
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
-	//~ fDbg("=================================");
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -855,7 +848,7 @@ cModuleEventTicker.prototype.fAppendStampMessageDivFromEvent = function(
 	vHtml = "";
 	vHtml += "<div id='message_" + vThis.mStampEventList[vIndex][1] + "_" + vID + "' style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: " + vWidth + "px;'>";
 	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 25px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; color: #EEEEEE; font-size: 12px; line-height: 100%;'>";	
-		vHtml += unescape(vThis.mStampEventList[vIndex][0][0]);
+		vHtml += vThis.mStampEventList[vIndex][0][0];
 	vHtml += "</div>";
 	vHtml += "</div>";
 	

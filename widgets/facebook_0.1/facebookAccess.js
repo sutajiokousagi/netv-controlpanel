@@ -2,16 +2,16 @@
 
 function getAccessTokenOAuthFalse()
 {
-console.log("*** getAccessTokenOAuthFalse()");
+fDbg("*** getAccessTokenOAuthFalse()");
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
 		     data : "<value>facebook_access_token</value>"},
 		    function(vData) {
-			console.log(vData);
+			fDbg(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
-			console.log("Access Token: " + access_token);
+			fDbg("Access Token: " + access_token);
 			
 			if ("" != access_token)
 			{
@@ -30,16 +30,16 @@ console.log("*** getAccessTokenOAuthFalse()");
 
 function getAccessTokenOAuthTrue()
 {
-console.log("*** getAccessTokenOAuthTrue()");    
+fDbg("*** getAccessTokenOAuthTrue()");    
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
 		     data : "<value>facebook_access_token</value>"},
 		    function(vData) {
-			console.log(vData);
+			fDbg(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
-			console.log("Access Token: " + access_token);
+			fDbg("Access Token: " + access_token);
 			
 			//~ access_token = "";
 			if ("" != access_token)
@@ -49,6 +49,7 @@ console.log("*** getAccessTokenOAuthTrue()");
 			    
 			    var vMsg = "<div style='margin-top: 50px; line-height: 200%; text-align: center; font-size: 36px; color: 33FF33;'>Your facebook account is already authenticated.</div>";
 				vMsg = encodeURIComponent(vMsg);
+				
 			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vMsg + "</message><type>foroauth</type>"}, function(vData) {
 			
 				});
@@ -77,7 +78,7 @@ function accessFacebook(access_token)
     	'https://graph.facebook.com/me/home?access_token='+access_token+'&callback=?',
     	function(data)
     	{
-	    console.log(JSON.stringify(data));
+	    fDbg(JSON.stringify(data));
 	    if (!data["data"])
 	    {
 		startOAuth();

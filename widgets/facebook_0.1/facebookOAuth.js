@@ -10,11 +10,7 @@ function startOAuth()
 {
     $('#result').append("<h3>Step 1</h3>");
     
-<<<<<<< HEAD
     var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=email,read_stream,offline_access';
-=======
-    var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=offline_access,read_stream,user_photos,user_videos';
->>>>>>> 654b1fee789a645390ffe01c70e40f033812d5f1
     
     // use bridge to call send the post command
     fXMLHttpRequest(vBridgePath,
@@ -74,7 +70,7 @@ function waitingOAuth(code)
 function processOAuthData(vData, url) 
 {
     var jsonDoc = $.xml2json(vData);
-    console.log(JSON.stringify(jsonDoc));
+	fDbg(JSON.stringify(jsonDoc));
     var jsonAuth = jQuery.parseJSON(jsonDoc["data"]["value"]);
     //console.log(JSON.stringify(jsonAuth));
     
@@ -87,7 +83,7 @@ function processOAuthData(vData, url)
 			
 		});
     } else {
-	console.log(typeof jsonAuth["error"]);
+	fDbg(typeof jsonAuth["error"]);
 	errMsg = jsonAuth["error"]["message"];
 	$('#result').append("<b>Auth Message: </b>" + errMsg + "<br />");
 	setTimeout(OAuthGain(url), 5000);
@@ -117,7 +113,7 @@ function saveAccessToken(access_token)
 		     data : "<facebook_access_token>"+access_token+"</facebook_access_token>"},
 		    function(vData) {
 			var jsonDoc = $.xml2json(vData);
-			console.log(JSON.stringify(jsonDoc));
+			fDbg(JSON.stringify(jsonDoc));
 			$('#result').append("<b>Access Token Saved: </b>" + JSON.stringify(jsonDoc) + "<br />");
 			getAccessTokenOAuthTrue();
 		    });

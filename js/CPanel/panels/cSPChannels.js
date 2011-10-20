@@ -112,6 +112,38 @@ if (!vMode) return vThis.mMode;
 	switch (vMode)
 	{
 	case cSPChannels.MODE_DEFAULT:
+	
+	/*
+	var vHtml;
+	vHtml = "";
+	vHtml += "<div id='message_001_001001' style='position: absolute; top: 50px; left: 10px; color: 3333EE;'>";
+	//~ if (vThis.mEventList[vIndex][0][2] && vThis.mEventList[vIndex][0][2].length > 0)		// if image exist
+	//~ {
+		//~ vHtml += "<div style='position: absolute; top: 4px; left: " + 10 + "px; height: 40px; width: 40px; border: solid white 2px;'>";
+		//~ vHtml += "<img src='" + vThis.mEventList[vIndex][0][2] + "' width='40px' height='40px'>";
+		//~ vHtml += "</div>";
+		//~ vInnerLeft += 70;
+	//~ }
+	//~ if (vThis.mEventList[vIndex][0][6])
+		//~ vCSS = vThis.mEventList[vIndex][0][6];
+	//~ else
+		//~ vCSS = "color: #EEEEEE; ";
+	
+	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: 0px; margin: 4px 0 0 0; font-size: 17px; line-height: 130%;'>";
+
+		//~ if (vThis.mEventList[vIndex][0][1] && vThis.mEventList[vIndex][0][1] != "")
+			vHtml += "<span style='font-weight: bold; text-shadow: #AAAAAA 1px 1px 2px;'>aaaaa</span>&nbsp; : &nbsp;" + "符号测试， 和验证。！";
+		//~ else
+			//~ vHtml += "符号测试， 和验证。！";
+	vHtml += "</div>";
+	vHtml += "</div>";
+	
+	
+		$("#div_char_testing").html("符号测试， 和验证。！");
+		$("#div_char_testing").append("스티브잡스의 숨은이야");
+		$("#div_char_testing").append(vHtml);
+	*/
+	
 		vThis.mDivInputPanel.hide();
 		vThis.mDivConfigPopup.hide();
 		vThis.mDivChannels.show();

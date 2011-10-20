@@ -1,5 +1,16 @@
 function sendMsgToBridge(msgTitle, msgBody, msgPic)
 {
+	
+	//~ fDbg("************** send from FB widget ****************");
+	//~ fDbg(msgTitle);
+	//~ fDbg(msgBody);
+	//~ fDbg(msgPic);
+	
+	fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : msgBody, title: msgTitle, image: msgPic}, function(vData) {
+		
+	});
+	
+	/*
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {
@@ -10,5 +21,5 @@ function sendMsgToBridge(msgTitle, msgBody, msgPic)
 		    },
 		    function(vData) {console.log(vData)}
 		   );
+	*/
 }
-
