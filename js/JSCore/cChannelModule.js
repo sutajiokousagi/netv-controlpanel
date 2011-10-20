@@ -92,9 +92,10 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	vReturnFun
 )
 {
-//~ fDbg2("*** cChannelModule, fParseChannelInfo()");
+//~ fDbg("*** cChannelModule, fParseChannelInfo()");
 	
-	var o, p, i, j, k;
+	var vThis, o, p, i, j, k;
+	vThis = this;
 	o = new cChannelObj(vData);
 	
 	// -----------------------------------------------------
@@ -102,6 +103,9 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	// -----------------------------------------------------
 	//~ cModel.fGetInstance().CHANNEL_LIST.splice(0, 1);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
+
+	fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
+	vThis.pScanWidgetList(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
 	
 	for (i = 0; i < o.mWidgetList.length; i++)
@@ -274,6 +278,9 @@ cChannelModule.prototype.fParseChannelList = function(
 	{
 		cChannelModule.fGetInstance().fFetchChannelInfo2(o[i].getAttribute("id"), function(vData) {
 			o = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1];
+			
+			
+			fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 			vThis.pScanWidgetList(o);
 			vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], [0, 4], function() {
 				
@@ -291,6 +298,9 @@ cChannelModule.prototype.fParseChannelList = function(
 				for (j = p.length - 1; j > 1; j--)
 					if (p[j].mID == p[1].mID)
 					{
+						fDbg(" total : " + cModel.fGetInstance().CHANNEL_LIST.length);
+						fDbg("!!!!! remove channel " + j);
+						fDbg(" total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 						q = cModel.fGetInstance().CHANNEL_LIST.splice(j, 1);
 						//~ cModel.fGetInstance().CHANNEL_LIST[1] = q;
 						break;
