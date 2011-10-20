@@ -37,8 +37,8 @@ function startOAuth()
 			vMsg += "<div style='margin-top: 30px; line-height: 160%; text-align: center; font-size: 32px; color: FFFFFF;'>";
 			vMsg += "Please go to <br/><span style='color: 3333FF'>http://www.facebook.com/device</span><br /> to enter the following code. <br />" + "<span style='font-family:  DejaVu Sans Mono; font-size: 48px; color: FFFF33; font-weight: bold;'>" + jsonDevice["user_code"] + "</span>";
 			vMsg += "</div>";
-			vMsg = encodeURIComponent(vMsg);
-			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vMsg + "</message><type>foroauth</type>"}, function(vData) {
+			//~ vMsg = encodeURIComponent(vMsg);
+			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vMsg, type: "foroauth"}, function(vData) {
 				
 			});
 			
@@ -79,7 +79,7 @@ function processOAuthData(vData, url)
 	var access_token = jsonAuth["access_token"];
 	$('result').append("<b>Access Token: </b>" + access_token + "<br />");
 	saveAccessToken(access_token);
-		fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>Authentication is successful!</message><type>foroauth</type>"}, function(vData) {
+		fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : "Authentication is successful!", type: "foroauth"}, function(vData) {
 			
 		});
     } else {

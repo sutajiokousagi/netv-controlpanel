@@ -48,9 +48,9 @@ fDbg("*** getAccessTokenOAuthTrue()");
 			    $('#result').append("<b>You have already configured your Facebook account, please go back. ^_^ </b>" + "<br />");
 			    
 			    var vMsg = "<div style='margin-top: 50px; line-height: 200%; text-align: center; font-size: 36px; color: 33FF33;'>Your facebook account is already authenticated.</div>";
-				vMsg = encodeURIComponent(vMsg);
+				//~ vMsg = encodeURIComponent(vMsg);
 				
-			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + vMsg + "</message><type>foroauth</type>"}, function(vData) {
+			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: vMsg, type: "foroauth"}, function(vData) {
 			
 				});
 
