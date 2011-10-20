@@ -10,7 +10,7 @@ function startOAuth()
 {
     $('#result').append("<h3>Step 1</h3>");
     
-    var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=email,read_stream';
+    var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=offline_access,read_stream,user_photos,user_videos';
     
     // use bridge to call send the post command
     fXMLHttpRequest(vBridgePath,
