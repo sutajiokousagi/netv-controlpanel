@@ -398,10 +398,12 @@ cSPChannels.prototype.fOnSignal = function(
 			}
 			break;
 		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
-			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
-			switch (i)
+			o = vThis.mSelection.attr("id");
+			o = o.split("_")[1];
+			
+			switch (o)
 			{
-			case 0:
+			case "0":
 				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", o + "px");
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
@@ -412,11 +414,11 @@ cSPChannels.prototype.fOnSignal = function(
 				
 				cProxy.fSaveModelData();
 				break;
-			case 1:
-				return;
+			case "updateinterval":
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
 				if (o.mUpdateInterval > 0)
 					o.mUpdateInterval--;
+				
 				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
@@ -560,10 +562,12 @@ cSPChannels.prototype.fOnSignal = function(
 			}
 			break;
 		case cSPChannels.MODE_WIDGETCONFIG_POPUP:
-			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
-			switch (i)
+			o = vThis.mSelection.attr("id");
+			o = o.split("_")[1];
+			
+			switch (o)
 			{
-			case 0:
+			case "0":
 				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", o + "px");
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
@@ -572,8 +576,7 @@ cSPChannels.prototype.fOnSignal = function(
 				$(vThis.mDivWidgetList[vThis.mSelectedWidgetN].children()[1]).children("img").attr("src", "./images/cross_32.png");
 				cProxy.fSaveModelData();
 				break;
-			case 1:
-				return;
+			case "updateinterval":
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
 				if (o.mUpdateInterval < o.mUpdateIntervalList.length - 1)
 					o.mUpdateInterval++;
@@ -1285,8 +1288,7 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
 		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
 	o += '</div>';
-	//~ o += '<div id="config_1" style="position: absolute; top: 90px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
-		/*
+	o += '<div id="config_updateinterval" style="position: absolute; top: 90px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
 		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 55px; background: #6598EB; border-radius: 10px;"></div>';
 		o += '<div style="position: absolute; top: 10px; left: 10px; width: 260px; text-shadow: #000000 2px 2px 2px;">';
 			o += '<div style="position: absolute; top: 0px; left: 0px; width: 140px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
@@ -1298,21 +1300,20 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 		o += '</div>';
 		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
 		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
-		*/
-	//~ o += '</div>';
-	o += '<div id="config_auth" style="position: absolute; top: 130px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+	o += '</div>';
+	o += '<div id="config_auth" style="position: absolute; top: 160px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
 		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
 		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'Authentication';
 		o += '</div>';
 	o += '</div>';
-	o += '<div id="config_param" style="position: absolute; top: 190px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+	o += '<div id="config_param" style="position: absolute; top: 200px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
 		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
 		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'Customize Configuration';
 		o += '</div>';
 	o += '</div>';
-	o += '<div id="config_ok" style="position: absolute; top: 250px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
+	o += '<div id="config_ok" style="position: absolute; top: 290px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
 		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
 		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'OK';
@@ -1353,8 +1354,12 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 		$($(o.children()[1]).children()[1]).html("YES");
 	}
 	
+	o = vThis.mDivConfigPopup.children("#config_updateinterval");
+	p = parseInt(o.children(".selector_bar").css("left")) + parseInt(o.children(".selector_bar").css("width")) / (vWidget.mUpdateIntervalList.length - 1) * vWidget.mUpdateInterval - parseInt(o.children(".selector_nod").css("width")) / 2;
+	o.children(".selector_nod").css("left", p + "px");
+	$($(o.children()[1]).children()[1]).html(vWidget.mUpdateIntervalDisplayList[vWidget.mUpdateInterval]);
+	
 	o = vThis.mDivConfigPopup.children("#config_auth");
-	fDbg("++++++++++++++++++++++++++++++ >>> " + vWidget.mNeedAuth);
 	if (!vWidget.mNeedAuth)
 		o.css("opacity", "0.4");
 		

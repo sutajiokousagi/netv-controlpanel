@@ -30,7 +30,7 @@ cChannelModule.fGetInstance = function()
 cChannelModule.prototype.fInit = function(
 )
 {
-fDbg("*** cChannelModule, fInit()");
+//~ fDbg("*** cChannelModule, fInit()");
 	
 }
 
@@ -74,7 +74,7 @@ cChannelModule.prototype.fParseChannelInfo2 = function(
 	vReturnFun
 )
 {
-//~ fDbg2("*** cChannelModule, fParseChannelInfo2()");
+//~ fDbg("*** cChannelModule, fParseChannelInfo2()");
 	
 	var o, p, i, j, k;
 	o = new cChannelObj(vData);
@@ -104,7 +104,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	//~ cModel.fGetInstance().CHANNEL_LIST.splice(0, 1);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
 
-	fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
+	//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 	vThis.pScanWidgetList(o);
 	cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
 	
@@ -118,8 +118,12 @@ cChannelModule.prototype.fParseChannelInfo = function(
 				break;
 			}
 		
-		//fDbg("----- " + i);
-		//fDbg(JSON.stringify(o.mWidgetList[i].mParameterList));
+		
+		if (i < 10)
+		{
+			//~ fDbg("----- " + i);
+			//~ fDbg(JSON.stringify(o.mWidgetList[i].mParameterList));
+		}
 		
 		if (p && p.mNeTVCompatiable)
 		{
@@ -137,7 +141,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 					{
 						// save to o.mWidgetList[i], data {vTempObj : ""}
 						cWidgetInstance.fGetInstance().fConfigure(o.mWidgetList[i].mID, null, null, null, {"vTempObj" : ""}, function(vData) {
-							fDbg(vData);
+							//~ fDbg(vData);
 						});
 					}
 				}
@@ -280,7 +284,7 @@ cChannelModule.prototype.fParseChannelList = function(
 			o = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1];
 			
 			
-			fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
+			//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 			vThis.pScanWidgetList(o);
 			vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], [0, 4], function() {
 				
@@ -298,11 +302,7 @@ cChannelModule.prototype.fParseChannelList = function(
 				for (j = p.length - 1; j > 1; j--)
 					if (p[j].mID == p[1].mID)
 					{
-						fDbg(" total : " + cModel.fGetInstance().CHANNEL_LIST.length);
-						fDbg("!!!!! remove channel " + j);
-						fDbg(" total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 						q = cModel.fGetInstance().CHANNEL_LIST.splice(j, 1);
-						//~ cModel.fGetInstance().CHANNEL_LIST[1] = q;
 						break;
 					}
 			}
@@ -337,12 +337,12 @@ cChannelModule.prototype.pScanWidgetList = function(
 		
 		if (p && p.mNeTVCompatiable)
 		{
-			fDbg("match ----------------> " + cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj) + " - " + i);
+			//~ fDbg("match ----------------> " + cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj) + " - " + i);
 			vChannelObj.mWidgetList[i].mNeTVCompatiable = true;
 			vChannelObj.mWidgetList[i].mPeerWidget.mID = p.mPeerWidget.mID;
 			vChannelObj.mWidgetList[i].mPeerWidget.mHref = p.mPeerWidget.mHref;
 			vChannelObj.mWidgetList[i].mNeedAuth = p.mNeedAuth;
-			fDbg("need auth : " + vChannelObj.mWidgetList[i].mNeedAuth);
+			//~ fDbg("need auth : " + vChannelObj.mWidgetList[i].mNeedAuth);
 			/*
 			if (i == 1)
 				for (var vTempObj in p.mPeerParameters)

@@ -20,7 +20,7 @@ function cModuleWE(
 	this.mCurrWidget = null;
 	this.mCurrWidgetPeriod = 15;
 	this.mCurrWidgetTimeSpend = 0;
-	this.mWidgetLockList = [];			// [[enabled|disabled, N seconds since last play], [], ]
+	this.mWidgetLockList = [];			// [[id, enabled|disabled, N seconds since last play], [], ]
 	
 	// WE status
 	this.mCurrWE = null;				// cWEHtml | cWEFlash     (cModuleEventTicker will depends on the mCurrChannel.mPlayMode)
@@ -78,16 +78,11 @@ cModuleWE.prototype.pCurrChannel = function(
 	var i;
 	if (v == undefined)
 		return this.mCurrChannel;
+//~ fDbg("------------------- playing new channel! --------------------");
 	
+	// reset after changing channel.
 	this.mCurrChannel = v;
 	this.mWidgetLockList = [];
-	for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
-	{
-		this.mWidgetLockList.push(["enabled", -1]);
-	}
-	//~ fDbg("------------------- playing new channel! --------------------");
-	//~ fDbg(this.mWidgetLockList);
-	
 	
 	
 	//~ return typeof(v) === "undefined" ? this.mCurrChannel : this.mCurrChannel = v;
@@ -226,9 +221,10 @@ cModuleWE.prototype.fPlay = function(
 	{
 		if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 		{
-			this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
-			//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
-			this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
+			fDbg("----------------------- fPlay(). pCurrChannel() is called --------------------");
+			vThis.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+			vThis.pCurrWidget(this.mCurrChannel.mWidgetList[0]);
+			//~ this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
 		}
 		
 		o = false;
@@ -242,13 +238,17 @@ cModuleWE.prototype.fPlay = function(
 		}
 		if (!o)
 			return;
-
-		vThis.mCurrWidget = this.mCurrChannel.mWidgetList[i];
+		
+		vThis.pCurrWidget(vThis.mCurrChannel.mWidgetList[i]);
+		//~ vThis.mCurrWidget = vThis.mCurrChannel.mWidgetList[i];
 	}
 	p = "?";
 	if (vThis.mCurrWidget.mParameterList)
 		for (o in vThis.mCurrWidget.mParameterList)
 			p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
+	
+	
+	
 	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 }
 
@@ -258,26 +258,29 @@ cModuleWE.prototype.fPlay = function(
 cModuleWE.prototype.fNext = function(
 )
 {
-fDbg("*** cModuleWE, fNext(), ");
+//~ fDbg("*** cModuleWE, fNext(), ");
 	var i, o, p, vThis;
 	vThis = this;
 
-if (!this.mCurrChannel)
+if (!vThis.mCurrChannel)
 {
-	this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+	fDbg("----------------------- fNext(), -1-, pCurrChannel() is called --------------------");
+	vThis.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
 	//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
 }
-else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
+else if (vThis.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 {
-	this.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
+	fDbg("----------------------- fNext(), -2-, pCurrChannel() is called --------------------");
+	vThis.pCurrChannel(cModel.fGetInstance().CHANNEL_CURRENT);
 	//~ this.mCurrChannel = cModel.fGetInstance().CHANNEL_CURRENT;
-	this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
+	vThis.pCurrWidget(vThis.mCurrChannel.mWidgetList[0]);
+	//~ vThis.mCurrWidget = vThis.mCurrChannel.mWidgetList[0];
 }
 
 	o = false;
-	for (i = 0; i < this.mCurrChannel.mWidgetList.length; i++)
+	for (i = 0; i < vThis.mCurrChannel.mWidgetList.length; i++)
 	{
-		if (this.mCurrChannel.mWidgetList[i].mNeTVCompatiable && this.mCurrChannel.mWidgetList[i].pEnabled())
+		if (vThis.mCurrChannel.mWidgetList[i].mNeTVCompatiable && vThis.mCurrChannel.mWidgetList[i].pEnabled())
 		{
 			o = true;
 			break;
@@ -288,14 +291,15 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 
 	
 	// set curr widget
-	if (this.mCurrWidget == null)
-		this.mCurrWidget = this.mCurrChannel.mWidgetList[0];
+	if (vThis.mCurrWidget == null)
+		vThis.pCurrWidget(vThis.mCurrChannel.mWidgetList[0]);						//~ vThis.mCurrWidget = vThis.mCurrChannel.mWidgetList[0];
 	else
-		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
+		vThis.pCurrWidget(vThis.mCurrChannel.pNextWidget(vThis.mCurrWidget)); 		//~ vThis.mCurrWidget = vThis.mCurrChannel.pNextWidget(vThis.mCurrWidget);
 
-	while (!this.mCurrWidget.mNeTVCompatiable || !this.mCurrWidget.pEnabled())
+	while (!vThis.mCurrWidget.mNeTVCompatiable || !vThis.mCurrWidget.pEnabled())
 	{
-		this.mCurrWidget = this.mCurrChannel.pNextWidget(this.mCurrWidget);
+		vThis.pCurrWidget(vThis.mCurrChannel.pNextWidget(vThis.mCurrWidget));
+		//~ vThis.mCurrWidget = vThis.mCurrChannel.pNextWidget(vThis.mCurrWidget);
 	}
 	
 	if (cModel.fGetInstance().PLAYMODE == "event")
@@ -305,33 +309,33 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 	cCPanel.fGetInstance().fOnSignal(cConst.SIGNAL_PLAYNEXTWIDGET, null, null);
 	
 	// check current WE state (activated | unactivated, playing, paused, stopped)
-	if (!this.mCurrWE)
+	if (!vThis.mCurrWE)
 	{
 		// load the "new" mCurrWidget
-		if (this.mCurrWidget.pIsHTML())
+		if (vThis.mCurrWidget.pIsHTML())
 		{
 			//~ fDbg("is html");
-			this.mCurrWE = cWEHtml.fGetInstance();
+			vThis.mCurrWE = cWEHtml.fGetInstance();
 		}
-		else if (this.mCurrWidget.pIsFLASH())
+		else if (vThis.mCurrWidget.pIsFLASH())
 		{
 			//~ fDbg("is flash");
-			this.mCurrWE = cWEHtml.fGetInstance();
+			vThis.mCurrWE = cWEHtml.fGetInstance();
 			//~ this.mCurrWE = cWEFlash.fGetInstance();
 		}
 		else
 		{
 			//~ fDbg("is default(html)");
-			this.mCurrWE = cWEHtml.fGetInstance();
+			vThis.mCurrWE = cWEHtml.fGetInstance();
 		}
 		
 		//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
-		this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
+		vThis.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
 		
 		p = "?";
-		if (this.mCurrWidget.mParameterList)
-			for (o in this.mCurrWidget.mParameterList)
-				p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";
+		if (vThis.mCurrWidget.mParameterList)
+			for (o in vThis.mCurrWidget.mParameterList)
+				p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";
 	}
 	else
 	{
@@ -339,18 +343,18 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 			
 			
 		// load the "new" mCurrWidget
-		if (this.mCurrWidget.pIsHTML())
+		if (vThis.mCurrWidget.pIsHTML())
 		{
-			this.mCurrWE = cWEHtml.fGetInstance();
+			vThis.mCurrWE = cWEHtml.fGetInstance();
 			//~ this.mCurrWE.pPlayMode(this.mCurrChannel.mPlayMode);
-			this.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
+			vThis.mCurrWE.pPlayMode(cModel.fGetInstance().PLAYMODE);
 			
 			p = "?";
-			if (this.mCurrWidget.mParameterList)
-				for (o in this.mCurrWidget.mParameterList)
-					p += o + "=" + this.mCurrWidget.mParameterList[o] + "&";		
+			if (vThis.mCurrWidget.mParameterList)
+				for (o in vThis.mCurrWidget.mParameterList)
+					p += o + "=" + vThis.mCurrWidget.mParameterList[o] + "&";		
 		}
-		else if (this.mCurrWidget.pIsHTML())
+		else if (vThis.mCurrWidget.pIsHTML())
 		{
 			
 		}
@@ -358,9 +362,38 @@ else if (this.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 		// show / animatein current WE
 	}
 
-	this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
-	//this.mCurrWE.fPlayWidget(this.mCurrWidget.pPeerWidgetHref() + p, null);
+
+
+
+
+
+
+	// decide if run this widget in iframe, according to this widget's UpdateInterval
+	fDbg("go play curr widget : " + vThis.pCurrWidget().mWidget.mMovie.mHref);
+	fDbg("curr time : " + new Date().getTime());
+	fDbg(vThis.mWidgetLockList);
 	
+	for (i = 0; i < vThis.mWidgetLockList.length; i++)
+	{
+		if (vThis.mWidgetLockList[i][0] == vThis.pCurrWidget().mID)
+		{
+			o = [];
+			o[0] = (new Date().getTime() - vThis.mWidgetLockList[i][1]) / 1000;
+			o[1] = vThis.pCurrWidget().mUpdateIntervalList[vThis.pCurrWidget().mUpdateInterval];
+			fDbg("time spent : " + o[0] + " ---------- widget update interval : " + o[1]);
+			if (o[0] - o[1] > -2)
+			{
+				fDbg("ok, you can play!");
+				vThis.mWidgetLockList[i][1] = new Date().getTime();
+				vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
+				vThis.mCurrPlayStatus = "playing";
+			}
+			
+			return;
+		}
+	}
+	vThis.mWidgetLockList.push([vThis.pCurrWidget().mID, new Date().getTime()]);
+	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 	vThis.mCurrPlayStatus = "playing";
 }
 

@@ -282,7 +282,7 @@ cCPanel.prototype.fOnSignal = function(
 				cModuleEventTicker.fGetInstance().pEnabled(true);
 				
 				cModuleEventTicker.fGetInstance().fEndStampEvent();
-				cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
+				//~ cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
 				cModuleWE.fGetInstance().fPlay();
 				
 				cModuleEventTicker.fGetInstance().fReset();

@@ -132,10 +132,43 @@ function cWidgetObj(
 	};
 	this.mParameterList = null;
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	// -------------------------------------------------------------------------	
+	// local/temp variables
+	// -------------------------------------------------------------------------
+	this.mLocalThumbnailPath = "";
+	this.mPeerWidget = {
+		mID : null,
+		mHref : null
+	};
+	this.mNeTVCompatiable = false;
+	this.mEventLock = false;
+	this.mEnabled = true;
+	this.mUpdateInterval = 0;
+	this.mUpdateIntervalList = [15, 60, 300, 600, 1800, 3600];
+	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
+	this.mNeedAuth = false;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// -------------------------------------------------------------------------	
+	// cast values from vDataNode
+	// -------------------------------------------------------------------------
 	if (!vDataNode)
 		return;
-
-	
 	// parse vDataNode
 	this.mID = vDataNode.getAttribute("id");
 	this.mName = vDataNode.getElementsByTagName("name")[0].textContent;
@@ -218,21 +251,6 @@ function cWidgetObj(
 	
 	
 	
-	// -------------------------------------------------------------------------	
-	// local/temp variables
-	// -------------------------------------------------------------------------
-	this.mLocalThumbnailPath = "";
-	this.mPeerWidget = {
-		mID : null,
-		mHref : null
-	};
-	this.mNeTVCompatiable = false;
-	this.mEventLock = false;
-	this.mEnabled = true;
-	this.mUpdateInterval = 1;
-	this.mUpdateIntervalList = [15, 60, 300, 600, 1800, 3600];
-	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
-	this.mNeedAuth = false;
 }
 
 // -------------------------------------------------------------------------------------------------

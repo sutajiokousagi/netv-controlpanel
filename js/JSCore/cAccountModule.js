@@ -91,18 +91,30 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 	parser = new DOMParser();
 	vThis = this;
 	
-	if (vData.indexOf("unauthorized") > -1)
+	//~ fDbg("--------------------------");
+	//~ fDbg(vData);
+	//~ fDbg("--------------------------");
+	if (vData.indexOf("<chumby id=") > -1)
 	{
-		cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
-		cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
+		if (vData.indexOf("unauthorized") > -1)
+		{
+			cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
+			cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
+			
+			cChannelModule.fGetInstance().fSimulateDefaultChannels();
+			return;
+		}
+		cModel.fGetInstance().CHUMBY_AUTHORIZED = true;
+		xmlDoc = parser.parseFromString(vData, "text/xml");
+		cModel.fGetInstance().CHUMBY_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("name")[0].textContent;
+		vThis.fAuthenticateByDla(vReturnFun);
+	}
+	else
+	{
+		// server down, internet down, 
 		
-		cChannelModule.fGetInstance().fSimulateDefaultChannels();
 		return;
 	}
-	cModel.fGetInstance().CHUMBY_AUTHORIZED = true;
-	xmlDoc = parser.parseFromString(vData, "text/xml");
-	cModel.fGetInstance().CHUMBY_NAME = xmlDoc.getElementsByTagName("chumby")[0].getElementsByTagName("name")[0].textContent;
-	vThis.fAuthenticateByDla(vReturnFun);
 }
 
 // -------------------------------------------------------------------------------------------------

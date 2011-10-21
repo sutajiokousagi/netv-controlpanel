@@ -179,7 +179,7 @@ cJSCore.prototype.fStartUp = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cJSCore, fStartUp()");
+fDbg("*** cJSCore, fStartUp()");
 	var vThis;
 	vThis = this;
 	
@@ -220,7 +220,7 @@ cJSCore.prototype.fStartUpReturn = function(
 			
 			// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
 			cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
-				fDbg("fetching channel list complete... ...");
+				fDbg("*** fetching channel list (by user ID) complete... ...");
 				if (vReturnFun)
 					vReturnFun(vData);
 					
