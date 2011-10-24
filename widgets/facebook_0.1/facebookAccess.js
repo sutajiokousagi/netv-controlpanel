@@ -105,7 +105,8 @@ function processNewsFeed(data)
 
 	$('#result').append("<b>Data</b>" + msgTitle + "    " + msgBody + "    " + msgPic +  "<br />");
 
-	sendMsgToBridge(msgTitle, msgBody, msgPic);
+	if ('undefined' != msgBody)
+	    sendMsgToBridge(msgTitle, msgBody, msgPic);
     }
 }
 
