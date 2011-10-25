@@ -70,7 +70,7 @@ function waitingOAuth(code)
 function processOAuthData(vData, url) 
 {
     var jsonDoc = $.xml2json(vData);
-	fDbg(JSON.stringify(jsonDoc));
+	//~ fDbg(JSON.stringify(jsonDoc));
     var jsonAuth = jQuery.parseJSON(jsonDoc["data"]["value"]);
     //console.log(JSON.stringify(jsonAuth));
     
@@ -83,7 +83,7 @@ function processOAuthData(vData, url)
 			
 		});
     } else {
-	fDbg(typeof jsonAuth["error"]);
+	//~ fDbg(typeof jsonAuth["error"]);
 	errMsg = jsonAuth["error"]["message"];
 	$('#result').append("<b>Auth Message: </b>" + errMsg + "<br />");
 	setTimeout(OAuthGain(url), 5000);
@@ -113,7 +113,7 @@ function saveAccessToken(access_token)
 		     data : "<facebook_access_token>"+access_token+"</facebook_access_token>"},
 		    function(vData) {
 			var jsonDoc = $.xml2json(vData);
-			fDbg(JSON.stringify(jsonDoc));
+			//~ fDbg(JSON.stringify(jsonDoc));
 			$('#result').append("<b>Access Token Saved: </b>" + JSON.stringify(jsonDoc) + "<br />");
 			getAccessTokenOAuthTrue();
 		    });
