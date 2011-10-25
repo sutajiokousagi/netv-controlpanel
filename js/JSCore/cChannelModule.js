@@ -441,6 +441,7 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 			{
 				if (vReturnFun)
 					vReturnFun();
+fDbg("preloading images complete...");
 				return;
 			}
 			fLoadTN();

@@ -113,6 +113,8 @@ cCPanel.prototype.fInit = function(
 	
 	// load other js classes
 	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
+	
+	vThis.mLocked = true;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -233,7 +235,7 @@ fDbg("*** cCPanel, fStartUp()");
 		// signal CPanel
 		vThis.fOnSignal(cConst.SIGNAL_STARTUP_INIT);
 	}
-
+	
 	/*
 	cProxy.fLoadModelData(function() {
 		//~ fDbg("load model data complete!");
@@ -261,85 +263,92 @@ cCPanel.prototype.fOnSignal = function(
 	//Prevent error when this is called too early by browser
 	if (!cConst)
 		return;
-
+	
 	// =========================================================================
 	// JavaScript Injection Signals
 	// ==========================================================================
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
+		if (vThis.mLocked == true)									// locked
+		{
+			return;
+		}
+		
 		cModuleChromaBg.fGetInstance().fRefreshScreen();
 		if (cModuleInput.fGetInstance().mIsActive)
-		{
 			cModuleInput.fGetInstance().fHide();
-		}
 		vThis.mUserFirstButtonPress = true;
 		switch (vThis.mState)
 		{
 		case "controlpanel":
+			fDbg("--------------------------------------------------->>> " + "1");
+			vThis.mLocked = true;
 			cSPChannels.fGetInstance().fEndAuth();
 			vThis.fAnimateOutControlPanel(function() {
 				cModuleEventTicker.fGetInstance().pEnabled(true);
-				
 				cModuleEventTicker.fGetInstance().fEndStampEvent();
-				//~ cModuleWE.fGetInstance().pCurrChannel(cModel.fGetInstance().CHANNEL_LIST[0]);
 				cModuleWE.fGetInstance().fPlay();
 				
 				cModuleEventTicker.fGetInstance().fReset();
-				cModuleEventTicker.fGetInstance().fAnimateIn();
+				cModuleEventTicker.fGetInstance().fAnimateIn(function() {
+					// release lock
+					vThis.mLocked = false;
+				});
 			});
 			vThis.pState("event");
 			break;
 			
 		case "event":
+			fDbg("--------------------------------------------------->>> " + "event");
 			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
 			break;
-
+			
 		case "empty":
+			fDbg("--------------------------------------------------->>> " + "empty");
 			vThis.fOnSignal(cConst.SIGNAL_GOTO_CONTROLPANEL, null, null);
 			break;
 		}
 		break;
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
-		if (cModuleInput.fGetInstance().mIsActive)
-		{
-			cModuleInput.fGetInstance().fHide();
-		}
-		vThis.mUserFirstButtonPress = true;
-		if (cCPanel.instance.mLocked == true)									// release lock
+		if (vThis.mLocked == true)									// locked
 			return;
-		cCPanel.instance.mLocked = true;
+			
+		if (cModuleInput.fGetInstance().mIsActive)
+			cModuleInput.fGetInstance().fHide();
+		vThis.mUserFirstButtonPress = true;
 		switch (vThis.mState)
 		{
 		case "controlpanel":
-			cCPanel.instance.mLocked = false;
+			vThis.mLocked = false;
 			break;
-
 		case "event":
+			vThis.mLocked = true;
 			cModuleEventTicker.fGetInstance().fAnimateOut(function() {
 				vThis.pState("empty");
 				cModuleEventTicker.fGetInstance().pEnabled(false);
+				vThis.mLocked = false;
 			});
-			cCPanel.instance.mLocked = false;
 			break;
-			
+		
 		case "empty":
 			switch (vThis.mPrevState)
 			{
 			case "event":
+				vThis.mLocked = true;
 				cModuleEventTicker.fGetInstance().pEnabled(true);
 				cModuleEventTicker.fGetInstance().fAnimateIn(function() {
 					vThis.pState("event");
+					vThis.mLocked = false;
 				});
 				break;
 			}
-			cCPanel.instance.mLocked = false;
 			break;
 			
 		case "widgetengine":
-			cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
-			cCPanel.instance.mLocked = false;
+			//~ cModuleWE.fGetInstance().fOnSignal(vSignal, vData, vReturnFun);
+			//~ cCPanel.instance.mLocked = false;
 			break;
 		}
 		break;

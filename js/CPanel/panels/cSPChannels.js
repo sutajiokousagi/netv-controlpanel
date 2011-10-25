@@ -21,7 +21,7 @@ function cSPChannels(
 		mWidgetListRow: 3,
 		mWidgetListColumn: 6
 	};
-
+	
 	// div elements
 	this.mDivIndicator = null;
 	
@@ -60,7 +60,6 @@ function cSPChannels(
 	cSPChannels.MODE_WIDGETCONFIG = "mode_widgetconfig";
 	cSPChannels.MODE_WIDGETAUTH = "mode_widgetauth";
 	cSPChannels.MODE_INPUT = "mode_input";
-	
 	
 	this.mCurrWidgetConfigurable = false;
 

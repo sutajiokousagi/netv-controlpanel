@@ -198,6 +198,7 @@ fDbg("*** cJSCore, fStartUp()");
 		}
 		else
 		{
+			cCPanel.fGetInstance().mLocked = false;
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED);
 		}
 	});
@@ -226,6 +227,7 @@ cJSCore.prototype.fStartUpReturn = function(
 					
 				// all DONE!!! START!!!!!
 				//~ fDbg("all done");
+				cCPanel.fGetInstance().mLocked = false;
 				vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
 			});
 			
