@@ -33,10 +33,9 @@ function cModuleEventTicker(
 	this.mTimeIntervalFrequency = 20;
 	
 	
-	
 	// ------------------------- DIVs
 	this.mDivTickerMini = null;
-
+	
 	
 	// ------------------------- timer
 	this.mTimer = null;
@@ -46,7 +45,7 @@ function cModuleEventTicker(
 	this.mCounterStampClockOrigin = null;
 	this.mTimeSpanStamp = 0;
 	this.mTimeSpanConfigModeOn = 0;
-
+	
 	
 	// main ticker event 
 	this.mEventList = [];					// [[ID, [message, title, image], displaycount], [...], [...], ...]
@@ -94,7 +93,7 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 	var vThis;
 	vThis = this;
 
-
+	
 	cProxy.fGetParams("eventtickerstyledata", function(vData) {
 		//~ fDbg(vData);
 		if (!vData || vData == "")
@@ -110,10 +109,12 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 	this.mTimer = setInterval(function() {
 		mCounterStampClockOrigin = 0;
 		vThis.fOnSignal("timerinterval", null, null);
+	
 	}, vThis.mTimeIntervalFrequency);
 	this.fReset();
 
 	vThis.pEnabled(true);
+	vThis.fAnimateIn();
 	vThis.fAnimateIn();
 	vThis.mEnabled = true;
 }

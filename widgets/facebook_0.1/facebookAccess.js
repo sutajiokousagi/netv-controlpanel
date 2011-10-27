@@ -2,16 +2,16 @@
 
 function getAccessTokenOAuthFalse()
 {
-fDbg("*** getAccessTokenOAuthFalse()");
+//~ fDbg("*** getAccessTokenOAuthFalse()");
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
 		     data : "<value>facebook_access_token</value>"},
 		    function(vData) {
-			fDbg(vData);
+			//~ fDbg(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
-			fDbg("Access Token: " + access_token);
+			//~ fDbg("Access Token: " + access_token);
 			
 			if ("" != access_token)
 			{
@@ -30,16 +30,16 @@ fDbg("*** getAccessTokenOAuthFalse()");
 
 function getAccessTokenOAuthTrue()
 {
-fDbg("*** getAccessTokenOAuthTrue()");    
+//~ fDbg("*** getAccessTokenOAuthTrue()");    
     fXMLHttpRequest(vBridgePath,
 		    "post",
 		    {cmd : "GetParam",
 		     data : "<value>facebook_access_token</value>"},
 		    function(vData) {
-			fDbg(vData);
+			//~ fDbg(vData);
 			var jsonDoc = $.xml2json(vData);
 			var access_token = jsonDoc["data"]["value"];
-			fDbg("Access Token: " + access_token);
+			//~ fDbg("Access Token: " + access_token);
 			
 			//~ access_token = "";
 			if ("" != access_token)
@@ -78,7 +78,7 @@ function accessFacebook(access_token)
     	'https://graph.facebook.com/me/home?access_token='+access_token+'&callback=?',
     	function(data)
     	{
-	    fDbg(JSON.stringify(data));
+	    //~ fDbg(JSON.stringify(data));
 	    if (!data["data"])
 	    {
 		startOAuth();
