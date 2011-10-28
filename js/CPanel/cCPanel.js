@@ -117,7 +117,7 @@ cCPanel.prototype.fInit = function(
 	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
 	
 	vThis.mLocked = false;
-	vThis.mGearBtnLocked = true;
+	vThis.mGearBtnLocked = false;
 	vThis.mChumbyBtnLocked = false;
 }
 

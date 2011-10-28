@@ -193,7 +193,6 @@ fDbg("*** cJSCore, fStartUp()");
 			// cast some fake data for testing
 			if (!cJSCore.kProductionMode)
 				vThis.fSimulateTestingData();
-			
 			vThis.fStartUpReturn(vReturnFun);
 		}
 		else
