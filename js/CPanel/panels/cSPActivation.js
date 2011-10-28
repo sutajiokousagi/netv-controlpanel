@@ -84,6 +84,7 @@ cSPActivation.prototype.pViewMode = function(
 	vViewMode
 )
 {
+fDbg("*** cSPActivation, pViewMode(), " + vViewMode);
 	var vThis;
 	vThis = this;
 

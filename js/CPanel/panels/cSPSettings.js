@@ -257,6 +257,7 @@ cSPSettings.prototype.fOnSignal = function(
 						$(vThis.mDivToggleSSH.children()[0]).hide();
 						$(vThis.mDivToggleSSH.children()[1]).hide();
 						$(vThis.mDivToggleSSH.children()[2]).show();
+						cModuleToast.fGetInstance().fToast("SSH Enabled Successfully.", "message", {color: "#00FF00"});
 					});
 				}
 				break;

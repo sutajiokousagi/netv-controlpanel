@@ -77,6 +77,7 @@ cAccountModule.prototype.fCheckAuthorization = function(
 	var vThis;
 	vThis = this;
 	
+	//~ cModel.fGetInstance().CHUMBY_GUID = "12345";		// simulate a fake ID to get a "unzuthorized" chumby
 	cDevice.fGetInstance().fCheckAuthorization(cModel.fGetInstance().CHUMBY_GUID, function(vData) {
 		vThis.fCheckAuthorizationReturn(vData, vReturnFun);
 	});
@@ -94,13 +95,12 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 	//~ fDbg("--------------------------");
 	//~ fDbg(vData);
 	//~ fDbg("--------------------------");
-	if (vData.indexOf("<chumby id=") > -1)
+	if (vData.indexOf("<chumby") > -1)
 	{
 		if (vData.indexOf("unauthorized") > -1)
 		{
 			cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
 			cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
-			
 			cChannelModule.fGetInstance().fSimulateDefaultChannels();
 			return;
 		}
