@@ -104,6 +104,8 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 			cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
 			cChannelModule.fGetInstance().fSimulateDefaultChannels();
 			cProxy.fClearDeviceData("unauthorized");
+			cCPanel.fGetInstance().mLocked = false;
+			cCPanel.fGetInstance().mGearBtnLocked = false;
 			return;
 		}
 		cModel.fGetInstance().CHUMBY_AUTHORIZED = true;

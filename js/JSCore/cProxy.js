@@ -167,7 +167,7 @@ fDbg("*** cProxy, fCPanelInfoPanelUpdate(), ");
  *	save / read external file
  * -----------------------------------------------------------------------------------------------*/
 // -------------------------------------------------------------------------------------------------
-//	get/post calls
+//	fSaveFile / fReadFile
 // -------------------------------------------------------------------------------------------------
 cProxy.fSaveFile = function(
 	vFileName,
@@ -181,10 +181,6 @@ cProxy.fSaveFile = function(
 	});
 }
 
-
-// -------------------------------------------------------------------------------------------------
-//	get/post calls
-// -------------------------------------------------------------------------------------------------
 cProxy.fReadFile = function(
 	vFileName,
 	vReturnFun
@@ -198,8 +194,6 @@ cProxy.fReadFile = function(
 			vReturnFun(vData);
 	});
 }
-
-
 
 // -------------------------------------------------------------------------------------------------
 //	get/post calls
@@ -261,7 +255,7 @@ cProxy.fSaveParams = function(
 }
 
 // -------------------------------------------------------------------------------------------------
-//	pLoadModelData
+//	pLoadModelData / fSaveModelData
 // -------------------------------------------------------------------------------------------------
 cProxy.fLoadModelData = function(
 	vReturnFun
@@ -292,6 +286,26 @@ fDbg("cProxy, fSaveModelData(), ");
 
 	cProxy.fSaveParams("cpanel_cmodel", o);
 }
+
+// -------------------------------------------------------------------------------------------------
+//	cProxy
+// -------------------------------------------------------------------------------------------------
+cProxy.fClearDeviceData = function(
+	v
+)
+{
+fDbg("cProxy, fClearDeviceData, ");
+	switch (v)
+	{
+	case "unauthorized":
+		cProxy.fSaveParams("cpanel_cmodel", "");
+		cProxy.fSaveParams("facebook_access_token", "");
+		break;
+	case "all":
+		break;
+	}
+}
+
 
 
 
