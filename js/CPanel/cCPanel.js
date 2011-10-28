@@ -40,6 +40,8 @@ function cCPanel(
 	this.JSCORE = null;
 
 	this.mLocked = false;
+	this.mGearBtnLocked = false;
+	this.mChumbyBtnLocked = false;
 
 	// widget playing
 	this.mCurrWidget = null;
@@ -114,7 +116,9 @@ cCPanel.prototype.fInit = function(
 	// load other js classes
 	fLoadExtJSScript(kCPanelStatic.mPluginClassList, vReturnFun);
 	
-	vThis.mLocked = true;
+	vThis.mLocked = false;
+	vThis.mGearBtnLocked = true;
+	vThis.mChumbyBtnLocked = false;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -132,9 +136,8 @@ cCPanel.prototype.fResize = function(
 //~ fDbg("this.mEnableResize == true  : " + (vThis.mEnableResize == true));
 //~ fDbg("========================================");
 if (vThis.mEnableResize == false)
-{
 	return;
-}
+	
 	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
 		return;
 
@@ -163,6 +166,7 @@ if (vThis.mEnableResize == false)
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleWE.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleInput.fGetInstance().fResize(vThis.mViewPortSize);
+	
 	// resize panels
 	
 	//~ cPMain.fResize(vThis.mViewPortSize);
@@ -268,6 +272,8 @@ cCPanel.prototype.fOnSignal = function(
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
 		if (vThis.mLocked == true)									// locked
 			return;
+		if (vThis.mGearBtnLocked == true)
+			return;
 		
 		cModuleChromaBg.fGetInstance().fRefreshScreen();
 		if (cModuleInput.fGetInstance().mIsActive)
@@ -301,6 +307,8 @@ cCPanel.prototype.fOnSignal = function(
 		
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
 		if (vThis.mLocked == true)									// locked
+			return;
+		if (vThis.mChumbyBtnLocked == true)
 			return;
 			
 		if (cModuleInput.fGetInstance().mIsActive)

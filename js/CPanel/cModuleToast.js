@@ -95,8 +95,9 @@ cModuleToast.prototype.fToast = function(
 )
 {
 fDbg("*** cModuleToast, fToast(), " + vMsg + ", " + vType);
-	var vThis;
+	var vThis, vT;
 	vThis = this;
+	vT = 3000;
 	
 	$("#div_toast_content").html(vMsg);
 	if (!vType || vType == "warning")
@@ -104,17 +105,18 @@ fDbg("*** cModuleToast, fToast(), " + vMsg + ", " + vType);
 		$("#div_toast_content").css("background-color", "#FF4444");
 		$("#div_toast_content").css("color", "#FFFFFF");
 		$("#div_toast_content").css("font-size", "24px");
+		vT = 5000;
 	}
 	else if (vType = "message")
 	{
 		$("#div_toast_content").css("background-color", "#333333");
 		$("#div_toast_content").css("color", "#FFFFFF");
 		$("#div_toast_content").css("font-size", "24px");
+		vT = 3000;
 	}
+	
 	if (vCSSObj)
-	{
 		$("#div_toast_content").css(vCSSObj);
-	}
 
 	
 	
@@ -128,7 +130,7 @@ fDbg("*** cModuleToast, fToast(), " + vMsg + ", " + vType);
 				top : "-100px"
 			}, 200, function() {
 			});
-		}, 3000);
+		}, vT);
 
 	});
 	
