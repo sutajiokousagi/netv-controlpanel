@@ -84,6 +84,7 @@ cSPActivation.prototype.pViewMode = function(
 	vViewMode
 )
 {
+fDbg("*** cSPActivation, pViewMode(), " + vViewMode);
 	var vThis;
 	vThis = this;
 
@@ -279,10 +280,10 @@ cSPActivation.prototype.fOnSignal = function(
 				{
 					cModuleToast.fGetInstance().fToast("Activation Successful!", "message", {color: "#00FF00"});
 					vThis.pViewMode(cSPActivation.VIEWMODE_DEACTIVATE);
+					cProxy.fClearDeviceData("unauthorized");
 				}
 				else
 				{
-					fDbg(vData);
 					if (vData.indexOf("Account not verified") > -1)
 						cModuleToast.fGetInstance().fToast("Activation Failed! <br/> Username and password mismatch.", "message", {color: "#FF0000"});
 					else if (vData.indexOf("Missing user") > -1)
@@ -298,6 +299,7 @@ cSPActivation.prototype.fOnSignal = function(
 				{
 					cModuleToast.fGetInstance().fToast("Deactivation Successful!", "message", {color: "#00FF00"});
 					vThis.pViewMode(cSPActivation.VIEWMODE_ACTIVATE_BACK);
+					cProxy.fClearDeviceData("unauthorized");
 				}
 			});
 			break;

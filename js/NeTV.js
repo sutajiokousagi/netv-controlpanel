@@ -17,6 +17,10 @@ var keyPressedArray = new Array();
 // -------------------------------------------------------------------------------------------------
 function fOnLoad()  {
 	fDbg("fOnLoad()");
+	
+	// -------- remove layerX and layerY --------
+    // ------------------------------------------
+	
 	keyboard_init();
 	fCheckForRedirection();
 	
@@ -37,21 +41,23 @@ function fOnLoad()  {
 		mCPanel.fInit(function() { mCPanel.fStartUp(); });
 	}, 100);
 	
+	// TODO : make up a input textfield and kept it in focus, capture the keydown stroke within that input textfield
 	// Native keyboard events
 	$(document).keydown(function(event)
 	{
+		fDbg(event.which);
 		var keycode = event.which;
 		var isRepeat = (keyPressedArray[""+keycode] == true) ? true : false;
 		keyPressedArray[""+keycode] = true;
 		
-		event.preventDefault();
-		if (keycode == 37)			fButtonPress('left',1,isRepeat);
-		else if (keycode == 39)		fButtonPress('right',1,isRepeat);
-		else if (keycode == 38)		fButtonPress('up',1,isRepeat);	
-		else if (keycode == 40)		fButtonPress('down',1,isRepeat);
-		else if (keycode == 13)		fButtonPress('center',1,isRepeat);
-		else if (keycode == 33)		fButtonPress('cpanel',1,isRepeat);
-		else if (keycode == 34)		fButtonPress('widget',1,isRepeat);
+		//event.preventDefault();
+		if (keycode == 37)			fButtonPress('left', 1, isRepeat);
+		else if (keycode == 39)		fButtonPress('right', 1, isRepeat);
+		else if (keycode == 38)		fButtonPress('up', 1, isRepeat);	
+		else if (keycode == 40)		fButtonPress('down', 1, isRepeat);
+		else if (keycode == 13)		fButtonPress('center', 1, isRepeat);
+		else if (keycode == 33)		fButtonPress('cpanel', 1, isRepeat);
+		else if (keycode == 34)		fButtonPress('widget', 1, isRepeat);
 		return true;
 	});
 	

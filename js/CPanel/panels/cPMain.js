@@ -21,6 +21,8 @@ function cPMain(
 	this.mCurrSelection = 0;
 	this.mViewPortSize = [1280, 720];
 	
+	this.mLocked = false;
+	
 	this.fInit();
 }
 
@@ -96,6 +98,9 @@ cPMain.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_LEFT:
+		if (vThis.mLocked)
+			return;
+			
 		var vCurrSelected, vNewSelected, vTitleDivList;
 		o = $("#div_cpanelMain #item_images");
 		for (i = 0; i < o.children().length; i++)
@@ -110,15 +115,14 @@ cPMain.prototype.fOnSignal = function(
 		$(o.children()[vCurrSelected]).fadeOut(150, function() {
 			$(o.children()[vNewSelected]).fadeIn(150);
 		});
-
-
 		
 		p = $("#div_cpanelMain #subnavi");
 		q = ((800 - parseInt($(p.children()[vNewSelected]).css("width").split("px")[0])) / 2 - (parseInt($(p.children()[vNewSelected]).css("left").split("px")[0])));
+		vThis.mLocked = true;
 		$("#div_cpanelMain #subnavi").animate({
 			left: q + "px"
 		}, 600, function() {
-			
+			vThis.mLocked = false;
 		});
 		
 		p = $("#div_cpanelMain #subnavi");
@@ -139,6 +143,9 @@ cPMain.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+		if (vThis.mLocked)
+			return;
+	
 		var vCurrSelected, vNewSelected, vTitleDivList;
 		o = $("#div_cpanelMain #item_images");
 		for (i = 0; i < o.children().length; i++)
@@ -156,10 +163,13 @@ cPMain.prototype.fOnSignal = function(
 		
 		p = $("#div_cpanelMain #subnavi");
 		q = ((800 - parseInt($(p.children()[vNewSelected]).css("width").split("px")[0])) / 2 - (parseInt($(p.children()[vNewSelected]).css("left").split("px")[0])));
+		
+		
+		vThis.mLocked = true;
 		$("#div_cpanelMain #subnavi").animate({
 			left: q + "px"
 		}, 600, function() {
-			
+			vThis.mLocked = false;
 		});
 
 		p = $("#div_cpanelMain #subnavi");

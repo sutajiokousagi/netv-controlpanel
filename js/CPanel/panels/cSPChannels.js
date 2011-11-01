@@ -44,13 +44,12 @@ function cSPChannels(
 	
 	this.mDivSubNaviContent = null;
 	this.mDivBack = null;
-
+	
 	// div variables
 	this.mPrevSelection = null;
 	this.mSelection = null;
 	this.mSelectedChannelN = null;
 	this.mSelectedWidgetN = null;
-	
 
 	this.mMode = null; 		// null (default) | mode_channel | mode_widget
 	this.mPrevMode = null;
@@ -62,7 +61,9 @@ function cSPChannels(
 	cSPChannels.MODE_INPUT = "mode_input";
 	
 	this.mCurrWidgetConfigurable = false;
-
+	
+	
+	this.mLocked = false;
 
 	// fInit();
 	this.fInit();
@@ -338,7 +339,7 @@ cSPChannels.prototype.fOnSignal = function(
 									o = i;
 									break;
 								}
-							o = o - 1;												
+							o = o - 1;								
 							for (i = 0; i < j; i++)
 								if (i == o)
 									$($("#div_channelMain_pageindicator").children()[i]).css("opacity", 1);
@@ -408,16 +409,13 @@ cSPChannels.prototype.fOnSignal = function(
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
 				o.pEnabled(true);
 				$($(vThis.mSelection.children()[1]).children()[1]).html("YES");
-				
 				$(vThis.mDivWidgetList[vThis.mSelectedWidgetN].children()[1]).children("img").attr("src", "./images/tick_32.png");
-				
 				cProxy.fSaveModelData();
 				break;
 			case "updateinterval":
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
 				if (o.mUpdateInterval > 0)
 					o.mUpdateInterval--;
-				
 				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
@@ -428,6 +426,8 @@ cSPChannels.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
+		if (vThis.mLocked)
+			return;
 		switch (vThis.mMode)
 		{
 		case cSPChannels.MODE_DEFAULT:
@@ -455,6 +455,8 @@ cSPChannels.prototype.fOnSignal = function(
 						
 						if (!j)
 							return;
+							
+						vThis.mLocked = true;
 						$("#div_channelMain_channelThumbnail_container").animate({
 							left: "-=800px"
 						}, 300, function() {
@@ -980,6 +982,7 @@ cSPChannels.prototype.fRenderChannelList = function(
 			vLeft = (i % 8 % 4 * 180 + 70 + (i - i % 8) / 8 * 800);
 			vTop = i % 8 < 4 ? 160 : 335;
 			o += '<div id="div_channelMain_channelThumbnail_' + i + '_container" style="position: absolute; top: ' + vTop + 'px; left: ' + vLeft + 'px; width: 120px; height: 120px; color: #FFFFFF; opacity: ' + (i == 0 ? 1 : 0.2) + '; ' + p + '">';
+				//~ o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 120px; height: 120px; background: #6598EB; border-radius: 10px;"></div>';
 				o += '<div id="channelThumbnail_' + i + '_title" style="position: absolute; top: 10px; left: 0px; width: 120px; font-size: 15px; font-weight: bold; text-align: center; color: #FFFFFF; text-shadow: #000000 2px 2px 2px;">' + vChannelList[i].mName + '</div>';
 				o += '<div id="channelThumbnail_' + i + '_container" style="position: absolute; top: 40px; left: 10px; border: solid #FFFFFF 0px; width: 100px; height: 82px;">';
 				vLen = vChannelList[i].mWidgetList.length < 4 ? vChannelList[i].mWidgetList.length : 4;
@@ -1011,10 +1014,6 @@ cSPChannels.prototype.fRenderChannelList = function(
 			o += '<div style="position: absolute; top: 0px; left: ' + ((800 - (vCircleW + vCircleGap) * (j - 1) + vCircleW) / 2 + (vCircleW + vCircleGap) * i) + 'px; width: ' + vCircleW + 'px; height: ' + vCircleW + 'px; background-color: #CCCCCC; border-radius: ' + (vCircleW / 2) + 'px;"></div>';
 		o += '</div>';
 		vDiv.html(o);
-		
-		
-		
-		
 		
 		for (i = 0; i < j; i++)
 			if (i == 0)

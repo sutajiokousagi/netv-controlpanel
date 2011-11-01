@@ -26,10 +26,8 @@ function cModuleWE(
 	this.mCurrWE = null;				// cWEHtml | cWEFlash     (cModuleEventTicker will depends on the mCurrChannel.mPlayMode)
 	this.mCurrPlayStatus = null;		// null(stopped) | playing | hidden | paused
 	
-	
 	// main status
 	this.mViewPortSize = [];
-	
 	
 	// initialize
 	this.fInit();
@@ -135,39 +133,24 @@ cModuleWE.prototype.fOnSignal = function(
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
-		/*
-		if (cCPanel.instance.mLocked == true)
-			return;
-		cCPanel.instance.mLocked = true;
-		*/
 		cModuleEventTicker.fAnimateOut();
 		if (vThis.mCurrWE)
-		{
 			if (vThis.mCurrPlayStatus == "playing")
 			{
 				if (cModel.fGetInstance().PLAYMODE == "default")
-				{
 					vThis.mCurrWE.fAnimateOut();
-				}
 				else 	// "event"
-				{
 					cModuleEventTicker.fGetInstance().fAnimateOut();
-				}
 				vThis.mCurrPlayStatus = "hidden";
 			}
 			else if (vThis.mCurrPlayStatus == "hidden")
 			{
 				if (cModel.fGetInstance().PLAYMODE == "default")
-				{
 					vThis.mCurrWE.fAnimateIn();
-				}
 				else 	// "event"
-				{
 					cModuleEventTicker.fGetInstance().fAnimateIn();
-				}
 				vThis.mCurrPlayStatus = "playing";
 			}
-		}
 	}
 	
 	switch(vSignal)

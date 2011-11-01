@@ -1052,19 +1052,16 @@ cModuleEventTicker.prototype.pConfigMode = function(
 		vThis.mDiv.css("border", "none");
 		o = vThis.mStyle;
 		o = JSON.stringify(o);
-		//~ fDbg(JSON.stringify(o));
 		cProxy.fSaveParams("eventtickerstyledata", o);
 		break;
-
+		
 	case "configmode1":
 		vThis.mDiv.css("border", "solid white 1px");
 		break;
-
+		
 	case "configmode2":
-		vThis.mDiv.css("border", "solid red 1px");
 		vThis.mDiv.css("border", "solid white 1px");
-		vThis.mDiv.css("border-left", "solid #22EE22 1px");
-		vThis.mDiv.css("border-right", "solid #22EE22 1px");
+		vThis.mDiv.css("border-left", "solid #22EE22 5px");
 		break;
 	}
 	vThis.mConfigMode = vMode;

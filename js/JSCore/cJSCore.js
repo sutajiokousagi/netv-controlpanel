@@ -193,12 +193,12 @@ fDbg("*** cJSCore, fStartUp()");
 			// cast some fake data for testing
 			if (!cJSCore.kProductionMode)
 				vThis.fSimulateTestingData();
-			
 			vThis.fStartUpReturn(vReturnFun);
 		}
 		else
 		{
 			cCPanel.fGetInstance().mLocked = false;
+			cCPanel.fGetInstance().mGearBtnLocked = false;
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_FAILED);
 		}
 	});
@@ -228,6 +228,7 @@ cJSCore.prototype.fStartUpReturn = function(
 				// all DONE!!! START!!!!!
 				//~ fDbg("all done");
 				cCPanel.fGetInstance().mLocked = false;
+				cCPanel.fGetInstance().mGearBtnLocked = false;
 				vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
 			});
 			
