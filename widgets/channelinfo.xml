@@ -15,15 +15,6 @@
 		</widget>
 		
 		
-		<widget>
-			<name>Twitter Search Widget 1</name>
-			<href>./widgets/twitter0.2/index.html</href>
-			<thumbnail>./widgets/twitter0.2/tn.png</thumbnail>
-			<contenttype>application/html</contenttype>
-			<parameters>
-				<parameter value="" name="keyword"/>
-			</parameters>
-		</widget>
 		
 		<!--
 		<widget>
@@ -36,6 +27,16 @@
 			<name>Twitter Search Widget 2</name>
 			<href>./widgets/twitter0.1/index.html</href>
 			<thumbnail>./widgets/twitter0.1/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+			<parameters>
+				<parameter value="" name="keyword"/>
+			</parameters>
+		</widget>
+		
+		<widget>
+			<name>Twitter Search Widget 1</name>
+			<href>./widgets/twitter0.2/index.html</href>
+			<thumbnail>./widgets/twitter0.2/tn.png</thumbnail>
 			<contenttype>application/html</contenttype>
 			<parameters>
 				<parameter value="" name="keyword"/>
