@@ -21,7 +21,7 @@ function getAccessTokenOAuthFalse()
 			else{
 			    $('#result').append("<b>No Access Token, Starting OAuth!</b>" +  "<br />");
 			    //startOAuth();
-			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please go to ControlPanel to config your facebook account!" +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
+			    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + "Please configure your Facebook settings from the control panel!" +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
 	      			// console.log(vData)
 			    });
 			}
