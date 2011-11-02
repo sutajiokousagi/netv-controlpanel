@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   
@@ -27,8 +28,8 @@
       var oauth_token = "";
       var oauth_token = "";
       
-      var username='erain';
-      var password='yiyu5678';
+      var username='';
+      var password='';
       //var oauth_token="17693738-z683uqiSo6ZlSU1Rt0H42iSyxQclAbyf6GrspPjLM";
       //var oauth_token_secret="BEH41DcqVxcRfXhFvLOXEfa1h40g1riUDmopHGyHuyI";
       //var oauth_token="372177612-DwKNP8LpldyNmUcHXtj1a3tFgvwNKZdpoGPL0XUr";
@@ -58,6 +59,19 @@
       	      if (p && p != "")
       		  auth = p;
       	  }
+	  if (o.split("username=").length > 1)
+      	  {
+      	      p = o.split("username=")[1].split("&")[0];
+      	      if (p && p != "")
+      		  username = p;
+      	  }
+      	  if (o.split("password=").length > 1)
+      	  {
+      	      p = o.split("password=")[1].split("&")[0];
+      	      if (p && p != "")
+      		  password = p;
+      	  }
+
       }
 
       
