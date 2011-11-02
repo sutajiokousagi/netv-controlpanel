@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+  <head>
+    <title>Twitter for NeTV</title>
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="json2.js"></script>
+    <script type="text/javascript" src="cMD5.js"></script>
+    <script type="text/javascript" src="fXML.js"></script>
+    <script type="text/javascript" src="jquery-ui.min.js"></script>
+    <script type="text/javascript" src="jquery.xml2json.js"></script>
+    <script type="text/javascript" src="sendMsgToBridge.js"></script>
+    <script type="text/javascript" src="twitterAccess.js"></script>
+    
+    <script type="text/javascript">
+
+      ///////////////////////////
+      // Some global variables
+      ///////////////////////////
+      var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
+
+      var consumer_secret='l9CtECQcBF13PHAcelZ7cQQJ6HujNd9vPlcdZ1DbTM';
+      var consumer_key='N5pKH4DvYjjurpULqsQovw';
+
+      var oauth_token = "";
+      var oauth_token = "";
+      
+      var username='erain';
+      var password='yiyu5678';
+      //var oauth_token="17693738-z683uqiSo6ZlSU1Rt0H42iSyxQclAbyf6GrspPjLM";
+      //var oauth_token_secret="BEH41DcqVxcRfXhFvLOXEfa1h40g1riUDmopHGyHuyI";
+      //var oauth_token="372177612-DwKNP8LpldyNmUcHXtj1a3tFgvwNKZdpoGPL0XUr";
+      //var oauth_token_secret="DoWtIbCyVz0P2s1xDbLBXMRS6ZeBgdQa1aXnsePsg";
+    
+
+      ////////////////////////
+      // For debug use
+      ////////////////////////
+      function fDbg(v)
+      {
+	  console.log("|~|" + v);
+      }
+      
+
+      //////////////////////////////////
+      // Are we inside the control panel?
+      ///////////////////////////////////
+      var auth = false;
+      var o, p;
+      o = location.href.split("?")[1];
+      if (o && o != "")
+      {
+      	  if (o.split("auth=").length > 1)
+      	  {
+      	      p = o.split("auth=")[1].split("&")[0];
+      	      if (p && p != "")
+      		  auth = p;
+      	  }
+      }
+
+      
+      $(function() {
+	  
+	  //fDbg("doing oauth? " + auth);
+	  	  
+	  if (false == auth)
+	      getAccessTokenOAuthFalse();
+	  else
+	      getAccessTokenOAuthTrue();
+
+	  // twitterXAuth(username, password, callBackFunc);
+	  // twitterAccess(oauth_token, oauth_token_secret);
+
+      });
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    <div id="result"></div>
+  </body>
+  
+</html>
