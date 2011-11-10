@@ -40,6 +40,14 @@ function cSPChannels(
 	this.mDivWidgetConfig = null;
 	this.mDivWidgetConfigList = null;
 	this.mDivWidgetAuth = null;
+	this.mDivWidgetAuthInput = null;
+	this.mDivWidgetAuthInput_Username = null;
+	this.mDivWidgetAuthInput_Username_Content = null;
+	this.mDivWidgetAuthInput_Password = null;
+	this.mDivWidgetAuthInput_Password_Content = null;
+	this.mDivWidgetAuthInput_OK = null;
+	this.mDivWidgetAuthInput_CANCEL = null;
+	
 	this.mDivInputPanel = null;
 	
 	this.mDivSubNaviContent = null;
@@ -58,6 +66,7 @@ function cSPChannels(
 	cSPChannels.MODE_WIDGETCONFIG_POPUP = "mode_widgetconfig_popup";
 	cSPChannels.MODE_WIDGETCONFIG = "mode_widgetconfig";
 	cSPChannels.MODE_WIDGETAUTH = "mode_widgetauth";
+	cSPChannels.MODE_WIDGETAUTH_INPUT = "mode_widgetauth_input";
 	cSPChannels.MODE_INPUT = "mode_input";
 	
 	this.mCurrWidgetConfigurable = false;
@@ -89,6 +98,18 @@ cSPChannels.prototype.fInit = function(
 	this.mDivWidgets = this.mDiv.children("#div_channelMain_widgets");
 	this.mDivWidgetConfig = this.mDiv.children("#div_channelMain_widgetconfig");
 	this.mDivWidgetAuth = this.mDiv.children("#div_channelMain_widgetauth");
+	this.mDivWidgetAuthInput = this.mDiv.children("#div_channelMain_widgetauth_input");
+	this.mDivWidgetAuthInput_Username = $(this.mDivWidgetAuthInput.children()[0]);
+	this.mDivWidgetAuthInput_Username.pIndicatorStyle = {width: "600px", height: "50px", left: "100px", top: "353px"};
+	this.mDivWidgetAuthInput_Username_Content = this.mDivWidgetAuthInput_Username.children("#input_username");
+	this.mDivWidgetAuthInput_Password = $(this.mDivWidgetAuthInput.children()[1]);
+	this.mDivWidgetAuthInput_Password.pIndicatorStyle = {width: "600px", height: "50px", left: "100px", top: "413px"};
+	this.mDivWidgetAuthInput_Password_Content = this.mDivWidgetAuthInput_Password.children("#input_password");
+	this.mDivWidgetAuthInput_OK = this.mDivWidgetAuthInput.children("#input_OK");
+	this.mDivWidgetAuthInput_OK.pIndicatorStyle =  {width: "96px", height: "36px", top: "513px", left: "295px" };
+	this.mDivWidgetAuthInput_CANCEL = this.mDivWidgetAuthInput.children("#input_CANCEL");
+	this.mDivWidgetAuthInput_CANCEL.pIndicatorStyle =  {width: "96px", height: "36px", top: "513px", left: "415px" };
+	
 	this.mDivInputPanel = this.mDiv.children("#div_channelMain_inputpanel");
 	
 	this.mDivSubNaviContent = $(this.mDiv.children("#subnavi").children()[0]);
@@ -120,6 +141,9 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.hide();
 		vThis.mDivWidgetAuth.hide();
+		vThis.mDivWidgetAuthInput.hide();
+		vThis.mDivBack.show();
+		vThis.mDivBack.html("BACK");
 		
 		vThis.mDivSubNaviContent.html("Channels");
 		vThis.fRenderChannelList();
@@ -147,7 +171,10 @@ if (!vMode) return vThis.mMode;
 			vThis.mDivWidgets.show();
 			vThis.mDivWidgetConfig.hide();
 			vThis.mDivWidgetAuth.hide();
+			vThis.mDivWidgetAuthInput.hide();
 			vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mName);
+			vThis.mDivBack.show();
+			vThis.mDivBack.html("BACK");
 			
 			vThis.fRenderWidgetList(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN]);
 			vThis.mDivIndicator.css({
@@ -183,6 +210,9 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.show();
 		vThis.mDivWidgetAuth.hide();
+		vTHis.mDivWidgetAuthInput.hide();
+		vThis.mDivBack.show();
+		vThis.mDivBack.html("BACK");
 		
 		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN].mName);
 		
@@ -204,6 +234,9 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.hide();
 		vThis.mDivWidgetAuth.show();
+		vThis.mDivWidgetAuthInput.hide();
+		vThis.mDivBack.show();
+		vThis.mDivBack.html("BACK");
 		
 		vThis.mDivSubNaviContent.html(cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN].mName);
 		
@@ -211,6 +244,16 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivIndicator.css(vThis.mDivBack.pIndicatorStyle);
 		vThis.mDivBack.css("opacity", "1");
 		vThis.pSelection(vThis.mDivBack);
+		
+		vThis.mPrevMode = vThis.mMode;
+		vThis.mMode = vMode;
+		break;
+		
+	case cSPChannels.MODE_WIDGETAUTH_INPUT:
+		vThis.mDivWidgetAuthInput.show();
+		vThis.pSelection(vThis.mDivWidgetAuthInput_Username);
+		vThis.mDivBack.hide();
+		
 		
 		vThis.mPrevMode = vThis.mMode;
 		vThis.mMode = vMode;
@@ -244,7 +287,7 @@ cSPChannels.prototype.pSelection = function(
 	var vThis, o, p, i;
 	vThis = this;
 if (!vSelection) return vThis.mSelection;
-	
+	fDbg(1);
 	if (vThis.mMode == cSPChannels.MODE_WIDGETCONFIG_POPUP)
 	{
 		if (vThis.mSelection && vThis.mSelection.attr("id") && vThis.mSelection.attr("id").split("config_").length == 2)
@@ -262,7 +305,6 @@ if (!vSelection) return vThis.mSelection;
 		vThis.mSelection.css("opacity", "1");
 	vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
 	//~ vThis.mDivIndicator.css("opacity", "0.4");
-	
 	if (vThis.mSelection && vThis.mSelection.attr("id"))
 	{
 		o = vThis.mSelection.attr("id").split("widgettn_");
@@ -273,7 +315,6 @@ if (!vSelection) return vThis.mSelection;
 			vThis.fRenderWidgetSummary(vThis.mSelectedChannelN, vThis.mSelectedWidgetN);
 		}
 	}
-	
 	if (vThis.mDivWidgetList && vThis.mDivWidgetList.indexOf(vThis.mSelection) > -1)
 	{
 		o = vThis.mDivWidgetList.indexOf(vThis.mSelection);
@@ -284,9 +325,7 @@ if (!vSelection) return vThis.mSelection;
 			vThis.mDivIndicator.css("opacity", "1");
 	}
 	else
-	{
 		vThis.mDivIndicator.css("opacity", "1");
-	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -421,6 +460,10 @@ cSPChannels.prototype.fOnSignal = function(
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
 				break;
 			}
+			break;
+		case cSPChannels.MODE_WIDGETAUTH_INPUT:
+			if (vThis.pSelection() == vThis.mDivWidgetAuthInput_CANCEL)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_OK);
 			break;
 		}
 		break;
@@ -587,6 +630,10 @@ cSPChannels.prototype.fOnSignal = function(
 				break;
 			}
 			break;
+		case cSPChannels.MODE_WIDGETAUTH_INPUT:
+			if (vThis.pSelection() == vThis.mDivWidgetAuthInput_OK)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_CANCEL);
+			break;
 		}
 		break;
 		
@@ -681,6 +728,29 @@ cSPChannels.prototype.fOnSignal = function(
 			vThis.fEndAuth();
 			vThis.pMode(cSPChannels.MODE_WIDGETLIST);
 			break;
+		case cSPChannels.MODE_WIDGETAUTH_INPUT:
+			if (cModuleInput.fGetInstance().mIsActive)
+				return;
+			
+			switch (vThis.pSelection())
+			{
+			case vThis.mDivWidgetAuthInput_Username:
+				cModuleInput.fGetInstance().fShow();
+				cModuleInput.fGetInstance().fAssociate(vThis.mDivWidgetAuthInput_Username_Content, vThis.mDivWidgetAuthInput_Username_Content.html());
+				break;
+			case vThis.mDivWidgetAuthInput_Password:
+				cModuleInput.fGetInstance().fShow();
+				cModuleInput.fGetInstance().fAssociate(vThis.mDivWidgetAuthInput_Password_Content, vThis.mDivWidgetAuthInput_Password_Content.html());
+				break;
+			case vThis.mDivWidgetAuthInput_OK:
+				vThis.fInitAuth({username: vThis.mDivWidgetAuthInput_Username_Content.html(), password: vThis.mDivWidgetAuthInput_Password_Content.html()});
+				break;
+			case vThis.mDivWidgetAuthInput_CANCEL:
+				vThis.fEndAuth();
+				vThis.pMode(cSPChannels.MODE_WIDGETLIST);
+				break;
+			}
+			break;
 		}
 		break;
 		
@@ -755,6 +825,13 @@ cSPChannels.prototype.fOnSignal = function(
 			i = vThis.mDivConfigPopupList.indexOf(vThis.mSelection);
 			if (i > 0)
 				vThis.pSelection(vThis.mDivConfigPopupList[i - 1]);
+			break;
+			
+		case cSPChannels.MODE_WIDGETAUTH_INPUT:
+			if (vThis.pSelection() == vThis.mDivWidgetAuthInput_Password)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_Username, false, true);
+			else if (vThis.pSelection() == vThis.mDivBack)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_Password, false, true);
 			break;
 		}
 		break;
@@ -835,6 +912,13 @@ cSPChannels.prototype.fOnSignal = function(
 			if (i < o - 1)
 				vThis.pSelection(vThis.mDivConfigPopupList[i + 1]);
 			break;
+			
+		case cSPChannels.MODE_WIDGETAUTH_INPUT:
+			if (vThis.pSelection() == vThis.mDivWidgetAuthInput_Username)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_Password, false, true);
+			else if (vThis.pSelection() == vThis.mDivWidgetAuthInput_Password)
+				vThis.pSelection(vThis.mDivWidgetAuthInput_OK, false, true);
+			break;
 		}
 		break;
 		
@@ -847,10 +931,24 @@ cSPChannels.prototype.fOnSignal = function(
 		
 		
 	case cConst.SIGNAL_MESSAGE_WIDGETMSG:
-		fDbg("msg from widget : ");
-		fDbg(vData);
-		if (vThis.mMode == cSPChannels.MODE_WIDGETAUTH)
+		fDbg("msg from widget : " + vData);
+		
+		if (vThis.mMode != cSPChannels.MODE_WIDGETAUTH && vThis.mMode != cSPChannels.MODE_WIDGETAUTH_INPUT)
+			break;
+		
+		if (vData != "false")
+		{
+			fDbg(vThis.mMode + " = ? " + cSPChannels.MODE_WIDGETAUTH_INPUT);
+			if (vThis.mMode == cSPChannels.MODE_WIDGETAUTH_INPUT)
+			{
+				//~ vThis.pMode(cSPChannels.MODE_WIDGETAUTH);
+			}
 			vThis.fUpdateMessage(vData);
+		}
+		else
+		{
+			vThis.pMode(cSPChannels.MODE_WIDGETAUTH_INPUT);
+		}
 		break;
 	}
 }
@@ -1399,6 +1497,7 @@ cSPChannels.prototype.fRenderWidgetAuth = function(
 }
 
 cSPChannels.prototype.fInitAuth = function(
+	v
 )
 {
 fDbg("*** cSPChannels, fInitAuth(), ");
@@ -1410,8 +1509,13 @@ fDbg("*** cSPChannels, fInitAuth(), ");
 	if (vWidget.mParameterList)
 		for (o in vWidget.mParameterList)
 			p += o + "=" + vWidget.mParameterList[o] + "&";
+			
+	if (v)
+		for (o in v)
+			p += o + "=" + v[o] + "&";
 	
 	$("#div_tempWidgetPlayer").children("#iframe_tempWidgetPlayer").attr("src", vWidget.pPeerWidgetHref() + p + "auth=true");
+	fDbg("auth load : " + (vWidget.pPeerWidgetHref() + p + "auth=true"));
 }
 
 cSPChannels.prototype.fEndAuth = function(

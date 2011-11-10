@@ -4,16 +4,28 @@
 	<widgets>
 		
 		<widget>
+			<name>Twitter Widget 1</name>
+			<href>./widgets/twitter_0.3/index.html</href>
+			<thumbnail>./widgets/twitter_0.3/logo.png</thumbnail>
+			<contenttype>application/html</contenttype>
+			<needauth>true</needauth>
+			<parameters>
+				
+			</parameters>
+		</widget>
+		
+		<!--
+		<widget>
 			<name>Facebook Widget 1</name>
 			<href>./widgets/facebook_0.1/index.html</href>
 			<thumbnail>./widgets/facebook_0.1/logo.png</thumbnail>
 			<contenttype>application/html</contenttype>
 			<needauth>true</needauth>
 			<parameters>
-				<parameter value="" name="oauth_secret"/>
+				
 			</parameters>
 		</widget>
-		
+		-->
 		
 		
 		<!--

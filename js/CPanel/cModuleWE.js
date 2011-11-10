@@ -352,9 +352,7 @@ else if (vThis.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 
 
 	// decide if run this widget in iframe, according to this widget's UpdateInterval
-	fDbg("go play curr widget : " + vThis.pCurrWidget().mWidget.mMovie.mHref);
-	fDbg("curr time : " + new Date().getTime());
-	fDbg(vThis.mWidgetLockList);
+	fDbg("play widget: " + vThis.pCurrWidget().mWidget.mMovie.mHref.split("/")[2] + " |~| "); // + vThis.mWidgetLockList);
 	
 	for (i = 0; i < vThis.mWidgetLockList.length; i++)
 	{

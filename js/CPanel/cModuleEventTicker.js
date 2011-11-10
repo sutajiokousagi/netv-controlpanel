@@ -24,11 +24,14 @@ function cModuleEventTicker(
 	this.mStyle = {
 		mTickerWidth: 80,
 		mTickerHeight: 50,
-		mBottomOffset: 40,
 		mCrawlerHeight: 50,
 		mCrawlerWidth: 1160,
+		
+		mMessageDefaultDisplayN: 2,
+		
+		mViewPortSize: [0, 0],
 		mRightOffset: 60,
-		mMessageDefaultDisplayN: 2
+		mBottomOffset: 40
 	}
 	this.mTimeIntervalFrequency = 20;
 	
@@ -95,7 +98,7 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 
 	
 	cProxy.fGetParams("eventtickerstyledata", function(vData) {
-		//~ fDbg(vData);
+		fDbg("data : "+ vData);
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
@@ -126,24 +129,62 @@ cModuleEventTicker.prototype.fResize = function(
 	vViewPortSize
 )
 {
-fDbg("*** cModuleEventTicker, fResize(), ");
+fDbg("*** cModuleEventTicker, fResize(), " + this.mViewPortSize + " -> " + vViewPortSize);
+	var vThis, o, p, q, i;
+	vThis = this;
 	
-	var vThis = this;
-	vThis.mViewPortSize = vViewPortSize;
-
+	// before
+	if (vThis.mViewPortSize && vThis.mViewPortSize[1])
+	{
+		p = parseInt($("#div_eventWidgetPlayer_crawling").css("left"));		// x-coordinate of crawler
+		p = p / vThis.mViewPortSize[0];
+		
+		//~ fDbg(vThis.mViewPortSize[1] + " vs " + parseInt(vThis.mDiv.css("top")));
+		
+		if (parseInt(vThis.mDiv.css("top")) >= vThis.mViewPortSize[1])		// ok, it's in hidden mode
+			o = vViewPortSize[1] + (parseInt(vThis.mDiv.css("top")) - vThis.mViewPortSize[1]);
+		else if (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("top")) > vThis.mViewPortSize[1] / 2)		// ok, it's at the upper part/region of the page
+			o = parseInt(vThis.mDiv.css("top"));
+		else  				// it's at the bottom part/region of the page
+			o = vViewPortSize[1] - (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("top")));
+	}
+	
+	// check if upper or lower region
+	q = (parseInt(vThis.mDiv.css("top")) < (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("height"))) / 2) ? false : true;
+	fDbg("right : " + vThis.mStyle.mRightOffset);
+	fDbg("bottom : " + vThis.mStyle.mBottomOffset + " at lower region? - " + 1);
+	q = parseInt(vThis.mDiv.css("top")) / vThis.mViewPortSize[1];
+	fDbg("pos percentage : " + q);
+	
+	
+	// update
+	vThis.mViewPortSize = [vViewPortSize[0], vViewPortSize[1]];
+	vThis.mStyle.mViewPortSize = vThis.mViewPortSize;
+	
+	// after
+	fDbg("===============+>>> " + o);
+	vThis.mDiv.css("top", o);
+	
+	q = parseInt(q * vThis.mViewPortSize[1] / 10);
+	fDbg("+++++++++++++++=>>> " + q);
+	
+	
 	vThis.mDiv.css("width", vViewPortSize[0] - 120);
 	$("#div_eventWidgetPlayer_mini").css("left", vViewPortSize[0] - 200);
-	$("#div_eventWidgetPlayer_crawling").css("left", vViewPortSize[0]);
+	$("#div_eventWidgetPlayer_crawling").css("left", vViewPortSize[0] * p);
 	$("#div_eventWidgetPlayer_crawling").css("width", vViewPortSize[0] - 201);
-
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[0]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
-	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px")
-
-	fDbg(vViewPortSize);
-
-	// check the current pos of the div and move to relative pos.
-
-	//~ if (this.mDiv.css("top")
+	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
+	
+	fDbg("+++++++++++++++++>>>>>>>>>>>>>. " + vThis.mStyle.mBottomOffset);
+	//~ vThis.mStyle.mBottomOffset = vThis.mViewPortSize[1] - (parseInt($("#div_eventWidgetPlayer_crawling").css("top")) + 50);
+	
+	
+	// TODO : save parameter to local storage
+	if (vThis.mStyle.mBottomOffset < 510)
+	{
+		
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -164,6 +205,90 @@ if (!vState) return vThis.mState;
 	vThis.mState = vState;
 }
 
+// -------------------------------------------------------------------------------------------------
+//	pConfigMode
+// -------------------------------------------------------------------------------------------------
+cModuleEventTicker.prototype.pConfigMode = function(
+	vMode
+)
+{
+	var vThis;
+	vThis = this;
+	
+if (!vMode)
+	return vThis.mConfigMode;	
+if (vMode == vThis.mConfigMode)
+	return;
+		
+	switch (vMode)
+	{
+	case "default":
+		vThis.mDiv.css("border", "none");
+		o = vThis.mStyle;
+		o = JSON.stringify(o);
+		fDbg("save data : " + o);
+		cProxy.fSaveParams("eventtickerstyledata", o);
+		break;
+		
+	case "configmode1":
+		vThis.mDiv.css("border", "solid white 1px");
+		break;
+		
+	case "configmode2":
+		vThis.mDiv.css("border", "solid white 1px");
+		vThis.mDiv.css("border-left", "solid #22EE22 5px");
+		break;
+	}
+	vThis.mConfigMode = vMode;
+}
+
+// -------------------------------------------------------------------------------------------------
+//	pPos
+// -------------------------------------------------------------------------------------------------
+cModuleEventTicker.prototype.pPos = function(
+	vPos		// {top: ...px; height: ...px}
+)
+{
+	var vThis, o;
+	vThis = this;
+if (!vPos) return vThis.mPos;
+	
+	// update positions
+	if (vPos.top)
+	{
+		vThis.mDiv.css("top", vPos.top);
+	}
+	
+	if (vPos.left)
+	{
+		vThis.mDiv.css("left", vPos.left);
+	}
+	
+	if (vPos.width)
+	{
+		vThis.mDiv.css("width", vPos.width);
+	}
+	
+	if (vPos.height)
+	{
+		vThis.mDiv.css("height", vPos.height);
+	}
+	
+	if (vPos.mBottomOffSet)
+	{
+		vThis.mDiv.css("top", vThis.mViewPortSize[1] - vPos.mBottomOffSet - parseInt(vThis.mDiv.css("height")));
+	}
+	
+	// update mStyle
+	if (vThis.mViewPortSize[0] && vThis.mViewPortSize[1])
+	{
+		vThis.mStyle.mRightOffset = vThis.mViewPortSize[0] - (parseInt(vThis.mDiv.css("left")) + parseInt(vThis.mDiv.css("width")));
+		vThis.mStyle.mBottomOffset = vThis.mViewPortSize[1] - (parseInt(vThis.mDiv.css("top")) + parseInt(vThis.mDiv.css("height")));
+	}
+	
+	
+}
+
 /** -------------------------------------------------------------------------------------------------
 	fOnSignal
 -------------------------------------------------------------------------------------------------- */
@@ -176,7 +301,7 @@ cModuleEventTicker.prototype.fOnSignal = function(
 //~ fDbg("*** cModuleEventTicker, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o, vThis;
 	vThis = this;
-		
+	
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
@@ -233,65 +358,32 @@ cModuleEventTicker.prototype.fOnSignal = function(
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
 		if (vThis.mConfigMode == "default")
-		{
 			vThis.pConfigMode("configmode1");
-			//~ $("#div_configmode1").show();
-			//~ $("#div_configmode1").css("left", parseInt($("#div_eventWidgetPlayer").css("left").split("px")[0]) + parseInt($("#div_eventWidgetPlayer #div_eventWidgetPlayer_mini").css("left").split("px")[0]) + 20);
-			//~ $("#div_configmode1").css("top", parseInt($("#div_eventWidgetPlayer").css("top").split("px")[0]) - 80);
-		}
 		else if (vThis.mConfigMode == "configmode1")
 		{
 			vThis.pConfigMode("configmode2");
 			this.mTimeSpanConfigModeOn = 0;
-			
-			$("#div_configmode1").hide();
 		}
 		else if (vThis.mConfigMode == "configmode2")
+		{
 			vThis.pConfigMode("default");
+			this.mTimeSpanConfigModeOn = 0;
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
-			if (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight + 20 < vThis.mViewPortSize[1])
-			{
-				vThis.mDiv.css("top", "-=10px");
-				vThis.mStyle.mBottomOffset += 10;
-			}
 			this.mTimeSpanConfigModeOn = 0;
-			
-
-			if (vThis.mConfigMode == "configmode1")
-			{
-				//~ $("#div_configmode1 #arrow_top_white").show();
-				//~ $("#div_configmode1 #arrow_top_white").fadeOut();
-			}
-			else if (vThis.mConfigMode == "configmode2")
-			{
-
-			}
+			vThis.pPos({top: "-=10px"});
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
-			if (vThis.mStyle.mBottomOffset - 20 > 0)
-			{
-				vThis.mDiv.css("top", "+=10px");
-				vThis.mStyle.mBottomOffset -= 10;
-			}
 			this.mTimeSpanConfigModeOn = 0;
-
-			if (vThis.mConfigMode == "configmode1")
-			{
-				$("#div_configmode1 #arrow_bottom_white").show();
-				$("#div_configmode1 #arrow_bottom_white").fadeOut();
-			}
-			else if (vThis.mConfigMode == "configmode2")
-			{
-
-			}
+			vThis.pPos({top: "+=10px"});
 		}
 		break;
 	}
@@ -314,7 +406,8 @@ cModuleEventTicker.prototype.fOnSignal = function(
 			vThis.mCounterStampClock = o;
 			vThis.fUpdateClock();
 		}
-
+		
+		//~ fDbg($("#div_eventWidgetPlayer_crawling").css("left") + " - " + $("#div_eventWidgetPlayer_crawling").css("top"));
 		
 		if (vThis.mPlayStatus == "crawlingin" && vThis.mEnabled)
 		{
@@ -405,7 +498,7 @@ else
 vThis.pState(cModuleEventTicker.STATE_STANDBY);
 	
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
-	if (vTopFinal < 340)
+	if (vTopFinal < (cModel.fGetInstance().VIEWPORTSIZE[1] - 80) / 2)
 		vTopStart = -80;
 	else
 		vTopStart = cModel.fGetInstance().VIEWPORTSIZE[1];
@@ -436,11 +529,14 @@ cModuleEventTicker.prototype.fAnimateOut = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cModuleEventTicker, fAnimateOut(), ");
+fDbg("*** cModuleEventTicker, fAnimateOut(), ");
 	var vThis, vTopStart, vTopFinal;
 	vThis = this;
-
+	
+	// clear config mode
 	vThis.pConfigMode("default");
+	
+	// calculate the OUT position
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
 	if (vTopFinal < (vThis.mViewPortSize[1] - vThis.mStyle.mTickerHeight) / 2)
 		vTopStart = -80;
@@ -566,6 +662,8 @@ cModuleEventTicker.prototype.fActivateMainTicker = function(
 	vThis = this;
 
 	vContainerWidth = cModel.fGetInstance().VIEWPORTSIZE[0] - 80;
+	
+	
 	if (vThis.mEventList.length == 0 || $("#crawling_container").children().length > 0)
 		return;
 		
@@ -1033,39 +1131,6 @@ cModuleEventTicker.prototype.pEnabled = function(
 
 
 
-cModuleEventTicker.prototype.pConfigMode = function(
-	vMode
-)
-{
-	var vThis;
-	vThis = this;
-	
-	if (!vMode)
-		return vThis.mConfigMode;
-	
-	if (vMode == vThis.mConfigMode)
-		return;
-		
-	switch (vMode)
-	{
-	case "default":
-		vThis.mDiv.css("border", "none");
-		o = vThis.mStyle;
-		o = JSON.stringify(o);
-		cProxy.fSaveParams("eventtickerstyledata", o);
-		break;
-		
-	case "configmode1":
-		vThis.mDiv.css("border", "solid white 1px");
-		break;
-		
-	case "configmode2":
-		vThis.mDiv.css("border", "solid white 1px");
-		vThis.mDiv.css("border-left", "solid #22EE22 5px");
-		break;
-	}
-	vThis.mConfigMode = vMode;
-}
 
 /** -------------------------------------------------------------------------------------------------
 	fReset

@@ -227,10 +227,13 @@ function fTickerEvents(
 //~ fDbg("*** fTickerEvents(), ");
 	if (vEventType && vEventType == "foroauth")
 	{
-	vEventMessage = decodeURIComponent(vEventMessage);
-	//~ vEventMessage = decodeURIComponent(vEventMessage);
-		//~ fDbg("message : " + vEventMessage);
-		fWidgetMsg(vEventMessage);
+		if (vEventMessage == "false")
+			fWidgetMsg("false");
+		else
+		{
+			vEventMessage = decodeURIComponent(vEventMessage);
+			fWidgetMsg(vEventMessage);
+		}
 		return;
 	}
 
@@ -238,20 +241,16 @@ function fTickerEvents(
 //~ fDbg(vEventMessage);
 //~ fDbg("----- image just received ----");
 //~ fDbg(vEventImage);
-
 vEventMessage = decodeURIComponent(vEventMessage);
-//vEventMessage = decodeURIComponent(vEventMessage);
 vEventTitle = decodeURIComponent(vEventTitle);
 vEventImage = decodeURIComponent(vEventImage);
 vEventType = decodeURIComponent(vEventType);
 vEventLevel = decodeURIComponent(vEventLevel);
 vEventVer = decodeURIComponent(vEventVer);
-
 //~ fDbg("----- message decoded ----");
 //~ fDbg(vEventMessage);
 //~ fDbg("----- image path decoded ----");
 //~ fDbg(vEventImage);
-
 	
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }

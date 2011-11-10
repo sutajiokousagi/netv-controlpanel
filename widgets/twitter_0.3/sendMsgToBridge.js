@@ -23,3 +23,9 @@ function sendMsgToBridge(msgTitle, msgBody, msgPic)
 		   );
 	*/
 }
+
+
+function fDbg(v)
+{
+	console.log("|~|" + v);
+}

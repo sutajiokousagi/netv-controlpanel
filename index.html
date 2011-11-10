@@ -40,7 +40,6 @@
 
 
 
-
 <!--
 ----------------------------------------------- level I
 -------------CPanel
@@ -149,13 +148,25 @@
 		<div id="item_indicator" style="position: absolute; top: 120px; left: 200px; background-color: #6598EB; width: 400px; height: 40px; border-radius: 10px;"></div>
 	</div>
 	
-
 	<div id="div_channelMain_channels" style="position: absolute; top: 0px; left: 0px;"></div>
 	<div id="div_channelMain_widgets" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
+	<div id="div_channelMain_config_popup" style="position: absolute; top: 180px; left: 250px; width: 300px; height: 340px; background: #000000; border: solid #333333 2px; border-radius: 15px; color: #FFFFFF; font-size: 14px;"></div>
+	
 	<div id="div_channelMain_widgetconfig" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
 	<div id="div_channelMain_widgetauth" style="position: absolute; top: 0px; left: 0px; color: #FFFFFF; font-size: 24px;"></div>
+	<div id="div_channelMain_widgetauth_input" style="position: absolute; top: 320px; left: 0px; color: #FFFFFF; font-size: 18px; ">
+		<div id="div_username_container" style="position: absolute; top: 40px; left: 160px; opacity: 1;">
+			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold; text-shadow: #333333 2px 2px 2px;">USERNAME : </div>
+			<div id="input_username" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 20px; font-weight: bold; "></div>
+		</div>
+		<div id="div_password_container" style="position: absolute; top: 100px; left: 160px; opacity: 0.2;">
+			<div style="position: absolute; padding-top: 10px; width: 160px; font-weight: bold; text-shadow: #333333 2px 2px 2px;">PASSWORD : </div>
+			<div id="input_password" style="position: absolute; top: 0px; left: 160px; width: 280px; height: 24px; border: solid #FFFFFF 2px; padding: 6px 0 5px 30px; background-color: #333333; color: #FFFFFF; border-radius: 20px; font-size: 20px; font-weight: bold; "></div>
+		</div>
+		<div id="input_OK" style="position: absolute; top: 200px; left: 330px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">OK</div>
+		<div id="input_CANCEL" style="position: absolute; top: 200px; left: 430px; width: 57px; opacity: 1; border: solid #FFFFFF 0px; text-shadow: #000000 3px 3px 3px;">Cancel</div>
+	</div>
 	
-	<div id="div_channelMain_config_popup" style="position: absolute; top: 180px; left: 250px; width: 300px; height: 340px; background: #000000; border: solid #333333 2px; border-radius: 15px; color: #FFFFFF; font-size: 14px;"></div>
 	
 	
 	<div id="subnavi_action" style="position: absolute; top: 560px; left: 0px; color: #FFFFFF; font-size: 18px; font-weight: bold; width: 800px; height: 40px;">
@@ -650,10 +661,10 @@ The unit will reboot within four seconds of holding down the switch if the initi
 
 <!--
 ----------------------------------------------- level I
--------------Event Ticker
+-------------Event Ticker - height: 50px;
 -----------------------------------------------
 -->
-<div id="div_eventWidgetPlayer" style="position: absolute; left: 60px; top: 1630px; width: 1160px; height: 50px; padding: 0; margin: 0; overflow: hidden; display:none; ">
+<div id="div_eventWidgetPlayer" style="position: absolute; left: 60px; top: 1630px; width: 1160px; height: 50px; padding: 0; margin: 0; overflow: hidden; display: none; ">
 <div id="div_eventWidgetPlayer_crawling" style="position: absolute; top: 0px; left: 1199px; width: 1078px; height: 50px; background-color: #222222; overflow: hidden;">
 	<div id="crawling_container" style="position: absolute; top: 0px; left: 0px; width: auto; height: 50px; background-color: #AA3333;"></div>
 	<div id="corner_container">
@@ -666,9 +677,6 @@ The unit will reboot within four seconds of holding down the switch if the initi
 
 <div id="div_eventWidgetPlayer_mini" style="position: absolute; top: 0px; left: 1080px; width: 80px; height: 60px; background-color: #222222; font-size: 18px;">
 	<div id="stamp_demo_container"><div style="position: absolute; top: 10px; left: 7px; width: 80px; height: 40px; -webkit-transform: rotate(-20deg); font-size: 24px; color: #FFFFFF; opacity: 0.1;">DEMO</div></div>
-<!--
-	<div><div style="position: absolute; top: 1px; left: 65px; width: 80px; height: 40px; font-size: 7px; color: #FFFFFF; opacity: 0.5;">888</div></div>
--->
 	<div id="stamp_top" style="position: absolute; top: 0px; left: 0px; width: 80px; height: 30px; padding: 4px 0 0 0; text-align: center;">
 		<img id="stamp_logo" src="./images/chumby_logo_48x48.png" width="24px" height="24px" style="position: absolute; top: 4px; left: 28px; width: 24px; height: 24px;" />
 		<div id="stamp_text_container" style="position: absolute; top: 4px; left: 0px; width: 80px; height: 30px; color: #CCCCCC; display: none;">00:00</div>
@@ -692,6 +700,31 @@ The unit will reboot within four seconds of holding down the switch if the initi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+----------------------------------------------- level I
+-------------loading bar div
+-----------------------------------------------
+-->
+<div id="div_loadingbar" style="position: absolute; top: 30px; left: 100px; width: 800px; height: 4px; border: solid blue 0px; overflow: hidden; display: none;">
+	<div id="div_laodingbar_base" style="position: absolute; top: 0px; left: 0px; width: 800px; height: 4px; border-radius: 2px; background-color: #FFFFFF;">
+		
+	</div>
+	<div id="div_laodingbar_progress" style="position: absolute; top: 0px; left: 0px; width: 700px; height: 4px; border-radius: 2px; background-color: #6598EB;">
+		
+	</div>
+</div>
 
 
 

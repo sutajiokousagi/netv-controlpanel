@@ -6,6 +6,7 @@
   <head>
     <title>Twitter for NeTV</title>
     
+    <script type="text/javascript" src="twitterAccess.js"></script>
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
@@ -13,7 +14,6 @@
     <script type="text/javascript" src="jquery-ui.min.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
     <script type="text/javascript" src="sendMsgToBridge.js"></script>
-    <script type="text/javascript" src="twitterAccess.js"></script>
     
     <script type="text/javascript">
 
@@ -34,7 +34,7 @@
       //var oauth_token_secret="BEH41DcqVxcRfXhFvLOXEfa1h40g1riUDmopHGyHuyI";
       //var oauth_token="372177612-DwKNP8LpldyNmUcHXtj1a3tFgvwNKZdpoGPL0XUr";
       //var oauth_token_secret="DoWtIbCyVz0P2s1xDbLBXMRS6ZeBgdQa1aXnsePsg";
-    
+	  var callBackFunc = null;
 
       ////////////////////////
       // For debug use
@@ -59,7 +59,7 @@
       	      if (p && p != "")
       		  auth = p;
       	  }
-	  if (o.split("username=").length > 1)
+		  if (o.split("username=").length > 1)
       	  {
       	      p = o.split("username=")[1].split("&")[0];
       	      if (p && p != "")
@@ -73,17 +73,16 @@
       	  }
 
       }
-
       
       $(function() {
 	  
 	  //fDbg("doing oauth? " + auth);
-	  	  
+	  
 	  if (false == auth)
 	      getAccessTokenOAuthFalse();
 	  else
 	      getAccessTokenOAuthTrue();
-
+	      
 	  // twitterXAuth(username, password, callBackFunc);
 	  // twitterAccess(oauth_token, oauth_token_secret);
 

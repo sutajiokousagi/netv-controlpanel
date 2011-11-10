@@ -130,17 +130,16 @@ cCPanel.prototype.fResize = function(
 	var vThis;
 	vThis = this;
 //~ fDbg("========================================");
-//~ fDbg("*** window resize : " + $(window).width() + ", " + $(window).height() + ", " + vThis.mEnableResize);
+//~ fDbg("*** window resize : " + vThis.mViewPortSize + " >>> " + $(window).width() + ", " + $(window).height() + ", " + vThis.mEnableResize);
 //~ fDbg("this.mEnableResize : " + vThis.mEnableResize);
 //~ fDbg("this.mEnableResize == false : " + (vThis.mEnableResize == false));
 //~ fDbg("this.mEnableResize == true  : " + (vThis.mEnableResize == true));
 //~ fDbg("========================================");
 if (vThis.mEnableResize == false)
+	return;	
+if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
 	return;
 	
-	if (vThis.mViewPortSize[0] == window.innerWidth && vThis.mViewPortSize[1] == window.innerHeight)
-		return;
-
 	vThis.mViewPortSize[0] = window.innerWidth;
 	vThis.mViewPortSize[1] = window.innerHeight;
 	if (cModel)
@@ -160,7 +159,7 @@ if (vThis.mEnableResize == false)
 	{
 		
 	}
-
+	
 	// resize modules	
 	cModuleToast.fGetInstance().fResize(vThis.mViewPortSize);
 	cModuleEventTicker.fGetInstance().fResize(vThis.mViewPortSize);
