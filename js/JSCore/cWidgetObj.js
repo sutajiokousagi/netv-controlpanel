@@ -155,6 +155,7 @@ function cWidgetObj(
 	this.mUpdateIntervalList = [15, 60, 300, 600, 1800, 3600];
 	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
 	this.mNeedAuth = false;
+	this.mOnlyShowNewEvent = true;
 	
 	
 	
@@ -329,4 +330,15 @@ cWidgetObj.prototype.pEnabled = function(
 	
 	if (v == true || v == false)
 		this.mEnabled = v;
+}
+
+cWidgetObj.prototype.pOnlyShowNewEvent = function(
+	v
+)
+{
+	if (v == undefined)
+		return this.mOnlyShowNewEvent ? true : false;
+	
+	if (v == true || v == false)
+		this.mOnlyShowNewEvent = v;
 }

@@ -52,6 +52,7 @@ function cModuleEventTicker(
 	
 	// main ticker event 
 	this.mEventList = [];					// [[ID, [message, title, image], displaycount], [...], [...], ...]
+	this.mPrevEventList = [];				// [[widget_ID, [event1, event2, event3, etc...]], [], ...]
 	this.mPlayStatus = null;				// null | stopped | paused
 	this.mEnableCrawlMessages = false;
 	
@@ -619,9 +620,10 @@ cModuleEventTicker.prototype.fAddEvent = function(
 )
 {
 //~ fDbg("*** cModuleEventTicker, fAddEvent(), ");
-	var vThis, o, i;
+	var vThis, o, i, j, vFlag;
 	vThis = this;
 	o = String(new Date().getTime());
+	
 	
 	// for type-"sms" 2 times only
 	if (vEventData[3] == "sms")
@@ -639,7 +641,43 @@ cModuleEventTicker.prototype.fAddEvent = function(
 		}
 	}
 	else
-		this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+	{
+		vFlag = false;
+		for (i = 0; i < vThis.mPrevEventList.length; i++)
+			if (vThis.mPrevEventList[i][0] == cModuleWE.fGetInstance().pCurrWidget().mID)
+			{
+				vFlag = true;
+				break;
+			}
+		if (!vFlag)
+		{
+			vThis.mPrevEventList.push([cModuleWE.fGetInstance().pCurrWidget().mID, [vEventData[0].substr(0, 20)]]);
+			this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+		}
+		else
+		{
+			vFlag = false;
+			// scan through "i"
+			fDbg("================================================== " + cModuleWE.fGetInstance().pCurrWidget().mID);
+			fDbg("old msg : " + vThis.mPrevEventList[i][1]);
+			fDbg("new msg : " + vEventData[0].substr(0, 20));
+			fDbg("==================================================");
+			for (j = 0; j < vThis.mPrevEventList[i][1].length; j++)
+			{
+				if (vEventData[0].substr(0, 20) == vThis.mPrevEventList[i][1][j])
+				{
+					fDbg("new msg : " + vEventData[0].substr(0, 20) + "     is the same as prev msg " + j + " ---> ignore!");
+					vFlag = true;
+					break;
+				}
+			}
+			if (!vFlag)
+			{
+				vThis.mPrevEventList[i][1].push(vEventData[0].substr(0, 20));
+				this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+			}
+		}
+	}
 	
 if (this.mEnabled == false)
 	return;
@@ -1177,10 +1215,32 @@ cModuleEventTicker.prototype.fClearEventList = function(
 )
 {
 //~ fDbg("*** cModuleEventTicker, fClearEventList(), ");
-	var vThis, vContainerWidth;
+	var vThis;
 	vThis = this;
 	
 	vThis.mEventList = [];
+}
+
+
+/** -------------------------------------------------------------------------------------------------
+	fClearPrevEventList
+-------------------------------------------------------------------------------------------------- */
+cModuleEventTicker.prototype.fClearPrevEventList = function(
+	vWidgetID,
+	vReturnFun
+)
+{
+//~ fDbg("*** cModuleEventTicker, fClearPrevEventList(), ");
+	var vThis, i;
+	vThis = this;
+	
+	for (i = 0; i < vThis.mPrevEventList.length; i++)
+	{
+		if (vThis.mPrevEventList[i][0] == vWidgetID)
+			vThis.mPrevEventList[i][1] = [];
+	}
+	if (vReturnFun)
+		vReturnFun();
 }
 
 

@@ -182,6 +182,7 @@ if (vThis.mCurrWidgetTimeSpend % 5 == 0)
 		{
 			cModuleEventTicker.fGetInstance().fAddEvent(vData);
 		}
+		break;
 	}
 }
 
@@ -350,10 +351,14 @@ else if (vThis.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 
 
 
-
+	
 	// decide if run this widget in iframe, according to this widget's UpdateInterval
 	fDbg("play widget: " + vThis.pCurrWidget().mWidget.mMovie.mHref.split("/")[2] + " |~| "); // + vThis.mWidgetLockList);
+	//~ fDbg("-----> " + vThis.pCurrWidget().mUpdateInterval);
+	//~ fDbg("-----> " + vThis.pCurrWidget().pOnlyShowNewEvent());
 	
+	
+	/*
 	for (i = 0; i < vThis.mWidgetLockList.length; i++)
 	{
 		if (vThis.mWidgetLockList[i][0] == vThis.pCurrWidget().mID)
@@ -373,6 +378,36 @@ else if (vThis.mCurrChannel != cModel.fGetInstance().CHANNEL_CURRENT)
 			return;
 		}
 	}
+	*/
+	for (i = 0; i < vThis.mWidgetLockList.length; i++)
+		if (vThis.mWidgetLockList[i][0] == vThis.pCurrWidget().mID)
+		{
+			o = [];
+			o[0] = (new Date().getTime() - vThis.mWidgetLockList[i][1]) / 1000;
+			o[1] = vThis.pCurrWidget().mUpdateIntervalList[vThis.pCurrWidget().mUpdateInterval];
+			fDbg("time spent : " + o[0] + " ---------- widget update interval : " + o[1]);
+			if (o[0] - o[1] > -2)
+			{
+				// clear cModuleEventTicker's mPrevEventList;
+				cModuleEventTicker.fGetInstance().fClearPrevEventList(vThis.pCurrWidget().mID);
+				fDbg("ok, you can play!");
+				
+				// update new "prev played timestamp"
+				vThis.mWidgetLockList[i][1] = new Date().getTime();
+			}
+			else
+			{
+				fDbg("ok, you can play, let's see if it's a new message!!!");
+			}
+			
+			// play the widget
+			vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
+			
+			// update status
+			vThis.mCurrPlayStatus = "playing";
+			return;
+		}
+	
 	vThis.mWidgetLockList.push([vThis.pCurrWidget().mID, new Date().getTime()]);
 	vThis.mCurrWE.fPlayWidget(vThis.mCurrWidget.pPeerWidgetHref() + p, null);
 	vThis.mCurrPlayStatus = "playing";

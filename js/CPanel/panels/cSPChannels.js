@@ -287,7 +287,7 @@ cSPChannels.prototype.pSelection = function(
 	var vThis, o, p, i;
 	vThis = this;
 if (!vSelection) return vThis.mSelection;
-	fDbg(1);
+	
 	if (vThis.mMode == cSPChannels.MODE_WIDGETCONFIG_POPUP)
 	{
 		if (vThis.mSelection && vThis.mSelection.attr("id") && vThis.mSelection.attr("id").split("config_").length == 2)
@@ -459,6 +459,14 @@ cSPChannels.prototype.fOnSignal = function(
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
 				break;
+			case "showneweventsonly":
+				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", o + "px");
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				o.pEnabled(true);
+				$($(vThis.mSelection.children()[1]).children()[1]).html("YES");
+				cProxy.fSaveModelData();
+				break;
 			}
 			break;
 		case cSPChannels.MODE_WIDGETAUTH_INPUT:
@@ -627,6 +635,14 @@ cSPChannels.prototype.fOnSignal = function(
 				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
+				break;
+			case "showneweventsonly":
+				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
+				vThis.mSelection.children(".selector_nod").css("left", o + "px");
+				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
+				o.pOnlyShowNewEvent(false);
+				$($(vThis.mSelection.children()[1]).children()[1]).html("NO");
+				cProxy.fSaveModelData();
 				break;
 			}
 			break;
@@ -830,7 +846,7 @@ cSPChannels.prototype.fOnSignal = function(
 		case cSPChannels.MODE_WIDGETAUTH_INPUT:
 			if (vThis.pSelection() == vThis.mDivWidgetAuthInput_Password)
 				vThis.pSelection(vThis.mDivWidgetAuthInput_Username, false, true);
-			else if (vThis.pSelection() == vThis.mDivBack)
+			else if (vThis.pSelection() == vThis.mDivWidgetAuthInput_OK || vThis.pSelection() == vThis.mDivWidgetAuthInput_CANCEL)
 				vThis.pSelection(vThis.mDivWidgetAuthInput_Password, false, true);
 			break;
 		}
@@ -1367,51 +1383,66 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 	vWidgetN
 )
 {
-	var vThis, o, i, vWidget;
+	var vThis, o, i, vWidget, vW;
 	vThis = this;
+	vW = parseInt(vThis.mDivConfigPopup.css("width")) - 40;
 	
 	o = '';
-	o += '<div id="config_0" style="position: absolute; top: 20px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
-		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 55px; background: #6598EB; border-radius: 10px;"></div>';
-		o += '<div style="position: absolute; top: 10px; left: 10px; width: 260px; text-shadow: #000000 2px 2px 2px;">';
+	o += '<div id="config_0" style="position: absolute; top: 20px; left: 20px; width: ' + vW + 'px; height: 32px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 32px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 10px; left: 20px; width: ' + (vW - 40) + 'px; text-shadow: #000000 2px 2px 2px;">';
 			o += '<div style="position: absolute; top: 0px; left: 0px; width: 140px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
 			o += 'Enabled';
 			o += '</div>';
-			o += '<div style="position: absolute; top: 0px; left: 140px; width: 100px; text-align: right; font-style:italic; border: solid #EEEEEE 0px;">';
+			o += '<div style="position: absolute; top: 0px; left: ' + (vW - 40 - 100) + 'px; width: 100px; text-align: right; font-weight: bold; font-style:italic; border: solid #EEEEEE 0px;">';
 				o += 'YES';
 			o += '</div>';
 		o += '</div>';
-		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
-		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 240px; width: 120px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 232px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
 	o += '</div>';
-	o += '<div id="config_updateinterval" style="position: absolute; top: 90px; left: 20px; width: 260px; height: 55px; border: solid #EEEEEE 0px;">';
-		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 55px; background: #6598EB; border-radius: 10px;"></div>';
-		o += '<div style="position: absolute; top: 10px; left: 10px; width: 260px; text-shadow: #000000 2px 2px 2px;">';
-			o += '<div style="position: absolute; top: 0px; left: 0px; width: 140px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
-			o += 'Time to Update';
+	o += '<div id="config_updateinterval" style="position: absolute; top: 70px; left: 20px; width: ' + vW + 'px; height: 32px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 32px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 10px; left: 20px; width: ' + (vW - 40) + 'px; text-shadow: #000000 2px 2px 2px;">';
+			o += '<div style="position: absolute; top: 0px; left: 0px; width: 250px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
+			o += 'Force Update Interval';
 			o += '</div>';
-			o += '<div style="position: absolute; top: 0px; left: 140px; width: 100px; text-align: right; font-style:italic; border: solid #EEEEEE 0px;">';
+			o += '<div style="position: absolute; top: 0px; left: ' + (vW - 40 - 100) + 'px; width: 100px; text-align: right; font-weight: bold; font-style:italic; border: solid #EEEEEE 0px;">';
 			o += 'YES';
 			o += '</div>';
 		o += '</div>';
-		o += '<div class="selector_bar" style="position: absolute; top: 34px; left: 70px; width: 140px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
-		o += '<div class="selector_nod" style="position: absolute; top: 30px; left: 62px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 240px; width: 120px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 232px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
 	o += '</div>';
-	o += '<div id="config_auth" style="position: absolute; top: 160px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
-		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
-		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+	o += '<div id="config_showneweventsonly" style="position: absolute; top: 120px; left: 20px; width: ' + vW + 'px; height: 32px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 32px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 10px; left: 20px; width: ' + (vW - 40) + 'px; text-shadow: #000000 2px 2px 2px;">';
+			o += '<div style="position: absolute; top: 0px; left: 0px; width: 250px; text-align: left; font-weight: bold; border: solid #EEEEEE 0px;">';
+			o += 'Only Show New Events';
+			o += '</div>';
+			o += '<div style="position: absolute; top: 0px; left: ' + (vW - 40 - 100) + 'px; width: 100px; text-align: right; font-weight: bold; font-style:italic; border: solid #EEEEEE 0px;">';
+				o += 'YES';
+			o += '</div>';
+		o += '</div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 240px; width: 120px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 232px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+	o += '</div>';
+	
+	o += '<div id="config_auth" style="position: absolute; top: 170px; left: 20px; width: ' + vW + 'px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 20px; width: ' + (vW - 40) + 'px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'Authentication';
 		o += '</div>';
 	o += '</div>';
-	o += '<div id="config_param" style="position: absolute; top: 200px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
-		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
-		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+	o += '<div id="config_param" style="position: absolute; top: 220px; left: 20px; width: ' + vW + 'px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 20px; width: ' + (vW - 40) + 'px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'Customize Configuration';
 		o += '</div>';
 	o += '</div>';
-	o += '<div id="config_ok" style="position: absolute; top: 290px; left: 20px; width: 260px; height: 30px; border: solid #EEEEEE 0px;">';
-		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: 260px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
-		o += '<div style="position: absolute; top: 8px; left: 0px; width: 260px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
+	o += '<div id="config_ok" style="position: absolute; top: 290px; left: 20px; width: ' + vW + 'px; height: 30px; border: solid #EEEEEE 0px;">';
+		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 30px; background: #6598EB; border-radius: 10px;"></div>';
+		o += '<div style="position: absolute; top: 8px; left: 20px; width: ' + (vW - 40) + 'px; text-align: center; font-weight: bold; font-size: 14px; text-shadow: #000000 2px 2px 2px;">';
 			o += 'OK';
 		o += '</div>';
 	o += '</div>';
