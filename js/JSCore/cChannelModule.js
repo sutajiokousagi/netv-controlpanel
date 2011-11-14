@@ -106,7 +106,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 
 	//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 	vThis.pScanWidgetList(o);
-	cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
+	//~ cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
 	
 	for (i = 0; i < o.mWidgetList.length; i++)
 	{
@@ -286,9 +286,8 @@ cChannelModule.prototype.fParseChannelList = function(
 			
 			//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 			vThis.pScanWidgetList(o);
-			vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], [0, 4], function() {
-				
-			});
+			//~ vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], [0, 4], function() { });
+			
 			if (cModel.fGetInstance().CHANNEL_LIST.length == vCount)
 			{
 				// load cModel data from local-copy
@@ -420,7 +419,7 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 )
 {
 //~ fDbg("cChannelModule, fPreloadChannelThumbnails(), ");
-	var o, i;
+	var o, i, p;
 
 	o = [];
 	for (i = vRange[0]; i < vChannelObj.mWidgetList.length; i++)
@@ -429,19 +428,20 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 		if (o.length >= vRange[1])
 			break;
 	}
+	p = cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj);
 	
 	i = vRange[0];
 	var fLoadTN = function() {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
 			vChannelObj.mWidgetList[i].mLocalThumbnailPath = vData.split("<data><value>")[1].split("</value></data>")[0];
-//~ fDbg(i + " : " + vChannelObj.mWidgetList[i].mLocalThumbnailPath.substr(64));
+//~ fDbg(p + "-" + i + " : " + vChannelObj.mWidgetList[i].mLocalThumbnailPath.substr(64));
 			i++;
 			o.splice(0, 1);
 			if (o.length == 0)
 			{
 				if (vReturnFun)
-					vReturnFun();
-fDbg("preloading images complete...");
+					vReturnFun([p, i - 1]);
+//~ fDbg("preloading images complete...");
 				return;
 			}
 			fLoadTN();

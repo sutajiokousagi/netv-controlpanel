@@ -99,7 +99,7 @@ fDbg("*** cModuleEventTicker, fInit(), ");
 
 	
 	cProxy.fGetParams("eventtickerstyledata", function(vData) {
-		fDbg("data : "+ vData);
+		//~ fDbg("data : "+ vData);
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
@@ -152,10 +152,10 @@ fDbg("*** cModuleEventTicker, fResize(), " + this.mViewPortSize + " -> " + vView
 	
 	// check if upper or lower region
 	q = (parseInt(vThis.mDiv.css("top")) < (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("height"))) / 2) ? false : true;
-	fDbg("right : " + vThis.mStyle.mRightOffset);
-	fDbg("bottom : " + vThis.mStyle.mBottomOffset + " at lower region? - " + 1);
+	//~ fDbg("right : " + vThis.mStyle.mRightOffset);
+	//~ fDbg("bottom : " + vThis.mStyle.mBottomOffset + " at lower region? - " + 1);
 	q = parseInt(vThis.mDiv.css("top")) / vThis.mViewPortSize[1];
-	fDbg("pos percentage : " + q);
+	//~ fDbg("pos percentage : " + q);
 	
 	
 	// update
@@ -163,11 +163,11 @@ fDbg("*** cModuleEventTicker, fResize(), " + this.mViewPortSize + " -> " + vView
 	vThis.mStyle.mViewPortSize = vThis.mViewPortSize;
 	
 	// after
-	fDbg("===============+>>> " + o);
+	//~ fDbg("===============+>>> " + o);
 	vThis.mDiv.css("top", o);
 	
 	q = parseInt(q * vThis.mViewPortSize[1] / 10);
-	fDbg("+++++++++++++++=>>> " + q);
+	//~ fDbg("+++++++++++++++=>>> " + q);
 	
 	
 	vThis.mDiv.css("width", vViewPortSize[0] - 120);
@@ -177,7 +177,7 @@ fDbg("*** cModuleEventTicker, fResize(), " + this.mViewPortSize + " -> " + vView
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[0]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
 	
-	fDbg("+++++++++++++++++>>>>>>>>>>>>>. " + vThis.mStyle.mBottomOffset);
+	//~ fDbg("+++++++++++++++++>>>>>>>>>>>>>. " + vThis.mStyle.mBottomOffset);
 	//~ vThis.mStyle.mBottomOffset = vThis.mViewPortSize[1] - (parseInt($("#div_eventWidgetPlayer_crawling").css("top")) + 50);
 	
 	
@@ -661,7 +661,6 @@ cModuleEventTicker.prototype.fAddEvent = function(
 			fDbg("================================================== " + cModuleWE.fGetInstance().pCurrWidget().mID);
 			fDbg("old msg : " + vThis.mPrevEventList[i][1]);
 			fDbg("new msg : " + vEventData[0].substr(0, 20));
-			fDbg("==================================================");
 			for (j = 0; j < vThis.mPrevEventList[i][1].length; j++)
 			{
 				if (vEventData[0].substr(0, 20) == vThis.mPrevEventList[i][1][j])
@@ -676,6 +675,7 @@ cModuleEventTicker.prototype.fAddEvent = function(
 				vThis.mPrevEventList[i][1].push(vEventData[0].substr(0, 20));
 				this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
 			}
+			fDbg("==================================================");
 		}
 	}
 	
