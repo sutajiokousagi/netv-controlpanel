@@ -150,12 +150,14 @@ function cWidgetObj(
 	};
 	this.mNeTVCompatiable = false;
 	this.mEventLock = false;
+	this.mNeedAuth = false;
+	
 	this.mEnabled = true;
 	this.mUpdateInterval = 0;
 	this.mUpdateIntervalList = [15, 60, 300, 600, 1800, 3600];
 	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
-	this.mNeedAuth = false;
 	this.mOnlyShowNewEvent = true;
+	
 	this.mEventDisplayCount = 2;
 	
 	
@@ -269,15 +271,19 @@ cWidgetObj.prototype.pData = function(
 	vThis.mData = {};
 	vThis.mData["ID"] = vThis.mID;
 	vThis.mData["USER_ENABLED"] = vThis.mEnabled;
+	vThis.mData["USER_UPDATEINTERVAL"] = vThis.mUpdateInterval;
+	vThis.mData["USER_ONLYSHOWNEWEVENT"] = vThis.mOnlyShowNewEvent;
 	
 	// 2, return mData
 	if (v == undefined) return vThis.mData;
 	
 	// 3, apply/cast mData from v
 	if (v["USER_ENABLED"] != undefined)
-	{
 		vThis.mEnabled = v["USER_ENABLED"];
-	}
+	if (v["USER_UPDATEINTERVAL"])
+		vThis.mUpdateInterval = v["USER_UPDATEINTERVAL"];
+	if (v["USER_ONLYSHOWNEWEVENT"] != null)
+		vThis.mOnlyShowNewEvent = v["USER_ONLYSHOWNEWEVENT"];
 }
 
 

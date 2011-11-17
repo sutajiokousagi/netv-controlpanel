@@ -665,15 +665,22 @@ cModuleEventTicker.prototype.fAddEvent = function(
 			fDbg("================================================== " + cModuleWE.fGetInstance().pCurrWidget().mID);
 			fDbg("old msg : " + vThis.mPrevEventList[i][1]);
 			fDbg("new msg : " + vEventData[0].substr(0, 20));
-			for (j = 0; j < vThis.mPrevEventList[i][1].length; j++)
-			{
-				if (vEventData[0].substr(0, 20) == vThis.mPrevEventList[i][1][j])
-				{
-					fDbg("new msg : " + vEventData[0].substr(0, 20) + "     is the same as prev msg " + j + " ---> ignore!");
-					vFlag = true;
-					break;
-				}
-			}
+			/*
+			fDbg(cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent);
+			fDbg(cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent);
+			fDbg(cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent);
+			fDbg(cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent);
+			fDbg(cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent);
+			*/
+			if (cModuleWE.fGetInstance().pCurrWidget().mOnlyShowNewEvent)
+				for (j = 0; j < vThis.mPrevEventList[i][1].length; j++)
+					if (vEventData[0].substr(0, 20) == vThis.mPrevEventList[i][1][j])
+					{
+						fDbg("new msg : " + vEventData[0].substr(0, 20) + "     is the same as prev msg " + j + " ---> ignore!");
+						vFlag = true;
+						break;
+					}
+				
 			if (!vFlag)
 			{
 				vThis.mPrevEventList[i][1].push(vEventData[0].substr(0, 20));

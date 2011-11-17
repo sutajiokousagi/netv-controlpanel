@@ -300,6 +300,7 @@ fDbg("cProxy, fClearDeviceData, ");
 	case "unauthorized":
 		cProxy.fSaveParams("cpanel_cmodel", "");
 		cProxy.fSaveParams("facebook_access_token", "");
+		cProxy.fSaveParams("twitter_oauth", "");
 		break;
 	case "all":
 		break;

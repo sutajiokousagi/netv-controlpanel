@@ -103,9 +103,12 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 			cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
 			cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
 			cChannelModule.fGetInstance().fSimulateDefaultChannels();
-			cProxy.fClearDeviceData("unauthorized");
+			//~ cProxy.fClearDeviceData("unauthorized");
 			cCPanel.fGetInstance().mLocked = false;
 			cCPanel.fGetInstance().mGearBtnLocked = false;
+			cProxy.fLoadModelData(function() {
+				fDbg("=====>>> load model data complete! @ unauthorized");
+			});
 			return;
 		}
 		cModel.fGetInstance().CHUMBY_AUTHORIZED = true;

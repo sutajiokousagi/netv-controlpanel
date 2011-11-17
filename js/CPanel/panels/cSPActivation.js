@@ -113,8 +113,12 @@ fDbg("*** cSPActivation, pViewMode(), " + vViewMode);
 		break;
 
 	case cSPActivation.VIEWMODE_ACTIVATE_BACK:
+		if (cModel.fGetInstance().CHUMBY_AUTHORIZED == true)
+			return;
+		
 		vThis.mDiv.children("#div_activationMain_deactivatestep1").hide();
 		vThis.mDiv.children("#div_activationMain_activatestep1").show();
+		
 		vThis.mDivUsername.css("opacity", "0.2");
 		vThis.mDivPassword.css("opacity", "0.2");
 		vThis.mDivDevicename.css("opacity", "0.2");

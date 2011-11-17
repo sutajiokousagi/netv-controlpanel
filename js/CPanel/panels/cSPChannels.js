@@ -490,12 +490,13 @@ cSPChannels.prototype.fOnSignal = function(
 				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
+				cProxy.fSaveModelData();
 				break;
 			case "showneweventsonly":
 				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", o + "px");
 				o = cModel.fGetInstance().CHANNEL_LIST[vThis.mSelectedChannelN].mWidgetList[vThis.mSelectedWidgetN];
-				o.pEnabled(true);
+				o.pOnlyShowNewEvent(true);
 				$($(vThis.mSelection.children()[1]).children()[1]).html("YES");
 				cProxy.fSaveModelData();
 				break;
@@ -668,6 +669,7 @@ cSPChannels.prototype.fOnSignal = function(
 				p = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) / (o.mUpdateIntervalList.length - 1) * o.mUpdateInterval - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
 				vThis.mSelection.children(".selector_nod").css("left", p + "px");
 				$($(vThis.mSelection.children()[1]).children()[1]).html(o.mUpdateIntervalDisplayList[o.mUpdateInterval]);
+				cProxy.fSaveModelData();
 				break;
 			case "showneweventsonly":
 				o = parseInt(vThis.mSelection.children(".selector_bar").css("left")) + parseInt(vThis.mSelection.children(".selector_bar").css("width")) - parseInt(vThis.mSelection.children(".selector_nod").css("width")) / 2;
@@ -1506,6 +1508,8 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 	
 	
 	vWidget = cModel.fGetInstance().CHANNEL_LIST[vChannelN].mWidgetList[vWidgetN];
+	
+	// enable/disable
 	o = vThis.mDivConfigPopupList[0];
 	if (!vWidget.pEnabled())
 	{
@@ -1520,15 +1524,33 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 		$($(o.children()[1]).children()[1]).html("YES");
 	}
 	
+	// update interval
 	o = vThis.mDivConfigPopup.children("#config_updateinterval");
 	p = parseInt(o.children(".selector_bar").css("left")) + parseInt(o.children(".selector_bar").css("width")) / (vWidget.mUpdateIntervalList.length - 1) * vWidget.mUpdateInterval - parseInt(o.children(".selector_nod").css("width")) / 2;
 	o.children(".selector_nod").css("left", p + "px");
 	$($(o.children()[1]).children()[1]).html(vWidget.mUpdateIntervalDisplayList[vWidget.mUpdateInterval]);
 	
+	// show new event only
+	o = vThis.mDivConfigPopup.children("#config_showneweventsonly");
+	if (!vWidget.mOnlyShowNewEvent)
+	{
+		i = parseInt(o.children(".selector_bar").css("left")) + parseInt(o.children(".selector_bar").css("width")) - parseInt(o.children(".selector_nod").css("width")) / 2;
+		o.children(".selector_nod").css("left", i + "px");
+		$($(o.children()[1]).children()[1]).html("NO");
+	}
+	else
+	{
+		i = parseInt(o.children(".selector_bar").css("left")) - parseInt(o.children(".selector_nod").css("width")) / 2;
+		o.children(".selector_nod").css("left", i + "px");
+		$($(o.children()[1]).children()[1]).html("YES");
+	}
+	
+	// auth
 	o = vThis.mDivConfigPopup.children("#config_auth");
 	if (!vWidget.mNeedAuth)
 		o.css("opacity", "0.4");
-		
+	
+	// param	
 	o = vThis.mDivConfigPopup.children("#config_param");
 	if (!vThis.mCurrWidgetConfigurable)
 		o.css("opacity", "0.4");
