@@ -375,20 +375,20 @@ function fIOSEvents( vEventName, vEventData )
 function fCheckAlive(
 )
 {
-	return true;
-	var o, p;
 	try {
-		o = cJSCore.fGetInstance().fOnSignal("checkalive");
-		
-		if (!o)
+		var jscore = cJSCore.fGetInstance();
+		if (!jscore)
+			return false;
+		var jscore_alive = jscore.fOnSignal("checkalive");	
+		if (!jscore_alive)
 			return false;
 
-		o = cCPanel.fGetInstance().fOnSignal("checkalive");
-		
-		if (!o)
+		var cpanel = cCPanel.fGetInstance();
+		if (!cpanel)
 			return false;
-		else
-			return true;
+		var cpanel_alive = cpanel.fOnSignal("checkalive");
+		if (!cpanel_alive)
+			return false;
 	}
 	catch (e) {
 		return false;
