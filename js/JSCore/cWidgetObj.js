@@ -156,6 +156,7 @@ function cWidgetObj(
 	this.mUpdateIntervalDisplayList = ["15s", "1m", "5m", "10m", "30m", "1h"];
 	this.mNeedAuth = false;
 	this.mOnlyShowNewEvent = true;
+	this.mEventDisplayCount = 2;
 	
 	
 	
@@ -341,4 +342,16 @@ cWidgetObj.prototype.pOnlyShowNewEvent = function(
 	
 	if (v == true || v == false)
 		this.mOnlyShowNewEvent = v;
+}
+
+
+cWidgetObj.prototype.pEventDisplayCount = function(
+	v
+)
+{
+	if (v == undefined)
+		return this.mEventDisplayCount ? true : false;
+	
+	if (v == true || v == false)
+		this.mEventDisplayCount = v;
 }

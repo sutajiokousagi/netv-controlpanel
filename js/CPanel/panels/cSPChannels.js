@@ -153,30 +153,10 @@ if (!vMode) return vThis.mMode;
 		vThis.mPrevMode = vThis.mMode;
 		vThis.mMode = vMode;
 		
+		// check/load thumbnails (first 4)
 		o = [];
-		/*
-		// check/load thumbnails (first 4)
 		for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST.length; i++)
 			for (j = 0; j < cModel.fGetInstance().CHANNEL_LIST[i].mWidgetList.length; j++)
-			{
-				if (j < 4)
-				{
-					if (cModel.fGetInstance().CHANNEL_LIST[i].mWidgetList[j].mLocalThumbnailPath == "")
-						cChannelModule.fGetInstance().fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[i], [j, 1], function(vData) {
-							//~ fDbg(vData);
-							$($(vThis.mDivChannelList[vData[0]].children()[1]).children()[vData[1]]).
-							$($(vThis.mDivChannelList[vData[0]].children()[1]).children()[vData[1]]).children("img").attr("src", cModel.fGetInstance().CHANNEL_LIST[vData[0]].mWidgetList[vData[1]].mLocalThumbnailPath);
-						});
-				}
-				else
-					break;
-			}
-		*/
-		
-		// check/load thumbnails (first 4)
-		for (i = 0; i < cModel.fGetInstance().CHANNEL_LIST.length; i++)
-			for (j = 0; j < cModel.fGetInstance().CHANNEL_LIST[i].mWidgetList.length; j++)
-			{
 				if (j < 4)
 				{
 					if (cModel.fGetInstance().CHANNEL_LIST[i].mWidgetList[j].mLocalThumbnailPath == "")
@@ -184,7 +164,6 @@ if (!vMode) return vThis.mMode;
 				}
 				else
 					break;
-			}
 			
 		var fun1 = function() {
 			var vChannelN, vWidgetN;
@@ -1458,8 +1437,8 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 				o += 'YES';
 			o += '</div>';
 		o += '</div>';
-		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 240px; width: 120px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
-		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 232px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 340px; width: 20px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 332px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
 	o += '</div>';
 	o += '<div id="config_updateinterval" style="position: absolute; top: 70px; left: 20px; width: ' + vW + 'px; height: 32px; border: solid #EEEEEE 0px;">';
 		o += '<div class="indicator_bg" style="position: absolute; top: 0px; left: 0px; width: ' + vW + 'px; height: 32px; background: #6598EB; border-radius: 10px;"></div>';
@@ -1484,8 +1463,8 @@ cSPChannels.prototype.fRenderWidgetConfigPopup = function(
 				o += 'YES';
 			o += '</div>';
 		o += '</div>';
-		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 240px; width: 120px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
-		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 232px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
+		o += '<div class="selector_bar" style="position: absolute; top: 14px; left: 340px; width: 20px; height: 8px; background: #FFFFFF; border-radius: 4px;"></div>';
+		o += '<div class="selector_nod" style="position: absolute; top: 10px; left: 332px; width: 16px; height: 16px; background: #104396; border-radius: 8px;"></div>';
 	o += '</div>';
 	
 	o += '<div id="config_auth" style="position: absolute; top: 170px; left: 20px; width: ' + vW + 'px; height: 30px; border: solid #EEEEEE 0px;">';

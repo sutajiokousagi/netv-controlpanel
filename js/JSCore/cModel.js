@@ -62,7 +62,11 @@ fDbg("*** cModel, ");
 	
 	
 	// user settings
-	this.EVENTTICKER_SPEED = 3;			// range 1 ~ 5
+	this.EVENTTICKER_SPEED = 3;				// range 1 ~ 5
+	this.EVENTTICKER_REPEATCOUNT = 2;		// range 1 ~ 3
+	this.EVENTTICKER_LINECOUNT = 2;			// range 1 ~ 2
+	
+	
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -81,6 +85,9 @@ cModel.prototype.pData = function(
 	// 1, format mData
 	vThis.mData = {};
 	vThis.mData["EVENTTICKER_SPEED"] = vThis.EVENTTICKER_SPEED;
+	vThis.mData["EVENTTICKER_REPEATCOUNT"] = vThis.EVENTTICKER_REPEATCOUNT;
+	vThis.mData["EVENTTICKER_LINECOUNT"] = vThis.EVENTTICKER_LINECOUNT;
+	
 	o = [];
 	for (i = 0; i < vThis.CHANNEL_LIST.length; i++)
 		o.push(vThis.CHANNEL_LIST[i].pData());
@@ -92,6 +99,10 @@ cModel.prototype.pData = function(
 	// 3, apply/cast mData from v
 	if (v["EVENTTICKER_SPEED"])
 		vThis.EVENTTICKER_SPEED = v["EVENTTICKER_SPEED"];
+	if (v["EVENTTICKER_REPEATCOUNT"])
+		vThis.EVENTTICKER_REPEATCOUNT = v["EVENTTICKER_REPEATCOUNT"];
+	if (v["EVENTTICKER_LINECOUNT"])
+		vThis.EVENTTICKER_LINECOUNT = v["EVENTTICKER_LINECOUNT"];
 	
 	if (v["CHANNELLIST_DATA"] && v["CHANNELLIST_DATA"].length > 0)
 	{

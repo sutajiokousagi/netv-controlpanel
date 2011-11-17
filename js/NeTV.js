@@ -20,7 +20,6 @@ function fOnLoad()  {
 	
 	// -------- remove layerX and layerY --------
     // ------------------------------------------
-	
 	keyboard_init();
 	fCheckForRedirection();
 	

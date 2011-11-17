@@ -28,6 +28,7 @@ function cModuleEventTicker(
 		mCrawlerWidth: 1160,
 		
 		mMessageDefaultDisplayN: 2,
+		mSMSDefaultDisplayN: 2,
 		
 		mViewPortSize: [0, 0],
 		mRightOffset: 60,
@@ -630,13 +631,15 @@ cModuleEventTicker.prototype.fAddEvent = function(
 	{
 		vEventData.push('color: #FFFF00; text-shadow: #FFFF00 2px 2px 2px; font-size: 24px; margin-top: 5px;');
 		if (this.mEventList.length == 0)
-			this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+		{
+			this.mEventList.push([vEventData, o, vThis.mStyle.mSMSDefaultDisplayN]);
+		}
 		else
 		{
 			// TODO filter sms type message, if same message exist in the first N, ignore it.
 			//~ for (i = 0; i < 3; i++)
 			//~ {
-				this.mEventList.splice(1, 0, [vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+				this.mEventList.splice(1, 0, [vEventData, o, vThis.mStyle.mSMSDefaultDisplayN]);
 			//~ }
 		}
 	}
@@ -652,7 +655,8 @@ cModuleEventTicker.prototype.fAddEvent = function(
 		if (!vFlag)
 		{
 			vThis.mPrevEventList.push([cModuleWE.fGetInstance().pCurrWidget().mID, [vEventData[0].substr(0, 20)]]);
-			this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+			//~ this.mEventList.push([vEventData, o, cModuleWE.fGetInstance().pCurrWidget().pEventDisplayCount()]);
+			this.mEventList.push([vEventData, o, cModel.fGetInstance().EVENTTICKER_REPEATCOUNT]);
 		}
 		else
 		{
@@ -673,7 +677,8 @@ cModuleEventTicker.prototype.fAddEvent = function(
 			if (!vFlag)
 			{
 				vThis.mPrevEventList[i][1].push(vEventData[0].substr(0, 20));
-				this.mEventList.push([vEventData, o, vThis.mStyle.mMessageDefaultDisplayN]);
+				//~ this.mEventList.push([vEventData, o, cModuleWE.fGetInstance().pCurrWidget().pEventDisplayCount()]);
+				this.mEventList.push([vEventData, o, cModel.fGetInstance().EVENTTICKER_REPEATCOUNT]);
 			}
 			fDbg("==================================================");
 		}
@@ -761,14 +766,21 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	vForceLeft
 )
 {
-	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft, o, vCSS;
+	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft, o, vCSS, vFontSize;
 	vThis = this;
 	
 	vID = vThis.fGenerateGUID();
 	vWidth = vThis.fGetTextWidth("<span style='font-weight: bold;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + vThis.mEventList[vIndex][0][0]);
-	vWidth = parseInt(vWidth / 2) + 400;
-	if (vWidth > 1100)
-		vWidth = 1100;
+	
+	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
+		vWidth = parseInt(vWidth) + 400;
+	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
+	{
+		vWidth = parseInt(vWidth / 2) + 400;
+		if (vWidth > 1100)
+			vWidth = 1100;
+	}
+	
 	if (vForceWidth)
 		vWidth = vForceWidth;
 	if (vForceLeft)
@@ -795,8 +807,13 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	else
 		vCSS = "color: #EEEEEE; ";
 	
-	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 50px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; font-size: 17px; line-height: 130%;" + vCSS + "'>";
+	// set single line or double line
+	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
+		vFontSize = 32;
+	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
+		vFontSize = 17;	
 
+	vHtml += "<div id='message_txt' style='border: solid yellow 0px; position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 50px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; font-size: " + vFontSize + "px; line-height: 130%;" + vCSS + "'>";
 		if (vThis.mEventList[vIndex][0][1] && vThis.mEventList[vIndex][0][1] != "")
 			vHtml += "<span style='font-weight: bold; text-shadow: #AAAAAA 1px 1px 2px;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + vThis.mEventList[vIndex][0][0];
 		else
@@ -865,7 +882,7 @@ cModuleEventTicker.prototype.fCheckNewMessage = function(
 				vThis.pState(cModuleEventTicker.STATE_CRAWLINGOUT);
 				$("#div_eventWidgetPlayer_crawling").animate({
 					top: "+=70px"
-				}, 1000, function() {
+				}, 1500, function() {
 					$("#crawling_container").html("");
 					$("#div_eventWidgetPlayer_crawling").css("top", "0px");
 					$("#div_eventWidgetPlayer_crawling").css("left", vContainerWidth + "px");
@@ -1459,8 +1476,14 @@ cModuleEventTicker.prototype.fGetTextWidth = function(
 )
 {
 	var vFixHeight = 50;
+	var vFontSize;
 	
-	$("#div_testing").append("<div id='div_testing_A' style='float: left; width: auto; height: 50px'>" + vStr + "</div>");
+	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
+		vFontSize = 32;
+	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
+		vFontSize = 17;
+	
+	$("#div_testing").append("<div id='div_testing_A' style='float: left; font-size: " + vFontSize + "px; width: auto; height: 50px'>" + vStr + "</div>");
 
 	var o = $("#div_testing_A");
 	var vWidth = 0;

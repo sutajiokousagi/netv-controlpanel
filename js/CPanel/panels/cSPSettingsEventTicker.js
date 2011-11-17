@@ -27,15 +27,16 @@ function cSPSettingsEventTicker(
 	this.mDivIndicator = null;
 	this.mDivBack = null;
 	this.mDivItemList = [];
-	o = $(this.mDiv.children()[0]);
+	o = this.mDiv;
 	for (i = 0; i < o.children().length; i++)
 	{
+		//~ p = $($(o.children()[i]).children()[0]);
 		p = $(o.children()[i]);
 		p.pIndicatorStyle = {
 			width: parseInt(p.css("width").split("px")[0]) + 80 + "px",
 			height: parseInt(p.css("height").split("px")[0]) + "px",
-			top: parseInt(o.css("top").split("px")[0]) + (i * parseInt(p.css("height").split("px")[0])) + "px",
-			left: parseInt(o.css("left").split("px")[0]) - 40 + "px",
+			top: parseInt(p.css("top").split("px")[0]) + "px",
+			left: parseInt(p.css("left").split("px")[0]) - 40 + "px",
 		};
 		this.mDivItemList.push(p);
 	}
@@ -104,9 +105,23 @@ if (!v) return vThis.mViewMode;
 	{
 	case cSPSettingsEventTicker.VIEWMODE_DEFAULT:
 		vThis.pSelection(vThis.mDivItemList[0], false, true);
-
-		// update value according to cModel data
 		
+		o = vThis.mDivItemList[0];
+		o = $($($(o.children()[0]).children()[2]).children()[0]);
+		o.html(cModel.fGetInstance().EVENTTICKER_SPEED);
+		
+		o = vThis.mDivItemList[1];
+		o = $($($(o.children()[0]).children()[2]).children()[0]);
+		o.html(cModel.fGetInstance().EVENTTICKER_REPEATCOUNT);
+		
+		o = vThis.mDivItemList[2];
+		o = $($($(o.children()[0]).children()[2]).children()[0]);
+		if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
+			o.html("Single Line");
+		else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
+			o.html("Double Line");
+		
+		// update value according to cModel data
 		$($(vThis.mDivItemList[0].children()[2]).children()[0]).html(cModel.fGetInstance().EVENTTICKER_SPEED);
 		break;
 	}
@@ -133,6 +148,7 @@ if (!vSelection) return vThis.mSelection;
 	if (vLightNewSelection)
 		vThis.mSelection.css("opacity", "1");
 	vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+	//~ fDbg(JSON.stringify(vThis.mSelection.pIndicatorStyle));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -191,7 +207,7 @@ cSPSettingsEventTicker.prototype.fOnSignal = function(
 	case cConst.SIGNAL_BUTTON_LEFT:
 		o = vThis.pSelection();
 		i = vThis.mDivItemList.indexOf(o);
-		o = $($(o.children()[2]).children()[0]);
+		o = $($($(o.children()[0]).children()[2]).children()[0]);
 		if (i == 0)
 		{
 			p = parseInt(o.html()) - 1;
@@ -201,12 +217,32 @@ cSPSettingsEventTicker.prototype.fOnSignal = function(
 			cModel.fGetInstance().EVENTTICKER_SPEED = p;
 			cProxy.fSaveModelData();
 		}
+		if (i == 1)
+		{
+			p = parseInt(o.html()) - 1;
+			if (p < 1)
+				p = 1;
+			o.html(p);
+			cModel.fGetInstance().EVENTTICKER_REPEATCOUNT = p;
+			cProxy.fSaveModelData();
+		}
+		if (i == 2)
+		{
+			//~ p = parseInt(o.html()) - 1;
+			p = cModel.fGetInstance().EVENTTICKER_LINECOUNT;
+			p--;
+			if (p < 1)
+				p = 1;
+			o.html("Single Line");
+			cModel.fGetInstance().EVENTTICKER_LINECOUNT = p;
+			cProxy.fSaveModelData();
+		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_RIGHT:
 		o = vThis.pSelection();
 		i = vThis.mDivItemList.indexOf(o);
-		o = $($(o.children()[2]).children()[0]);
+		o = $($($(o.children()[0]).children()[2]).children()[0]);
 		if (i == 0)
 		{
 			p = parseInt(o.html()) + 1;
@@ -214,6 +250,26 @@ cSPSettingsEventTicker.prototype.fOnSignal = function(
 				p = 5;
 			o.html(p);
 			cModel.fGetInstance().EVENTTICKER_SPEED = p;
+			cProxy.fSaveModelData();
+		}
+		if (i == 1)
+		{
+			p = parseInt(o.html()) + 1;
+			if (p > 3)
+				p = 3;
+			o.html(p);
+			cModel.fGetInstance().EVENTTICKER_REPEATCOUNT = p;
+			cProxy.fSaveModelData();
+		}
+		if (i == 2)
+		{
+			//~ p = parseInt(o.html()) + 1;
+			p = cModel.fGetInstance().EVENTTICKER_LINECOUNT;
+			p++;
+			if (p > 2)
+				p = 2;
+			o.html("Double Line");
+			cModel.fGetInstance().EVENTTICKER_LINECOUNT = p;
 			cProxy.fSaveModelData();
 		}
 		break;
@@ -237,85 +293,33 @@ cSPSettingsEventTicker.prototype.fOnSignal = function(
 			o = vThis.mDivItemList[vThis.mDivItemList.length - 1];
 			vThis.pSelection(o, true, true);
 		}
-		/*
-		switch (vThis.pViewMode())
+		else
 		{
-		case cSPSettingsEventTicker.VIEWMODE_DEFAULT:
-			switch (vThis.mSelection)
+			o = vThis.pSelection();
+			i = vThis.mDivItemList.indexOf(o);
+			if (i > 0)
 			{
-			case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
-			case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivToggleSSH; break;
-			case vThis.mDivReboot:				o = vThis.mDivSetTimezone; break;
-			case vThis.mDivBack:				o = vThis.mDivReboot; break;
-			default: 							return;
+	 			i--;
+				vThis.pSelection(vThis.mDivItemList[i], false, true);
 			}
-			vThis.mSelection.css("opacity", "0.2");
-			vThis.mSelection = o;
-			vThis.mSelection.css("opacity", "1");
-			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
-			break;
-		case cSPSettingsEventTicker.VIEWMODE_SETTING_TIMEZONE:
-			switch (vThis.mSelection)
-			{
-			case vThis.mDivSettingTimezoneTitle:
-				break;
-			case vThis.mDivSettingTimezoneListContainer:
-				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone - 1);
-				break;
-			case vThis.mDivBack:
-				vThis.pSelection(vThis.mDivSettingTimezoneTitle, true, true);
-				break;
-			}
-			break;
 		}
-		*/
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
 		o = vThis.pSelection();
 		i = vThis.mDivItemList.indexOf(o);
-		o = $($(o.children()[2]).children()[0]);
-		if (i == vThis.mDivItemList.length - 1)
-		{
-			o = vThis.mDivBack;
-			vThis.pSelection(o, false, true);
-		}
 		
-		/*
-		switch (vThis.pViewMode())
-		{
-		case cSPSettingsEventTicker.VIEWMODE_DEFAULT:
-			switch (vThis.mSelection)
+		if (i > -1)
+			if (i == vThis.mDivItemList.length - 1)
 			{
-			case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
-			case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
-			case vThis.mDivToggleSSH:			o = vThis.mDivSetTimezone; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivReboot; break;
-			case vThis.mDivReboot:				o = vThis.mDivBack; break;
-			default: 							return;
+				o = vThis.mDivBack;
+				vThis.pSelection(o, false, true);
 			}
-			
-			vThis.mSelection.css("opacity", "0.2");
-			vThis.mSelection = o;
-			vThis.mSelection.css("opacity", "1");
-			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
-			break;
-		case cSPSettingsEventTicker.VIEWMODE_SETTING_TIMEZONE:
-			switch (vThis.mSelection)
+			else
 			{
-			case vThis.mDivSettingTimezoneTitle:
-				vThis.pSelection(vThis.mDivBack, false, true);
-				break;
-			case vThis.mDivSettingTimezoneListContainer:
-				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone + 1);
-				break;
-			case vThis.mDivBack:
-				break;
+				i++;
+				vThis.pSelection(vThis.mDivItemList[i], false, true);
 			}
-			break;
-		}
-		*/
 		break;
 	}
 }
