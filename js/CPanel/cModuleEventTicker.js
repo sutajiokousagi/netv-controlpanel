@@ -777,7 +777,13 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 	vThis = this;
 	
 	vID = vThis.fGenerateGUID();
-	vWidth = vThis.fGetTextWidth("<span style='font-weight: bold;'>" + vThis.mEventList[vIndex][0][1] +  "</span>&nbsp; : &nbsp;" + vThis.mEventList[vIndex][0][0]);
+	
+	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!";
+	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!费德勒年终大师赛冠军!";
+	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符";
+	//~ vThis.mEventList[vIndex][0][0] = "qwuery qweuty wqetuy qwety qweuty";
+	//~ fDbg(vThis.mEventList[vIndex][0][0]);
+	vWidth = vThis.fGetTextWidth(vThis.mEventList[vIndex][0][1] + vThis.mEventList[vIndex][0][0]);
 	
 	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
 		vWidth = parseInt(vWidth) + 400;
@@ -787,16 +793,15 @@ cModuleEventTicker.prototype.fAppendMessageDivFromEvent = function(
 		if (vWidth > 1100)
 			vWidth = 1100;
 	}
-	
-	if (vForceWidth)
-		vWidth = vForceWidth;
+	fDbg("++++++++++++++++++++===============+++++++++++++++++++++++++>>>>>>>> " + vWidth);
+	//~ if (vForceWidth)
+		//~ vWidth = vForceWidth;
 	if (vForceLeft)
 		vLeft = vForceLeft;
 	else
 		vLeft = 20;
 	
 	vInnerLeft = 0;
-	
 	
 	//~ vThis.mEventList[vIndex][0][0] = "符号测试， 和验证。！";
 	
@@ -1490,12 +1495,12 @@ cModuleEventTicker.prototype.fGetTextWidth = function(
 	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
 		vFontSize = 17;
 	
-	$("#div_testing").append("<div id='div_testing_A' style='float: left; font-size: " + vFontSize + "px; width: auto; height: 50px'>" + vStr + "</div>");
-
+	$("#div_testing").html("<div id='div_testing_A' style='float: left; font-size: " + vFontSize + "px; width: auto; height: 50px'>" + vStr.substr(0, parseInt(vStr.length / 3)) + "</div>");
+	
 	var o = $("#div_testing_A");
 	var vWidth = 0;
-	vWidth = o.width() + 10;
-	$("#div_testing").html("");
+	vWidth = (o.width() + 40) * 3;
+	//~ $("#div_testing").html("");
 	return vWidth;
 }
 
