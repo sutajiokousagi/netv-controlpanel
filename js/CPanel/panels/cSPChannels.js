@@ -236,7 +236,7 @@ if (!vMode) return vThis.mMode;
 		vThis.mDivWidgets.hide();
 		vThis.mDivWidgetConfig.show();
 		vThis.mDivWidgetAuth.hide();
-		vTHis.mDivWidgetAuthInput.hide();
+		vThis.mDivWidgetAuthInput.hide();
 		vThis.mDivBack.show();
 		vThis.mDivBack.html("BACK");
 		
