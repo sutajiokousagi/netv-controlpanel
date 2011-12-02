@@ -188,11 +188,11 @@ fDbg("*** cJSCore, fStartUp()");
 	cStartupModule.fGetInstance().fEnvironmentalCheck(function(vData) {
 		if (vData)
 		{
-			cProxy.fUpdateDeviceToServer({}, function(vData) {
-				fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-				fDbg(vData);
-				fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-			});
+			// cProxy.fUpdateDeviceToServer({}, function(vData) {
+				// fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+				// fDbg(vData);
+				// fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+			// });
 
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE);
 			
