@@ -168,13 +168,24 @@ fDbg("*** cProxy, fCPanelInfoPanelUpdate(), ");
 
 
 // -------------------------------------------------------------------------------------------------
-//	fReadDefaultChannelData
+//	fUpdateDeviceToServer
 // -------------------------------------------------------------------------------------------------
-cProxy.fReadDefaultChannelData = function(
+cProxy.fUpdateDeviceToServer = function(
+	vPostParam,
 	vReturnFun
 )
 {
-	cProxy.fReadFile("/usr/share/netvserver/docroot/widgets/channelinfo.xml", function(vData) {
+	var o, vUrl;
+
+	// 1, process vPathList
+	vUrl = "http://torinnguyen.com/netv/webservices/";
+	
+	// 3, process vPostParam
+	vPostParam = vPostParam ? vPostParam : "";
+	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
+		//~ fDbg(vData);
+		//~ vData = vData.split("<value>")[1].split("</value>")[0];
+		
 		if (vReturnFun)
 			vReturnFun(vData);
 	});
