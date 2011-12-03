@@ -179,11 +179,16 @@ cProxy.fUpdateDeviceToServer = function(
 )
 {
 	var vUrl = "http://netv.bunnie-bar.com/torin/webservices/update_device.php";
-	
+
+	//Decompose vPostParam array into GET style string
 	vPostParam = vPostParam ? vPostParam : "";
+	var parameters = "";
+	for (var o in vPostParam)
+		parameters += o + "=" + encodeURIComponent(vPostParam[o]) + "&";
+	if (parameters.substr(parameters.length - 1, 1) == "&")
+		parameters = parameters.substr(0, parameters.length - 1);
 	
-	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
-		//~ fDbg(vData);	
+	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : parameters}, function(vData) {
 		if (vCompleteFunc)
 			vCompleteFunc(vData);
 	});
