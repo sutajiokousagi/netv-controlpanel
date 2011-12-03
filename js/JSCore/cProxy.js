@@ -179,45 +179,14 @@ cProxy.fUpdateDeviceToServer = function(
 )
 {
 	var vUrl = "http://netv.bunnie-bar.com/torin/webservices/update_device.php";
-	var self = this;
 	
-	if (!window.XMLHttpRequest)		// Mozilla/Safari
-	{
+	vPostParam = vPostParam ? vPostParam : "";
+	
+	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
+		//~ fDbg(vData);	
 		if (vCompleteFunc)
-			vCompleteFunc("XMLHttpRequest doesn't exist.");
-		return;
-	}
-
-	var xmlHttpReq = new XMLHttpRequest();
-	xmlHttpReq.open("post", vUrl, true);
-	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.onreadystatechange = function()
-	{
-		if (xmlHttpReq.readyState == 4)
-		{
-			switch (xmlHttpReq.status)
-			{
-			case 200:
-				if (vCompleteFunc)
-					vCompleteFunc(xmlHttpReq.responseText);
-				break;
-			case 0:
-				if (vCompleteFunc)
-					vCompleteFunc(0);
-				break;
-			}
-		}
-	}
-	
-	// POST data
-	var parameters = "";
-	for (var o in vPostParam)
-		parameters += o + "=" + encodeURIComponent(vPostParam[o]) + "&";
-	if (parameters.substr(parameters.length - 1, 1) == "&")
-		parameters = parameters.substr(0, parameters.length - 1);
-		
-	// Send it
-	xmlHttpReq.send(parameters);
+			vCompleteFunc(vData);
+	});
 }
 
 
