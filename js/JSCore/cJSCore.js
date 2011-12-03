@@ -188,11 +188,19 @@ fDbg("*** cJSCore, fStartUp()");
 	cStartupModule.fGetInstance().fEnvironmentalCheck(function(vData) {
 		if (vData)
 		{
-			// cProxy.fUpdateDeviceToServer({}, function(vData) {
-				// fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-				// fDbg(vData);
-				// fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-			// });
+			// report this device to statistic server
+			var model = cModel.fGetInstance();
+			var devInfo = new Array();
+			devInfo['guid'] = model.CHUMBY_GUID;
+			devInfo['hwver'] = model.CHUMBY_HWVERSION;
+			devInfo['fwver'] = model.CHUMBY_FWVERSION;
+			devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;		
+			
+			cProxy.fUpdateDeviceToServer(devInfo, function(responseText) {
+				fDbg("From stats server:+++++++++++++++++++++++++");
+				fDbg(responseText);
+				fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+			});
 
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE);
 			

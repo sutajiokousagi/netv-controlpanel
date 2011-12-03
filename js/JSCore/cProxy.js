@@ -211,8 +211,8 @@ cProxy.fUpdateDeviceToServer = function(
 	
 	// POST data
 	var parameters = "";
-	for (var o in vData)
-		parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
+	for (var o in vPostParam)
+		parameters += o + "=" + encodeURIComponent(vPostParam[o]) + "&";
 	if (parameters.substr(parameters.length - 1, 1) == "&")
 		parameters = parameters.substr(0, parameters.length - 1);
 		
