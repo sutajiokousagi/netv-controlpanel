@@ -194,12 +194,25 @@ fDbg("*** cJSCore, fStartUp()");
 			devInfo['guid'] = model.CHUMBY_GUID;
 			devInfo['hwver'] = model.CHUMBY_HWVERSION;
 			devInfo['fwver'] = model.CHUMBY_FWVERSION;
-			devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;		
+			devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;
+			devInfo['local_ip'] = model.CHUMBY_NETWORK_IP;
 			
-			cProxy.fUpdateDeviceToServer(devInfo, function(responseText) {
-				fDbg("From stats server:+++++++++++++++++++++++++");
-				fDbg(responseText);
-				fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+			cProxy.fUpdateDeviceToServer(devInfo, function(responseText)
+			{
+				if (responseText != null && responseText.length > 10)
+					responseText = responseText.split("<value>")[1].split("</value>")[0];
+				var json = eval('(' + responseText + ')')[0];
+				var status = json['ws_status'];
+				
+				if (status != null && status != "" && status.toLowerCase() == "yes") {
+					fDbg("Successfully report to stats server");
+				}
+				else {
+					fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+					fDbg("Failed to report to stats server: " + status);
+					fDbg(responseText);
+					fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+				}
 			});
 
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE);
