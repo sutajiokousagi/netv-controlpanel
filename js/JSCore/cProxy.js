@@ -43,15 +43,18 @@ cProxy.xmlhttpPost = function(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-	if (window.XMLHttpRequest)						// Mozilla/Safari
-		xmlHttpReq = new XMLHttpRequest();
-	else
-		vCompleteFunction("XMLHttpRequest doens't exist.");
+	if (!window.XMLHttpRequest)						// Mozilla/Safari
+	{
+		if (vCompleteFun)
+			vCompleteFun("XMLHttpRequest doesn't exist.");
+		return;
+	}
 	
 	if (!strURL || strURL == "")
 		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
 
 //~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);
+	xmlHttpReq = new XMLHttpRequest();
 	xmlHttpReq.open(vType, strURL, true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	//~ xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -172,23 +175,49 @@ fDbg("*** cProxy, fCPanelInfoPanelUpdate(), ");
 // -------------------------------------------------------------------------------------------------
 cProxy.fUpdateDeviceToServer = function(
 	vPostParam,
-	vReturnFun
+	vCompleteFunc
 )
 {
-	var o, vUrl;
-
-	// 1, process vPathList
-	vUrl = "http://torinnguyen.com/netv/webservices/";
+	var vUrl = "http://netv.bunnie-bar.com/torin/webservices/update_device.php";
+	var self = this;
 	
-	// 3, process vPostParam
-	vPostParam = vPostParam ? vPostParam : "";
-	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
-		//~ fDbg(vData);
-		//~ vData = vData.split("<value>")[1].split("</value>")[0];
+	if (!window.XMLHttpRequest)		// Mozilla/Safari
+	{
+		if (vCompleteFunc)
+			vCompleteFunc("XMLHttpRequest doesn't exist.");
+		return;
+	}
+
+	var xmlHttpReq = new XMLHttpRequest();
+	xmlHttpReq.open("post", vUrl, true);
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlHttpReq.onreadystatechange = function()
+	{
+		if (xmlHttpReq.readyState == 4)
+		{
+			switch (xmlHttpReq.status)
+			{
+			case 200:
+				if (vCompleteFunc)
+					vCompleteFunc(xmlHttpReq.responseText);
+				break;
+			case 0:
+				if (vCompleteFunc)
+					vCompleteFunc(0);
+				break;
+			}
+		}
+	}
+	
+	// POST data
+	var parameters = "";
+	for (var o in vData)
+		parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
+	if (parameters.substr(parameters.length - 1, 1) == "&")
+		parameters = parameters.substr(0, parameters.length - 1);
 		
-		if (vReturnFun)
-			vReturnFun(vData);
-	});
+	// Send it
+	xmlHttpReq.send(parameters);
 }
 
 
