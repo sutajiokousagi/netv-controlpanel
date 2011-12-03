@@ -89,6 +89,10 @@ cStartupModule.prototype.fEnvironmentalCheck = function(
 			o.CHUMBY_MAC_ADDRESS = vData.split("</mac>")[0].split("<mac>")[1];
 			//o.CHUMBY_INTERNET = "false";
 			
+			//hwver is an xml string, need more massaging
+			if (o.CHUMBY_HWVERSION.indexOf("success") > 0)
+				o.CHUMBY_HWVERSION = o.CHUMBY_HWVERSION.split("result=\"success\">")[1].split("</response>")[0];
+			o.CHUMBY_HWVERSION = o.CHUMBY_HWVERSION.substring(o.CHUMBY_HWVERSION.length, o.CHUMBY_HWVERSION.length-8);
 			
 			switch (vData.split("</internet>")[0].split("<internet>")[1])
 			{
