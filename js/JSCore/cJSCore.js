@@ -188,32 +188,7 @@ fDbg("*** cJSCore, fStartUp()");
 	cStartupModule.fGetInstance().fEnvironmentalCheck(function(vData) {
 		if (vData)
 		{
-			// report this device to statistic server
-			var model = cModel.fGetInstance();
-			var devInfo = new Array();
-			devInfo['guid'] = model.CHUMBY_GUID;
-			devInfo['hwver'] = model.CHUMBY_HWVERSION;
-			devInfo['fwver'] = model.CHUMBY_FWVERSION;
-			devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;
-			devInfo['local_ip'] = model.CHUMBY_NETWORK_IP;
-			
-			cProxy.fUpdateDeviceToServer(devInfo, function(responseText)
-			{
-				if (responseText != null && responseText.length > 10)
-					responseText = responseText.split("<value>")[1].split("</value>")[0];
-				var json = eval('(' + responseText + ')')[0];
-				var status = json['ws_status'];
-				
-				if (status != null && status != "" && status.toLowerCase() == "yes") {
-					fDbg("Successfully report to stats server");
-				}
-				else {
-					fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-					fDbg("Failed to report to stats server: " + status);
-					fDbg(responseText);
-					fDbg("+++++++++++++++++++++++++++++++++++++++++++");
-				}
-			});
+			vThis.fUpdateDeviceToServer();
 
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE);
 			
@@ -279,9 +254,50 @@ cJSCore.prototype.fSimulateTestingData = function(
 	}
 }
 
+// -------------------------------------------------------------------------------------------------
+//	fUpdateDeviceToServer
+// -------------------------------------------------------------------------------------------------
+cJSCore.prototype.startUpdateDeviceToServer = function(
+)
+{
+	var min1020 = Math.round(10 + Math.random() * 10.0) * 60000;		//10 to 20 minutes
+	setTimeout('this.fUpdateDeviceToServer', min1020);
+	fDbg("Checking in with stats server in " + Math.round(min1020/60000) + "minutes");
+}
 
-
-
+cJSCore.prototype.fUpdateDeviceToServer = function(
+)
+{
+	// report this device to statistic server
+	var model = cModel.fGetInstance();
+	var devInfo = new Array();
+	devInfo['guid'] = model.CHUMBY_GUID;
+	devInfo['hwver'] = model.CHUMBY_HWVERSION;
+	devInfo['fwver'] = model.CHUMBY_FWVERSION;
+	devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;
+	devInfo['local_ip'] = model.CHUMBY_NETWORK_IP;
+	
+	cProxy.fUpdateDeviceToServer(devInfo, function(responseText)
+	{
+		if (responseText != null && responseText.length > 10)
+			responseText = responseText.split("<value>")[1].split("</value>")[0];
+		var json = eval('(' + responseText + ')')[0];
+		var status = json['ws_status'];
+		
+		if (status != null && status != "" && status.toLowerCase() == "yes") {
+			fDbg("Successfully report to stats server");
+		}
+		else {
+			fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+			fDbg("Failed to report to stats server: " + status);
+			fDbg(responseText);
+			fDbg("+++++++++++++++++++++++++++++++++++++++++++");
+		}
+	});
+	
+	// restart the update
+	this.startUpdateDeviceToServer();
+}
 
 
 
