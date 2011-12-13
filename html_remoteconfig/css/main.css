@@ -1,0 +1,32 @@
+
+
+
+.row_container {
+	float: left;
+	width: 900px;
+	height: auto;
+	border-bottom: solid black 1px;
+}
+
+.cell_title {
+	float: left;
+	width: 250px;
+	
+	padding: 6px 0 0 0;
+	border: solid black 0px;
+}
+
+.cell_description {
+	float: left;
+	width: 470px;
+	
+	font-size: 12px;
+	padding: 6px 0 0 0;
+	border: solid black 0px;
+}
+
+.cell_input {
+	float: left;
+	width: 100px;
+	border: solid black 0px;
+}

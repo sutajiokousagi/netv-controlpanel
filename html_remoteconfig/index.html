@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>NeTV Remote Configuration</title>
+
+<link href="./css/main.css" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Cagliostro' rel='stylesheet' type='text/css'>
+
+<script type='text/javascript' src='js/jquery-1.7.1.min.js'></script>
+<script type='text/javascript' src='js/cProxy.js'></script>
+<script type='text/javascript' src='js/main.js'></script>
+</head>
+
+
+
+<body>
+				
+<div id="div_full_page" style="text-align: center; font-family: 'Cagliostro', sans-serif; font-family: 'Arial', sans-serif;">
+
+	<div id="div_center" class="div_center_wrapper" style="width: 900px; height: auto; text-align: left; margin: 0 auto 0 auto; border: solid black 0px;">
+		<!-- ------------------------ header ----------------------- -->
+		<div ID="div_header" style="float: left; width: 900px; height: 200px;">
+			<div class="spacer">&nbsp;</div>
+			<div style="float: left; width: 80px; height: 48px; background-image: url('../images/chumby_logo_48x48.png'); background-repeat: no-repeat; background-position:center"></div>
+			<div style="float: left; height: 48px; line-height:48px; font-size: 18px; font-weight:bold;">NeTV Remote Configuration</div>
+			<div class="spacer">&nbsp;</div>
+			
+			<div id="div_system" style="float: left; margin: -60px 0 0 770px; width: 310px; font-size: 12px;">
+				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Total - </div><div style="float: left; width: 100px;"></div></div>
+				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Used - </div><div style="float: left; width: 100px; color: AA0000;"></div></div>
+				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Free - </div><div style="float: left; width: 100px; color: 00AA00;"></div></div>
+			</div>
+			
+			<div id="div_info" style="float: left; margin: 20px 0 0 0; width: 900px; height: 100px; font-size: 12px; border-top: dashed #333333 1px; border-bottom: dashed #333333 1px; ">
+				<div style="float: left; width: 900px;">
+					<div style="float: left; width: 400px;">
+						<div style="float: left; width: 400px; margin-top: 8px;">
+							<div style="float: left; width: 120px;">MAC</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">IP</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">FW VER</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">HW VER</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+					</div>
+				
+					<div style="float: left; width: 400px;">
+						<div style="float: left; width: 400px; margin-top: 8px;">
+							<div style="float: left; width: 120px;">Internet</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">Activation Status</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">-</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+						<div style="float: left; width: 400px; margin-top: 10px;">
+							<div style="float: left; width: 120px;">-</div><div style="float: left; width: 10px;">-</div><div style="float: left; width: 200px;">-</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- ----------------------- loading icon ---------------------- -->
+		<!--
+		<div id="div_loadingMain">
+			<div style="text-align: center; margin-top:130px">
+				<img width="48" height="48" src="images/loading_48.gif" >
+			</div>
+			<div style="text-align: center; margin-top: 15px;">Please wait...</div>
+		</div>
+		-->
+		
+		<div class="row_container">
+			<div class="cell_title">Ticker Speed</div>
+			<div class="cell_description">speed of the crawling events (1 ~ 5)</div>
+			<div class="cell_input"><input id="ip_ticketspeed" name="ip_ticketspeed" type="text" /></div>
+		</div>
+		
+		<div class="row_container">
+			<div class="cell_title">Ticket No. of Rows</div>
+			<div class="cell_description">single/double row display for ticket events (1 ~ 2)</div>
+			<div class="cell_input"><input id="ip_ticketNrows" name="ip_ticketNrows" type="text" /></div>
+		</div>
+		
+		<!--
+		<div class="row_container">
+			<div class="cell_title">Enable SSH</div>
+			<div class="cell_description">enable/disable SSH</div>
+			<div class="cell_input"><input id="ip_systemssh" name="ip_systemssh" type="text" /></div>
+		</div>
+		-->
+		<div class="row_container">
+			<div class="cell_title">Ticket Bottom Offset</div>
+			<div class="cell_description">bottom offset of the event ticket (int)</div>
+			<div class="cell_input"><input id="ip_ticketbottomoffset" name="ip_ticketbottomoffset" type="text" /></div>
+		</div>
+		
+		
+		
+		
+		<div class="row_container" style="border: none; margin-top: 50px;">
+			<div class="cell_title">&nbsp;</div>
+			<div class="cell_description">&nbsp;</div>
+			<div class="cell_input" style="float: right; margin-right: 105px;"><input id="btn_submit" type="button" value="save and restart NeTV Browser" /></div>
+		</div>
+    </div>
+
+</div>
+
+</body>
+</html>
