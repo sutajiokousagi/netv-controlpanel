@@ -4,6 +4,10 @@ var keyPressedArray = new Array();
 
 
 
+var mEnableAutoRefreshMemoryStats = false;
+var mViewPortSize = [0, 0];
+
+
 var mData = {
 	eventtickerstyledata : {
 		mLoaded : null,
@@ -66,19 +70,108 @@ $(function() {
 		return true;
 	});
 	
+	$(window).resize(function() { fResize(); });
+	fResize();
+	
+	
+	// widget - controller
+	$("#div_widget_controller_trigger").hover(
+		function() {
+			$(this).animate({
+				right: "0px"
+			}, 200, function() {
+				
+			});
+		},
+		function() {
+			$(this).animate({
+				right: "-30px"
+			}, 200, function() {
+				
+			});
+		}
+	);
+	$("#div_widget_controller_trigger").click(function() {
+		$("#div_widget_controller_content").children("iframe").attr("src", "../html_remote.html");
+		$("#div_widget_controller_content").fadeIn(300);
+		$("#div_widget_controller_bg").fadeIn(300);
+	});
+	$("#div_widget_controller_bg").click(function() {
+		$("#div_widget_controller_content").fadeOut(300, function() {
+			$("#div_widget_controller_content").children("iframe").attr("src", "");
+		});
+		$("#div_widget_controller_bg").fadeOut(300);
+	});
+	
+	
+	
+	
+	
+	// widget - neighbour scanner
+	o = '';
+	for (i = 2; i < 255; i++)
+	{
+		o += '<div class="neighbourscanner_item" style="float: left; width: 40px; height: 15px; background: #999999; border: solid black 1px; margin: 5px;"><div style="float: left; width: 40px; margin: 2px 0 0 0; text-align: center; font-size: 10px;">1.' + i + '</div></div>';
+		// <img src="../images/netv_logo_24x24.png" style="margin: 2px 0 0 7px;" />
+	}
+	o += '<div style="float: left; width: 800px; text-align: center;"><input id="btn_neighbourscanner_submit" type="button" value="scan"/></div>';
+	
+	
+	$("#div_widget_neighbourscanner_content").html(o);
+	$("#btn_neighbourscanner_submit").click(function() {
+		$(this).hide();
+		fScanNeighbour();
+	});	
+	$("#div_widget_neighbourscanner_trigger").hover(
+		function() {
+			$(this).animate({
+				right: "0px"
+			}, 200, function() {
+				
+			});
+		},
+		function() {
+			$(this).animate({
+				right: "-30px"
+			}, 200, function() {
+				
+			});
+		}
+	);
+	$("#div_widget_neighbourscanner_trigger").click(function() {
+		$("#div_widget_neighbourscanner_content").fadeIn(300);
+		$("#div_widget_neighbourscanner_bg").fadeIn(300);
+	});
+	$("#div_widget_neighbourscanner_bg").click(function() {
+		$("#div_widget_neighbourscanner_content").fadeOut(300);
+		$("#div_widget_neighbourscanner_bg").fadeOut(300);
+	});
+	
 	
 	
 	
 	// prrodically refresh system data
 	var mSystemDataInterval = setInterval(function() {
+		if (!mEnableAutoRefreshMemoryStats)
+			return;
 		fRefreshSystemData();
 	}, 5000);
+	
+	$("#cb_refreshmemorystats").change(function() {
+		if ($(this).attr("checked") == "checked")
+			mEnableAutoRefreshMemoryStats = true;
+		else
+			mEnableAutoRefreshMemoryStats = false;
+	});
+	
+	
+	
 	
 	
 	
 	
 	cProxy.xmlhttpPost("", "post", {cmd : "hello", data: null}, function(vData) {
-		fDbg(vData);
+		//~ fDbg(vData);
 		
 		o = vData.split("</mac>")[0].split("<mac>")[1];
 		$($($($($("#div_info").children()[0]).children()[0]).children()[0]).children()[2]).html(o);
@@ -91,7 +184,6 @@ $(function() {
 		
 		o = vData.split("</hwver>")[0].split("<hwver>")[1].split("</response>")[0].split("success\">")[1];
 		$($($($($("#div_info").children()[0]).children()[0]).children()[3]).children()[2]).html(o);
-		
 		
 		o = vData.split("</internet>")[0].split("<internet>")[1];
 		$($($($($("#div_info").children()[0]).children()[1]).children()[0]).children()[2]).html(o);
@@ -118,6 +210,23 @@ $(function() {
 	
 });
 
+
+// -------------------------------------------------------------------------------------------------
+//	fResize
+// -------------------------------------------------------------------------------------------------
+function fResize(
+)
+{
+	
+	mViewPortSize = [window.innerWidth, window.innerHeight];
+	
+	$("#div_widget_controller_content").css("left", (mViewPortSize[0] - 600) / 2);
+	$("#div_widget_controller_bg").css({width: mViewPortSize[0], height: mViewPortSize[1]});
+	
+	$("#div_widget_neighbourscanner_content").css("left", (mViewPortSize[0] - 800) / 2);
+	$("#div_widget_neighbourscanner_bg").css({width: mViewPortSize[0], height: mViewPortSize[1]});
+	
+}
 
 
 
@@ -280,6 +389,92 @@ function fRefreshSystemData(
 		$($($("#div_system").children()[2]).children()[1]).html(mSystemData["mMemory"]["mFree"] + " KB");
 	});
 }
+
+
+
+
+
+function fScanNeighbour(
+	vN
+)
+{
+	var o;
+	if (!vN)
+		vN = 2;
+		
+	o = location.href.split("http://")[1].split("/")[0];
+	o = o.split(".");
+	o = o[0] + "." + o[1] + "." + o[2] + "." + vN;
+	
+	cProxy.xmlhttpPost("", "post", {cmd : "GetURL", url : "http://" + o + "/bridge", post : "cmd=hello"}, function(vData) {
+		fDbg(vN + " - " + vData);
+		if (vData.indexOf("<fwver>") > -1)
+		{
+			$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#FFFFFF");
+		}
+		else
+		{
+			$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#333333");
+		}
+		
+		
+		if (vN < 255)
+			vN++;
+		else
+		{
+			$("#btn_neighbourscanner_submit").show();
+			return;
+		}
+		fScanNeighbour(vN);
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

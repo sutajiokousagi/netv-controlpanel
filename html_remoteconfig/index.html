@@ -16,6 +16,9 @@
 				
 <div id="div_full_page" style="text-align: center; font-family: 'Cagliostro', sans-serif; font-family: 'Arial', sans-serif;">
 
+
+
+
 	<div id="div_center" class="div_center_wrapper" style="width: 900px; height: auto; text-align: left; margin: 0 auto 0 auto; border: solid black 0px;">
 		<!-- ------------------------ header ----------------------- -->
 		<div ID="div_header" style="float: left; width: 900px; height: 200px;">
@@ -28,6 +31,9 @@
 				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Total - </div><div style="float: left; width: 100px;"></div></div>
 				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Used - </div><div style="float: left; width: 100px; color: AA0000;"></div></div>
 				<div style="float: left; width: 300px;"><div style="float: left; width: 50px;">Free - </div><div style="float: left; width: 100px; color: 00AA00;"></div></div>
+			</div>
+			<div id="div_system_control" style="float: left; margin: -60px 0 0 650px; width: 310px; font-size: 12px;">
+				<input id="cb_refreshmemorystats" type="checkbox" value="" />auto refresh
 			</div>
 			
 			<div id="div_info" style="float: left; margin: 20px 0 0 0; width: 900px; height: 100px; font-size: 12px; border-top: dashed #333333 1px; border-bottom: dashed #333333 1px; ">
@@ -100,14 +106,44 @@
 			<div class="cell_input"><input id="ip_ticketbottomoffset" name="ip_ticketbottomoffset" type="text" /></div>
 		</div>
 		
-		
-		
-		
 		<div class="row_container" style="border: none; margin-top: 50px;">
 			<div class="cell_title">&nbsp;</div>
 			<div class="cell_description">&nbsp;</div>
 			<div class="cell_input" style="float: right; margin-right: 105px;"><input id="btn_submit" type="button" value="save and restart NeTV Browser" /></div>
 		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div id="div_widget_controller" style="position: fixed; top: 0px; left: 0px; width: auto; height: auto; margin: 0; padding: 0; border: solid black 0px;">
+			<div id="div_widget_controller_bg" style="width: 800px; height: 800px; background-image: url('./images/white_overlay.png'); display: none;"></div>
+			<div id="div_widget_controller_trigger" style="position: fixed; top: 100px; right: -30px; width: 48px; height: 48px; "><a id="a_widget_controller_button" href="#"><img src="../images/chumby_logo_48x48.png" /></a></div>
+			<div id="div_widget_controller_content" style="position: fixed; top: 100px; left: 300px; border: solid #666666 8px; display: none;">
+				<iframe src="" style="width: 600px; height: 300px;"></iframe>
+			</div>
+		</div>
+		
+		<div id="div_widget_neighbourscanner" style="position: fixed; top: 0px; left: 0px; width: auto; height: auto; margin: 0; padding: 0; border: solid black 0px;">
+			<div id="div_widget_neighbourscanner_bg" style="width: 800px; height: 800px; background-image: url('./images/white_overlay.png'); display: none;"></div>
+			<div id="div_widget_neighbourscanner_trigger" style="position: fixed; top: 160px; right: -30px; width: 48px; height: 48px; "><a id="a_widget_neighbourscanner_button" href="#"><img src="../images/chumby_logo_48x48.png" /><img src="../images/chumby_logo_48x48.png" style="margin: -42px 0 0 6px;" /></a></div>
+			<div id="div_widget_neighbourscanner_content" style="position: fixed; top: 100px; left: 300px; width: 800px; height: 500px; background: #FFFFFF; border: solid #666666 8px; display: none;">
+				
+			</div>
+		</div>
+		
     </div>
 
 </div>
