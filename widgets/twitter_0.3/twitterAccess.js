@@ -85,7 +85,7 @@ function twitterXAuth(username, password)
 	"' AND oauth_consumer_key='" + consumer_key +
 	"' AND username='" + username +
 	"' AND password='" + password + "'";
-	fDbg(query_xAuth);
+    fDbg(query_xAuth);
     // The YQL url for xAuth
     var yql_xAuth = "https://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query_xAuth)+"&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"; 
 
@@ -95,30 +95,30 @@ function twitterXAuth(username, password)
     // Get the access_token & access_token_secret
     // Store them in in the /psp/parameter.ini
     $.getJSON(yql_xAuth, function(data) {
-		$('#result').append("<b>xAuth Results: </b>" + JSON.stringify(data) + "<br >");
-		var result = data['query']['results']['result'];
-		
-		if (result.indexOf("&") == -1)
-		{
-			if (result.indexOf("Tunnel Connection Failed") > -1)
-			{
-				twitterXAuth(username, password);
-				return;
-			}
-			
-			if (result.indexOf("Invalid") > -1)
-				result = '<div style="font-size: 36px; color: FF3333; margin-top: 30px;">' + result + '</div>';
-				
-			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: result, type: "foroauth"}, function(vData) {});
-			return;
-		}
-		 
-		var xAuth = result.split("&");
-		var oauth_token = xAuth[0].split("=")[1];
-		var oauth_token_secret = xAuth[1].split("=")[1];
-		var twitter_oauth = oauth_token + "|~|" + oauth_token_secret;
-		
-		saveAccessToken(twitter_oauth, callBackFunc ? callBackFunc : null);
+	$('#result').append("<b>xAuth Results: </b>" + JSON.stringify(data) + "<br >");
+	var result = data['query']['results']['result'];
+	
+	if (result.indexOf("&") == -1)
+	{
+	    if (result.indexOf("Tunnel Connection Failed") > -1)
+	    {
+		twitterXAuth(username, password);
+		return;
+	    }
+	    
+	    if (result.indexOf("Invalid") > -1)
+		result = '<div style="font-size: 36px; color: FF3333; margin-top: 30px;">' + result + '</div>';
+	    
+	    fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: result, type: "foroauth"}, function(vData) {});
+	    return;
+	}
+	
+	var xAuth = result.split("&");
+	var oauth_token = xAuth[0].split("=")[1];
+	var oauth_token_secret = xAuth[1].split("=")[1];
+	var twitter_oauth = oauth_token + "|~|" + oauth_token_secret;
+	
+	saveAccessToken(twitter_oauth, callBackFunc ? callBackFunc : null);
     });
 
 }
@@ -130,16 +130,16 @@ function saveAccessToken(twitter_oauth, callBackFunc)
 		    {cmd : "SetParam",
 		     data : "<twitter_oauth>"+twitter_oauth+"</twitter_oauth>"},
 		    function(vData) {
-				var jsonDoc = $.xml2json(vData);
-				fDbg("save param return : " + JSON.stringify(jsonDoc));
-				$('#result').append("<b>Access Token Saved: </b>" + JSON.stringify(jsonDoc) + "<br />");
+			var jsonDoc = $.xml2json(vData);
+			fDbg("save param return : " + JSON.stringify(jsonDoc));
+			$('#result').append("<b>Access Token Saved: </b>" + JSON.stringify(jsonDoc) + "<br />");
 
-				var vMsg = "<div style='margin-top: 30px; line-height: 200%; text-align: center; font-size: 32px; color: 33FF33;'>Your Twitter account is sucessfully authenticated.</div>";
-				//~ vMsg = encodeURIComponent(vMsg);
-				
-					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: vMsg, type: "foroauth"}, function(vData) {
-						
-					});
+			var vMsg = "<div style='margin-top: 30px; line-height: 200%; text-align: center; font-size: 32px; color: 33FF33;'>Your Twitter account is sucessfully authenticated.</div>";
+			//~ vMsg = encodeURIComponent(vMsg);
+			
+			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: vMsg, type: "foroauth"}, function(vData) {
+			    
+			});
 		    });
 
 }
@@ -149,63 +149,43 @@ function saveAccessToken(twitter_oauth, callBackFunc)
 
 
 
-		    function twitterAccess(access_token, access_token_secret)
-		    {
-			var query_timeline = "select * from twitter.status.timeline.friends where oauth_consumer_secret='" + consumer_secret +
-			    "' AND oauth_consumer_key='" + consumer_key +
-			    "' AND oauth_token='" + oauth_token +
-			    "' AND oauth_token_secret='" + oauth_token_secret+ "'";
+function twitterAccess(access_token, access_token_secret)
+{
+    var query_timeline = "select * from twitter.status.timeline.friends where oauth_consumer_secret='" + consumer_secret +
+	"' AND oauth_consumer_key='" + consumer_key +
+	"' AND oauth_token='" + oauth_token +
+	"' AND oauth_token_secret='" + oauth_token_secret+ "'";
 
-			var yql_timeline = "https://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query_timeline)+"&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"; 
+    var yql_timeline = "https://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query_timeline)+"&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"; 
 
-			
-			// Get users' timeline using yql;
-			$.getJSON(yql_timeline, function(data) {
-			    processNewsFeed(data);
-			});
+    
+    // Get users' timeline using yql;
+    $.getJSON(yql_timeline, function(data) {
+	processNewsFeed(data);
+    });
 
-		    }
-
-
-		    function processNewsFeed(data)
-		    {
-			var news = data["query"]["results"]["statuses"]["status"];
-
-			for (var i=0; i<2; i++)
-			{
-    			    var msgTitle = news[i]["user"]["screen_name"];
-    			    var msgBody = news[i]["text"];
-    			    var msgPic = news[i]["user"]["profile_image_url"];
-    			    if (!msgPic)
-    				msgPic = picUrl;
-
-    			    $('#result').append("<b>Data: </b>" + msgTitle + "    " + msgBody + "    " + msgPic +  "<br />");
+}
 
 
-    			    sendMsgToBridge(msgTitle, msgBody, msgPic);
-			}
-		    }
+function processNewsFeed(data)
+{
+    var news = data["query"]["results"]["statuses"]["status"];
+
+    for (var i=0; i<2; i++)
+    {
+    	var msgTitle = news[i]["user"]["screen_name"];
+    	var msgBody = news[i]["text"];
+    	var msgPic = news[i]["user"]["profile_image_url"];
+    	if (!msgPic)
+    	    msgPic = picUrl;
+
+    	$('#result').append("<b>Data: </b>" + msgTitle + "    " + msgBody + "    " + msgPic +  "<br />");
 
 
+    	sendMsgToBridge(msgTitle, msgBody, msgPic);
+    }
+}
 
-		    function accessFacebook(access_token)
-		    {
-			$('#result').append("<h3>Access Facebook</h3>");
-
-			$.getJSON(
-    			    'https://graph.facebook.com/me/home?access_token='+access_token+'&callback=?',
-    			    function(data)
-    			    {
-				//~ fDbg(JSON.stringify(data));
-				if (!data["data"])
-				{
-				    startOAuth();
-				} else {
-				    processNewsFeed(data);
-				}
-    			    }
-			);
-		    }
 
 
 
