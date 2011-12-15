@@ -591,6 +591,9 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 
 	case cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL:
+		if (!cModel.fGetInstance().UNAUTHORIZED_SHOWACTIVATIONPANEL)
+			return;
+		
 		cModuleEventTicker.fGetInstance().pEnabled(false);
 		cModuleEventTicker.fGetInstance().fAnimateOut(function() {
 			cModuleEventTicker.fGetInstance().fStopAll();

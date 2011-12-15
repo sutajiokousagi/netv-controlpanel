@@ -108,6 +108,15 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 			cCPanel.fGetInstance().mGearBtnLocked = false;
 			cProxy.fLoadModelData(function() {
 				fDbg("=====>>> load model data complete! @ unauthorized");
+				
+				
+				// skip showing activation screen for unauthorized device
+				if (!cModel.fGetInstance().UNAUTHORIZED_SHOWACTIVATIONPANEL)
+				{
+					cCPanel.fGetInstance().mLocked = false;
+					cCPanel.fGetInstance().mGearBtnLocked = false;
+					cCPanel.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_COMPLETE);
+				}
 			});
 			return;
 		}

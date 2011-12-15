@@ -66,6 +66,7 @@ fDbg("*** cModel, ");
 	this.EVENTTICKER_REPEATCOUNT = 2;		// range 1 ~ 3
 	this.EVENTTICKER_LINECOUNT = 2;			// range 1 ~ 2
 	
+	this.UNAUTHORIZED_SHOWACTIVATIONPANEL = false;
 	
 }
 
