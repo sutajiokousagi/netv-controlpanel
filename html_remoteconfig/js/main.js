@@ -3,6 +3,8 @@ o = o.parseFromString("<data>null</data>", "text/xml");
 var keyPressedArray = new Array();
 
 
+var mTempBlockPopup = false;
+
 
 var mEnableAutoRefreshMemoryStats = false;
 var mViewPortSize = [0, 0];
@@ -27,6 +29,28 @@ var mSystemData = {
 		mFree : -1
 	}
 }
+
+var mScannerTimeout = null;
+var mScannerCurrIP = null;
+var mScannerCurrIPDataReturned = null;
+
+
+
+var mLocalWidgetList = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
@@ -97,6 +121,9 @@ $(function() {
 		$("#div_widget_controller_bg").fadeIn(300);
 	});
 	$("#div_widget_controller_bg").click(function() {
+		if (mTempBlockPopup)
+			return;
+		
 		$("#div_widget_controller_content").fadeOut(300, function() {
 			$("#div_widget_controller_content").children("iframe").attr("src", "");
 		});
@@ -111,7 +138,7 @@ $(function() {
 	o = '';
 	for (i = 2; i < 255; i++)
 	{
-		o += '<div class="neighbourscanner_item" style="float: left; width: 40px; height: 15px; background: #999999; border: solid black 1px; margin: 5px;"><div style="float: left; width: 40px; margin: 2px 0 0 0; text-align: center; font-size: 10px;">1.' + i + '</div></div>';
+		o += '<div class="neighbourscanner_item" style="float: left; width: 40px; height: 15px; background: #999999; border: solid black 2px; margin: 4px;"><div style="float: left; width: 40px; margin: 2px 0 0 0; text-align: center; font-size: 10px;">1.' + i + '</div></div>';
 		// <img src="../images/netv_logo_24x24.png" style="margin: 2px 0 0 7px;" />
 	}
 	o += '<div style="float: left; width: 800px; text-align: center;"><input id="btn_neighbourscanner_submit" type="button" value="scan"/></div>';
@@ -120,7 +147,11 @@ $(function() {
 	$("#div_widget_neighbourscanner_content").html(o);
 	$("#btn_neighbourscanner_submit").click(function() {
 		$(this).hide();
+		$(".neighbourscanner_item").css("background", "#999999");
+		
+		mTempBlockPopup = true;
 		fScanNeighbour();
+		
 	});	
 	$("#div_widget_neighbourscanner_trigger").hover(
 		function() {
@@ -143,6 +174,8 @@ $(function() {
 		$("#div_widget_neighbourscanner_bg").fadeIn(300);
 	});
 	$("#div_widget_neighbourscanner_bg").click(function() {
+		if (mTempBlockPopup)
+			return;
 		$("#div_widget_neighbourscanner_content").fadeOut(300);
 		$("#div_widget_neighbourscanner_bg").fadeOut(300);
 	});
@@ -172,7 +205,6 @@ $(function() {
 	
 	cProxy.xmlhttpPost("", "post", {cmd : "hello", data: null}, function(vData) {
 		//~ fDbg(vData);
-		
 		o = vData.split("</mac>")[0].split("<mac>")[1];
 		$($($($($("#div_info").children()[0]).children()[0]).children()[0]).children()[2]).html(o);
 		
@@ -194,6 +226,46 @@ $(function() {
 	
 	// 0001, get existing parameters
 	fGetParameter();
+	
+	
+	
+	// 0002, get current stored widgets
+	fRefreshWidgetList();
+	$('#uploadfile_iframe').load(function() {
+		//~ alert("the iframe has been loaded");
+		var myIFrame = document.getElementById("uploadfile_iframe");
+		var content = myIFrame.contentWindow.document.body.innerHTML;
+		content = content.split("</pre>")[0].split("pre-wrap;\">")[1];
+		content = fUnescapeHTML(content);
+		
+		var vCmd = content.split("</cmd>")[0].split("<cmd>")[1];
+		
+		if (!vCmd)
+			return;
+			
+		switch (vCmd.toLowerCase())
+		{
+		case "uploadfile":
+			cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/cp /tmp/temp_local_widget.zip /media/storage/temproot/widgets/local/", xmlescape: true}, function(vData) {
+				fDbg(vData);
+				cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/usr/bin/unzip /media/storage/temproot/widgets/local/temp_local_widget.zip -d /media/storage/temproot/widgets/local/", xmlescape: true}, function(vData) {
+					fDbg(vData);
+					cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/rm /media/storage/temproot/widgets/local/temp_local_widget.zip", xmlescape: true}, function(vData) {
+						fRefreshWidgetList();
+					});
+				});
+			});
+			break;
+		}
+	});
+	// 00021, delete selected widget
+	$("#ip_btn_deletelocalwidget").click(function() {
+		o = $("#select_widgetlist").val();
+		cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/rm -r /media/storage/temproot/widgets/local/" + o, xmlescape: true}, function(vData) {
+			fRefreshWidgetList();
+		});
+	});
+	
 	
 	
 	
@@ -398,36 +470,195 @@ function fScanNeighbour(
 	vN
 )
 {
-	var o;
+	var o, p;
 	if (!vN)
 		vN = 2;
-		
+fDbg("=======>>  " + mTempBlockPopup);
 	o = location.href.split("http://")[1].split("/")[0];
 	o = o.split(".");
 	o = o[0] + "." + o[1] + "." + o[2] + "." + vN;
 	
+	mScannerTimeout = 1;
+	mScannerCurrIP = vN;
+	mScannerCurrIPDataReturned = null;
+	
+	fDbg("============================================================");
+	fDbg("============================================================");
+	fDbg("============================================================");
+	fDbg("start testing on IP : " + o);
 	cProxy.xmlhttpPost("", "post", {cmd : "GetURL", url : "http://" + o + "/bridge", post : "cmd=hello"}, function(vData) {
-		fDbg(vN + " - " + vData);
-		if (vData.indexOf("<fwver>") > -1)
+	//~ cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/ping " + o + " -c 1", xmlescape: true}, function(vData) {
+		
+		fDbg("--------------------------------");
+		fDbg(vN + "<>" + mScannerCurrIP);
+		fDbg(o + " - " + vData);
+		fDbg("--------------------------------");
+		
+		if (vN != mScannerCurrIP)
+			return;
+		mScannerCurrIPDataReturned = vData;
+	});
+	
+	var vInterval = setInterval(function() {
+		clearInterval(vInterval);
+		
+		fDbg("check for IP.: " + vN + "      proceed to next IP");
+		if (mScannerCurrIPDataReturned)
 		{
-			$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#FFFFFF");
+			fDbg("IP " + vN + " return - " + mScannerCurrIPDataReturned);
+			if (mScannerCurrIPDataReturned.indexOf("<fwver>") > -1)
+			{
+				$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#2c5bae");
+				
+				
+				$($("#div_widget_neighbourscanner_content").children()[vN - 2]).click(function() {
+					//~ p = location.href.split("http://")[1].split("/")[0];
+					//~ p = p.split(".");
+					//~ p = p[0] + "." + p[1] + "." + p[2] + "." + vN;
+					location.href="http://" + "192.168.1." + (vN - 1) + "/html_remoteconfig/";
+				});
+			}
+			else
+			{
+				if (mScannerCurrIPDataReturned.split("</value></data>")[0].split("<data><value>")[1].length > 0)
+					$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#FF6666");
+				else
+					$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#333333");
+			}
 		}
 		else
 		{
 			$($("#div_widget_neighbourscanner_content").children()[vN - 2]).css("background", "#333333");
 		}
 		
-		
 		if (vN < 255)
 			vN++;
 		else
 		{
 			$("#btn_neighbourscanner_submit").show();
+			mTempBlockPopup = false;
 			return;
 		}
 		fScanNeighbour(vN);
+	}, 1200);
+	
+}
+
+
+
+function fRefreshWidgetList(
+)
+{
+	cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/ls /media/storage/temproot/widgets/local", xmlescape: true}, function(vData) {
+		vData = vData.split("</value>")[0].split("<value>")[1];
+		mLocalWidgetList = vData.split("\n");
+		
+		o = '';
+		o += '<select id="select_widgetlist" multiple="multiple" style="width: 180px; height: 200px;">';
+		for (i = 0; i < mLocalWidgetList.length; i++)
+			o += '<option value="' + mLocalWidgetList[i] + '">' + mLocalWidgetList[i] + '</option>';
+		o += '</select>';
+		$("#div_widgetlist").html(o);
 	});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -816,4 +1047,9 @@ function fMultitab(
 {
 	//pass everything to cCPanel
 	cCPanel.fGetInstance().fOnSignal("multitab", [vOption, vParam, vTab], null);
+}
+
+
+function fUnescapeHTML(escapedHTML) {
+  return escapedHTML.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 }

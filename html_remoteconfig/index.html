@@ -35,7 +35,7 @@
 			<div id="div_system_control" style="float: left; margin: -60px 0 0 650px; width: 310px; font-size: 12px;">
 				<input id="cb_refreshmemorystats" type="checkbox" value="" />auto refresh
 			</div>
-			
+				
 			<div id="div_info" style="float: left; margin: 20px 0 0 0; width: 900px; height: 100px; font-size: 12px; border-top: dashed #333333 1px; border-bottom: dashed #333333 1px; ">
 				<div style="float: left; width: 900px;">
 					<div style="float: left; width: 400px;">
@@ -106,23 +106,38 @@
 			<div class="cell_input"><input id="ip_ticketbottomoffset" name="ip_ticketbottomoffset" type="text" /></div>
 		</div>
 		
-		<div class="row_container" style="border: none; margin-top: 50px;">
+		<div class="row_container" style="border: none; margin-top: 0px;">
 			<div class="cell_title">&nbsp;</div>
 			<div class="cell_description">&nbsp;</div>
 			<div class="cell_input" style="float: right; margin-right: 105px;"><input id="btn_submit" type="button" value="save and restart NeTV Browser" /></div>
 		</div>
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		<div style="float: left; margin-top: 20px; width: 600px; height: 300px; border: solid blue 1px;">
+			<div style="float: left; width: 100%; height: 30px; text-align: center;">
+				<span style="font-size: 16px; font-weight: bold;">USER LOCAL WIDGETS</span>
+			</div>
+			<div id="div_widgetlist" style="float: left; width: 200px;">
+				<select id="select_widgetlist" multiple="multiple" style="width: 120px; height: 200px;">
+					<option>loading...</option>
+				</select>
+			</div>
+			
+			<div style="float: left; width: 400px;">
+				<span style="font-size: 12px; font-weight: bold;">ADD</span>
+				<form method="post" enctype="multipart/form-data" action="../bridge" target="uploadfile_iframe">
+					<input type="hidden" name="cmd" value="uploadfile">
+					<input type="hidden" name="path" value="/tmp/temp_local_widget.zip">
+					<input type="file" name="filedata">
+					<input type="submit">
+				</form>
+				<iframe id="uploadfile_iframe" name="uploadfile_iframe" src="../bridge" style="display: none;"></iframe>
+			</div>
+			<div>
+				<span style="float: left; font-size: 12px; font-weight: bold; width: 400px;">DELETE</span>
+				<input id="ip_btn_deletelocalwidget" type="button" value="Delete">
+			</div>
+		</div>
 		
 		
 		
