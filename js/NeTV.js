@@ -138,7 +138,7 @@ function fCheckForRedirection(
 	if (location.href.indexOf("localhost") == -1)
 		if (location.href.indexOf("usr/share") == -1)
 			if (location.href.indexOf("index_autotest.html") == -1)
-				location.href = "./html_config/";
+				location.href = "./html_remoteconfig/";
 }
 
 

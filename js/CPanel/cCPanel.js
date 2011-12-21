@@ -15,6 +15,7 @@ var kCPanelStatic = {
 		"./js/CPanel/cModuleInput.js",
 		"./js/CPanel/cModuleWE.js",
 		"./js/CPanel/cModuleEventTicker.js",
+		"./js/CPanel/cModuleLocalWidgets.js",
 		"./js/CPanel/cModuleChromaBg.js",
 
 		"./js/CPanel/widgetengine/cWEFlash.js",
@@ -204,6 +205,7 @@ fDbg("*** cCPanel, fStartUp()");
 	cModuleToast.fGetInstance("div_toast");
 	cModuleInput.fGetInstance("div_inputpanel");
 	cModuleEventTicker.fGetInstance($("#div_eventWidgetPlayer"));
+	cModuleLocalWidgets.fGetInstance("div_localwidgets");
 	cModuleChromaBg.fGetInstance("div_tempBg");
 	cModuleWE.fGetInstance(null);
 	cWEFlash.fGetInstance(null);
@@ -570,6 +572,7 @@ cCPanel.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_STARTUP_INIT:
+		cModuleLocalWidgets.fGetInstance().fInit();
 		vThis.fResize();
 		cModuleChromaBg.fGetInstance().fRefreshScreen();
 		cModuleEventTicker.fGetInstance().fInit();

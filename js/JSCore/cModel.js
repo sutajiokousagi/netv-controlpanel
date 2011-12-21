@@ -53,6 +53,8 @@ fDbg("*** cModel, ");
 	this.CHANNEL_CURRENT = null;
 	this.CURR_WIDGET_INDEX = null;
 	this.PREV_WIDGET_INDEX = null;
+	
+	this.LOCAL_WIDGETS_LIST = [];
 
 	
 	this.PLAYMODE = "event";
