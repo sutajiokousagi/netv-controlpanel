@@ -276,6 +276,8 @@ cProxy.fGetParams = function(
 	vReturnFun
 )
 {
+//~ fDbg("*** cProxy, fGetParams(), " + vTagName);
+
 	cProxy.xmlhttpPost("", "post", {cmd : "GetParam", data : "<value>" + vTagName + "</value>"}, function(vData) {
 		//~ fDbg(vData);
 		vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
@@ -312,9 +314,13 @@ fDbg("cProxy, fLoadModelData(), ");
 	var o;
 	
 	cProxy.fGetParams("cpanel_cmodel", function(vData) {
-		//~ fDbg(vData);
+		
 		if (!vData || vData == "")
+		{
+			if (vReturnFun)
+				vReturnFun();
 			return;
+		}
 		vData = JSON.parse(vData);
 		cModel.fGetInstance().pData(vData)
 		

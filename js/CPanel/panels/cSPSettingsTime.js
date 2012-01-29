@@ -46,6 +46,8 @@ function cSPSettingsTime(
 	this.mDivSettingTimezoneListContainer = $(this.mDiv.children("#setting_timezone").children()[1]);
 	this.mDivSettingTimezoneListContainer.pIndicatorStyle = { width: "640px", height: "36px", top: "260px", left: "80px" };
 	*/
+	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
+	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
 	
 	// view modes
 	this.mViewMode = null;
@@ -265,6 +267,14 @@ cSPSettingsTime.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
+		if (vThis.mSelection == vThis.mDivBack)
+			vThis.pSelection(vThis.mDivItemList[vThis.mDivItemList.length - 1], false, true);
+		else
+		{
+			o = vThis.mDivItemList.indexOf(vThis.mSelection);
+			if (o > 0)
+				vThis.pSelection(vThis.mDivItemList[o - 1], false, true);
+		}
 		/*
 		switch (vThis.pViewMode())
 		{
@@ -301,6 +311,11 @@ cSPSettingsTime.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
+		o = vThis.mDivItemList.indexOf(vThis.mSelection);
+		if (o < vThis.mDivItemList.length - 1)
+			vThis.pSelection(vThis.mDivItemList[o + 1], false, true);
+		else
+			vThis.pSelection(vThis.mDivBack, false, true);
 		/*
 		switch (vThis.pViewMode())
 		{

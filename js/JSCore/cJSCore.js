@@ -106,6 +106,10 @@ cJSCore.prototype.fOnSignal = function(
 	case "checkalive":
 		return true;
 		break;
+		
+	case cConst.SIGNAL_UPDATE_WIFI:
+		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
+		break;
 
 	// --------- from jscore -----------------------------------------
 	case cConst.SIGNAL_HEARTBEAT:
@@ -211,7 +215,7 @@ cJSCore.prototype.fStartUpReturn = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cJSCore, fStartUpReturn()");
+fDbg("*** cJSCore, fStartUpReturn()");
 	var vThis;
 	vThis = this;
 	
@@ -224,6 +228,7 @@ cJSCore.prototype.fStartUpReturn = function(
 			// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
 			cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
 				fDbg("*** fetching channel list (by user ID) complete... ...");
+				
 				if (vReturnFun)
 					vReturnFun(vData);
 					

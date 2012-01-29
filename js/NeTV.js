@@ -254,6 +254,23 @@ vEventVer = decodeURIComponent(vEventVer);
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
 }
 
+function fUpdateWifiSignal(
+	vStatus		// int
+)
+{
+fDbg("*** fUpdateWifiSignal(), " + vStatus);
+	if (vStatus >= 75)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [3], null);
+	else if (vStatus >= 50)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [2], null);
+	else if (vStatus >= 25)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [1], null);
+	else if (vStatus >= 0)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [0], null);
+	else
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [-1], null);
+}
+
 // -------------------------------------------------------------------------------------------------
 //	events from HDMI/FPGA
 // -------------------------------------------------------------------------------------------------

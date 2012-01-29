@@ -103,6 +103,10 @@ cConst.STATE_SUB_HTMLCHANNELWIDGETSMAIN = "state_sub_htmlchannelwidgetsmain";
 cConst.STATE_SUB_CHANNELMAIN = "state_sub_channelmain";
 
 
+// -----------------------------------------------------------------------------
+//	System signals from NeTVServer
+// -----------------------------------------------------------------------------
+cConst.SIGNAL_UPDATE_WIFI = "signal_update_wifi";
 
 
 
