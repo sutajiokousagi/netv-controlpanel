@@ -52,6 +52,7 @@ function cSPSettings(
 	// sub sub panels
 	this.mSSPTime = cSPSettingsTime.fGetInstance(this.mDiv.children("#setting_time"));
 	this.mSSPTime.pDivIndicator(this.mDivIndicator);
+	this.mSSPTime.pDivBack(this.mDivBack);
 	this.mSSPEventTicker = cSPSettingsEventTicker.fGetInstance(this.mDiv.children("#setting_eventticker"));
 	this.mSSPEventTicker.pDivIndicator(this.mDivIndicator);
 	this.mSSPEventTicker.pDivBack(this.mDivBack);

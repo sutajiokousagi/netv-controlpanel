@@ -250,6 +250,9 @@ cProxy.fReadDefaultChannelData = function(
 )
 {
 	cProxy.fReadFile("/usr/share/netvserver/docroot/widgets/channelinfo.xml", function(vData) {
+		fDbg("----------- channelinfo.xml --------------");
+		fDbg(vData);
+		fDbg("------------------------------------------");
 		if (vReturnFun)
 			vReturnFun(vData);
 	});
@@ -276,8 +279,6 @@ cProxy.fGetParams = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cProxy, fGetParams(), " + vTagName);
-
 	cProxy.xmlhttpPost("", "post", {cmd : "GetParam", data : "<value>" + vTagName + "</value>"}, function(vData) {
 		//~ fDbg(vData);
 		vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
@@ -314,9 +315,9 @@ fDbg("cProxy, fLoadModelData(), ");
 	var o;
 	
 	cProxy.fGetParams("cpanel_cmodel", function(vData) {
-		
 		if (!vData || vData == "")
 		{
+			fDbg("no model data returned from /psp/parameters.ini-> cpanel_cmodel, EMPTY!");
 			if (vReturnFun)
 				vReturnFun();
 			return;

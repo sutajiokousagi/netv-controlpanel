@@ -106,10 +106,6 @@ cJSCore.prototype.fOnSignal = function(
 	case "checkalive":
 		return true;
 		break;
-		
-	case cConst.SIGNAL_UPDATE_WIFI:
-		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
-		break;
 
 	// --------- from jscore -----------------------------------------
 	case cConst.SIGNAL_HEARTBEAT:
@@ -183,7 +179,7 @@ cJSCore.prototype.fStartUp = function(
 	vReturnFun
 )
 {
-fDbg("*** cJSCore, fStartUp()");
+fDbg("*** cJSCore, fStartUp()---------------------");
 	var vThis;
 	vThis = this;
 	
@@ -193,7 +189,6 @@ fDbg("*** cJSCore, fStartUp()");
 		if (vData)
 		{
 			vThis.fUpdateDeviceToServer();
-
 			vThis.CPANEL.fOnSignal(cConst.SIGNAL_STARTUP_ENVIRONMENTALCHECK_COMPLETE);
 			
 			// cast some fake data for testing
@@ -218,17 +213,16 @@ cJSCore.prototype.fStartUpReturn = function(
 fDbg("*** cJSCore, fStartUpReturn()");
 	var vThis;
 	vThis = this;
-	
+	fDbg(cAccountModule.fGetInstance().fCheckAccount);
 	// load profile/channel data from server
 	cAccountModule.fGetInstance().fCheckAccount(function() {
 		cChannelModule.fGetInstance().fFetchChannelInfo(function() {
-			//~ fDbg("now we have " + cModel.fGetInstance().CHANNEL_LIST.length + " channels.");
-			//~ fDbg("start fetching channel list by user ID.");
+			fDbg("now we have " + cModel.fGetInstance().CHANNEL_LIST.length + " channels.");
+			fDbg("start fetching channel list by user ID.");
 			
 			// here we have the user_id, therefore we proceed to fetch the ID of this user's other channels
 			cChannelModule.fGetInstance().fFetchChannelListByUserID(function(vData) {
 				fDbg("*** fetching channel list (by user ID) complete... ...");
-				
 				if (vReturnFun)
 					vReturnFun(vData);
 					

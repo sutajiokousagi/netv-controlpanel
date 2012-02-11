@@ -363,7 +363,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
+fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
 	var vThis, o, p, q, i, j, vLen, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();

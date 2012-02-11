@@ -40,7 +40,7 @@ cAccountModule.prototype.fCheckAccount = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cAccountModule, fCheckAccount()");
+fDbg("*** cAccountModule, fCheckAccount()");
 	
 	var o, parser, xmlDoc, vThis;
 	parser = new DOMParser();
@@ -88,29 +88,27 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 	vReturnFun
 )
 {
-//~ fDbg("*** cAccountModule, fCheckAuthorizationReturn(), ");
 	var o, parser, xmlDoc, vThis;
 	parser = new DOMParser();
 	vThis = this;
 	
-	//~ fDbg("--------------------------");
-	//~ fDbg(vData);
-	//~ fDbg("--------------------------");
+	fDbg("--------------------------");
+	fDbg(vData);
+	fDbg("--------------------------");
 	//~ vData = "";
 	if (vData.indexOf("<chumby") > -1)
 	{
 		if (vData.indexOf("unauthorized") > -1)
 		{
-			fDbg("----------- here -----------------------");
 			cModel.fGetInstance().CHUMBY_AUTHORIZED = false;
 			cJSCore.fGetInstance().fOnSignal(cConst.SIGNAL_STARTUP_AUTHORIZATION_FAIL, null, null);
 			cChannelModule.fGetInstance().fSimulateDefaultChannels();
-			
 			//~ cProxy.fClearDeviceData("unauthorized");
 			cCPanel.fGetInstance().mLocked = false;
 			cCPanel.fGetInstance().mGearBtnLocked = false;
 			cProxy.fLoadModelData(function() {
 				fDbg("=====>>> load model data complete! @ unauthorized");
+				
 				
 				// skip showing activation screen for unauthorized device
 				if (!cModel.fGetInstance().UNAUTHORIZED_SHOWACTIVATIONPANEL)
@@ -130,6 +128,7 @@ cAccountModule.prototype.fCheckAuthorizationReturn = function(
 	else
 	{
 		// server down, internet down, 
+		
 		cModuleToast.fGetInstance().fToast("Internet Down! Please check your internet connection.", "warning", null);
 		return;
 	}

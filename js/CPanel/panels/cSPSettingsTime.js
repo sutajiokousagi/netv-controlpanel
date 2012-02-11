@@ -40,14 +40,18 @@ function cSPSettingsTime(
 		this.mDivItemList.push(p);
 	}
 	
+	this.mMonthList = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JULY", "AUG", "SEP", "OCT", "NOV", "DEC"];
+	this.mMonthLimit = [0, 11];
+	this.mDayLimit = [1, 31];
+	this.mHourLimit = [0, 23];
+	this.mMinuteLimit = [0, 59];
+	
 	/*
 	this.mDivSettingTimezoneTitle = $(this.mDiv.children("#setting_timezone").children()[0]);
 	this.mDivSettingTimezoneTitle.pIndicatorStyle = { width: "740px", height: "36px", top: "140px", left: "30px" };
 	this.mDivSettingTimezoneListContainer = $(this.mDiv.children("#setting_timezone").children()[1]);
 	this.mDivSettingTimezoneListContainer.pIndicatorStyle = { width: "640px", height: "36px", top: "260px", left: "80px" };
 	*/
-	this.mDivBack = $(this.mDiv.children("#subnavi_action").children()[0]);
-	this.mDivBack.pIndicatorStyle = { width: "96px", height: "36px", top: "551px", left: "350px" };
 	
 	// view modes
 	this.mViewMode = null;
@@ -71,7 +75,7 @@ cSPSettingsTime.fGetInstance = function(
 cSPSettingsTime.prototype.fInit = function(
 )
 {
-//~ fDbg2("*** cSPSettingsTime, fInit(), ");
+fDbg("*** cSPSettingsTime, fInit(), ");
 	var vThis;
 	vThis = this;
 }
@@ -83,8 +87,21 @@ cSPSettingsTime.prototype.pDivIndicator = function(
 	v
 )
 {
+fDbg("*** cSPSettingTime, pDivIndicator(), ");
 	if (v)
 		this.mDivIndicator = v;
+}
+
+/** ------------------------------------------------------------------------------------------------
+ *	pDivBack
+ * -----------------------------------------------------------------------------------------------*/
+cSPSettingsTime.prototype.pDivBack = function(
+	v
+)
+{
+fDbg("*** cSPSettingTime, pDivBack(), ");
+	if (v)
+		this.mDivBack = v;
 }
 
 /** ------------------------------------------------------------------------------------------------
@@ -137,6 +154,20 @@ cSPSettingsTime.prototype.fShow = function(
 {
 	this.pViewMode(cSPSettingsTime.VIEWMODE_DEFAULT);
 	this.mDiv.show();
+	this.mDivBack.html("DONE");
+	
+	var vThis = this;
+	var vDate = new Date();
+	o = $($(vThis.mDivItemList[0].children()[2]).children()[0]);
+	o.html(vDate.getFullYear());
+	o = $($(vThis.mDivItemList[1].children()[2]).children()[0]);
+	o.html(vThis.mMonthList[vDate.getMonth()]);
+	o = $($(vThis.mDivItemList[2].children()[2]).children()[0]);
+	o.html(vDate.getDate());
+	o = $($(vThis.mDivItemList[3].children()[2]).children()[0]);
+	o.html(vDate.getHours());
+	o = $($(vThis.mDivItemList[4].children()[2]).children()[0]);
+	o.html(vDate.getMinutes());
 }
 cSPSettingsTime.prototype.fHide = function(
 )
@@ -186,9 +217,40 @@ cSPSettingsTime.prototype.fOnSignal = function(
 		o = vThis.pSelection();
 		i = vThis.mDivItemList.indexOf(o);
 		o = $($(o.children()[2]).children()[0]);
-		if (i > -1)
+		
+		switch (i)
 		{
+		case 0:
 			o.html(parseInt(o.html()) - 1);
+			break;
+			
+		case 1:
+			i = this.mMonthList.indexOf(o.html()) - 1;
+			if (i < this.mMonthLimit[0])
+				i = this.mMonthLimit[1];
+			o.html(this.mMonthList[i]);
+			break;
+			
+		case 2:
+			i = parseInt(o.html()) - 1;
+			if (i < this.mDayLimit[0])
+				i = this.mDayLimit[1];
+			o.html(i);
+			break;
+			
+		case 3:
+			i = parseInt(o.html()) - 1;
+			if (i < this.mHourLimit[0])
+				i = this.mHourLimit[1];
+			o.html(i);
+			break;
+		
+		case 4:
+			i = parseInt(o.html()) - 1;
+			if (i < this.mMinuteLimit[0])
+				i = this.mMinuteLimit[1];
+			o.html(i);
+			break;
 		}
 		break;
 		
@@ -196,13 +258,62 @@ cSPSettingsTime.prototype.fOnSignal = function(
 		o = vThis.pSelection();
 		i = vThis.mDivItemList.indexOf(o);
 		o = $($(o.children()[2]).children()[0]);
-		if (i > -1)
+		
+		switch (i)
 		{
+		case 0:
 			o.html(parseInt(o.html()) + 1);
+			break;
+			
+		case 1:
+			i = this.mMonthList.indexOf(o.html()) + 1;
+			if (i > this.mMonthLimit[1])
+				i = this.mMonthLimit[0];
+			o.html(this.mMonthList[i]);
+			break;
+			
+		case 2: 
+			i = parseInt(o.html()) + 1;
+			if (i > this.mDayLimit[1])
+				i = this.mDayLimit[0];
+			o.html(i);
+			break;
+			
+		case 3:
+			i = parseInt(o.html()) + 1;
+			if (i > this.mHourLimit[1])
+				i = this.mHourLimit[0];
+			o.html(i);
+			break;
+			
+		case 4:
+			i = parseInt(o.html()) + 1;
+			if (i > this.mMinuteLimit[1])
+				i = this.mMinuteLimit[0];
+			o.html(i);
+			break;
 		}
 		break;
 		
 	case cConst.SIGNAL_BUTTON_CENTER:
+		o = vThis.pSelection();
+		if (o == this.mDivBack)
+		{
+			cCPanel.fGetInstance().fBack();
+			this.mDivBack.html("BACK");
+			
+			var vStr = "";
+			for (i = 0; i < 5; i++)
+			{
+				o = $($(vThis.mDivItemList[i].children()[2]).children()[0]).html();
+				if (i == 1)
+					o = this.mMonthList.indexOf(o) + 1;
+				vStr += o + (i == 4 ? "" : "_");
+			}
+			cProxy.xmlhttpPost("./bridge", "post", {cmd : "FixTime", data: vStr}, function(vData) {
+				fDbg(">>> -----FixTime : " + vData);
+			});
+		}
 		/*
 		switch (vThis.pViewMode())
 		{
@@ -267,89 +378,22 @@ cSPSettingsTime.prototype.fOnSignal = function(
 		break;
 		
 	case cConst.SIGNAL_BUTTON_UP:
-		if (vThis.mSelection == vThis.mDivBack)
-			vThis.pSelection(vThis.mDivItemList[vThis.mDivItemList.length - 1], false, true);
-		else
-		{
-			o = vThis.mDivItemList.indexOf(vThis.mSelection);
-			if (o > 0)
-				vThis.pSelection(vThis.mDivItemList[o - 1], false, true);
-		}
-		/*
-		switch (vThis.pViewMode())
-		{
-		case cSPSettingsTime.VIEWMODE_DEFAULT:
-			switch (vThis.mSelection)
-			{
-			case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
-			case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivToggleSSH; break;
-			case vThis.mDivReboot:				o = vThis.mDivSetTimezone; break;
-			case vThis.mDivBack:				o = vThis.mDivReboot; break;
-			default: 							return;
-			}
-			vThis.mSelection.css("opacity", "0.2");
-			vThis.mSelection = o;
-			vThis.mSelection.css("opacity", "1");
-			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
-			break;
-		case cSPSettingsTime.VIEWMODE_SETTING_TIMEZONE:
-			switch (vThis.mSelection)
-			{
-			case vThis.mDivSettingTimezoneTitle:
-				break;
-			case vThis.mDivSettingTimezoneListContainer:
-				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone - 1);
-				break;
-			case vThis.mDivBack:
-				vThis.pSelection(vThis.mDivSettingTimezoneTitle, true, true);
-				break;
-			}
-			break;
-		}
-		*/
+		o = vThis.pSelection();
+		i = vThis.mDivItemList.indexOf(o);
+		if (i == -1)
+			this.pSelection(vThis.mDivItemList[4], true, false);
+		else if (i != 0)
+			this.pSelection(vThis.mDivItemList[i-1], false, false);
 		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
-		o = vThis.mDivItemList.indexOf(vThis.mSelection);
-		if (o < vThis.mDivItemList.length - 1)
-			vThis.pSelection(vThis.mDivItemList[o + 1], false, true);
-		else
-			vThis.pSelection(vThis.mDivBack, false, true);
-		/*
-		switch (vThis.pViewMode())
-		{
-		case cSPSettingsTime.VIEWMODE_DEFAULT:
-			switch (vThis.mSelection)
-			{
-			case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
-			case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
-			case vThis.mDivToggleSSH:			o = vThis.mDivSetTimezone; break;
-			case vThis.mDivSetTimezone:			o = vThis.mDivReboot; break;
-			case vThis.mDivReboot:				o = vThis.mDivBack; break;
-			default: 							return;
-			}
-			
-			vThis.mSelection.css("opacity", "0.2");
-			vThis.mSelection = o;
-			vThis.mSelection.css("opacity", "1");
-			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
-			break;
-		case cSPSettingsTime.VIEWMODE_SETTING_TIMEZONE:
-			switch (vThis.mSelection)
-			{
-			case vThis.mDivSettingTimezoneTitle:
-				vThis.pSelection(vThis.mDivBack, false, true);
-				break;
-			case vThis.mDivSettingTimezoneListContainer:
-				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone + 1);
-				break;
-			case vThis.mDivBack:
-				break;
-			}
-			break;
-		}
-		*/
+		o = vThis.pSelection();
+		i = vThis.mDivItemList.indexOf(o);
+		
+		if (i == 4)
+			this.pSelection(vThis.mDivBack, false, true);
+		else if (i > -1)
+			this.pSelection(vThis.mDivItemList[i+1], false, false);
 		break;
 	}
 }
@@ -391,3 +435,94 @@ cSPSettingsTime.prototype.fShiftTimezoneSelection = function(
 	vThis.mCurrHighlightTimezone = vData;
 	*/
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		/*
+		switch (vThis.pViewMode())
+		{
+		case cSPSettingsTime.VIEWMODE_DEFAULT:
+			switch (vThis.mSelection)
+			{
+			case vThis.mDivReloadControlPanel:	o = vThis.mDivReconnectToWIFI; break;
+			case vThis.mDivToggleSSH:			o = vThis.mDivReloadControlPanel; break;
+			case vThis.mDivSetTimezone:			o = vThis.mDivToggleSSH; break;
+			case vThis.mDivReboot:				o = vThis.mDivSetTimezone; break;
+			case vThis.mDivBack:				o = vThis.mDivReboot; break;
+			default: 							return;
+			}
+			vThis.mSelection.css("opacity", "0.2");
+			vThis.mSelection = o;
+			vThis.mSelection.css("opacity", "1");
+			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+			break;
+		case cSPSettingsTime.VIEWMODE_SETTING_TIMEZONE:
+			switch (vThis.mSelection)
+			{
+			case vThis.mDivSettingTimezoneTitle:
+				break;
+			case vThis.mDivSettingTimezoneListContainer:
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone - 1);
+				break;
+			case vThis.mDivBack:
+				vThis.pSelection(vThis.mDivSettingTimezoneTitle, true, true);
+				break;
+			}
+			break;
+		}
+		*/
+		/*
+		switch (vThis.pViewMode())
+		{
+		case cSPSettingsTime.VIEWMODE_DEFAULT:
+			switch (vThis.mSelection)
+			{
+			case vThis.mDivReconnectToWIFI:		o = vThis.mDivReloadControlPanel; break;
+			case vThis.mDivReloadControlPanel:	o = vThis.mDivToggleSSH; break;
+			case vThis.mDivToggleSSH:			o = vThis.mDivSetTimezone; break;
+			case vThis.mDivSetTimezone:			o = vThis.mDivReboot; break;
+			case vThis.mDivReboot:				o = vThis.mDivBack; break;
+			default: 							return;
+			}
+			
+			vThis.mSelection.css("opacity", "0.2");
+			vThis.mSelection = o;
+			vThis.mSelection.css("opacity", "1");
+			vThis.mDivIndicator.css(vThis.mSelection.pIndicatorStyle);
+			break;
+		case cSPSettingsTime.VIEWMODE_SETTING_TIMEZONE:
+			switch (vThis.mSelection)
+			{
+			case vThis.mDivSettingTimezoneTitle:
+				vThis.pSelection(vThis.mDivBack, false, true);
+				break;
+			case vThis.mDivSettingTimezoneListContainer:
+				vThis.fShiftTimezoneSelection(vThis.mCurrHighlightTimezone + 1);
+				break;
+			case vThis.mDivBack:
+				break;
+			}
+			break;
+		}
+		*/
