@@ -1137,7 +1137,7 @@ cModuleEventTicker.prototype.fRenderIconPanel = function(
 	o = "";
 	if (cModel.fGetInstance().CHUMBY_INTERNET == "true")
 	{
-		o += "<div style='position: absolute; top: 2px; left: 55px; width:10px; height:10px; opacity: 1;'><img src='./images/wifi3.png' width='20px' height='20px' /></div>";
+		o += "<div id='stamp_bottom_iconset_wifi' style='position: absolute; top: 2px; left: 55px; width:10px; height:10px; opacity: 1;'><img src='./images/wifi3.png' width='20px' height='20px' /></div>";
 		o += "<div style='position: absolute; top: 7px; left: 40px; width:10px; height:10px; opacity: 1;'>";
 			o += "<img src='./images/tx_ico_inactive.png' width='11px' height='11px'/>";
 		o += "</div>";

@@ -45,6 +45,7 @@ function fOnLoad()  {
 	$(document).keydown(function(event)
 	{
 		//~ fDbg(event.which);
+		
 		var keycode = event.which;
 		var isRepeat = (keyPressedArray[""+keycode] == true) ? true : false;
 		keyPressedArray[""+keycode] = true;
@@ -65,6 +66,7 @@ function fOnLoad()  {
 		keyPressedArray[""+event.which] = false;
 		return true;
 	});
+
 
 }
 
@@ -252,6 +254,23 @@ vEventVer = decodeURIComponent(vEventVer);
 //~ fDbg(vEventImage);
 	
 	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
+}
+
+function fUpdateWifiSignal(
+	vStatus		// int
+)
+{
+fDbg("*** fUpdateWifiSignal(), " + vStatus);
+	if (vStatus >= 75)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [3], null);
+	else if (vStatus >= 50)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [2], null);
+	else if (vStatus >= 25)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [1], null);
+	else if (vStatus >= 0)
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [0], null);
+	else
+		mJSCore.fOnSignal(cConst.SIGNAL_UPDATE_WIFI, [-1], null);
 }
 
 // -------------------------------------------------------------------------------------------------

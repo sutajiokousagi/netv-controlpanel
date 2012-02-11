@@ -106,6 +106,10 @@ cJSCore.prototype.fOnSignal = function(
 	case "checkalive":
 		return true;
 		break;
+		
+	case cConst.SIGNAL_UPDATE_WIFI:
+		this.CPANEL.fOnSignal(vSignal, vData, vReturnFun);
+		break;
 
 	// --------- from jscore -----------------------------------------
 	case cConst.SIGNAL_HEARTBEAT:
@@ -213,7 +217,7 @@ cJSCore.prototype.fStartUpReturn = function(
 fDbg("*** cJSCore, fStartUpReturn()");
 	var vThis;
 	vThis = this;
-	fDbg(cAccountModule.fGetInstance().fCheckAccount);
+	
 	// load profile/channel data from server
 	cAccountModule.fGetInstance().fCheckAccount(function() {
 		cChannelModule.fGetInstance().fFetchChannelInfo(function() {

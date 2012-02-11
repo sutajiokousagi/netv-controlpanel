@@ -835,6 +835,24 @@ cCPanel.prototype.fOnSignal = function(
 			//Do something about this
 		}
 		break;
+		
+	case cConst.SIGNAL_UPDATE_WIFI:
+		switch (vData[0])
+		{
+		case 3:
+			$("#stamp_bottom_iconset_wifi").children("img").attr("src", "./images/wifi3.png");
+			break;
+		case 2:
+			$("#stamp_bottom_iconset_wifi").children("img").attr("src", "./images/wifi2.png");
+			break;
+		case 1:
+			$("#stamp_bottom_iconset_wifi").children("img").attr("src", "./images/wifi1.png");
+			break;
+		case 0:
+			$("#stamp_bottom_iconset_wifi").children("img").attr("src", "./images/wifi0.png");
+			break;
+		}
+		break;
 	}
 }
 
