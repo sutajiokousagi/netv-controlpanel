@@ -357,55 +357,80 @@ cChannelModule.prototype.pScanWidgetList = function(
 	}
 }
 
+cChannelModule.prototype.fProcessChannelInfoXML = function(
+	vData,
+	vReturnFun
+)
+{
+	var vThis, o, p, q, i, j, vLen, parser, xmlDoc;
+	vThis = this;
+	parser = new DOMParser();
 
+	o = new cChannelObj();
+	xmlDoc = parser.parseFromString(vData, "text/xml");
+	o.mName = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("name")[0].textContent;
+	o.mPlayMode = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("playmode")[0].textContent;
+	p = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("widgets")[0].getElementsByTagName("widget");
+	vLen = p.length;
+	for (i = 0; i < vLen; i++)
+	{
+		o.mWidgetList.push(new cWidgetObj());
+		o.mWidgetList[o.mWidgetList.length - 1].mID = "xxxx_0000_" + i;
+		o.mWidgetList[o.mWidgetList.length - 1].mName = p[i].getElementsByTagName("name")[0].textContent;
+		o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = p[i].getElementsByTagName("href")[0].textContent;
+		o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
+		o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
+		o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
+		o.mWidgetList[o.mWidgetList.length - 1].mNeTVCompatiable = true;
+		o.mWidgetList[o.mWidgetList.length - 1].mEnabled = true;
+		if (p[i].getElementsByTagName("needauth")[0])
+			o.mWidgetList[o.mWidgetList.length - 1].mNeedAuth = p[i].getElementsByTagName("needauth")[0].textContent;
+		
+		q = p[i].getElementsByTagName("parameters");
+		if (q.length > 0)
+		{
+			q = p[i].getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
+			o.mWidgetList[o.mWidgetList.length - 1].mParameterList = {};
+			for (j = 0; j < q.length; j++)
+				o.mWidgetList[o.mWidgetList.length - 1].mParameterList[q[j].getAttribute("name")] = q[j].getAttribute("value");
+		}
+	}
+	cModel.fGetInstance().CHANNEL_LIST.push(o);
+	cModel.fGetInstance().CHANNEL_CURRENT = o;
+
+	if (vReturnFun)
+		vReturnFun();
+		
+	vThis.fLoadChannelData();
+}
 
 cChannelModule.prototype.fSimulateDefaultChannels = function(
 	vReturnFun
 )
 {
-fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
-	var vThis, o, p, q, i, j, vLen, parser, xmlDoc;
-	vThis = this;
-	parser = new DOMParser();
+//~ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
+	var vThis = this;
 	
-	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
-		vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
-		
-		o = new cChannelObj();
-		xmlDoc = parser.parseFromString(vData, "text/xml");
-		o.mName = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("name")[0].textContent;
-		o.mPlayMode = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("playmode")[0].textContent;
-		p = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("widgets")[0].getElementsByTagName("widget");
-		vLen = p.length;
-		for (i = 0; i < vLen; i++)
-		{
-			o.mWidgetList.push(new cWidgetObj());
-			o.mWidgetList[o.mWidgetList.length - 1].mID = "xxxx_0000_" + i;
-			o.mWidgetList[o.mWidgetList.length - 1].mName = p[i].getElementsByTagName("name")[0].textContent;
-			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mHref = p[i].getElementsByTagName("href")[0].textContent;
-			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mThumbnail.mHref = p[i].getElementsByTagName("thumbnail")[0].textContent;
-			o.mWidgetList[o.mWidgetList.length - 1].mLocalThumbnailPath = p[i].getElementsByTagName("thumbnail")[0].textContent;
-			o.mWidgetList[o.mWidgetList.length - 1].mWidget.mMovie.mContentType = p[i].getElementsByTagName("contenttype")[0].textContent;
-			o.mWidgetList[o.mWidgetList.length - 1].mNeTVCompatiable = true;
-			o.mWidgetList[o.mWidgetList.length - 1].mEnabled = true;
-			if (p[i].getElementsByTagName("needauth")[0])
-				o.mWidgetList[o.mWidgetList.length - 1].mNeedAuth = p[i].getElementsByTagName("needauth")[0].textContent;
-			
-			q = p[i].getElementsByTagName("parameters");
-			if (q.length > 0)
-			{
-				q = p[i].getElementsByTagName("parameters")[0].getElementsByTagName("parameter");
-				o.mWidgetList[o.mWidgetList.length - 1].mParameterList = {};
-				for (j = 0; j < q.length; j++)
-					o.mWidgetList[o.mWidgetList.length - 1].mParameterList[q[j].getAttribute("name")] = q[j].getAttribute("value");
-			}
+	//try reading from new docroot location
+	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/media/storage/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+
+		if (vData)
+			vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+		var notFound = (!vData || vData.length <= 0 || vData == "file not found");
+
+		//ok, perform callback with data
+		if (!notFound) {
+			vThis.fProcessChannelInfoXML(vData, vReturnFun);
+			return;
 		}
-		cModel.fGetInstance().CHANNEL_LIST.push(o);
-		cModel.fGetInstance().CHANNEL_CURRENT = o;
-		if (vReturnFun)
-			vReturnFun();
-			
-		vThis.fLoadChannelData();
+
+		//fallback to life support location
+		cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+			if (vData)
+				vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+
+			vThis.fProcessChannelInfoXML(vData, vReturnFun);
+		});
 	});
 }
 

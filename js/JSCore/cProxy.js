@@ -249,12 +249,25 @@ cProxy.fReadDefaultChannelData = function(
 	vReturnFun
 )
 {
-	cProxy.fReadFile("/usr/share/netvserver/docroot/widgets/channelinfo.xml", function(vData) {
-		fDbg("----------- channelinfo.xml --------------");
-		fDbg(vData);
-		fDbg("------------------------------------------");
-		if (vReturnFun)
+	//try reading from new docroot location
+	cProxy.fReadFile("/media/storage/docroot/widgets/channelinfo.xml", function(vData) {
+
+		var tempVData = "" + vData;
+		if (tempVData)
+			tempVData = tempVData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
+		var notFound = (!vData || tempVData.length <= 0 || tempVData == "file not found");
+
+		//ok, perform callback with data
+		if (!notFound) {
 			vReturnFun(vData);
+			return;
+		}
+
+		//fallback to life support location
+		cProxy.fReadFile("/usr/share/netvserver/docroot/widgets/channelinfo.xml", function(vData) {
+			if (vReturnFun)
+				vReturnFun(vData);
+		});
 	});
 }
 
