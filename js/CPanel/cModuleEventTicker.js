@@ -1482,25 +1482,25 @@ cModuleEventTicker.prototype.fClearPrevEventList = function(
 
 
 
-
+/*
+ * Use a dummy div in main HTML to obtain dynamic width of text strings
+ */
 cModuleEventTicker.prototype.fGetTextWidth = function(
 	vStr
 )
 {
 	var vFixHeight = 50;
-	var vFontSize;
-	
-	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
-		vFontSize = 32;
-	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
-		vFontSize = 17;
-	
-	$("#div_testing").html("<div id='div_testing_A' style='float: left; font-size: " + vFontSize + "px; width: auto; height: 50px'>" + vStr.substr(0, parseInt(vStr.length / 3)) + "</div>");
-	
-	var o = $("#div_testing_A");
-	var vWidth = 0;
-	vWidth = (o.width() + 40) * 3;
-	//~ $("#div_testing").html("");
+	var vPadding = 40;
+	var vFontSize = (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2) ? 17: 32;
+		
+	var htmlString = "<div id='div_dynamic_text_length_inner' style='float:left; width:auto; height:50px; font-size:" + vFontSize + "px;' >";
+	htmlString +=  "" + vStr.substr(0, parseInt(vStr.length / 3));
+	htmlString +=  "</div>";
+
+	$("#div_dynamic_text_length").html(htmlString);
+	var o = $("#div_dynamic_text_length_inner");
+	var vWidth = (o.width() + vPadding) * 3;
+
 	return vWidth;
 }
 

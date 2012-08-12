@@ -15,13 +15,16 @@ var keyPressedArray = new Array();
 // -------------------------------------------------------------------------------------------------
 //	window.onload function
 // -------------------------------------------------------------------------------------------------
-function fOnLoad()  {
+function fOnLoad()
+{
 	fDbg("fOnLoad()");
 
 	// -------- remove layerX and layerY --------
     // ------------------------------------------
 	keyboard_init();
-	fCheckForRedirection();
+	var needsRedirect = fCheckForRedirection();
+	if (needsRedirect)
+		return;
 	
 	if (cCPanel)
 		mJSCore = cJSCore.fGetInstance();
@@ -129,6 +132,7 @@ function fLoadExtJSScript(
 function fCheckForRedirection(
 )
 {
+	// conveninent development mode
 	if (location.search.indexOf("standalone") > -1)
 	{
 		$("#div_tempBg").hide();
@@ -136,11 +140,13 @@ function fCheckForRedirection(
 		return true;
 	}
 		
-	// redirect
-	if (location.href.indexOf("localhost") == -1)
-		if (location.href.indexOf("usr/share") == -1)
-//			if (location.href.indexOf("index_autotest.html") == -1)  
-				location.href = "./html_remoteconfig/";
+	// redirect if we access from remote browser
+	if (location.href.indexOf("localhost") == -1 && location.href.indexOf("usr/share") == -1) {
+		location.href = "./html_remoteconfig/";
+		return true;
+	}
+
+	return false;
 }
 
 

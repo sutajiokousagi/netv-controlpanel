@@ -66,10 +66,9 @@ function getAccessTokenOAuthTrue()
 			    if ("" != username)
 			    {
 			    	$('#result').append("<b>No Access Token, Waitng xAuth!</b>" +  "<br />");
-				twitterXAuth(username, password);
+					twitterXAuth(username, password);
 			    } else {
-				fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: "false", type: "foroauth"}, function(vData) {});
-
+					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message: "false", type: "foroauth"}, function(vData) {});
 			    }
 			}
 		    });

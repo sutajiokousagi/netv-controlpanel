@@ -34,14 +34,14 @@
       //var oauth_token_secret="BEH41DcqVxcRfXhFvLOXEfa1h40g1riUDmopHGyHuyI";
       //var oauth_token="372177612-DwKNP8LpldyNmUcHXtj1a3tFgvwNKZdpoGPL0XUr";
       //var oauth_token_secret="DoWtIbCyVz0P2s1xDbLBXMRS6ZeBgdQa1aXnsePsg";
-	  var callBackFunc = null;
+      var callBackFunc = null;
 
       ////////////////////////
       // For debug use
       ////////////////////////
       function fDbg(v)
       {
-	  console.log("|~|" + v);
+        console.log("|~|" + v);
       }
       
 
@@ -76,16 +76,9 @@
       
       $(function() {
 	  
-	  //fDbg("doing oauth? " + auth);
-	  
-	  if (false == auth)
-	      getAccessTokenOAuthFalse();
-	  else
-	      getAccessTokenOAuthTrue();
+	      if (false == auth)	   getAccessTokenOAuthFalse();
+	      else        	         getAccessTokenOAuthTrue();
 	      
-	  // twitterXAuth(username, password, callBackFunc);
-	  // twitterAccess(oauth_token, oauth_token_secret);
-
       });
       
     </script>
