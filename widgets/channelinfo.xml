@@ -1,5 +1,5 @@
 <channel>
-	<name>Twitter Demo Channel</name>
+	<name>Demo Channel</name>
 	<playmode>default</playmode>
 	<widgets>
 		
@@ -49,9 +49,183 @@
 		</widget>
 
 		<widget>
+			<name>Engadget News</name>
+			<href>./widgets/engadget_0.1/index.html</href>
+			<thumbnail>./widgets/engadget_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<!-- Doesn't work?
+		<widget>
 			<name>Google News</name>
 			<href>./widgets/google_news_0.1/index.html</href>
 			<thumbnail>./widgets/google_news_0.1/tn.png</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>Hacker News</name>
+			<href>./widgets/hackernews_0.1/index.html</href>
+			<thumbnail>./widgets/hackernews_0.1/logo.png</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>Groupon</name>
+			<href>./widgets/groupon_0.1/index.html</href>
+			<thumbnail>./widgets/groupon_0.1/logo.png</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		-->
+
+		<widget>
+			<name>New York Times Today's Paper</name>
+			<href>./widgets/NYTimes_0.1/index.html</href>
+			<thumbnail>./widgets/NYTimes_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>People.com</name>
+			<href>./widgets/people_0.1/index.html</href>
+			<thumbnail>./widgets/people_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>ESPN News</name>
+			<href>./widgets/ESPN_0.1/index.html</href>
+			<thumbnail>./widgets/ESPN_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<!-- Works, but need zipcode parameter
+		<widget>
+			<name>Weather</name>
+			<href>./widgets/weather_0.1/index.html</href>
+			<thumbnail>./widgets/weather_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		-->
+
+		<!-- Doesn't work?
+		<widget>
+			<name>NFL News</name>
+			<href>./widgets/sports/NFL_0.1/news.html</href>
+			<thumbnail>./widgets/sports/NFL_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>MLB Scores</name>
+			<href>./widgets/sports/MLB_0.1/score.html</href>
+			<thumbnail>./widgets/sports/MLB_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>Stock Quotes</name>
+			<href>./widgets/StockQuotes_0.1/index.html</href>
+			<thumbnail>./widgets/StockQuotes_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+		-->
+
+	</widgets>
+</channel>
+
+<channel>
+	<name>Social</name>
+	<playmode>default</playmode>
+	<widgets>
+
+		<!-- Facebook with device-based authentication -->
+		<widget>
+			<name>Facebook</name>
+			<href>./widgets/facebook_0.1/index.html</href>
+			<thumbnail>./widgets/facebook_0.1/logo.png</thumbnail>
+			<contenttype>application/html</contenttype>
+			<needauth>true</needauth>
+			<parameters>
+				
+			</parameters>
+		</widget>
+
+		<widget>
+			<name>Twitter Search Widget 2</name>
+			<href>./widgets/twitter0.1/index.html</href>
+			<thumbnail>./widgets/twitter0.1/tn.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+			<parameters>
+				<parameter value="" name="keyword"/>
+			</parameters>
+		</widget>
+		
+		<widget>
+			<name>Twitter Search Widget 1</name>
+			<href>./widgets/twitter0.2/index.html</href>
+			<thumbnail>./widgets/twitter0.2/tn.png</thumbnail>
+			<contenttype>application/html</contenttype>
+			<parameters>
+				<parameter value="" name="keyword"/>
+			</parameters>
+		</widget>
+
+	</widgets>
+</channel>
+
+<channel>
+	<name>News</name>
+	<playmode>default</playmode>
+	<widgets>
+
+		<widget>
+			<name>Engadget News</name>
+			<href>./widgets/engadget_0.1/index.html</href>
+			<thumbnail>./widgets/engadget_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>New York Times Today's Paper</name>
+			<href>./widgets/NYTimes_0.1/index.html</href>
+			<thumbnail>./widgets/NYTimes_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>People.com</name>
+			<href>./widgets/people_0.1/index.html</href>
+			<thumbnail>./widgets/people_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+	</widgets>
+</channel>
+
+<channel>
+	<name>Sports</name>
+	<playmode>default</playmode>
+	<widgets>
+
+		<widget>
+			<name>ESPN News</name>
+			<href>./widgets/ESPN_0.1/index.html</href>
+			<thumbnail>./widgets/ESPN_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>NFL News</name>
+			<href>./widgets/sports/NFL_0.1/news.html</href>
+			<thumbnail>./widgets/sports/NFL_0.1/logo.jpg</thumbnail>
+			<contenttype>application/html</contenttype>
+		</widget>
+
+		<widget>
+			<name>MLB Scores</name>
+			<href>./widgets/sports/MLB_0.1/score.html</href>
+			<thumbnail>./widgets/sports/MLB_0.1/logo.jpg</thumbnail>
 			<contenttype>application/html</contenttype>
 		</widget>
 
