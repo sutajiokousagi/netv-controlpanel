@@ -280,6 +280,7 @@ cJSCore.prototype.fUpdateDeviceToServer = function(
 	devInfo['mac'] = model.CHUMBY_MAC_ADDRESS;
 	devInfo['local_ip'] = model.CHUMBY_NETWORK_IP;
 	
+	/*
 	cProxy.fUpdateDeviceToServer(devInfo, function(responseText)
 	{
 		if (responseText != null && responseText.length > 10)
@@ -297,6 +298,7 @@ cJSCore.prototype.fUpdateDeviceToServer = function(
 			fDbg("+++++++++++++++++++++++++++++++++++++++++++");
 		}
 	});
+	*/
 	
 	// restart the update
 	this.startUpdateDeviceToServer();

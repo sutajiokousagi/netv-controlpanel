@@ -123,7 +123,7 @@ function fLoadExtJSScript(
 			fLoadExtJSScript(vFileList, vReturnFun);
 	};
 	
-	document.getElementsByTagName("head")[0].appendChild(script);
+	document.getElementsByTagName("body")[0].appendChild(script);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -141,10 +141,12 @@ function fCheckForRedirection(
 	}
 		
 	// redirect if we access from remote browser
+	/*
 	if (location.href.indexOf("localhost") == -1 && location.href.indexOf("usr/share") == -1) {
 		location.href = "./html_remoteconfig/";
 		return true;
 	}
+	*/
 
 	return false;
 }

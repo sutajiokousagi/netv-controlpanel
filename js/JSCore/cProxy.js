@@ -37,7 +37,8 @@ cProxy.xmlhttpPost = function(
 	strURL,
 	vType,			// "post" | "get"
 	vData,
-	vCompleteFun
+	vCompleteFun,
+	vDeserialize	// set to "true" to return "value" as the argument to vCompleteFun
 )
 {
 	var xmlHttpReq = false;
@@ -69,8 +70,19 @@ cProxy.xmlhttpPost = function(
 			switch (xmlHttpReq.status)
 			{
 			case 200:
-				if (vCompleteFun)
-					vCompleteFun(xmlHttpReq.responseText);
+				if (vCompleteFun) {
+					var xmlText = xmlHttpReq.responseText;
+					var oParser = new DOMParser();
+					var oDOM = oParser.parseFromString(xmlText, "text/xml");
+					var value;
+					try {
+						value = oDOM.getElementsByTagName("xml")[0].getElementsByTagName("value")[0].textContent;
+					}
+					catch (e) {
+						value = undefined;
+					}
+					vCompleteFun(xmlText, value);
+				}
 				break;
 			case 0:
 				if (vCompleteFun)
@@ -138,7 +150,6 @@ cProxy.fWidgetEngineShow = function(
 	cProxy.fDispatchSignal(cConst.SIGNAL_WIDGETENGINE_SHOW, null, null);
 }
 
-
 // -------------------------------------------------------------------------------------------------
 //	CPanel, show info SCP
 // -------------------------------------------------------------------------------------------------
@@ -155,20 +166,6 @@ cProxy.fCPanelInfoPanelUpdate = function(
 fDbg("*** cProxy, fCPanelInfoPanelUpdate(), ");
 	cProxy.fDispatchSignal(cConst.SIGNAL_SCPINFO_UPDATE, null, null);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // -------------------------------------------------------------------------------------------------
 //	fUpdateDeviceToServer

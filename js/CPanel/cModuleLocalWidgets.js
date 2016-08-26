@@ -36,61 +36,6 @@ function cModuleLocalWidgets(
 	
 	
 	return;
-	
-	this.mStyle = {
-		mTickerWidth: 80,
-		mTickerHeight: 50,
-		mCrawlerHeight: 50,
-		mCrawlerWidth: 1160,
-		
-		mMessageDefaultDisplayN: 2,
-		mSMSDefaultDisplayN: 2,
-		
-		mViewPortSize: [0, 0],
-		mRightOffset: 60,
-		mBottomOffset: 40
-	}
-	this.mTimeIntervalFrequency = 20;
-	
-	
-	// ------------------------- DIVs
-	this.mDivTickerMini = null;
-	
-	
-	// ------------------------- timer
-	this.mTimer = null;
-	this.mCounterTimer = 0;
-	this.mCounterTimerSec = 0;
-	this.mCounterStampClock = 0;
-	this.mCounterStampClockOrigin = null;
-	this.mTimeSpanStamp = 0;
-	this.mTimeSpanConfigModeOn = 0;
-	
-	
-	// main ticker event 
-	this.mEventList = [];					// [[ID, [message, title, image], displaycount], [...], [...], ...]
-	this.mPrevEventList = [];				// [[widget_ID, [event1, event2, event3, etc...]], [], ...]
-	this.mPlayStatus = null;				// null | stopped | paused
-	this.mEnableCrawlMessages = false;
-	
-	// stamp ticker event
-	this.mStampEventList = [];				// [[ID, [message, title, image], displaycount], [...], [...], ...]
-	this.mStampPlayStatus = null;
-	
-	
-	this.mStopAfterLastEvent = false;
-	this.mStopNow = false;
-
-	
-	// ------------------------- states
-	cModuleLocalWidgets.STATE_STANDBY = "state_standby";
-	cModuleLocalWidgets.STATE_CRAWLINGIN = "state_crawlingin";
-	cModuleLocalWidgets.STATE_CRAWLING = "state_crawling";
-	cModuleLocalWidgets.STATE_CRAWLINGOUT = "state_crawlingout";
-	
-
-	this.mConfigMode = "default"; 			// default | configmode1 | configmode2
-	//~ this.fInit();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -110,7 +55,7 @@ cModuleLocalWidgets.fGetInstance = function(
 cModuleLocalWidgets.prototype.fInit = function(
 )
 {
-fDbg("*** cModuleLocalWidgets, fInit(), ");
+	fDbg("*** cModuleLocalWidgets, fInit(), ");
 	var vThis;
 	vThis = this;
 
@@ -119,71 +64,26 @@ fDbg("*** cModuleLocalWidgets, fInit(), ");
 	
 	
 	// 0002, get current stored widgets
-	cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/ls /media/storage/temproot/widgets/local", xmlescape: true}, function(vData) {
-		var o, p, i;
-		//~ fDbg(vData)
-		vData = vData.split("</value>")[0].split("<value>")[1];
-		//~ fDbg(vData);
-		
+	cProxy.xmlhttpPost("", "post", {cmd : "GETLOCALWIDGETS", xmlescape: true}, function(vData, value) {
+		var i;
 		//~ vData = vData.split("\n")[0];
-		p = vData.split("\n");
+		var pluginConfigs = JSON.parse(value);
 		//~ cModel.fGetInstance().LOCAL_WIDGETS_LIST = p;
-		
-		
-		
-		for (i = 0; i < p.length; i++)
+
+		var output = "";
+		for (i = 0; i < pluginConfigs.length; i++)
 		{
-			p[i] = {
-				mUrl : "./widgets/local/" + p[i] + "/index.html", 
-				mWidth : null, 
-				mHeight : null,
-				mTop : null,
-				mLeft : null
-			};
-			
+			var pluginConfig = pluginConfigs[i];
+			output += '<iframe src="' + pluginConfig.url
+				+ '" width="' + pluginConfig.width
+				+ '" height="' + pluginConfig.height
+				+ '" style="position: absolute'
+					+ '; top: ' + pluginConfig.top
+					+ '; left: ' + pluginConfig.left
+					+ ';"'
+				+ ' frameborder="0"></iframe>';
 		}
-		for (i = 0; i < p.length; i++)
-		{
-			
-			cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/cat /media/storage/temproot/widgets/local/" + p[i]["mUrl"].split("/index.html")[0].split("./widgets/local/")[1] + "/config", xmlescape: true}, function(vData) {
-				//~ fDbg(vData);
-				//~ "<xml><status>1</status><cmd>NECOMMAND</cmd><data><value>{top: 100px, left: 50px, width: 300px, height: 200px}</value></data></xml>" 
-				vData = vData.split("</value>")[0].split("<value>")[1];
-				//~ fDbg(vData);
-				vData = vData.replace(/&quot;/g, "\"");
-				vData = JSON.parse(vData);
-				
-				
-				
-				for (i = 0; i < p.length; i++)
-				{
-					if (p[i]["mWidth"] == null)
-					{
-						fDbg(i);
-						p[i]["mWidth"] = vData["width"];
-						p[i]["mHeight"] = vData["height"];
-						p[i]["mTop"] = vData["top"];
-						p[i]["mLeft"] = vData["left"];
-						
-						if (i == p.length - 1)
-						{
-							
-		o = "";
-		for (i = 0; i < p.length; i++)
-		{
-			o += '<iframe src="' + p[i]["mUrl"] + '" width="' + p[i]["mWidth"] + '" height="' + p[i]["mHeight"] + '" style="position: absolute; top: ' + p[i]["mTop"] + '; left: ' + p[i]["mLeft"] + ';" frameborder="0"></iframe>';
-		}
-		vThis.mDiv.html(o);
-							
-						}
-						break;
-					}
-				}
-				
-			});
-			
-		}
-		
+		vThis.mDiv.html(output);
 	});
 	
 	
@@ -191,31 +91,6 @@ fDbg("*** cModuleLocalWidgets, fInit(), ");
 	
 	
 	return;
-	
-	
-	cProxy.fGetParams("eventtickerstyledata", function(vData) {
-		//~ fDbg("data : "+ vData);
-		if (!vData || vData == "")
-			return;
-		vData = JSON.parse(vData);
-		vThis.mStyle = vData;
-	});
-	
-	this.mDivTickerMini = this.mDiv.children("#div_eventWidgetPlayer_mini");
-	this.mDiv.css("top", "400px");
-	
-
-	this.mTimer = setInterval(function() {
-		mCounterStampClockOrigin = 0;
-		vThis.fOnSignal("timerinterval", null, null);
-	
-	}, vThis.mTimeIntervalFrequency);
-	this.fReset();
-
-	vThis.pEnabled(true);
-	vThis.fAnimateIn();
-	vThis.fAnimateIn();
-	vThis.mEnabled = true;
 }
 
 /** -------------------------------------------------------------------------------------------------

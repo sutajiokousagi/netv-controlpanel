@@ -498,7 +498,7 @@ cCPanel.prototype.fOnSignal = function(
 			$("#div_externalUrlPlayer").scrollTop( $("#div_externalUrlPlayer").scrollTop() - height/7 );
 			//~ $("#iframe_externalUrlPlayer").css("top", "+=" + height / 7 + "px");
 		}
-		break;scribe
+		break;
 		
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (cModuleInput.fGetInstance().mIsActive)
@@ -569,7 +569,6 @@ cCPanel.prototype.fOnSignal = function(
 	{
 	case "checkalive":
 		return true;
-		break;
 		
 	case cConst.SIGNAL_STARTUP_INIT:
 		cModuleLocalWidgets.fGetInstance().fInit();
