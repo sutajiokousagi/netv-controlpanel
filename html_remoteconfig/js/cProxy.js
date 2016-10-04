@@ -49,7 +49,7 @@ cProxy.xmlhttpPost = function(
 			vCompleteFun("XMLHttpRequest doesn't exist.");
 		return;
 	}
-	
+
 	if (!strURL || strURL == "")
 		strURL = "../bridge";
 
@@ -79,7 +79,7 @@ cProxy.xmlhttpPost = function(
 			}
 		}
 	}
-	
+
 	if (vType.toLowerCase() == "post")
 	{
 		for (var o in vData)
@@ -187,7 +187,7 @@ cProxy.fUpdateDeviceToServer = function(
 		parameters += o + "=" + encodeURIComponent(vPostParam[o]) + "&";
 	if (parameters.substr(parameters.length - 1, 1) == "&")
 		parameters = parameters.substr(0, parameters.length - 1);
-	
+
 	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : parameters}, function(vData) {
 		if (vCompleteFunc)
 			vCompleteFunc(vData);
@@ -233,6 +233,7 @@ cProxy.fReadFile = function(
 	vReturnFun
 )
 {
+	debugger;
 	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data : "<value>" + vFileName + "</value>"}, function(vData) {
 		//~ fDbg(vData.split("</cmd><data><value>")[0]);
 		if (vData)
@@ -325,14 +326,14 @@ cProxy.fLoadModelData = function(
 {
 fDbg("cProxy, fLoadModelData(), ");
 	var o;
-	
+
 	cProxy.fGetParams("cpanel_cmodel", function(vData) {
 		//~ fDbg(vData);
 		if (!vData || vData == "")
 			return;
 		vData = JSON.parse(vData);
 		cModel.fGetInstance().pData(vData)
-		
+
 		if (vReturnFun)
 			vReturnFun();
 	});

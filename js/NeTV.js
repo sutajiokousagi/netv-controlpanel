@@ -25,7 +25,7 @@ function fOnLoad()
 	var needsRedirect = fCheckForRedirection();
 	if (needsRedirect)
 		return;
-	
+
 	if (cCPanel)
 		mJSCore = cJSCore.fGetInstance();
 	else
@@ -35,35 +35,35 @@ function fOnLoad()
 		mCPanel = cCPanel.fGetInstance();
 	else
 		window.location.reload();
-		
+
 	var o = setTimeout(function() {
 		mJSCore.CPANEL = mCPanel;
 		mCPanel.JSCORE = mJSCore;
 		mJSCore.fInit(function() { mJSCore.fStartUp(); });
 		mCPanel.fInit(function() { mCPanel.fStartUp(); });
 	}, 100);
-	
+
 	// TODO : make up a input textfield and kept it in focus, capture the keydown stroke within that input textfield
 	// Native keyboard events
 	$(document).keydown(function(event)
 	{
 		//~ fDbg(event.which);
-		
+
 		var keycode = event.which;
 		var isRepeat = (keyPressedArray[""+keycode] == true) ? true : false;
 		keyPressedArray[""+keycode] = true;
-		
+
 		//event.preventDefault();
 		if (keycode == 37)			fButtonPress('left', 1, isRepeat);
 		else if (keycode == 39)		fButtonPress('right', 1, isRepeat);
-		else if (keycode == 38)		fButtonPress('up', 1, isRepeat);	
+		else if (keycode == 38)		fButtonPress('up', 1, isRepeat);
 		else if (keycode == 40)		fButtonPress('down', 1, isRepeat);
 		else if (keycode == 13)		fButtonPress('center', 1, isRepeat);
 		else if (keycode == 33)		fButtonPress('cpanel', 1, isRepeat);
 		else if (keycode == 34)		fButtonPress('widget', 1, isRepeat);
 		return true;
 	});
-	
+
 	$(document).keyup(function(event)
 	{
 		keyPressedArray[""+event.which] = false;
@@ -111,10 +111,10 @@ function fLoadExtJSScript(
 	var vUrl = vFileList.pop();
 //~ fDbg("cJSCore, fLoadExtJSScript()" + vUrl);
 	var script = document.createElement("script");
-	
+
 	script.type = "text/javascript";
 	script.src = vUrl;
-	
+
 	script.onload = function() {
 //~ fDbg2("*** fLoadScript(), loaded");
 		if (vFileList.length == 0)
@@ -122,12 +122,12 @@ function fLoadExtJSScript(
 		else
 			fLoadExtJSScript(vFileList, vReturnFun);
 	};
-	
+
 	document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 // -------------------------------------------------------------------------------------------------
-//	fCheckForRedirection	
+//	fCheckForRedirection
 // -------------------------------------------------------------------------------------------------
 function fCheckForRedirection(
 )
@@ -139,12 +139,12 @@ function fCheckForRedirection(
 		$("body").css("background-color", "#FFFFFF");
 		return true;
 	}
-		
+
 	// redirect if we access from remote browser
-	if (location.href.indexOf("localhost") == -1 && location.href.indexOf("usr/share") == -1) {
-		location.href = "./html_remoteconfig/";
-		return true;
-	}
+//	if (location.href.indexOf("localhost") == -1 && location.href.indexOf("usr/share") == -1) {
+//		location.href = "./html_remoteconfig/";
+//		return true;
+//	}
 
 	return false;
 }
@@ -187,7 +187,7 @@ function fButtonPress(
 
 	if (vOnHold && (vButtonName == "cpanel" || vButtonName == "widget" || vButtonName == "widget" || vButtonName == "setup"))
 		return true;
-		
+
 	switch (vButtonName)
 	{
 		case "cpanel": mJSCore.fOnSignal(cConst.SIGNAL_TOGGLE_CONTROLPANEL); break;
@@ -197,14 +197,14 @@ function fButtonPress(
 		case "center": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_CENTER); break;
 		case "up": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_UP); break;
 		case "down": mJSCore.fOnSignal(cConst.SIGNAL_BUTTON_DOWN); break;
-		
+
 		case "setup":
 			if (vCount == 3)
 			{
 				// fDbg("switched to demo(AP) mode");
 			}
 			else if (!vCount || vCount == 1)
-			{	
+			{
 				mCPanel.fOnSignal("signal_goto_controlpanel", ["help"], null);
 			}
 			break;
@@ -258,8 +258,8 @@ vEventVer = decodeURIComponent(vEventVer);
 //~ fDbg(vEventMessage);
 //~ fDbg("----- image path decoded ----");
 //~ fDbg(vEventImage);
-	
-	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);	
+
+	mJSCore.fOnSignal(cConst.SIGNAL_MESSAGE_EVENTMSG, [vEventMessage, vEventTitle, vEventImage, vEventType, vEventLevel, vEventVer], null);
 }
 
 function fUpdateWifiSignal(
@@ -324,32 +324,32 @@ function fUPDATECOUNTEvent( newPackageCount )
 	fDbg("-------------------------------------------");
 	fDbg("Downloading " + newPackageCount + " packages....");
 	fDbg("-------------------------------------------");
-	
+
 	//Show a small downloading icon here (like Android)
-	
+
 	return "ok";
 }
 
 function fUPDATEEvents( vEventName, vEventData )
 {
 fDbg("fUPDATEEvents: " + vEventName + "," + vEventData);
-	
+
 	if (vEventName == "starting")
 	{
 		var needReboot = (vEventData == "1") ? "true" : "false";
-		
+
 		fDbg("-------------------------------------------");
 		fDbg("  Update Starting");
 		if (needReboot == "true")		fDbg("  Reboot required");
 		else							fDbg("  Reboot NOT required");
 		fDbg("-------------------------------------------");
-	
+
 		//Gracefully hide everything here
 		mCPanel.fOnSignal(cConst.SIGNAL_TOGGLE_WIDGETENGINE);
 		// TODO: hide whatever on the screen
-		// 
-		
-		
+		//
+
+
 		//Redirect to update page after all animations are done
 		var locationString = "http://localhost/html_update/index.html?dummy=0";
 		if (needReboot != null && needReboot != "") 				locationString += "&reboot=" + needReboot;
@@ -371,7 +371,7 @@ function fAndroidEvents( vEventName, vEventData )
 	if (vEventName == "changeview" && vEventData == "remote")
 	{
 	}
-	
+
 	//User has just started the Android app & select an unconfigured device
 	if (vEventName == "changeview" && vEventData == "loading")
 	{
@@ -388,7 +388,7 @@ function fIOSEvents( vEventName, vEventData )
 	if (vEventName == "changeview" && vEventData == "remote")
 	{
 	}
-	
+
 	//User has just started the iOS app & select an unconfigured device
 	if (vEventName == "changeview" && vEventData == "loading")
 	{
@@ -404,7 +404,7 @@ function fCheckAlive(
 		var jscore = cJSCore.fGetInstance();
 		if (!jscore)
 			return false;
-		var jscore_alive = jscore.fOnSignal("checkalive");	
+		var jscore_alive = jscore.fOnSignal("checkalive");
 		if (!jscore_alive)
 			return false;
 
@@ -431,3 +431,46 @@ function fMultitab(
 	//pass everything to cCPanel
 	cCPanel.fGetInstance().fOnSignal("multitab", [vOption, vParam, vTab], null);
 }
+
+// We used to have a custom web browser that allowed for injecting javascript
+// directly.  We no longer have that.
+// Instead, fake it with what is essentially an AJAX (or is it COMET?) call.
+function fGetNextRPC(url) {
+	try {
+		var xmlHttpReq = false;
+		var self = this;
+		var parameters = "";
+		if (!window.XMLHttpRequest)						// Mozilla/Safari
+		{
+			if (vCompleteFun)
+				vCompleteFun("XMLHttpRequest doesn't exist.");
+			return;
+		}
+
+		request = new XMLHttpRequest();
+		request.open("get", url, true);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		request.onreadystatechange = function() {
+			if (request.readyState == 4)
+			{
+				if (request.status == 200) {
+					var cmd = request.responseText;
+					console.log("Result of call: " + cmd);
+					try {
+						eval(cmd);
+					}
+					catch(e) {
+						;
+					}
+				}
+				fGetNextRPC(url);
+			}
+		}
+		request.send();
+	}
+	catch(e) {
+		console.log("Unable to call xmlhttpPost, trying again: " + e);
+		window.setTimeout(fGetNextRPC, 50, url);
+	}
+}
+fGetNextRPC("/getrpc");

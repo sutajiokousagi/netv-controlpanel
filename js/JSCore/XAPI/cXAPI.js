@@ -21,10 +21,10 @@ function cXAPI(
 	this.mOauthNonce = (new Date()).getTime()/60000;
 
 
-	
+
 	this.mReq = null;
 	this.mRes = null;
-	
+
 	this.GET = 'GET';
 	this.POST = 'POST';
 
@@ -48,7 +48,7 @@ cXAPI.prototype.fInit = function(
 )
 {
 fDbg("*** cXAPI, fInit()");
-	
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -91,12 +91,12 @@ cXAPI.prototype.fAuthenticateByDla = function(
 {
 fDbg("*** cXAPI, fAuthenticateByDla()");
 	var o;
-	
+
 	if (cXAPI.instance.mOauthAuthID == null)
 		cXAPI.instance.mOauthAuthID = cGUID.fAsGUID(cGUID.fGetMD5(cGUID.fGetMD5(vDeviceID + vDeviceName))).toUpperCase();
 	if (cXAPI.instance.mOauthConsumerSecret == null)
 		cXAPI.instance.mOauthConsumerSecret = cGUID.fGetMD5(cGUID.fGetMD5(vDeviceID)).toUpperCase();
-	
+
 	o = {
 		auth_request : {
 			__attr : {
@@ -113,43 +113,6 @@ fDbg("*** cXAPI, fAuthenticateByDla()");
 	return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 //	static functions ---
 // -------------------------------------------------------------------------------------------------
@@ -180,14 +143,13 @@ cXAPI.fXAPIRequest = function(
 		vUrl = vUrl.substring(0, vUrl.length - 1);
 	}
 	//~ fDbg(vUrl);
-	
-	
+
+
 	// 3, process vPostParam
 	vPostParam = vPostParam ? vPostParam : "";
 	cProxy.xmlhttpPost("./bridge", "post", {cmd : "GetURL", url : vUrl, post : vPostParam}, function(vData) {
-		//~ fDbg2(vData);
 		vData = vData.split("<value>")[1].split("</value>")[0];
-		
+
 		if (vReturnFun)
 			vReturnFun(vData);
 	});
@@ -202,7 +164,7 @@ cXAPI.fObjToXML = function(
 {
 	var o, p, vStr, vStr2;
 	vStr = vStr2 = "";
-	
+
 	for (o in vObj)
 	{
 		if (typeof(vObj[o]) == "string")
@@ -234,7 +196,7 @@ cXAPI.fAddStandardParams = function(
 	vParamObj.oauth_consumer_key = cXAPI.instance.mOauthConsumerKey;
 	vParamObj.oauth_nonce = String(cXAPI.instance.mOauthNonce);
 	vParamObj.oauth_signature_method = 'MD5-HEX';
-	
+
 	return vUrl + "oauth_consumer_key=" + vParamObj.oauth_consumer_key + "&oauth_nonce=" + vParamObj.oauth_nonce + "&oauth_signature_method=" + vParamObj.oauth_signature_method;
 }
 
@@ -266,7 +228,7 @@ cXAPI.fBaseStringOf = function(
 		return pathPart + '&' + paramsPart;
 }
 
-	
+
 cXAPI.fPathSignaturePartOf = function(
 	pathItems
 )
@@ -276,7 +238,7 @@ cXAPI.fPathSignaturePartOf = function(
 		result += pathItems.toString();
 	else
 		result += pathItems.join('/');
-		
+
 	return cXAPI.fUrlEscape('/xapis/' + result);
 }
 

@@ -13,50 +13,50 @@ function cModuleLocalWidgets(
 )
 {
 	this.mDiv = $("#" + vDivObj);
-	
+
 	// ------------------------- main control
 	this.mEnabled = false;
 	this.mState = null;
 	this.mVisibleOnScreen = false;
-	
+
 	// ------------------------- css / style related
 	this.mViewPortSize = [];
-	
-	
-	
+
+
+
 	fDbg("++++++++++++++++++++++++++++++++++++");
 	fDbg("++++++++++++++++++++++++++++++++++++");
 	fDbg("++++++++++++++++++++++++++++++++++++");
-	
-	
-	
-	
+
+
+
+
 	//~ this.fInit();
-	
-	
-	
+
+
+
 	return;
-	
+
 	this.mStyle = {
 		mTickerWidth: 80,
 		mTickerHeight: 50,
 		mCrawlerHeight: 50,
 		mCrawlerWidth: 1160,
-		
+
 		mMessageDefaultDisplayN: 2,
 		mSMSDefaultDisplayN: 2,
-		
+
 		mViewPortSize: [0, 0],
 		mRightOffset: 60,
 		mBottomOffset: 40
 	}
 	this.mTimeIntervalFrequency = 20;
-	
-	
+
+
 	// ------------------------- DIVs
 	this.mDivTickerMini = null;
-	
-	
+
+
 	// ------------------------- timer
 	this.mTimer = null;
 	this.mCounterTimer = 0;
@@ -65,29 +65,29 @@ function cModuleLocalWidgets(
 	this.mCounterStampClockOrigin = null;
 	this.mTimeSpanStamp = 0;
 	this.mTimeSpanConfigModeOn = 0;
-	
-	
-	// main ticker event 
+
+
+	// main ticker event
 	this.mEventList = [];					// [[ID, [message, title, image], displaycount], [...], [...], ...]
 	this.mPrevEventList = [];				// [[widget_ID, [event1, event2, event3, etc...]], [], ...]
 	this.mPlayStatus = null;				// null | stopped | paused
 	this.mEnableCrawlMessages = false;
-	
+
 	// stamp ticker event
 	this.mStampEventList = [];				// [[ID, [message, title, image], displaycount], [...], [...], ...]
 	this.mStampPlayStatus = null;
-	
-	
+
+
 	this.mStopAfterLastEvent = false;
 	this.mStopNow = false;
 
-	
+
 	// ------------------------- states
 	cModuleLocalWidgets.STATE_STANDBY = "state_standby";
 	cModuleLocalWidgets.STATE_CRAWLINGIN = "state_crawlingin";
 	cModuleLocalWidgets.STATE_CRAWLING = "state_crawling";
 	cModuleLocalWidgets.STATE_CRAWLINGOUT = "state_crawlingout";
-	
+
 
 	this.mConfigMode = "default"; 			// default | configmode1 | configmode2
 	//~ this.fInit();
@@ -110,51 +110,56 @@ cModuleLocalWidgets.fGetInstance = function(
 cModuleLocalWidgets.prototype.fInit = function(
 )
 {
+/*
 fDbg("*** cModuleLocalWidgets, fInit(), ");
 	var vThis;
 	vThis = this;
 
-	
-	
-	
-	
+
+
+
 	// 0002, get current stored widgets
 	cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/ls /media/storage/temproot/widgets/local", xmlescape: true}, function(vData) {
 		var o, p, i;
 		//~ fDbg(vData)
 		vData = vData.split("</value>")[0].split("<value>")[1];
 		//~ fDbg(vData);
-		
+
 		//~ vData = vData.split("\n")[0];
 		p = vData.split("\n");
 		//~ cModel.fGetInstance().LOCAL_WIDGETS_LIST = p;
-		
-		
-		
+
+
+
 		for (i = 0; i < p.length; i++)
 		{
 			p[i] = {
-				mUrl : "./widgets/local/" + p[i] + "/index.html", 
-				mWidth : null, 
+				mUrl : "./widgets/local/" + p[i] + "/index.html",
+				mWidth : null,
 				mHeight : null,
 				mTop : null,
 				mLeft : null
 			};
-			
+
 		}
 		for (i = 0; i < p.length; i++)
 		{
-			
+
 			cProxy.xmlhttpPost("", "post", {cmd : "NECOMMAND", value: "/bin/cat /media/storage/temproot/widgets/local/" + p[i]["mUrl"].split("/index.html")[0].split("./widgets/local/")[1] + "/config", xmlescape: true}, function(vData) {
 				//~ fDbg(vData);
-				//~ "<xml><status>1</status><cmd>NECOMMAND</cmd><data><value>{top: 100px, left: 50px, width: 300px, height: 200px}</value></data></xml>" 
+				//~ "<xml><status>1</status><cmd>NECOMMAND</cmd><data><value>{top: 100px, left: 50px, width: 300px, height: 200px}</value></data></xml>"
 				vData = vData.split("</value>")[0].split("<value>")[1];
 				//~ fDbg(vData);
 				vData = vData.replace(/&quot;/g, "\"");
-				vData = JSON.parse(vData);
-				
-				
-				
+				try {
+					vData = JSON.parse(vData);
+				}
+				catch(e) {
+					debugger;
+				}
+
+
+
 				for (i = 0; i < p.length; i++)
 				{
 					if (p[i]["mWidth"] == null)
@@ -164,35 +169,35 @@ fDbg("*** cModuleLocalWidgets, fInit(), ");
 						p[i]["mHeight"] = vData["height"];
 						p[i]["mTop"] = vData["top"];
 						p[i]["mLeft"] = vData["left"];
-						
+
 						if (i == p.length - 1)
 						{
-							
+
 		o = "";
 		for (i = 0; i < p.length; i++)
 		{
 			o += '<iframe src="' + p[i]["mUrl"] + '" width="' + p[i]["mWidth"] + '" height="' + p[i]["mHeight"] + '" style="position: absolute; top: ' + p[i]["mTop"] + '; left: ' + p[i]["mLeft"] + ';" frameborder="0"></iframe>';
 		}
 		vThis.mDiv.html(o);
-							
+
 						}
 						break;
 					}
 				}
-				
+
 			});
-			
+
 		}
-		
+
 	});
-	
-	
-	
-	
-	
+
+
+
+
+
 	return;
-	
-	
+
+
 	cProxy.fGetParams("eventtickerstyledata", function(vData) {
 		//~ fDbg("data : "+ vData);
 		if (!vData || vData == "")
@@ -200,15 +205,15 @@ fDbg("*** cModuleLocalWidgets, fInit(), ");
 		vData = JSON.parse(vData);
 		vThis.mStyle = vData;
 	});
-	
+
 	this.mDivTickerMini = this.mDiv.children("#div_eventWidgetPlayer_mini");
 	this.mDiv.css("top", "400px");
-	
+
 
 	this.mTimer = setInterval(function() {
 		mCounterStampClockOrigin = 0;
 		vThis.fOnSignal("timerinterval", null, null);
-	
+
 	}, vThis.mTimeIntervalFrequency);
 	this.fReset();
 
@@ -216,6 +221,7 @@ fDbg("*** cModuleLocalWidgets, fInit(), ");
 	vThis.fAnimateIn();
 	vThis.fAnimateIn();
 	vThis.mEnabled = true;
+	*/
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -228,15 +234,15 @@ cModuleLocalWidgets.prototype.fResize = function(
 fDbg("*** cModuleLocalWidgets, fResize(), " + this.mViewPortSize + " -> " + vViewPortSize);
 	var vThis, o, p, q, i;
 	vThis = this;
-	
+
 	// before
 	if (vThis.mViewPortSize && vThis.mViewPortSize[1])
 	{
 		p = parseInt($("#div_eventWidgetPlayer_crawling").css("left"));		// x-coordinate of crawler
 		p = p / vThis.mViewPortSize[0];
-		
+
 		//~ fDbg(vThis.mViewPortSize[1] + " vs " + parseInt(vThis.mDiv.css("top")));
-		
+
 		if (parseInt(vThis.mDiv.css("top")) >= vThis.mViewPortSize[1])		// ok, it's in hidden mode
 			o = vViewPortSize[1] + (parseInt(vThis.mDiv.css("top")) - vThis.mViewPortSize[1]);
 		else if (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("top")) > vThis.mViewPortSize[1] / 2)		// ok, it's at the upper part/region of the page
@@ -244,42 +250,42 @@ fDbg("*** cModuleLocalWidgets, fResize(), " + this.mViewPortSize + " -> " + vVie
 		else  				// it's at the bottom part/region of the page
 			o = vViewPortSize[1] - (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("top")));
 	}
-	
+
 	// check if upper or lower region
 	q = (parseInt(vThis.mDiv.css("top")) < (vThis.mViewPortSize[1] - parseInt(vThis.mDiv.css("height"))) / 2) ? false : true;
 	//~ fDbg("right : " + vThis.mStyle.mRightOffset);
 	//~ fDbg("bottom : " + vThis.mStyle.mBottomOffset + " at lower region? - " + 1);
 	q = parseInt(vThis.mDiv.css("top")) / vThis.mViewPortSize[1];
 	//~ fDbg("pos percentage : " + q);
-	
-	
+
+
 	// update
 	vThis.mViewPortSize = [vViewPortSize[0], vViewPortSize[1]];
 	vThis.mStyle.mViewPortSize = vThis.mViewPortSize;
-	
+
 	// after
 	//~ fDbg("===============+>>> " + o);
 	vThis.mDiv.css("top", o);
-	
+
 	q = parseInt(q * vThis.mViewPortSize[1] / 10);
 	//~ fDbg("+++++++++++++++=>>> " + q);
-	
-	
+
+
 	vThis.mDiv.css("width", vViewPortSize[0] - 120);
 	$("#div_eventWidgetPlayer_mini").css("left", vViewPortSize[0] - 200);
 	$("#div_eventWidgetPlayer_crawling").css("left", vViewPortSize[0] * p);
 	$("#div_eventWidgetPlayer_crawling").css("width", vViewPortSize[0] - 201);
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[0]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
 	$($("#div_eventWidgetPlayer_crawling #corner_container").children()[1]).css("left", parseInt($("#div_eventWidgetPlayer_crawling").css("width").split("px")[0]) - 8 + "px");
-	
+
 	//~ fDbg("+++++++++++++++++>>>>>>>>>>>>>. " + vThis.mStyle.mBottomOffset);
 	//~ vThis.mStyle.mBottomOffset = vThis.mViewPortSize[1] - (parseInt($("#div_eventWidgetPlayer_crawling").css("top")) + 50);
-	
-	
+
+
 	// TODO : save parameter to local storage
 	if (vThis.mStyle.mBottomOffset < 510)
 	{
-		
+
 	}
 }
 
@@ -293,10 +299,10 @@ cModuleLocalWidgets.prototype.pState = function(
 	var vThis, o;
 	vThis = this;
 if (!vState) return vThis.mState;
-	
+
 	switch (vState)
 	{
-	
+
 	}
 	vThis.mState = vState;
 }
@@ -310,12 +316,12 @@ cModuleLocalWidgets.prototype.pConfigMode = function(
 {
 	var vThis;
 	vThis = this;
-	
+
 if (!vMode)
-	return vThis.mConfigMode;	
+	return vThis.mConfigMode;
 if (vMode == vThis.mConfigMode)
 	return;
-		
+
 	switch (vMode)
 	{
 	case "default":
@@ -325,11 +331,11 @@ if (vMode == vThis.mConfigMode)
 		fDbg("save data : " + o);
 		cProxy.fSaveParams("eventtickerstyledata", o);
 		break;
-		
+
 	case "configmode1":
 		vThis.mDiv.css("border", "solid white 1px");
 		break;
-		
+
 	case "configmode2":
 		vThis.mDiv.css("border", "solid white 1px");
 		vThis.mDiv.css("border-left", "solid #22EE22 5px");
@@ -348,41 +354,41 @@ cModuleLocalWidgets.prototype.pPos = function(
 	var vThis, o;
 	vThis = this;
 if (!vPos) return vThis.mPos;
-	
+
 	// update positions
 	if (vPos.top)
 	{
 		vThis.mDiv.css("top", vPos.top);
 	}
-	
+
 	if (vPos.left)
 	{
 		vThis.mDiv.css("left", vPos.left);
 	}
-	
+
 	if (vPos.width)
 	{
 		vThis.mDiv.css("width", vPos.width);
 	}
-	
+
 	if (vPos.height)
 	{
 		vThis.mDiv.css("height", vPos.height);
 	}
-	
+
 	if (vPos.mBottomOffSet)
 	{
 		vThis.mDiv.css("top", vThis.mViewPortSize[1] - vPos.mBottomOffSet - parseInt(vThis.mDiv.css("height")));
 	}
-	
+
 	// update mStyle
 	if (vThis.mViewPortSize[0] && vThis.mViewPortSize[1])
 	{
 		vThis.mStyle.mRightOffset = vThis.mViewPortSize[0] - (parseInt(vThis.mDiv.css("left")) + parseInt(vThis.mDiv.css("width")));
 		vThis.mStyle.mBottomOffset = vThis.mViewPortSize[1] - (parseInt(vThis.mDiv.css("top")) + parseInt(vThis.mDiv.css("height")));
 	}
-	
-	
+
+
 }
 
 /** -------------------------------------------------------------------------------------------------
@@ -397,21 +403,21 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 //~ fDbg("*** cModuleLocalWidgets, fOnSignal(), " + vSignal + ", " + vData);
 	var i, o, vThis;
 	vThis = this;
-	
+
 	switch(vSignal)
 	{
 	case cConst.SIGNAL_TOGGLE_CONTROLPANEL:
 		break;
-		
+
 	case cConst.SIGNAL_TOGGLE_WIDGETENGINE:
 		break;
-		
+
 	case cConst.SIGNAL_BUTTON_LEFT:
 		if (vThis.mConfigMode && vThis.mConfigMode == "configmode1")
 		{
 			vThis.mDiv.css("left", "-=5px");
 			this.mTimeSpanConfigModeOn = 0;
-			
+
 			$("#div_configmode1 #arrow_left_white").show();
 			$("#div_configmode1 #arrow_left_white").fadeOut();
 		}
@@ -421,20 +427,20 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 			vThis.mDiv.css("width", "+=5px");
 			$(vThis.mDiv.children("#div_eventWidgetPlayer_mini")[0]).css("left", "+=5px");
 			$(vThis.mDiv.children("#div_eventWidgetPlayer_crawling")[0]).css("width", "+=5px");
-			
+
 			o = $($("#div_eventWidgetPlayer_crawling").children()[1]);
 			$(o.children()[0]).css("left", "+=5px");
 			$(o.children()[1]).css("left", "+=5px");
 			this.mTimeSpanConfigModeOn = 0;
 		}
 		break;
-		
+
 	case cConst.SIGNAL_BUTTON_RIGHT:
 		if (vThis.mConfigMode && vThis.mConfigMode == "configmode1")
 		{
 			vThis.mDiv.css("left", "+=5px");
 			this.mTimeSpanConfigModeOn = 0;
-			
+
 			$("#div_configmode1 #arrow_right_white").show();
 			$("#div_configmode1 #arrow_right_white").fadeOut();
 		}
@@ -444,14 +450,14 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 			vThis.mDiv.css("width", "-=5px");
 			$(vThis.mDiv.children("#div_eventWidgetPlayer_mini")[0]).css("left", "-=5px");
 			$(vThis.mDiv.children("#div_eventWidgetPlayer_crawling")[0]).css("width", "-=5px");
-			
+
 			o = $($("#div_eventWidgetPlayer_crawling").children()[1]);
 			$(o.children()[0]).css("left", "-=5px");
 			$(o.children()[1]).css("left", "-=5px");
 			this.mTimeSpanConfigModeOn = 0;
 		}
 		break;
-		
+
 	case cConst.SIGNAL_BUTTON_CENTER:
 		if (vThis.mConfigMode == "default")
 			vThis.pConfigMode("configmode1");
@@ -466,7 +472,7 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 			this.mTimeSpanConfigModeOn = 0;
 		}
 		break;
-		
+
 	case cConst.SIGNAL_BUTTON_UP:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
@@ -474,7 +480,7 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 			vThis.pPos({top: "-=10px"});
 		}
 		break;
-		
+
 	case cConst.SIGNAL_BUTTON_DOWN:
 		if (vThis.mConfigMode && vThis.mConfigMode != "default")
 		{
@@ -483,7 +489,7 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 		}
 		break;
 	}
-	
+
 	switch (vSignal)
 	{
 	case "timerinterval":
@@ -496,22 +502,22 @@ cModuleLocalWidgets.prototype.fOnSignal = function(
 			vThis.mCounterTimerSec++
 			vThis.fCheckConfigMode();
 		}
-		
+
 		if (o != vThis.mCounterStampClock)
 		{
 			vThis.mCounterStampClock = o;
 			vThis.fUpdateClock();
 		}
-		
+
 		//~ fDbg($("#div_eventWidgetPlayer_crawling").css("left") + " - " + $("#div_eventWidgetPlayer_crawling").css("top"));
-		
+
 		if (vThis.mPlayStatus == "crawlingin" && vThis.mEnabled)
 		{
 			vThis.fCrawlingIn();
 		}
-		
+
 		if (vThis.mPlayStatus == "playing" && vThis.mEnabled)
-		{	
+		{
 			vThis.fCrawlMessages();
 			vThis.fCheckNewMessage();
 			vThis.fCheckLeadingMessage();
@@ -592,14 +598,14 @@ else
 	$("#stamp_demo_container").show();
 
 vThis.pState(cModuleLocalWidgets.STATE_STANDBY);
-	
+
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
 	if (vTopFinal < (cModel.fGetInstance().VIEWPORTSIZE[1] - 80) / 2)
 		vTopStart = -80;
 	else
 		vTopStart = cModel.fGetInstance().VIEWPORTSIZE[1];
-	
-	
+
+
 	this.mDiv.show();
 	this.mDiv.css("top", vTopStart + "px");
 	this.mDiv.animate({
@@ -611,10 +617,10 @@ vThis.pState(cModuleLocalWidgets.STATE_STANDBY);
 			vThis.mDiv.animate({
 				top: cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight) + "px"
 			}, 500, function() {
-				
+
 			});
 		}
-		
+
 		vThis.mVisibleOnScreen = true;
 		if (vReturnFun)
 			vReturnFun();
@@ -628,17 +634,17 @@ cModuleLocalWidgets.prototype.fAnimateOut = function(
 fDbg("*** cModuleLocalWidgets, fAnimateOut(), ");
 	var vThis, vTopStart, vTopFinal;
 	vThis = this;
-	
+
 	// clear config mode
 	vThis.pConfigMode("default");
-	
+
 	// calculate the OUT position
 	vTopFinal = cModel.fGetInstance().VIEWPORTSIZE[1] - (vThis.mStyle.mBottomOffset + vThis.mStyle.mTickerHeight);
 	if (vTopFinal < (vThis.mViewPortSize[1] - vThis.mStyle.mTickerHeight) / 2)
 		vTopStart = -80;
 	else
 		vTopStart = cModel.fGetInstance().VIEWPORTSIZE[1];
-	
+
 	this.mDiv.css("top", vTopFinal + "px");
 	this.mDiv.animate({
 		top: vTopStart + "px"
@@ -647,7 +653,7 @@ fDbg("*** cModuleLocalWidgets, fAnimateOut(), ");
 		if (vReturnFun)
 			vReturnFun();
 	});
-	
+
 	this.pConfigMode(null);
 }
 
@@ -673,13 +679,13 @@ cModuleLocalWidgets.prototype.fUpdateClock = function(
 	var runTime = new Date();
 	var hours = runTime.getHours();
 	var minutes = runTime.getMinutes();
-	
+
 	if (hours < 10)
 		hours = "0" + hours;
 	if (minutes < 10)
 		minutes = "0" + minutes;
 	$("#stamp_text_container").html(hours + ":" + minutes);
-	
+
 	if (this.mTimeSpanStamp > 20)
 	{
 		if ($("#stamp_text_container").is(":visible"))
@@ -704,7 +710,7 @@ cModuleLocalWidgets.prototype.fUpdateClock = function(
  * -------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
  * -------------------------------------------------------------------------------------------------
- *	
+ *
  * ---------------------------------------------------------------------------------------------- */
 /** ------------------------------------------------------------------------------------------------
 	fAddEvent
@@ -718,8 +724,8 @@ cModuleLocalWidgets.prototype.fAddEvent = function(
 	var vThis, o, i, j, vFlag;
 	vThis = this;
 	o = String(new Date().getTime());
-	
-	
+
+
 	// for type-"sms" 2 times only
 	if (vEventData[3] == "sms")
 	{
@@ -774,7 +780,7 @@ cModuleLocalWidgets.prototype.fAddEvent = function(
 						vFlag = true;
 						break;
 					}
-				
+
 			if (!vFlag)
 			{
 				vThis.mPrevEventList[i][1].push(vEventData[0].substr(0, 20));
@@ -784,10 +790,10 @@ cModuleLocalWidgets.prototype.fAddEvent = function(
 			fDbg("==================================================");
 		}
 	}
-	
+
 if (this.mEnabled == false)
 	return;
-	
+
 	if (!this.mPlayStatus || this.mPlayStatus == "paused" || this.mPlayStatus == "stopped")
 	{
 		//~ this.mPlayStatus = "paused";
@@ -806,11 +812,11 @@ cModuleLocalWidgets.prototype.fActivateMainTicker = function(
 	vThis = this;
 
 	vContainerWidth = cModel.fGetInstance().VIEWPORTSIZE[0] - 80;
-	
-	
+
+
 	if (vThis.mEventList.length == 0 || $("#crawling_container").children().length > 0)
 		return;
-		
+
 	//~ fDbg("==================================== ACTIVATE =========================================");
 	vThis.pState(cModuleLocalWidgets.STATE_CRAWLINGIN);
 	vThis.fAddNextEventToContainer(0, true);
@@ -829,7 +835,7 @@ cModuleLocalWidgets.prototype.fCrawlingIn = function(
 	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
 	vThis = this;
 	vStep = cModel.fGetInstance().pTickerStep();
-	
+
 	$("#div_eventWidgetPlayer_crawling").css("left", "-=" + vStep + "px");
 	vLeft = parseInt($("#div_eventWidgetPlayer_crawling").css("left").split("px")[0]);
 	if (vLeft <= 0)
@@ -850,12 +856,12 @@ cModuleLocalWidgets.prototype.fAddNextEventToContainer = function(
 {
 	var vThis, vID;
 	vThis = this;
-	
+
 	if (vIsFirstMessage)
 		vThis.fAppendMessageDivFromEvent(vIndex, vThis.mViewPortSize[0] - 80 - 200, null);
 	else
 		vThis.fAppendMessageDivFromEvent(vIndex, null, vThis.mViewPortSize[0] - 80);
-	
+
 	vThis.mEventList[0][2]--;
 	if (vThis.mEventList[0][2] == 0)
 		vThis.mEventList.splice(0, 1);
@@ -869,16 +875,16 @@ cModuleLocalWidgets.prototype.fAppendMessageDivFromEvent = function(
 {
 	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft, o, vCSS, vFontSize;
 	vThis = this;
-	
+
 	vID = vThis.fGenerateGUID();
-	
+
 	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!费德勒年终大师赛冠军!";
 	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。希望这里有140个字符。人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!人民群众的力量!费德勒年终大师赛冠军!";
 	//~ vThis.mEventList[vIndex][0][0] = "希望这里有140个字符。希望这里有140个字符。希望这里有140个字符";
 	//~ vThis.mEventList[vIndex][0][0] = "qwuery qweuty wqetuy qwety qweuty";
 	//~ fDbg(vThis.mEventList[vIndex][0][0]);
 	vWidth = vThis.fGetTextWidth(vThis.mEventList[vIndex][0][1] + vThis.mEventList[vIndex][0][0]);
-	
+
 	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
 		vWidth = parseInt(vWidth) + 400;
 	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
@@ -894,11 +900,11 @@ cModuleLocalWidgets.prototype.fAppendMessageDivFromEvent = function(
 		vLeft = vForceLeft;
 	else
 		vLeft = 20;
-	
+
 	vInnerLeft = 0;
-	
+
 	//~ vThis.mEventList[vIndex][0][0] = "符号测试， 和验证。！";
-	
+
 	vHtml = "";
 	vHtml += "<div id='message_" + vThis.mEventList[vIndex][1] + "_" + vID + "' style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: " + vWidth + "px;'>";
 	if (vThis.mEventList[vIndex][0][2] && vThis.mEventList[vIndex][0][2].length > 0)		// if image exist
@@ -912,12 +918,12 @@ cModuleLocalWidgets.prototype.fAppendMessageDivFromEvent = function(
 		vCSS = vThis.mEventList[vIndex][0][6];
 	else
 		vCSS = "color: #EEEEEE; ";
-	
+
 	// set single line or double line
 	if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 1)
 		vFontSize = 32;
 	else if (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2)
-		vFontSize = 17;	
+		vFontSize = 17;
 
 	vHtml += "<div id='message_txt' style='border: solid yellow 0px; position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 50px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; font-size: " + vFontSize + "px; line-height: 130%;" + vCSS + "'>";
 		if (vThis.mEventList[vIndex][0][1] && vThis.mEventList[vIndex][0][1] != "")
@@ -926,7 +932,7 @@ cModuleLocalWidgets.prototype.fAppendMessageDivFromEvent = function(
 			vHtml += vThis.mEventList[vIndex][0][0];
 	vHtml += "</div>";
 	vHtml += "</div>";
-	
+
 	$("#crawling_container").append(vHtml);
 	//~ fDbg($("#crawling_container").html());
 }
@@ -941,7 +947,7 @@ cModuleLocalWidgets.prototype.fCrawlMessages = function(
 	vThis = this;
 	vStep = 4;
 	vStep = cModel.fGetInstance().pTickerStep();
-	
+
 	vList = $("#crawling_container").children();
 	vLen = vList.length;
 	if (vLen == 0)
@@ -974,7 +980,7 @@ cModuleLocalWidgets.prototype.fCheckNewMessage = function(
 		vLeft = parseInt(o.css("left").split("px")[0]);
 		vWidth = parseInt(o.css("width").split("px")[0]);
 		vRight = vLeft + vWidth;
-		
+
 		if (vRight < vContainerWidth - 400)
 		{
 			if (vThis.mEventList.length > 0)
@@ -1015,7 +1021,7 @@ cModuleLocalWidgets.prototype.fCheckLeadingMessage = function(
 		vLeft = parseInt(o.css("left").split("px")[0]);
 		vWidth = parseInt(o.css("width").split("px")[0]);
 		vRight = vLeft + vWidth;
-		
+
 		if (vRight < 0)
 			o.remove();
 	}
@@ -1044,7 +1050,7 @@ cModuleLocalWidgets.prototype.fAddStampEvent = function(
 
 	var o = String(new Date().getTime());
 	this.mStampEventList.push([vEventData, o, 100]);
-	
+
 	if (!this.mStampPlayStatus || this.mStampPlayStatus == "paused" || this.mStampPlayStatus == "stopped")
 	{
 		this.fActivateStampTicker();
@@ -1058,10 +1064,10 @@ cModuleLocalWidgets.prototype.fActivateStampTicker = function(
 	var vThis, i, o, p, vLeft, vWidth, vRight, vContainerWidth, vID, vTraceInterval;
 	vThis = this;
 	vContainerWidth = 80;
-	
+
 	if (vThis.mStampEventList.length == 0 || $("#stamp_bottom_message_container").children().length > 0)
 		return;
-		
+
 	//~ fDbg("==================================== ACTIVATE STAMP ===================================");
 	vThis.fAddNextStampEventToContainer(0, true);
 	$("#stamp_bottom_message_container").show();
@@ -1080,12 +1086,12 @@ cModuleLocalWidgets.prototype.fAddNextStampEventToContainer = function(
 {
 	var vThis;
 	vThis = this;
-	
+
 	if (vIsFirstMessage)
 		vThis.fAppendStampMessageDivFromEvent(vIndex, 1190, null);
 	else
 		vThis.fAppendStampMessageDivFromEvent(vIndex, null, 1200);
-	
+
 	vThis.mStampEventList[0][2]--;
 	if (vThis.mStampEventList[0][2] == 0)
 		vThis.mStampEventList.splice(0, 1);
@@ -1096,10 +1102,10 @@ cModuleLocalWidgets.prototype.fAppendStampMessageDivFromEvent = function(
 )
 {
 //~ fDbg("*** cModuelEventTicker, fAppendStampMessageDivFromEvent(), ");
-	
+
 	var vThis, vID, vHtml, vLeft, vWidth, vInnerLeft;
 	vThis = this;
-	
+
 	vID = vThis.fGenerateGUID();
 	vWidth = vThis.fGetTextWidth(vThis.mStampEventList[vIndex][0][0]);
 
@@ -1107,11 +1113,11 @@ cModuleLocalWidgets.prototype.fAppendStampMessageDivFromEvent = function(
 	vInnerLeft = 0;
 	vHtml = "";
 	vHtml += "<div id='message_" + vThis.mStampEventList[vIndex][1] + "_" + vID + "' style='position: absolute; top: 0px; left: " + vLeft + "px; height: 50px; width: " + vWidth + "px;'>";
-	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 25px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; color: #EEEEEE; font-size: 12px; line-height: 100%;'>";	
+	vHtml += "<div id='message_txt' style=' position: absolute; top: 0px; left: " + vInnerLeft + "px; height: 25px; width: " + (vWidth - vInnerLeft) + "px; margin: 4px 0 0 0; color: #EEEEEE; font-size: 12px; line-height: 100%;'>";
 		vHtml += vThis.mStampEventList[vIndex][0][0];
 	vHtml += "</div>";
 	vHtml += "</div>";
-	
+
 	$("#stamp_bottom_message_container").append(vHtml);
 }
 
@@ -1125,7 +1131,7 @@ cModuleLocalWidgets.prototype.fCrawlStampMessages = function(
 	var vThis, i, o, vList, vLen, vLeft, vWidth, vRight, vStep;
 	vThis = this;
 	vStep = 1;
-	
+
 	vList = $("#stamp_bottom_message_container").children();
 	vLen = vList.length;
 	if (vLen == 0)
@@ -1158,7 +1164,7 @@ cModuleLocalWidgets.prototype.fCheckStampNewMessage = function(
 		vLeft = parseInt(o.css("left").split("px")[0]);
 		vWidth = parseInt(o.css("width").split("px")[0]);
 		vRight = vLeft + vWidth;
-		
+
 		if (vRight < vContainerWidth - 50)
 		{
 			if (vThis.mStampEventList.length > 0)
@@ -1189,14 +1195,14 @@ cModuleLocalWidgets.prototype.fCheckStampLeadingMessage = function(
 {
 	var o, vThis, vLeft, vWidth, vRight;
 	vThis = this;
-	
+
 	o = $($("#stamp_bottom_message_container").children()[0]);
 	if (o.length > 0)
 	{
 		vLeft = parseInt(o.css("left").split("px")[0]);
 		vWidth = parseInt(o.css("width").split("px")[0]);
 		vRight = vLeft + vWidth;
-		
+
 		if (vRight < 0)
 			o.remove();
 	}
@@ -1224,7 +1230,7 @@ cModuleLocalWidgets.prototype.fEndStampEvent = function(
 }
 
 
- 
+
 cModuleLocalWidgets.prototype.fRenderIconPanel = function(
 )
 {
@@ -1243,7 +1249,7 @@ cModuleLocalWidgets.prototype.fRenderIconPanel = function(
 			o += "<img src='./images/tx_ico_inactive.png' width='11px' height='11px'/>";
 		o += "</div>";
 	}
-		
+
 	$("#stamp_bottom_iconset_container").html(o);
 	$("#stamp_bottom_iconset_container").fadeIn();
 
@@ -1268,7 +1274,7 @@ cModuleLocalWidgets.prototype.fStopAll = function(
 
 	vThis.mStampPlayStatus = null;
 	vThis.mStampEventList = [];
-	
+
 	vThis.mPlayStatus = null;
 	vThis.mEventList = [];
 	vThis.mEnabled = false;
@@ -1303,9 +1309,9 @@ cModuleLocalWidgets.prototype.fReset = function(
 //~ fDbg("*** cModuleLocalWidgets, fReset(), ");
 	var vThis, vContainerWidth;
 	vThis = this;
-	
+
 	vContainerWidth = vThis.mViewPortSize[0] - 80;
-	
+
 	$("#div_eventWidgetPlayer_crawling").css("left", vContainerWidth + "px");
 	$("#crawling_container").html("");
 }
@@ -1318,10 +1324,10 @@ cModuleLocalWidgets.prototype.fCheckConfigMode = function(
 {
 	var vThis;
 	vThis = this;
-	
+
 	if (vThis.pConfigMode() == "default")
 		return;
-		
+
 	vThis.mTimeSpanConfigModeOn++;
 	if (this.mTimeSpanConfigModeOn >= 5)
 	{
@@ -1340,7 +1346,7 @@ cModuleLocalWidgets.prototype.fClearEventList = function(
 //~ fDbg("*** cModuleLocalWidgets, fClearEventList(), ");
 	var vThis;
 	vThis = this;
-	
+
 	vThis.mEventList = [];
 }
 
@@ -1356,7 +1362,7 @@ cModuleLocalWidgets.prototype.fClearPrevEventList = function(
 //~ fDbg("*** cModuleLocalWidgets, fClearPrevEventList(), ");
 	var vThis, i;
 	vThis = this;
-	
+
 	for (i = 0; i < vThis.mPrevEventList.length; i++)
 	{
 		if (vThis.mPrevEventList[i][0] == vWidgetID)
@@ -1586,7 +1592,7 @@ cModuleLocalWidgets.prototype.fGetTextWidth = function(
 	var vFixHeight = 50;
 	var vPadding = 40;
 	var vFontSize = (cModel.fGetInstance().EVENTTICKER_LINECOUNT == 2) ? 17: 32;
-		
+
 	var htmlString = "<div id='div_dynamic_text_length_inner' style='float:left; width:auto; height:50px; font-size:" + vFontSize + "px;' >";
 	htmlString +=  "" + vStr.substr(0, parseInt(vStr.length / 3));
 	htmlString +=  "</div>";

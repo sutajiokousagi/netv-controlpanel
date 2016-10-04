@@ -31,7 +31,7 @@ cChannelModule.prototype.fInit = function(
 )
 {
 //~ fDbg("*** cChannelModule, fInit()");
-	
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -44,10 +44,10 @@ cChannelModule.prototype.fFetchChannelInfo = function(
 //~ fDbg("*** cChannelModule, fFetchAccountInfo()");
 	var vThis;
 	vThis = this;
-	
+
 	// reset channels
 	cModel.fGetInstance().CHANNEL_LIST = [];
-	
+
 	vThis.fSimulateDefaultChannels(function() {
 		cProfile.fGetInstance().fFetchInfo(cModel.fGetInstance().PROFILE_ID, function(vData) {
 			cChannelModule.instance.fParseChannelInfo(vData, vReturnFun);
@@ -75,11 +75,11 @@ cChannelModule.prototype.fParseChannelInfo2 = function(
 )
 {
 //~ fDbg("*** cChannelModule, fParseChannelInfo2()");
-	
+
 	var o, p, i, j, k;
 	o = new cChannelObj(vData);
 	cModel.fGetInstance().CHANNEL_LIST.push(o);
-	
+
 	if (vReturnFun)
 		vReturnFun();
 }
@@ -93,11 +93,11 @@ cChannelModule.prototype.fParseChannelInfo = function(
 )
 {
 //~ fDbg("*** cChannelModule, fParseChannelInfo()");
-	
+
 	var vThis, o, p, i, j, k;
 	vThis = this;
 	o = new cChannelObj(vData);
-	
+
 	// -----------------------------------------------------
 	// parse the fetched channel
 	// -----------------------------------------------------
@@ -107,7 +107,7 @@ cChannelModule.prototype.fParseChannelInfo = function(
 	//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 	vThis.pScanWidgetList(o);
 	//~ cChannelModule.instance.fPreloadChannelThumbnails(o, [0, 4]);
-	
+
 	for (i = 0; i < o.mWidgetList.length; i++)
 	{
 		p = null;
@@ -117,14 +117,14 @@ cChannelModule.prototype.fParseChannelInfo = function(
 				p = cConst.DEFAULT_WIDGETPEERLIST[j];
 				break;
 			}
-		
-		
+
+
 		if (i < 10)
 		{
 			//~ fDbg("----- " + i);
 			//~ fDbg(JSON.stringify(o.mWidgetList[i].mParameterList));
 		}
-		
+
 		if (p && p.mNeTVCompatiable)
 		{
 			o.mWidgetList[i].mNeTVCompatiable = true;
@@ -148,8 +148,8 @@ cChannelModule.prototype.fParseChannelInfo = function(
 			}
 		}
 	}
-	
-	
+
+
 	if (vReturnFun)
 		vReturnFun();
 }
@@ -269,32 +269,32 @@ cChannelModule.prototype.fParseChannelList = function(
 	vReturnFun
 )
 {
-	
+
 	var vThis, o, p, q, i, j, vCount, parser, xmlDoc;
 	vThis = this;
 	parser = new DOMParser();
 	xmlDoc = parser.parseFromString(vData, "text/xml");
-	
+
 	o = xmlDoc.getElementsByTagName("profiles")[0].getElementsByTagName("profile");
 	vCount = cModel.fGetInstance().CHANNEL_LIST.length + o.length;
-	
+
 	for (i = 0; i < o.length; i++)
 	{
 		cChannelModule.fGetInstance().fFetchChannelInfo2(o[i].getAttribute("id"), function(vData) {
 			o = cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1];
-			
-			
+
+
 			//~ fDbg("************* channel " + (cModel.fGetInstance().CHANNEL_LIST.length - 1) + "*********************" + " total : " + cModel.fGetInstance().CHANNEL_LIST.length);
 			vThis.pScanWidgetList(o);
 			//~ vThis.fPreloadChannelThumbnails(cModel.fGetInstance().CHANNEL_LIST[cModel.fGetInstance().CHANNEL_LIST.length - 1], [0, 4], function() { });
-			
+
 			if (cModel.fGetInstance().CHANNEL_LIST.length == vCount)
 			{
 				// load cModel data from local-copy
 				cProxy.fLoadModelData(function() {
 					fDbg("load model data complete!");
 				});
-				
+
 				if (vReturnFun)
 					vReturnFun();
 				p = cModel.fGetInstance().CHANNEL_LIST;
@@ -307,7 +307,7 @@ cChannelModule.prototype.fParseChannelList = function(
 			}
 		});
 	}
-	
+
 	cProxy.fLoadModelData(function() {
 		fDbg("load model data once............");
 	});
@@ -323,7 +323,7 @@ cChannelModule.prototype.pScanWidgetList = function(
 {
 //~ fDbg("*** cChannelModule, pScanWidgetList()");
 	var vThis, o, p, i;
-	
+
 	for (i = 0; i < vChannelObj.mWidgetList.length; i++)
 	{
 		p = null;
@@ -333,7 +333,7 @@ cChannelModule.prototype.pScanWidgetList = function(
 				p = cConst.DEFAULT_WIDGETPEERLIST[j];
 				break;
 			}
-		
+
 		if (p && p.mNeTVCompatiable)
 		{
 			//~ fDbg("match ----------------> " + cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj) + " - " + i);
@@ -367,7 +367,7 @@ cChannelModule.prototype.fProcessChannelInfoXML = function(
 	parser = new DOMParser();
 
 	o = new cChannelObj();
-	xmlDoc = parser.parseFromString(vData, "text/xml");
+	xmlDoc = parser.parseFromString("<xml>" + vData + "</xml>", "text/xml");
 	o.mName = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("name")[0].textContent;
 	o.mPlayMode = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("playmode")[0].textContent;
 	p = xmlDoc.getElementsByTagName("channel")[0].getElementsByTagName("widgets")[0].getElementsByTagName("widget");
@@ -385,7 +385,7 @@ cChannelModule.prototype.fProcessChannelInfoXML = function(
 		o.mWidgetList[o.mWidgetList.length - 1].mEnabled = true;
 		if (p[i].getElementsByTagName("needauth")[0])
 			o.mWidgetList[o.mWidgetList.length - 1].mNeedAuth = p[i].getElementsByTagName("needauth")[0].textContent;
-		
+
 		q = p[i].getElementsByTagName("parameters");
 		if (q.length > 0)
 		{
@@ -400,7 +400,7 @@ cChannelModule.prototype.fProcessChannelInfoXML = function(
 
 	if (vReturnFun)
 		vReturnFun();
-		
+
 	vThis.fLoadChannelData();
 }
 
@@ -410,9 +410,9 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 {
 //~ fDbg("*** cChannelModule, fSimulateDefaultChannels(), ");
 	var vThis = this;
-	
+
 	//try reading from new docroot location
-	cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/media/storage/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+	cProxy.xmlhttpPost("", "post", {cmd : "GetChannelInfo"}, function(vData) {
 
 		if (vData)
 			vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
@@ -425,7 +425,7 @@ cChannelModule.prototype.fSimulateDefaultChannels = function(
 		}
 
 		//fallback to life support location
-		cProxy.xmlhttpPost("", "post", {cmd : "GetFileContents", data: "<value>/usr/share/netvserver/docroot/widgets/channelinfo.xml</value>"}, function(vData) {
+		cProxy.xmlhttpPost("", "post", {cmd : "GetChannelInfo", data: "<value>default</value>"}, function(vData) {
 			if (vData)
 				vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
 
@@ -454,7 +454,7 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 			break;
 	}
 	p = cModel.fGetInstance().CHANNEL_LIST.indexOf(vChannelObj);
-	
+
 	i = vRange[0];
 	var fLoadTN = function() {
 		cProxy.xmlhttpPost("", "post", {cmd: "GetJPG", data: "<value>" + o[0] + "</value>"}, function(vData) {
@@ -472,6 +472,6 @@ cChannelModule.prototype.fPreloadChannelThumbnails = function(
 			fLoadTN();
 		});
 	};
-	
+
 	fLoadTN();
 }
