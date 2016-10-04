@@ -1,26 +1,26 @@
 <!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+
+
   <head>
     <title>Stock Quotes</title>
-    
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
-	
+
     <script type="text/javascript">
 
-      
-      var vBridgePath = "http://localhost/bridge";
-      
+
+      var vBridgePath = "/bridge";
+
       // the stock feed url
       var feedUrl = "http://content.chumby.com/stock_quote/?symbols[]=IBM&symbols[]=AMZN&symbols[]=MSFT&symbols[]=AAPL&symbols[]=GOOG";
 
       var picUrl = "./widgets/StockQuotes_0.1/logo.jpg"
-      
+
       function processXML(xmlDoc) {
 
 	  var jsonDoc = $.xml2json(xmlDoc);
@@ -55,7 +55,7 @@
 		  price_change = '<span style="color:red">' + price_change + '</span>';
 
 	      }
-	      
+
 	      var price_high = pricedata["high"];
 
 	      var price_low = pricedata["low"];
@@ -82,7 +82,7 @@
 	      //$("#result").append(msgBody);
 
 	      msgBody = encodeURIComponent(msgBody);
-	      
+
 	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + msgBody +  "</message>"+ "<image>"+picUrl+"</image>"}, function(vData) {
 	      	  // console.log(vData)
 	      });
@@ -90,14 +90,14 @@
 	  }
 
       }
-      
+
       $(function() {
 
 	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + feedUrl + '"') + '&format=xml&callback=?';
-	  
+
 	  $.getJSON(yql, function(data) {
 	      var text = JSON.stringify(data['results']);
-	 
+
 	      xmlStr = text.substring(2, text.length-2);
 
 	      var tmpStr1 = xmlStr.replace(/\\n/g, '');
@@ -107,17 +107,17 @@
               xmlDoc = $.parseXML(tmpStr2);
 
               processXML(xmlDoc);
-      
+
 	  });
 
       });
-      
+
     </script>
-    
+
   </head>
-  
+
   <body>
     <div id="result"></div>
   </body>
-  
+
 </html>

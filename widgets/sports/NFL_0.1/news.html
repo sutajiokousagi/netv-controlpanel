@@ -1,26 +1,26 @@
 <!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+
+
   <head>
     <title>NFL News</title>
-    
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript" src="xmlToJson.js"></script>
-	
+
     <script type="text/javascript">
 
-      
-      var vBridgePath = "http://localhost/bridge";
-      
+
+      var vBridgePath = "/bridge";
+
       // the sports feed url
       var feedUrl = "http://sportfeed.chumby.com/f/searchDocuments?max_age=60&league-keys=l.nfl.com&fixture-keys=general-news";
 
       var picUrl = "./widgets/NFL_0.1/logo.jpg"
-      
+
       function processXML(xmlDoc) {
 
 	  var jsonDoc = xmlToJson(xmlDoc);
@@ -34,11 +34,11 @@
 
 	  }
       }
-      
+
       $(function() {
 
 	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + feedUrl + '"') + '&format=xml&callback=?';
-	  
+
 	  $.getJSON(yql, function(data) {
 	      var text = JSON.stringify(data['results']);
 
@@ -47,21 +47,21 @@
 	      var tmpStr1 = xmlStr.replace(/\\n/g, '');
 
 	      var tmpStr2 = tmpStr1.replace(/\\/g, '');
-             
+
               xmlDoc = $.parseXML(tmpStr2);
 
               processXML(xmlDoc);
-      
+
 	  });
 
       });
-      
+
     </script>
-    
+
   </head>
-  
+
   <body>
     <div id="result"></div>
   </body>
-  
+
 </html>

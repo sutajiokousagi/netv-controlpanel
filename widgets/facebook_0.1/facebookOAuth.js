@@ -1,6 +1,6 @@
 //var vBridgePath = "http://localhost/bridge";
 
-var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
+var vBridgePath = "/bridge";
 
 var picUrl = "./widgets/facebook_0.1/logo.png";
 
@@ -9,9 +9,9 @@ var picUrl = "./widgets/facebook_0.1/logo.png";
 function startOAuth()
 {
     $('#result').append("<h3>Step 1</h3>");
-    
+
     var url = 'https://graph.facebook.com/oauth/device?type=device_code&client_id=150792241632891&scope=email,read_stream,offline_access';
-    
+
     // use bridge to call send the post command
     fXMLHttpRequest(vBridgePath,
 		    "post",
@@ -23,8 +23,8 @@ function startOAuth()
 			$('#result').append("<b>code: </b>" + jsonDevice["code"] + "<br />");
 			$('#result').append("<b>user_code: </b>" + jsonDevice["user_code"] + "<br />");
 			$('#result').append("<b>verification_uri: </b>" + jsonDevice["verification_uri"] + "<br />");
-			
-			
+
+
 			/*
 			fXMLHttpRequest(vBridgePath, "post", {cmd : "ControlPanel", data : "<value>Javascript \"fWidgetMsg('Please go to http://www.facebook.com/device to enter the following code.<p>" + jsonDevice["user_code"] + "')\"</value>"}, function(vData) {
 				console.log("-----------------------------")
@@ -39,12 +39,12 @@ function startOAuth()
 			vMsg += "</div>";
 			//~ vMsg = encodeURIComponent(vMsg);
 			fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vMsg, type: "foroauth"}, function(vData) {
-				
+
 			});
-			
+
 			waitingOAuth(jsonDevice["code"]);
 		    });
-    
+
 }
 
 
@@ -62,25 +62,25 @@ function waitingOAuth(code)
 		    function(vData) {
 			processOAuthData(vData, url);
 		    });
-    
+
 }
 
 
 
-function processOAuthData(vData, url) 
+function processOAuthData(vData, url)
 {
     var jsonDoc = $.xml2json(vData);
 	//~ fDbg(JSON.stringify(jsonDoc));
     var jsonAuth = jQuery.parseJSON(jsonDoc["data"]["value"]);
     //console.log(JSON.stringify(jsonAuth));
-    
+
     if (!jsonAuth["error"])
     {
 	var access_token = jsonAuth["access_token"];
 	$('result').append("<b>Access Token: </b>" + access_token + "<br />");
 	saveAccessToken(access_token);
 		fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : "Authentication is successful!", type: "foroauth"}, function(vData) {
-			
+
 		});
     } else {
 	//~ fDbg(typeof jsonAuth["error"]);

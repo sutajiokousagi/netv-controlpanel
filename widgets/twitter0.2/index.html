@@ -7,7 +7,7 @@
 <style type="text/css">
 body{
 	font-family: Verdana;
-	font-size: 12px;	
+	font-size: 12px;
 }
 </style>
 <script type="text/javascript" src="jquery.min.js"></script>
@@ -27,20 +27,20 @@ body{
 	var mQueryKeyword = "ラメン";
 	var mQueryInterval = 10000;
 
-	
+
 	$(function() {
-		
-		
+
+
 		/*
 		// -------------- testing functions ---------------
 		var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
 		var vTagName = "zzzzz";
-		
-		
+
+
 		fXMLHttpRequest(vBridgePath, "post", {cmd : "GetParam", data : "<value>" + vTagName + "</value>"}, function(vData) {
 			//~ fDbg(vData);
 			vData = vData.split("</cmd><data><value>")[1].split("</value></data></xml>")[0];
-			
+
 			fDbg("===========");
 			fDbg("===========");
 			fDbg("===========");
@@ -53,9 +53,9 @@ body{
 			fDbg("===========");
 			fDbg("===========");
 		});
-		
-		
-		
+
+
+
 		var vVal = "11111111111111111111111" + new Date();
 		var vStr = "";
 		vStr += "<" + vTagName + ">" + vVal + "</" + vTagName + ">";
@@ -74,26 +74,26 @@ body{
 			fDbg("+++++++++++");
 			fDbg("+++++++++++");
 		});
-		
+
 		// ------------------------------------------------
 		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		if (typeof window.innerWidth != 'undefined')
-		{
+
+
+
+
+
+
+
+
+
+
+//		if (typeof window.innerWidth != 'undefined')
+//		{
 			vViewPortSize[0] = window.innerWidth,
 			vViewPortSize[1] = window.innerHeight
-		}
+//		}
 		$("#twitstream_container").css("left", (vViewPortSize[0] - parseFloat($("#twitstream_container").css("width").split("px")[0])) / 2 + "px");
-		
+
 		//fStart();
 		mInterval = setTimeout ("fStart()", 20);
 
@@ -104,8 +104,8 @@ body{
 			p = o.split("keyword=")[1].split("&")[0];
 			if (p && p != "")
 				mQueryKeyword = p;
-			
-			
+
+
 			//p = o.split("interval=")[1].split("&")[0];
 			//if (p && p != "")
 				//mQueryInterval = parseInt(p) * 1000;
@@ -119,7 +119,7 @@ fResize();
 		var fGetThenDispatchEvent = function() {
 			//fDbg("0, " + mQueryKeyword + " at interval " + mQueryInterval);
 			//fDbg(mQueryInterval);
-			
+
 			//var url="http://search.twitter.com/search.json?q="+ "harry%20potter" +"&rpp=" + 1 + "&callback=?";
 			var url = "http://search.twitter.com/search.json?q="+ encodeURIComponent(mQueryKeyword) +"&rpp=" + 1 + "&callback=?";
 			var vBridgePath = "http://" + location.href.split("/")[2] + "/bridge";
@@ -154,16 +154,16 @@ fResize();
 					}
 					if (json.results[0].profile_image_url)
 						vTweet_image = json.results[0].profile_image_url;
-						
+
 					vTweet_createdAt = json.results[0].created_at.split("0000")[0];
 					mPrevTweetID = vID;
 					//fDbg("4, " + "send tickerevent");
 					//fDbg("<message>" + vTweet_message + " - " + vTweet_createdAt + "</message><title>" + vTweet_title + "</title><image>" + vTweet_image + "</image>");
-					
-					
-					
-					
-					
+
+
+
+
+
 					//vTweet_message = "*&(^*$#^$#@#!@!@#$%*&(&()_+<///></>/\\";
 					//vTweet_message = encodeURIComponent(vTweet_message);
 					//fDbg("************* from widget *************");
@@ -173,11 +173,11 @@ fResize();
 					fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", message : vTweet_message + " - " + vTweet_createdAt, title: vTweet_title, image: vTweet_image}, function(vData) {
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
-					
-					
-					
-					
-					
+
+
+
+
+
 					//vTweet_message = "aaaaa !@#$%^&*()?/";
 					//vTweet_message = "aaaaa?bbbbb!ccccc,";
 					//vTweet_message = encodeURIComponent(vTweet_message);
@@ -192,11 +192,11 @@ fResize();
 						//fDbg("5, " + "tickerevent return - " + vData);
 					});
 					*/
-					
-					
-					
-					
-					
+
+
+
+
+
 					/*
 					vTweet_message = "스티브잡스의 숨은이야";
 					vTweet_message = encodeURIComponent(vTweet_message);
@@ -227,7 +227,7 @@ function fResize(
 {
 	var vThis;
 	vThis = this;
-	
+
 	if (typeof window.innerWidth != 'undefined')
 	{
 		vThis.mViewPortSize[0] = window.innerWidth,
@@ -236,12 +236,12 @@ function fResize(
 
 	$("#twitstream_container").css("width", (mViewPortSize[0] + "px"));
 	$("#twitstream_container").css("left", "0px");
-	
+
 }
 
 
 
-	
+
 // -------------------------------------------------------------------------------------------------
 //	override fDbg() function
 // -------------------------------------------------------------------------------------------------
@@ -263,22 +263,22 @@ function fXMLHttpRequest(
 	var xmlHttpReq = false;
 	var self = this;
 	var parameters = "";
-	
+
 	if (window.XMLHttpRequest)						// Mozilla/Safari
 		xmlHttpReq = new XMLHttpRequest();
-	
+
 	if (!strURL || strURL == "")
 		strURL = cModel.fGetInstance().LOCALBRIDGE_URL;
 
-//~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);		
+//~ fDbg("*** cProxy, " + vType.toUpperCase() + ", " + strURL + ", " + vData.cmd + ", " + vData.data + ", " + vData.url + ", " + vData.post);
 	xmlHttpReq.open(vType, strURL, true);
 	//xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	var o = hex_md5(String(Math.round((new Date()).getTime()/1000)));
 //~	fDbg("----time MD5 ----> " + o);
 	xmlHttpReq.setRequestHeader('Authorized-Caller', hex_md5(String(Math.round((new Date()).getTime()/1000))));
-	
-	
+
+
 	xmlHttpReq.onreadystatechange = function()
 	{
 //~ fDbg("state: " + xmlHttpReq.readyState);
@@ -300,12 +300,12 @@ function fXMLHttpRequest(
 			}
 		}
 	}
-	
+
 	if (vType.toLowerCase() == "post")
 	{
 		for (var o in vData)
 			parameters += o + "=" + encodeURIComponent(vData[o]) + "&";
-			
+
 //fDbg("----- POST para sent ----");
 //fDbg(parameters);
 		xmlHttpReq.send(parameters);
@@ -323,8 +323,8 @@ function fXMLHttpRequest(
 
 
 
-	
-	
+
+
 	function fStart()
 	{
 		var o = [parseInt($("#tweets").css("width").split("px")[0]), parseFloat($("#tweets").css("left").split("px")[0])];

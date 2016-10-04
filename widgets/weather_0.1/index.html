@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+
+
   <head>
     <title>NeTV Weather Widgets</title>
-    
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript" src="xmlToJson.js"></script>
-	
+
     <script type="text/javascript">
 
       var weekMap = {"0": "SUNDAY",
@@ -31,16 +31,16 @@
 	  if (p && p != "")
 	     mZipCode  = p;
       }
-      
-      
-      var vBridgePath = "http://localhost/bridge";
-      
+
+
+      var vBridgePath = "/bridge";
+
       var feedUrl = "http://content.chumby.com/weather_items?zipcode=" + mZipCode;
-      
+
       var picUrl = "http://www.nws.noaa.gov/weather/images/fcicons/bkn.jpg";
-      
+
       var netvUrl = "http://192.168.1.49/bridge";
-      
+
 
       function getTitle(jsonLocation)
       {
@@ -52,19 +52,19 @@
 	  return msgTitle;
       }
 
-      function getForecast(jsonForecast) 
+      function getForecast(jsonForecast)
       {
-	  
+
 	  var msgWeather = jsonForecast['@attributes']['condition'];
 	  var msgTempH = jsonForecast['@attributes']['highf'];
 	  var msgTempL = jsonForecast['@attributes']['lowf'];
 	  if (msgWeather == '')
 	      var msgForecast =  'High Temperature: ' + msgTempH + ';  Low Temperature:' + msgTempL;
 	  else
-	      var msgForecast =  'Weather Condition: ' + msgWeather + ';  High Temperature:' + msgTempH + ';  Low Temperature:' + msgTempL; 
+	      var msgForecast =  'Weather Condition: ' + msgWeather + ';  High Temperature:' + msgTempH + ';  Low Temperature:' + msgTempL;
 	  return msgForecast;
       }
-      
+
       function processXML(xmlDoc) {
 	  var jsonDoc = xmlToJson(xmlDoc);
 
@@ -77,7 +77,7 @@
 	      var msgForecast = getForecast(jsonForecast[i]);
 
 	      var dayofweek = jsonForecast[i]['@attributes']['dayofweek'];
-	      
+
 	      var msgWeekday = weekMap[dayofweek];
 
 	      var msgTitle = msgWeekday + ' ' + getTitle(jsonLocation);
@@ -92,31 +92,31 @@
 
 	  // console.log(JSON.stringify(jsonForecast));
       }
-      
+
       $(function() {
-	  
+
 	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + feedUrl + '"') + '&format=xml&callback=?';
-	  
+
 	  $.getJSON(yql, function(data) {
 	      var text = JSON.stringify(data['results']);
 	      xmlStr = text.substring(2, text.length-2);
 
-	      var tmpStr = xmlStr.replace(/\\/g, "");	      
+	      var tmpStr = xmlStr.replace(/\\/g, "");
 
 	      xmlDoc = $.parseXML(tmpStr);
-              
+
               processXML(xmlDoc);
-      
+
 	  });
 
       });
-      
+
     </script>
-    
+
   </head>
-  
+
   <body>
     <div id="result"></div>
   </body>
-  
+
 </html>

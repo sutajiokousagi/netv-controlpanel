@@ -1,21 +1,21 @@
 <!DOCTYPE html PUBLIC "-//3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+
+
   <head>
     <title>MLB Scores</title>
-    
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
     <script type="text/javascript" src="fXML.js"></script>
     <script type="text/javascript" src="xmlToJson.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
-	
+
     <script type="text/javascript">
 
       var msgNum = 2;
-      
+
       var o, p;
       o = location.href.split("?")[1];
       if (o && o != "")
@@ -24,14 +24,14 @@
 	  if (p && p != "")
 	      msgNum = p;
       }
-      
-      var vBridgePath = "http://localhost/bridge";
-      
+
+      var vBridgePath = "/bridge";
+
       // the sports feed url
       var feedUrl = "http://sportfeed.chumby.com/f/searchDocuments?max_age=1000&league-keys=l.mlb.com&fixture-keys=event-score&date-window=9959&revision-control=latest-only&publisher-keys=sportsnetwork.com&max-result-count=" + Math.max(2, msgNum) + "&content-returned=all-content&content-format=sportsml&rendering-engine=xslt&gateway-theme=default&query-debug=false";
 
       var picUrl = "./widgets/MLB_0.1/logo.jpg"
-      
+
       function processXML(xmlDoc) {
 
 	  var jsonDoc = $.xml2json(xmlDoc);
@@ -41,19 +41,19 @@
 	  console.log(JSON.stringify(sports_content));
 
 	  for (var i=0; i<msgNum; i++) {
-	      
+
 	      var sports_metadata = sports_content[i]["sports\_metadata"];
 	      var sports_title = sports_metadata["sports\_title"];
-	      
+
 	      var sports_event = sports_content[i]["sports\_event"];
 	      var start_date_time = sports_event["event_metadata"]["start\_date\_time"];
-	      
+
 	      var team = sports_event["team"];
 	      var team_1_name = team[0]["team\_metadata"]["name"]["first"]+
 		  " "+team[0]["team\_metadata"]["name"]["last"];
 	      var team_1_event_outcome = team[0]["team\_stats"]["event_outcome"];
 	      var team_1_score = team[0]["team_stats"]["score"];
-	      
+
 	      var team_2_name = team[1]["team\_metadata"]["name"]["first"]+
 		  " "+team[1]["team\_metadata"]["name"]["last"];
 	      var team_2_event_outcome = team[1]["team\_stats"]["event_outcome"];
@@ -70,13 +70,13 @@
 	  }
 
       }
-      
+
       $(function() {
 
 	  var yql_query = 'select * from xml where url="' + feedUrl + '"';
 
 	  var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(yql_query) + '&format=xml&callback=?';
-	  
+
 	  $.getJSON(yql, function(data) {
 	      var text = JSON.stringify(data['results']);
 
@@ -89,17 +89,17 @@
               xmlDoc = $.parseXML(tmpStr2);
 
               processXML(xmlDoc);
-      
+
 	  });
 
       });
-      
+
     </script>
-    
+
   </head>
-  
+
   <body>
     <div id="result"></div>
   </body>
-  
+
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+
+
   <head>
     <title>Engadget News</title>
-    
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="cMD5.js"></script>
@@ -12,7 +12,7 @@
     <script type="text/javascript">
 
       var msgNum = 2;
-      
+
       var o, p;
       o = location.href.split("?")[1];
       if (o && o != "")
@@ -22,17 +22,17 @@
 	      msgNum = p;
       }
 
-      
-      var vBridgePath = "http://localhost/bridge";
-      
+
+      var vBridgePath = "/bridge";
+
       var rssUrl = "http://www.engadget.com/rss.xml";
-      
+
       var picUrl = "./widgets/engadget_0.1/logo.jpg";
-      
+
       function processRSS(JSONdata) {
-	  
+
 	  console.log("ENTER the processRSS");
-	  
+
 	  var news = JSONdata['item'];
 
 	  //for (var i = 0; i< news.length; i++)
@@ -43,13 +43,13 @@
 
 	      content = JSON.stringify(news[i]['content']);
 	      $('#result').append('<h3>' + title + '</h3>');
-	      
+
 	      fXMLHttpRequest(vBridgePath, "post", {cmd : "TickerEvent", data : "<message>" + title +  "</message><title>Engadget News</title><image>" + picUrl + "</image>"}, function(vData) {console.log(vData)});
 	  }
       }
-      
+
       $(function() {
-	  
+
 	  var query = "select * from feed where url='"+rssUrl+"' LIMIT "+ Math.max(2, msgNum);
 
 	  var yql_url = "http://query.yahooapis.com/v1/public/yql?q="+encodeURIComponent(query)+"&format=json&callback=?";
@@ -58,15 +58,15 @@
 	  $.getJSON(yql_url, function(data) {
 	      processRSS(data['query']['results']);
 	  });
-	  
+
       });
-      
+
     </script>
-    
+
   </head>
-  
+
   <body>
     <div id="result"></div>
   </body>
-  
+
 </html>
